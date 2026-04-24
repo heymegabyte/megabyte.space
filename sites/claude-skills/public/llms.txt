@@ -1,0 +1,31 @@
+# Claude Skills
+
+> Claude Skills is a 14-category autonomous product-building OS with 18 specialized agents and 94 reference docs. It transforms one-line natural language prompts into deployed, tested, production-ready products on Cloudflare Workers. Built by a Principal Software Engineer with 14 years of craft across front-end, backend, app, and OS development.
+
+## What It Does
+
+Claude Skills routes your prompt through 14 skill categories (Operating System, Goal & Brief, Planning & Research, Preference & Memory, Architecture & Stack, Build & Slice Loop, Quality & Verification, Deploy & Runtime, Brand & Content, Experience & Design, Motion & Interaction, Media Orchestration, Observability & Growth, Idea Engine) and spawns from a pool of 18 specialized agents (Architect, Code Simplifier, Completeness Checker, Deploy Verifier, Security Reviewer, Test Writer, SEO Auditor, Visual QA, Computer Use Operator, Dependency Auditor, Meta Orchestrator, Migration Agent, Content Writer, Performance Profiler, Incident Responder, Accessibility Auditor, Cost Estimator, Changelog Generator) to build your product autonomously.
+
+## Installation
+
+- GitHub Skills: `gh skill install megabytespace/claude-skills`
+- Claude Code Plugin: `claude plugin install megabytespace/claude-skills`
+- npm: `npm i @megabytespace/claude-skills`
+- JSR: `jsr add @megabytespace/claude-skills`
+- OpenAI Codex: `git clone https://github.com/megabytespace/claude-skills ~/.codex/skills/claude-skills`
+- Manual: `git clone https://github.com/megabytespace/claude-skills`
+
+## Supported Platforms
+
+Works with 32+ AI coding tools: Claude Code, OpenAI Codex, Cursor (MDC), GitHub Copilot, VS Code, Windsurf, Augment, OpenHands, Gemini CLI, Amazon Q, JetBrains (Junie + AI Assistant), Kiro (AWS), Tabnine, Continue, Roo Code, Trae, Aider, Bolt.new, Replit, Qodo, Devin, Goose, and more.
+
+## Default Tech Stack
+
+Cloudflare Workers + Hono (backend), Angular + Ionic + PrimeNG (frontend), D1/Neon (database), Drizzle ORM + Zod (data layer), Clerk (auth), Stripe (billing), Inngest (workflows), Resend (email), Bun (tooling), Playwright + Vitest (testing), PostHog + Sentry + GA4 (observability).
+
+## Links
+
+- Website: https://claude.megabyte.space
+- GitHub: https://github.com/megabytespace/claude-skills
+- npm: https://www.npmjs.com/package/@megabytespace/claude-skills
+- Author: https://megabyte.space

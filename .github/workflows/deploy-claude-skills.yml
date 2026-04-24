@@ -1,0 +1,50 @@
+name: Deploy Claude Skills Showcase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sites/claude-skills/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    defaults:
+      run:
+        working-directory: sites/claude-skills
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - run: npx tsc --noEmit
+
+      - name: Validate required assets
+        run: |
+          for f in public/index.html public/styles.css public/robots.txt public/sitemap.xml public/manifest.json public/llms.txt public/og.png public/_headers; do
+            [ -f "$f" ] || { echo "::error::Missing required file: $f"; exit 1; }
+          done
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: sites/claude-skills
+          command: deploy
+
+      - name: Post-deploy smoke test
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://claude.megabyte.space/health)
+          if [ "$STATUS" != "200" ]; then
+            echo "::warning::Health check returned $STATUS"
+          else
+            echo "Health check passed (200 OK)"
+          fi

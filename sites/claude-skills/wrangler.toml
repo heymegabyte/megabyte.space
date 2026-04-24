@@ -1,0 +1,19 @@
+name = "claude-megabyte-space"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[assets]
+directory = "public"
+not_found_handling = "single-page-application"
+
+[vars]
+ENVIRONMENT = "production"
+
+# Workers Builds — auto-deploy on push to main
+[build]
+command = "npm install && npx tsc --noEmit"
+
+# Custom domain
+[[routes]]
+pattern = "claude.megabyte.space"
+custom_domain = true

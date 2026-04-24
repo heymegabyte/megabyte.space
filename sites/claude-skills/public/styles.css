@@ -26,16 +26,16 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --bg: #060610;
-    --bg-raised: #0c0c1d;
-    --bg-card: #111128;
-    --bg-card-hover: #161640;
-    --cyan: #00E5FF;
-    --blue: #50AAE3;
-    --purple: #7C3AED;
-    --text: #e4e4f0;
-    --text-dim: #9e9ebe;
-    --text-bright: #ffffff;
+    --bg: oklch(0.08 0.02 275);
+    --bg-raised: oklch(0.12 0.03 275);
+    --bg-card: oklch(0.16 0.04 275);
+    --bg-card-hover: oklch(0.20 0.05 275);
+    --cyan: oklch(0.82 0.17 195);
+    --blue: oklch(0.71 0.12 230);
+    --purple: oklch(0.49 0.25 290);
+    --text: oklch(0.91 0.02 285);
+    --text-dim: oklch(0.68 0.04 280);
+    --text-bright: oklch(1.00 0 0);
     --border: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(0, 229, 255, 0.15);
     --glow-cyan: rgba(0, 229, 255, 0.12);
@@ -662,7 +662,7 @@
     overflow-x: auto;
   }
 
-  .how__step p { font-size: 0.9rem; color: var(--text-dim); }
+  .how__step p { font-size: 0.9rem; color: var(--text-dim); text-wrap: pretty; }
 
   .how__connector {
     width: 40px;
@@ -751,6 +751,7 @@
     color: var(--text-dim);
     line-height: 1.5;
     margin-bottom: 0.75rem;
+    text-wrap: pretty;
   }
 
   .skill-card__docs {
@@ -813,6 +814,7 @@
     font-size: 0.8rem;
     color: var(--text-dim);
     line-height: 1.5;
+    text-wrap: pretty;
   }
 
   /* ---- Stack ---- */
@@ -1016,6 +1018,7 @@
     font-size: 1.1rem;
     line-height: 1.7;
     margin-bottom: 1.5rem;
+    text-wrap: pretty;
   }
 
   .author__links {
@@ -1236,6 +1239,7 @@
       padding: 0 1.5rem 1.25rem;
       color: var(--text-dim);
       line-height: 1.7;
+      text-wrap: pretty;
     }
   }
 

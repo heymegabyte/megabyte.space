@@ -118,7 +118,8 @@
       "group": "Integrations",
       "pages": [
         "integrations/e2b",
-        "integrations/docker"
+        "integrations/docker",
+        "integrations/langfuse"
       ]
     },
     {

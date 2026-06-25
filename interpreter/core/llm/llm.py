@@ -20,6 +20,7 @@ import uuid
 import requests
 import tokentrim as tt
 
+from .langfuse_setup import build_trace_metadata, configure_langfuse
 from .run_text_llm import run_text_llm
 
 # from .run_function_calling_llm import run_function_calling_llm
@@ -49,6 +50,11 @@ class Llm:
 
         # Store a reference to parent interpreter
         self.interpreter = interpreter
+
+        # Enable Langfuse tracing if LANGFUSE_* keys are set (no-op otherwise).
+        configure_langfuse()
+        # Stable session id so every call in this conversation groups in Langfuse.
+        self._langfuse_session_id = str(uuid.uuid4())
 
         # OpenAI-compatible chat completions "endpoint"
         self.completions = fixed_litellm_completions
@@ -301,6 +307,20 @@ Continuing...
             params["temperature"] = self.temperature
         if hasattr(self.interpreter, "conversation_id"):
             params["conversation_id"] = self.interpreter.conversation_id
+
+        # Langfuse: attach trace/session metadata read by LiteLLM's callback.
+        # Prefer the interpreter's conversation_id (set in some modes) so a
+        # session maps 1:1 to a conversation; fall back to our per-LLM id.
+        session_id = getattr(
+            self.interpreter, "conversation_id", None
+        ) or self._langfuse_session_id
+        trace_metadata = build_trace_metadata(
+            model=model,
+            session_id=session_id,
+            version=getattr(self.interpreter, "version", None),
+        )
+        if trace_metadata:
+            params["metadata"] = trace_metadata
 
         # Set some params directly on LiteLLM
         if self.max_budget:

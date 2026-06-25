@@ -1,0 +1,65 @@
+---
+title: Langfuse
+---
+
+[Langfuse](https://langfuse.com/) is an open-source LLM observability platform. Because Open Interpreter runs every model call through [LiteLLM](https://docs.litellm.ai/), tracing is built in through LiteLLM's native Langfuse callback — it captures the model, token usage, cost, latency, and errors for each generation automatically.
+
+Tracing stays **off** until both Langfuse keys are present in the environment, so there is nothing to disable when you don't want it.
+
+## Setup
+
+Install the Langfuse client:
+
+```bash
+pip install langfuse
+```
+
+Set your keys ([get them here](https://cloud.langfuse.com)):
+
+```python
+import os
+
+os.environ["LANGFUSE_PUBLIC_KEY"] = "pk-lf-..."
+os.environ["LANGFUSE_SECRET_KEY"] = "sk-lf-..."
+# Optional — defaults to https://cloud.langfuse.com
+# Use https://us.cloud.langfuse.com for the US region, or your self-hosted URL.
+os.environ["LANGFUSE_HOST"] = "https://cloud.langfuse.com"
+
+from interpreter import interpreter
+
+interpreter.chat("What's 2 + 2?")
+```
+
+That's it. Open traces in the Langfuse UI — each Open Interpreter conversation is grouped under a **session**, and every model call appears as a generation named `open-interpreter:<model>` and tagged `open-interpreter`.
+
+From the terminal it works the same way — just export the variables first:
+
+```bash
+export LANGFUSE_PUBLIC_KEY="pk-lf-..."
+export LANGFUSE_SECRET_KEY="sk-lf-..."
+interpreter
+```
+
+## What gets captured
+
+| Field | Source |
+| --- | --- |
+| Model name | LiteLLM callback |
+| Input / output tokens + cost | LiteLLM callback |
+| Latency & errors | LiteLLM callback |
+| `session_id` | Open Interpreter conversation id (groups a chat together) |
+| `trace_name` / `generation_name` | `open-interpreter` / `open-interpreter:<model>` |
+| `tags` | `open-interpreter`, the model name |
+
+## Masking sensitive data
+
+Open Interpreter can see local files, terminal output, and other sensitive content. To keep prompt and completion **bodies** out of your traces (timing, tokens, and cost are still captured), set:
+
+```python
+os.environ["LANGFUSE_REDACT_IO"] = "true"
+```
+
+## Learn more
+
+- Sessions: https://langfuse.com/docs/tracing-features/sessions
+- LiteLLM integration: https://langfuse.com/docs/integrations/litellm

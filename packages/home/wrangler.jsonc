@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "megabyte-home",
+  "main": "worker.ts",
+  "compatibility_date": "2026-09-01",
+  "account_id": "84fa0d1b16ff8086dd958c468ce7fd59",
+  // workers_dev stays on so the front door always has a fallback origin
+  // (and so pre-flight verification can run before the apex swap).
+  "workers_dev": true,
+  "routes": [{ "pattern": "megabyte.space", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Without this, browser navigations (Accept: text/html) to /login are
+    // swallowed by the SPA fallback and never reach the worker's 302.
+    "run_worker_first": ["/login", "/login/", "/health"]
+  },
+  "observability": { "enabled": true }
+}

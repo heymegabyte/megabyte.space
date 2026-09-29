@@ -1,24 +1,26 @@
 #!/usr/bin/env node
-// Post-deploy production verification for https://megabyte.space (Cloudflare OS).
+// Post-deploy production verification for the megabyte.space Cloudflare OS estate.
 //
-// Asserts, against the LIVE site:
-//   1. Unauthenticated apex request is intercepted by Cloudflare Access
-//      (302 to the manhattan.cloudflareaccess.com login) — the app is never
-//      served anonymously.
-//   2. A request authenticated with the "megabyte-os-e2e" Access service token
-//      reaches the router Worker and receives the app shell (200, HTML,
-//      contains the root mount node).
-//   3. www.megabyte.space 301s to the apex.
+// Topology under test:
+//   https://megabyte.space/        → PUBLIC cinematic homepage (200, no auth wall,
+//                                    WebGL canvas mount + login CTA present)
+//   https://megabyte.space/login   → 302 into the gated app at os.megabyte.space
+//   https://os.megabyte.space/     → Cloudflare Access gate (302 to manhattan team
+//                                    login) for anonymous visitors
+//   os.megabyte.space + service token → Cloudflare OS app shell (200, id="root")
+//   https://www.megabyte.space/    → 301 to the apex
 //
-// Service-token credentials come from CF_ACCESS_CLIENT_ID / CF_ACCESS_CLIENT_SECRET
-// (falling back to the session drop files under /tmp for local runs).
+// Service-token credentials: CF_ACCESS_CLIENT_ID / CF_ACCESS_CLIENT_SECRET
+// (falling back to the session drop files under /tmp).
 //
-// Exit code 0 = all green; 1 = any assertion failed. TDD: this script is
-// written BEFORE the first deploy and must fail (RED) until the deploy lands.
+// Exit 0 = all green; 1 = any assertion failed. TDD: rewritten BEFORE the
+// topology change and must fail (RED) until the swap lands.
 
 import { readFileSync } from "node:fs";
 
 const APEX = "https://megabyte.space/";
+const LOGIN = "https://megabyte.space/login";
+const OS = "https://os.megabyte.space/";
 const WWW = "https://www.megabyte.space/";
 const ISSUER_HOST = "manhattan.cloudflareaccess.com";
 
@@ -47,28 +49,71 @@ const tryFetch = async (url, options) => {
   }
 };
 
-// 1. Unauthenticated apex → Access login redirect.
+// 1. Apex is a PUBLIC homepage — no Access redirect, WebGL mount + login CTA.
 {
   const res = await tryFetch(APEX, { redirect: "manual" });
   if (res.error) {
-    record("apex gated by Access", false, `fetch failed: ${res.error}`);
+    record("apex serves public homepage", false, `fetch failed: ${res.error}`);
+  } else {
+    // Static-shell markers only — the WebGL canvas + login CTAs render client-side
+    // and are asserted by the real-browser pass (Playwright + screenshot + console).
+    const body = res.status === 200 ? await res.text() : "";
+    const hasRoot = body.includes('id="app"');
+    const isOurs = body.includes("Megabyte OS") && body.includes("/assets/");
+    const noAccessWall = !(res.headers.get("location") || "").includes(ISSUER_HOST);
+    const pass = res.status === 200 && hasRoot && isOurs && noAccessWall && body.length > 1000;
+    record(
+      "apex serves public homepage",
+      pass,
+      `status=${res.status} root=${hasRoot} branded=${isOurs} bytes=${body.length}`,
+    );
+  }
+}
+
+// 2. /login funnels into the gated OS — with BROWSER headers. A plain curl
+//    (Accept: */*) skips the asset layer's SPA fallback and flatters the worker;
+//    a real navigation (Accept: text/html) is what users send, and is exactly
+//    the path that regressed when /login lacked run_worker_first.
+{
+  const res = await tryFetch(LOGIN, {
+    redirect: "manual",
+    headers: {
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Dest": "document",
+    },
+  });
+  if (res.error) {
+    record("/login redirects into the OS", false, `fetch failed: ${res.error}`);
+  } else {
+    const location = res.headers.get("location") || "";
+    const pass = [301, 302].includes(res.status) && location.startsWith("https://os.megabyte.space");
+    record("/login redirects into the OS", pass, `status=${res.status} location=${location || "(none)"}`);
+  }
+}
+
+// 3. Anonymous os.megabyte.space is gated by Access.
+{
+  const res = await tryFetch(OS, { redirect: "manual" });
+  if (res.error) {
+    record("os subdomain gated by Access", false, `fetch failed: ${res.error}`);
   } else {
     const location = res.headers.get("location") || "";
     const pass = res.status === 302 && location.includes(ISSUER_HOST);
     record(
-      "apex gated by Access",
+      "os subdomain gated by Access",
       pass,
       `status=${res.status} location=${location.slice(0, 80) || "(none)"}`,
     );
   }
 }
 
-// 2. Service-token request → app shell from the router Worker.
+// 4. Service-token request reaches the OS app shell.
 {
   if (!clientId || !clientSecret) {
     record("service token reaches app shell", false, "missing CF_ACCESS_CLIENT_ID/SECRET");
   } else {
-    const res = await tryFetch(APEX, {
+    const res = await tryFetch(OS, {
       redirect: "manual",
       headers: {
         "CF-Access-Client-Id": clientId,
@@ -79,19 +124,31 @@ const tryFetch = async (url, options) => {
       record("service token reaches app shell", false, `fetch failed: ${res.error}`);
     } else {
       const body = res.status === 200 ? await res.text() : "";
-      const isHtml = (res.headers.get("content-type") || "").includes("text/html");
-      const hasRoot = body.includes('id="root"');
-      const pass = res.status === 200 && isHtml && hasRoot && body.length > 500;
-      record(
-        "service token reaches app shell",
-        pass,
-        `status=${res.status} html=${isHtml} root=${hasRoot} bytes=${body.length}`,
-      );
+      const pass =
+        res.status === 200 &&
+        (res.headers.get("content-type") || "").includes("text/html") &&
+        body.includes('id="root"') &&
+        body.length > 500;
+      record("service token reaches app shell", pass, `status=${res.status} bytes=${body.length}`);
     }
   }
 }
 
-// 3. www → apex redirect.
+// 5. The OG card is a real image — the SPA asset fallback happily serves
+//    index.html as a 200 for any missing file, so content-type is the tell.
+{
+  const res = await tryFetch("https://megabyte.space/og.jpg", { redirect: "manual" });
+  if (res.error) {
+    record("og image serves as image", false, `fetch failed: ${res.error}`);
+  } else {
+    const type = res.headers.get("content-type") || "";
+    const bytes = (await res.arrayBuffer()).byteLength;
+    const pass = res.status === 200 && type.includes("image/jpeg") && bytes > 20000 && bytes < 150000;
+    record("og image serves as image", pass, `status=${res.status} type=${type} bytes=${bytes}`);
+  }
+}
+
+// 6. www → apex.
 {
   const res = await tryFetch(WWW, { redirect: "manual" });
   if (res.error) {

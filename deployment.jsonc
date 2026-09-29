@@ -21,7 +21,7 @@
       // Production: use a hostname in an active Cloudflare zone. Wrangler creates DNS and TLS.
       // Evaluation: replace this with "route": { "workersDev": true } and set publicBaseUrl above.
       // https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
-      "route": { "customDomain": "megabyte.space" }
+      "route": { "customDomain": "os.megabyte.space" }
     },
 
     // The Workshop backend. No public route: the router reaches it over a service binding.

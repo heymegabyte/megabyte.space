@@ -30,3 +30,9 @@ Two surfaces in one repo:
 ## Upgrades
 
 Bump the `cloudflare-os` submodule to a reviewed upstream release → `pnpm check` → `pnpm deploy`. Homepage deploys independently.
+
+## Mission (2026-09-29 →)
+
+- megabyte.space is the ADVANCED PLAYGROUND: rapid AI-driven UI evolution on the Cloudflare OS shell; projectsites.dev stays the stability anchor. Continually absorb its capabilities (93 inventoried) into perfectly-placed, minimal Cloudflare OS UI.
+- Steering: `.claude/run-the-loop/ULTIMATE-REQUIREMENTS.md` (distilled 364KB doc) + `PROJECTSITES-ABSORPTION.md` + `BACKLOG.md`. Loop: `/run-the-loop` (ported, project command wins). Upstream `cloudflare-os` submodule stays PINNED — enhance starter-owned layers only.
+- Beautify-10x: every surface created → 10 "more gorgeous" passes + more on revisit; state in `.claude/modifier-matrix.json` (per gorgeous-by-default § Beautify-10x).

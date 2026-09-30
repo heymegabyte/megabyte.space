@@ -1,0 +1,14 @@
+{
+  "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
+  "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
+  "surfaces": {
+    "home.hero": { "beautifyPasses": 1, "aiVisionScore": 8.5, "density": 2, "lastVisit": "2026-09-29", "next": ["WebGPU particle upgrade", "kinetic headline stagger", "scroll-scrub camera path"] },
+    "home.features": { "beautifyPasses": 1, "aiVisionScore": 8, "density": 3, "lastVisit": "2026-09-29", "next": ["bento asymmetry", "hover video previews", "live OS stats feed"] },
+    "home.how-it-works": { "beautifyPasses": 1, "aiVisionScore": 7.5, "density": 3, "lastVisit": "2026-09-29", "next": ["animated step timeline", "inline gadget demo"] },
+    "home.trust": { "beautifyPasses": 1, "aiVisionScore": 8, "density": 4, "lastVisit": "2026-09-29", "next": ["live gatekeeper audit ticker"] },
+    "os.login": { "beautifyPasses": 0, "aiVisionScore": 6, "density": 2, "lastVisit": "2026-09-29", "next": ["Access login CSS branding via /admin", "custom error pages"] },
+    "os.shell": { "beautifyPasses": 0, "aiVisionScore": 0, "density": 5, "lastVisit": null, "next": ["/admin branding pass (name, logo, accent)", "survey enhanceable starter-owned layers"] },
+    "os.admin": { "beautifyPasses": 0, "aiVisionScore": 0, "density": 6, "lastVisit": null, "next": ["first visual inspection fire"] },
+    "os.database-studio": { "beautifyPasses": 0, "aiVisionScore": 0, "density": 9, "lastVisit": null, "next": ["flagship: D1 Notion/Airtable studio per ULTIMATE-REQUIREMENTS §Data-UX"] }
+  }
+}

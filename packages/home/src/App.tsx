@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { mountHeroField } from "./webgl";
 
 const FEATURES = [
@@ -41,7 +41,7 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  ["01", "Sign in", "One login through Megabyte Labs' identity — Authentik SSO or an email code."],
+  ["01", "Sign in", "One login through Megabyte Labs' identity — a one-time email code, zero-touch on managed devices."],
   ["02", "Ask", "Describe the document, app, or task. Attach repos, docs, or data through Gatekeepers."],
   ["03", "Approve", "Agents queue side-effects instead of stalling. Review the log, approve in one sweep."],
   ["04", "Ship", "Share the Gadget with the team — each person gets their own safe, remixable copy."],
@@ -180,10 +180,11 @@ export default function App() {
             <h2 className="font-display reveal mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
               Four moves, <span className="text-gradient">zero friction</span>
             </h2>
-            <ol className="mt-14 grid gap-5 md:grid-cols-4">
-              {STEPS.map(([n, title, body]) => (
-                <li key={n} className="card reveal p-7">
-                  <span className="font-mono text-sm text-[--color-cyan]">{n}</span>
+            <ol className="timeline reveal mt-14 grid gap-5 md:mt-24 md:grid-cols-4 md:pt-10">
+              {STEPS.map(([n, title, body], i) => (
+                <li key={n} className="card step-card p-7" style={{ "--step-i": i } as CSSProperties}>
+                  <span className="step-node" aria-hidden="true" />
+                  <span className="step-num font-mono text-sm text-[--color-cyan]">{n}</span>
                   <h3 className="font-display mt-3 text-lg font-semibold">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-white/60">{body}</p>
                 </li>
@@ -205,7 +206,7 @@ export default function App() {
                 <p className="mt-5 leading-relaxed text-white/70">
                   Gatekeepers wrap every external service in a capability-scoped API. Side-effects are simulated so
                   agents never stall waiting for you — then you approve the queue in one pass, with a full audit log.
-                  Identity sits behind Cloudflare Access: Authentik SSO or a one-time email code.
+                  Identity sits behind Cloudflare Access: a one-time email code, with WARP zero-touch on managed devices.
                 </p>
               </div>
               <ul className="space-y-4 font-mono text-sm">

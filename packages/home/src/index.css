@@ -96,14 +96,16 @@ body {
 
   .reveal {
     opacity: 0;
-    transform: translateY(28px);
+    /* translate (not transform) so .reveal.is-in never out-specifies and kills
+       .card:hover's transform lift — the lift was dead on every revealed card. */
+    translate: 0 28px;
     transition:
       opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .reveal.is-in {
     opacity: 1;
-    transform: none;
+    translate: 0 0;
   }
 
   .cta-primary {
@@ -133,14 +135,120 @@ body {
     background-clip: text;
     color: transparent;
   }
+
+  /* How-it-works: beam draws across the top as the section enters, step nodes
+     ignite on it, cards cascade in. Beam + nodes are md+ only (single column
+     on mobile keeps the cascade without negative-offset overflow). */
+  .timeline {
+    position: relative;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-sky) 55%, var(--color-violet));
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.45);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+    display: none;
+  }
+  .timeline.is-in::before {
+    transform: scaleX(1);
+  }
+
+  .step-card {
+    opacity: 0;
+  }
+  .timeline.is-in .step-card {
+    opacity: 1;
+    /* backwards (not both): once the entrance ends the animation releases the
+       card, so .card's hover transform keeps working. */
+    animation: step-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.25s + var(--step-i) * 0.14s);
+  }
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .step-num {
+    display: inline-block;
+    letter-spacing: 0.14em;
+    text-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
+  }
+
+  .step-node {
+    position: absolute;
+    left: 50%;
+    top: -2.5rem; /* matches the ol's md:pt-10 so the node sits on the beam */
+    width: 14px;
+    height: 14px;
+    translate: -50% -50%;
+    border-radius: 9999px;
+    border: 2px solid var(--color-cyan);
+    background: var(--color-void);
+    scale: 0;
+    transition:
+      scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.5s ease;
+    transition-delay: calc(0.5s + var(--step-i) * 0.14s);
+    display: none;
+  }
+  .step-node::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: inherit;
+    background: var(--color-cyan);
+  }
+  .timeline.is-in .step-node {
+    scale: 1;
+    box-shadow: 0 0 18px 3px rgba(0, 229, 255, 0.35);
+  }
+
+  @media (min-width: 768px) {
+    .timeline::before,
+    .step-node {
+      display: block;
+    }
+  }
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
-    transform: none;
+    translate: none;
   }
   .cta-primary::before {
     animation: none;
+  }
+  /* Timeline fully drawn, nodes lit, cards visible — zero animation, still gorgeous. */
+  .timeline::before {
+    transform: scaleX(1);
+  }
+  .step-card,
+  .timeline.is-in .step-card {
+    opacity: 1;
+    animation: none;
+  }
+  .step-node {
+    scale: 1;
   }
 }

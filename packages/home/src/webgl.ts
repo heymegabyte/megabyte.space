@@ -156,11 +156,6 @@ export function mountHeroField(canvas: HTMLCanvasElement): () => void {
     if (!document.hidden) raf = requestAnimationFrame(tick);
   };
 
-  const render = () => {
-    renderer.render(scene, camera);
-    requestAnimationFrame(render);
-  };
-
   resize();
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
@@ -175,7 +170,6 @@ export function mountHeroField(canvas: HTMLCanvasElement): () => void {
     renderRaf = requestAnimationFrame(renderLoop);
   };
   renderRaf = requestAnimationFrame(renderLoop);
-  void render;
 
   return () => {
     cancelAnimationFrame(raf);

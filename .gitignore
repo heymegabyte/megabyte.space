@@ -8,7 +8,7 @@ deployment.local.jsonc
 .claude/run-the-loop/.fire-lease.json
 .claude/run-the-loop/.watchdog.lock
 .claude/run-the-loop/watchdog.log
-.claude/.worktree-pool/
+.claude/.worktree-pool
 # Journey/explorer run artifacts (screenshots etc.) stay local
 e2e/screenshots/
 e2e/deep-ui-explorer/runs/

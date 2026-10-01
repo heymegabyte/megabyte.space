@@ -143,6 +143,28 @@
 - [ ] Slice 4 — ops loop: weekly pricing/keyword experiment + sales/visit stats into the
   Observatory — accept: one completed experiment with before/after data
 
+### WS-11 — OS to the apex + first-run WebGL overlay (Brian 2026-10-01 — overrides public-front-door for THIS estate)
+- Mission: `megabyte.space` SERVES the OS. The WebGL homepage becomes a **first-run dismissible
+  intro layer** over it (shown once; an "Enter / go in" button dismisses + persists a flag;
+  suppressed on return). Overlay injected by a WRAPPER worker in FRONT of the OS router — NEVER a
+  `cloudflare-os` submodule patch. `os.megabyte.space` retained as a legacy 301→apex. Access stays
+  the edge gate (→ WS-8 Better Auth later). Brian's words: "CloudFlare OS should be at megabyte.space
+  … make it just show up as a layer that you dismiss that only shows the first time until you press
+  the button to go in."
+- Cadence: PRIORITY — the immediate next fire(s). Best run in a FRESH full-budget session
+  (one-way-door infra; `delegate-when-saturated` — don't start this large pass context-saturated).
+- GOTCHAS (from `docs/customization.md`, confirmed fire-6):
+  - (a) changing the router `customDomain` DETACHES `megabyte-home` from the apex (CLAUDE.md § Gotchas) — plan megabyte-home's fate (fold its WebGL into the overlay worker) BEFORE the flip.
+  - (b) the self-hosted Access app must cover `megabyte.space` (added/!new hostname; AUD may change) — **canonical-answer #4 PAUSE: Access host change is the one genuinely gated step.**
+  - (c) `publicBaseUrl` derives from `customDomain`; pin `context.sharingDomain: "https://os.megabyte.space"` BEFORE the flip so existing Context data isn't hidden, and re-verify OAuth redirect URIs (both read the origin).
+  - (d) the router serves the OS frontend (UPSTREAM/submodule) — the overlay MUST be a wrapper worker (service binding to the router) or an HTML-rewrite in front; respect the submodule boundary.
+  - (e) quick partial brand win: `/admin` General tab sets name→"Megabyte OS" + accent→`#00E5FF` + logo (runtime, no deploy) — but needs an authenticated ADMIN session (Access OTP), not the service token.
+- [ ] Slice 1 — Overlay wrapper worker (reversible; build + verify against a workers.dev/preview URL first) — accept: serves the first-run WebGL overlay (reuse `packages/home` WebGL) then reveals/proxies the OS; cookie `os_entered` suppresses it on return; "Enter" dismisses + sets the cookie; real-browser 0 console errors + reduced-motion static fallback.
+- [ ] Slice 2 — `/admin` brand pass (partial fire-5 off-brand fix) — accept: name "Megabyte OS" + accent `#00E5FF` + logo set via an authenticated admin session; screenshot shows cyan accent live. (Needs Brian's OTP or a documented admin-automation path.)
+- [ ] Slice 3 — origin-preservation pre-flip — accept: `context.sharingDomain` pinned; `publicBaseUrl` plan verified; `pnpm check` green; rollback runbook written (restore `customDomain` + Access host).
+- [ ] Slice 4 — DOMAIN FLIP (one-way-door, deliberate) — accept: detach megabyte-home from apex → point the `megabyte-os` router `customDomain` to `megabyte.space` → Access app covers the apex → `pnpm deploy` → `verify-prod` rewritten for the new topology all-green; `os.megabyte.space` 301→apex; real-browser: anonymous → Access → first-run overlay once → OS; rollback rehearsed.
+- [ ] Slice 5 — reconcile `verify-prod` + `CLAUDE.md` + `public-front-door` to the shipped topology — accept: docs match live; verify-prod asserts apex = OS + first-run overlay.
+
 ## Next-wave inbox (discovery appends here; convergence dedupes into workstreams)
 
 > fire-1 (2026-09-30, aborted on session limit; Brian canceled loops) — Product Discovery + Security

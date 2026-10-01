@@ -1,9 +1,9 @@
 # megabyte.space — Megabyte OS estate
 
-Two surfaces in one repo:
+Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01): Cloudflare OS moves to the APEX `megabyte.space`** — the WebGL homepage becomes a **first-run dismissible intro layer** over the OS (shown once; an "Enter / go in" button dismisses it; a persisted flag suppresses it on return visits). This DELIBERATELY OVERRIDES `public-front-door` for this estate (see that rule's reference incidents). Migration = `BACKLOG.md` WS-11; until it lands, the surfaces below are the LIVE (transitional) topology.
 
-- **`https://megabyte.space`** — PUBLIC cinematic homepage (`packages/home`: React 19 + Vite + Tailwind v4 + Three.js WebGL hero, worker `megabyte-home`). `/login` 302s into the OS. Auth walls never sit on `/` (per `public-front-door` rule).
-- **`https://os.megabyte.space`** — [cloudflare/cloudflare-os](https://github.com/cloudflare/cloudflare-os) (pinned submodule) via the [cloudflare-os-starter](https://github.com/cloudflare/cloudflare-os-starter) wrapper, Cloudflare Access-gated. Six Workers: `megabyte-os` (router, owns the os custom domain) + `megabyte-os-backend` (Workshop) + `-context` + `-scheduler` + `-custom` + `-errors`.
+- **`https://megabyte.space`** — TODAY: PUBLIC cinematic homepage (`packages/home`: React 19 + Vite + Tailwind v4 + Three.js WebGL hero, worker `megabyte-home`); `/login` 302s into the OS. TARGET (WS-11): the OS at the apex, with the WebGL homepage as a first-run overlay served by a WRAPPER worker IN FRONT of the router (never a submodule patch; overlay gated by a cookie/localStorage flag, "Enter" dismisses + proceeds to the OS).
+- **`https://os.megabyte.space`** — [cloudflare/cloudflare-os](https://github.com/cloudflare/cloudflare-os) (pinned submodule) via the [cloudflare-os-starter](https://github.com/cloudflare/cloudflare-os-starter) wrapper, Cloudflare Access-gated. Six Workers: `megabyte-os` (router, owns the os custom domain — WS-11 re-points it to the apex) + `megabyte-os-backend` (Workshop) + `-context` + `-scheduler` + `-custom` + `-errors`. Post-WS-11: retained as a legacy alias / 301 → apex.
 
 ## Commands
 

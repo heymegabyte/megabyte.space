@@ -73,3 +73,18 @@
 - backlog: WS-4 explorer-bootstrap ticked (live run done); +3 next-wave (OS black/cyan theme · WS-auth-for-OS-E2E = WS-8.4 · AI-Gateway vision live run)
 - loop-improvement: explorer header-scoping fix (honest OS console capture) + documented the service-token↔WebSocket OS limitation as a durable OS-E2E constraint
 - attrition: none
+
+## fire-6 — 2026-10-01 — fire-6-run (DIRECTION CAPTURE: OS → apex + first-run overlay)
+
+- roster: lead-direct (Product Discovery + Architecture + Documentation + Loop Improvement) · rejected: all Agent spawns (direction-capture + planning — no independent fan-out) · budget: 100% discovery/architecture/docs (a steering fire)
+- [direction] Brian corrected the estate topology: "CloudFlare OS should be at megabyte.space … make it just show up as a layer that you dismiss that only shows the first time until you press the button to go in." → the APEX serves the OS; the WebGL homepage becomes a first-run dismissible intro layer (shown once, "Enter/go in" dismisses + persists a flag, suppressed on return). Deliberately overrides public-front-door for this estate.
+- [architecture] investigated the customization surface (docs/customization.md): the router serves the OS frontend (UPSTREAM) → the overlay MUST be a WRAPPER worker in front (submodule stays pinned); /admin does runtime name/logo/accent; the domain flip detaches megabyte-home + needs an Access host change (canonical #4 PAUSE) + context.sharingDomain/publicBaseUrl pinning to preserve data. Captured as WS-11: 5 ordered risk-tagged slices + gotchas.
+- [docs] directive captured SAME-TURN (prompt-as-training-signal): project CLAUDE.md two-surface header rewritten to the target topology; GLOBAL public-front-door rule gained a 2026-10-01 reference incident (this estate reverses the split — don't "fix" it back); BACKLOG WS-11 authored.
+- journey: none (steering fire)
+- long-trail: unchanged · explorer: none this fire
+- beautify: none (planning fire); OS black/cyan theme folded into WS-11 slice 2 + the fire-5 os.shell 4/10 finding
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: +WS-11 (5 slices) — the new PRIORITY workstream
+- loop-improvement: the directive is captured in THREE durable places (project CLAUDE.md + global rule + WS-11) so the migration executes correctly even from a fresh session; flagged that the one-way-door execution belongs in a FRESH full-budget session (delegate-when-saturated), not the tail of this long one
+- attrition: none
+- NOTE: NO prod change this fire — the OS→apex migration is a one-way-door (domain + Access host) deliberately NOT half-executed at session-end. WS-11 is the executable plan.

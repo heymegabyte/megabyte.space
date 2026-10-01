@@ -159,7 +159,13 @@
   - (c) `publicBaseUrl` derives from `customDomain`; pin `context.sharingDomain: "https://os.megabyte.space"` BEFORE the flip so existing Context data isn't hidden, and re-verify OAuth redirect URIs (both read the origin).
   - (d) the router serves the OS frontend (UPSTREAM/submodule) — the overlay MUST be a wrapper worker (service binding to the router) or an HTML-rewrite in front; respect the submodule boundary.
   - (e) quick partial brand win: `/admin` General tab sets name→"Megabyte OS" + accent→`#00E5FF` + logo (runtime, no deploy) — but needs an authenticated ADMIN session (Access OTP), not the service token.
-- [ ] Slice 1 — Overlay wrapper worker (reversible; build + verify against a workers.dev/preview URL first) — accept: serves the first-run WebGL overlay (reuse `packages/home` WebGL) then reveals/proxies the OS; cookie `os_entered` suppresses it on return; "Enter" dismisses + sets the cookie; real-browser 0 console errors + reduced-motion static fallback.
+- [x] Slice 1 — first-run overlay BEHAVIOUR shipped (fire-7, 39fa9579) — built into `packages/home`
+  (the apex worker today), flag `VITE_FIRST_RUN_OVERLAY` default-OFF so the live apex is
+  byte-identical; "Enter the OS" persists `localStorage.megabyteOS_entered`; a return visitor
+  auto-skips to the OS entry via a redirect splash (only on "/", never intercepts the OS entry).
+  TDD 3/3 real-browser (`e2e/first-run-overlay/verify.mjs`, RED 1/3 → GREEN 3/3); deployed DARK
+  (verify-prod 8/8 + verify-browser 4/4). REMAINING for the flip: the "reveal/proxy the OS at the
+  SAME apex" wiring (vs today's `/login`→os. redirect) + wrapper-worker packaging land in Slice 4.
 - [ ] Slice 2 — `/admin` brand pass (partial fire-5 off-brand fix) — accept: name "Megabyte OS" + accent `#00E5FF` + logo set via an authenticated admin session; screenshot shows cyan accent live. (Needs Brian's OTP or a documented admin-automation path.)
 - [ ] Slice 3 — origin-preservation pre-flip — accept: `context.sharingDomain` pinned; `publicBaseUrl` plan verified; `pnpm check` green; rollback runbook written (restore `customDomain` + Access host).
 - [ ] Slice 4 — DOMAIN FLIP (one-way-door, deliberate) — accept: detach megabyte-home from apex → point the `megabyte-os` router `customDomain` to `megabyte.space` → Access app covers the apex → `pnpm deploy` → `verify-prod` rewritten for the new topology all-green; `os.megabyte.space` 301→apex; real-browser: anonymous → Access → first-run overlay once → OS; rollback rehearsed.

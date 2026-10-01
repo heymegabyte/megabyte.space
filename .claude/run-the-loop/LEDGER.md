@@ -88,3 +88,16 @@
 - loop-improvement: the directive is captured in THREE durable places (project CLAUDE.md + global rule + WS-11) so the migration executes correctly even from a fresh session; flagged that the one-way-door execution belongs in a FRESH full-budget session (delegate-when-saturated), not the tail of this long one
 - attrition: none
 - NOTE: NO prod change this fire — the OS→apex migration is a one-way-door (domain + Access host) deliberately NOT half-executed at session-end. WS-11 is the executable plan.
+
+## fire-7 — 2026-10-01 — fire-7-run (WS-11 Slice 1: first-run overlay behaviour)
+
+- roster: lead-direct (Feature Delivery + Golden-Path TDD + Loop Improvement) · rejected: all Agent spawns (single coherent feature slice) · budget: ~60% feature · ~30% TDD/verify · ~10% reconcile
+- [feature] WS-11 Slice 1 — first-run overlay behaviour in `packages/home`, flag `VITE_FIRST_RUN_OVERLAY` (default-OFF → live apex byte-identical): "Enter the OS" persists `localStorage.megabyteOS_entered`; a return visitor auto-skips to the OS entry via a redirect splash; fires only on "/" (never intercepts the OS entry) — 39fa9579 — prod: shipped DARK, verify-prod 8/8 + verify-browser 4/4 (hero paints 304KB, 0 OUR console errors — NO regression)
+- [tdd] `e2e/first-run-overlay/verify.mjs` — real-browser (local vite preview), RED 1/3 before impl → GREEN 3/3 after (first-visit shows overlay · Enter persists flag + goes to OS · return-visit auto-skips). Harness fix mid-flight: same-origin `/login` stub (route-ABORT drops the page to an opaque origin → localStorage denied).
+- journey: TDD feature-build (RED→GREEN), not a long golden-path this fire
+- long-trail: unchanged · explorer: none
+- beautify: home.hero re-verified live post-deploy (304KB paint, 0 OUR errors, 4/4) — 8.5 holds · matrix lastVisit refreshed
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-11 Slice 1 ticked; Slices 2-5 remain (the domain flip is Slice 4 — Access host change = Brian-gated)
+- loop-improvement: a durable reusable real-browser overlay verifier (`e2e/first-run-overlay/verify.mjs`) + the same-origin-stub pattern for testing client redirects locally (baked into the harness comments)
+- attrition: none

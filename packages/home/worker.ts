@@ -18,17 +18,24 @@ interface Env {
 
 const OS_ORIGIN = "https://os.megabyte.space";
 
-// Allowlist matches the real shell: Google Fonts stylesheet (style-src) +
-// gstatic font files (font-src) + data: SVG grain (img-src). JSON-LD blocks
-// are non-executable and unaffected by script-src. No nonce needed — static
-// Vite SPA, scripts are same-origin files only.
+// Allowlist matches what the Cloudflare edge actually serves + injects:
+//   • Cloudflare Fonts rewrites the Google Fonts <link> to SAME-ORIGIN woff2 at
+//     /cf-fonts/* → font-src 'self' (NOT gstatic; the browser never hits gstatic).
+//     gstatic kept as a fallback for if CF Fonts is ever disabled.
+//   • Cloudflare Web Analytics auto-injects static.cloudflareinsights.com/beacon.min.js
+//     (script-src) which POSTs RUM to cloudflareinsights.com (connect-src).
+//   • JSON-LD blocks are non-executable (type=ld+json) — unaffected by script-src.
+// Our own scripts are same-origin Vite modules, so no nonce is needed. The ONE
+// residual is CF's challenge-platform inline bootstrap (window.__CF$cv$params): it
+// embeds a per-request ray, so its hash is unstable (un-pinnable) and we refuse
+// 'unsafe-inline' — it is a documented upstream edge injection, not our code.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval'",
+  "script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src https://fonts.gstatic.com",
+  "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://cloudflareinsights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "object-src 'none'",

@@ -1,0 +1,88 @@
+{
+  "$doc": "deep-ui-explorer coverage ledger — the resumable cursor (role §1.17). States, not URLs: route · auth context · panel · overlay. Statuses: discovered | visited | blocked (with exact prerequisite) | skipped-with-reason. Run artifacts live in gitignored runs/<runId>/; this ledger is committed.",
+  "states": {
+    "apex.home.hero": {
+      "status": "visited",
+      "breadcrumb": ["/"],
+      "firstVisited": "2026-10-01T04:30:00Z",
+      "lastVisited": "2026-10-01T15:34:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (playwright-mcp; fire-3, Bash-classifier outage session)",
+      "lastConsoleErrors": 0,
+      "lastScore": 8.5,
+      "notes": "WebGL wave settled + visible both visits; vision 8.5/10 (fire-3 re-confirmed: gradient headline, stat strip, field framing)"
+    },
+    "apex.home.features": {
+      "status": "visited",
+      "breadcrumb": ["/", "scroll #features"],
+      "firstVisited": "2026-10-01T04:35:00Z",
+      "lastVisited": "2026-10-01T15:39:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-3: card count 6/6, no-overflow probes)",
+      "lastConsoleErrors": 0
+    },
+    "apex.home.how": {
+      "status": "visited",
+      "breadcrumb": ["/", "click nav How it works"],
+      "firstVisited": "2026-10-01T04:36:00Z",
+      "lastVisited": "2026-10-01T15:35:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastConsoleErrors": 0,
+      "lastScore": 7.5,
+      "notes": "PRE-deploy state re-captured fire-3 (old 4-card grid, 7.5/10). Fire-2's animated timeline + fire-3's Authentik→OTP copy fix are WRITTEN, not yet live — re-capture post-deploy. Mobile 390: no overflow"
+    },
+    "apex.home.trust": {
+      "status": "visited",
+      "breadcrumb": ["/", "click nav Trust"],
+      "firstVisited": "2026-10-01T04:37:00Z",
+      "lastVisited": "2026-10-01T15:36:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastConsoleErrors": 0,
+      "lastScore": 8,
+      "notes": "4 gatekeeper mono rows + CTA reveal GREEN (shot case-001/14-trust-gatekeepers.png). Live copy still shows Authentik line — fix ships with fire-2 deploy"
+    },
+    "apex.home.footer": {
+      "status": "visited",
+      "breadcrumb": ["/", "scroll footer"],
+      "firstVisited": "2026-10-01T04:38:00Z",
+      "lastVisited": "2026-10-01T15:37:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastConsoleErrors": 0,
+      "notes": "© Megabyte Labs + cloudflare-os + repo links verified via innerText probe"
+    },
+    "apex.login.funnel": {
+      "status": "visited",
+      "breadcrumb": ["/", "click Log in", "302 → os.megabyte.space"],
+      "firstVisited": "2026-10-01T04:40:00Z",
+      "lastVisited": "2026-10-01T06:50:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-2 + resume)",
+      "lastConsoleErrors": 0,
+      "notes": "Browser-header 302 funnel GREEN in real browser (fire-2 resume @06:50Z)"
+    },
+    "os.access-gate": {
+      "status": "visited",
+      "breadcrumb": ["/", "click Log in", "302", "Access sign-in @ manhattan.cloudflareaccess.com"],
+      "firstVisited": "2026-10-01T04:41:00Z",
+      "lastVisited": "2026-10-01T06:50:00Z",
+      "visits": 2,
+      "lastProvider": "local-chromium-mcp FALLBACK (fire-2 + resume)",
+      "lastConsoleErrors": 1,
+      "notes": "1 console error is UPSTREAM (CF Access page CSP blocks its own SVG); AUD b455c445…e8fa, is_warp:true, service_token_status:false (anonymous browser). Stock page 6/10 — being REPLACED by Better Auth (WS-8), not branded"
+    },
+    "os.shell.root": {
+      "status": "blocked",
+      "breadcrumb": ["os:/"],
+      "prerequisite": "Service-token browser context (CF_ACCESS_CLIENT_ID/CF_ACCESS_CLIENT_SECRET via get-secret megabyte-os-e2e) wired into extraHTTPHeaders; curl-level token fetch proven, browser leg pending",
+      "notes": "Never counted as coverage until the OS SHELL (not an Access page) renders in-browser"
+    },
+    "apex.404.unknown-path": {
+      "status": "discovered",
+      "breadcrumb": ["/this-page-does-not-exist"],
+      "notes": "Soft-404 class (BACKLOG WS-1): shell renders but status is 200 — real-404 slice pending"
+    }
+  }
+}

@@ -3,69 +3,97 @@
   "states": {
     "apex.home.hero": {
       "status": "visited",
-      "breadcrumb": ["/"],
+      "breadcrumb": [
+        "/"
+      ],
       "firstVisited": "2026-10-01T04:30:00Z",
-      "lastVisited": "2026-10-01T15:34:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (playwright-mcp; fire-3, Bash-classifier outage session)",
-      "lastConsoleErrors": 0,
+      "lastVisited": "2026-10-01T22:33:17.787Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
+      "lastConsoleErrors": 7,
       "lastScore": 8.5,
-      "notes": "WebGL wave settled + visible both visits; vision 8.5/10 (fire-3 re-confirmed: gradient headline, stat strip, field framing)"
+      "notes": "WebGL wave settled + visible both visits; vision 8.5/10 (fire-3 re-confirmed: gradient headline, stat strip, field framing)",
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "apex.home.features": {
       "status": "visited",
-      "breadcrumb": ["/", "scroll #features"],
+      "breadcrumb": [
+        "/",
+        "scroll #features"
+      ],
       "firstVisited": "2026-10-01T04:35:00Z",
-      "lastVisited": "2026-10-01T15:39:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (fire-3: card count 6/6, no-overflow probes)",
-      "lastConsoleErrors": 0
+      "lastVisited": "2026-10-01T22:33:18.058Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
+      "lastConsoleErrors": 0,
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "apex.home.how": {
       "status": "visited",
-      "breadcrumb": ["/", "click nav How it works"],
+      "breadcrumb": [
+        "/",
+        "scroll #how"
+      ],
       "firstVisited": "2026-10-01T04:36:00Z",
-      "lastVisited": "2026-10-01T15:35:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastVisited": "2026-10-01T22:33:18.238Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
       "lastConsoleErrors": 0,
       "lastScore": 7.5,
-      "notes": "PRE-deploy state re-captured fire-3 (old 4-card grid, 7.5/10). Fire-2's animated timeline + fire-3's Authentik→OTP copy fix are WRITTEN, not yet live — re-capture post-deploy. Mobile 390: no overflow"
+      "notes": "PRE-deploy state re-captured fire-3 (old 4-card grid, 7.5/10). Fire-2's animated timeline + fire-3's Authentik→OTP copy fix are WRITTEN, not yet live — re-capture post-deploy. Mobile 390: no overflow",
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "apex.home.trust": {
       "status": "visited",
-      "breadcrumb": ["/", "click nav Trust"],
+      "breadcrumb": [
+        "/",
+        "scroll #trust"
+      ],
       "firstVisited": "2026-10-01T04:37:00Z",
-      "lastVisited": "2026-10-01T15:36:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastVisited": "2026-10-01T22:33:18.444Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
       "lastConsoleErrors": 0,
       "lastScore": 8,
-      "notes": "4 gatekeeper mono rows + CTA reveal GREEN (shot case-001/14-trust-gatekeepers.png). Live copy still shows Authentik line — fix ships with fire-2 deploy"
+      "notes": "4 gatekeeper mono rows + CTA reveal GREEN (shot case-001/14-trust-gatekeepers.png). Live copy still shows Authentik line — fix ships with fire-2 deploy",
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "apex.home.footer": {
       "status": "visited",
-      "breadcrumb": ["/", "scroll footer"],
+      "breadcrumb": [
+        "/",
+        "scroll footer"
+      ],
       "firstVisited": "2026-10-01T04:38:00Z",
-      "lastVisited": "2026-10-01T15:37:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (fire-3)",
+      "lastVisited": "2026-10-01T22:33:18.659Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
       "lastConsoleErrors": 0,
-      "notes": "© Megabyte Labs + cloudflare-os + repo links verified via innerText probe"
+      "notes": "© Megabyte Labs + cloudflare-os + repo links verified via innerText probe",
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "apex.login.funnel": {
       "status": "visited",
-      "breadcrumb": ["/", "click Log in", "302 → os.megabyte.space"],
+      "breadcrumb": [
+        "/",
+        "click Log in"
+      ],
       "firstVisited": "2026-10-01T04:40:00Z",
-      "lastVisited": "2026-10-01T06:50:00Z",
-      "visits": 2,
-      "lastProvider": "local-chromium-mcp FALLBACK (fire-2 + resume)",
-      "lastConsoleErrors": 0,
-      "notes": "Browser-header 302 funnel GREEN in real browser (fire-2 resume @06:50Z)"
+      "lastVisited": "2026-10-01T22:33:20.452Z",
+      "visits": 3,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
+      "lastConsoleErrors": 6,
+      "notes": "Browser-header 302 funnel GREEN in real browser (fire-2 resume @06:50Z)",
+      "lastRun": "run-2026-10-01T22-33-15-860Z"
     },
     "os.access-gate": {
       "status": "visited",
-      "breadcrumb": ["/", "click Log in", "302", "Access sign-in @ manhattan.cloudflareaccess.com"],
+      "breadcrumb": [
+        "/",
+        "click Log in",
+        "302",
+        "Access sign-in @ manhattan.cloudflareaccess.com"
+      ],
       "firstVisited": "2026-10-01T04:41:00Z",
       "lastVisited": "2026-10-01T06:50:00Z",
       "visits": 2,
@@ -74,14 +102,23 @@
       "notes": "1 console error is UPSTREAM (CF Access page CSP blocks its own SVG); AUD b455c445…e8fa, is_warp:true, service_token_status:false (anonymous browser). Stock page 6/10 — being REPLACED by Better Auth (WS-8), not branded"
     },
     "os.shell.root": {
-      "status": "blocked",
-      "breadcrumb": ["os:/"],
+      "status": "visited",
+      "breadcrumb": [
+        "os:/"
+      ],
       "prerequisite": "Service-token browser context (CF_ACCESS_CLIENT_ID/CF_ACCESS_CLIENT_SECRET via get-secret megabyte-os-e2e) wired into extraHTTPHeaders; curl-level token fetch proven, browser leg pending",
-      "notes": "Never counted as coverage until the OS SHELL (not an Access page) renders in-browser"
+      "notes": "Never counted as coverage until the OS SHELL (not an Access page) renders in-browser",
+      "lastVisited": "2026-10-01T22:36:27.791Z",
+      "visits": 2,
+      "lastProvider": "local-chromium (walk) + cf-browser-rendering (captures available)",
+      "lastConsoleErrors": 7,
+      "lastRun": "run-2026-10-01T22-36-25-734Z"
     },
     "apex.404.unknown-path": {
       "status": "discovered",
-      "breadcrumb": ["/this-page-does-not-exist"],
+      "breadcrumb": [
+        "/this-page-does-not-exist"
+      ],
       "notes": "Soft-404 class (BACKLOG WS-1): shell renders but status is 200 — real-404 slice pending"
     }
   }

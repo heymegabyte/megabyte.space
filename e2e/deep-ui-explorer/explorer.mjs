@@ -124,13 +124,37 @@ async function resolveProvider(manifest) {
   }
   const brCreds = process.env.CLOUDFLARE_API_KEY && process.env.CLOUDFLARE_EMAIL && process.env.CLOUDFLARE_ACCOUNT_ID;
   const browser = await playwright.chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 },
-    extraHTTPHeaders: serviceTokenEnv()
-      ? { "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID, "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET }
-      : {},
-  });
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
+  // Scope the service-token headers to the OS ORIGIN ONLY. Set context-wide they
+  // leak onto cross-origin requests (e.g. the CF Web Analytics beacon), tripping
+  // its CORS preflight (cf-access-client-id is not in Access-Control-Allow-Headers)
+  // and polluting the OS console capture with an artifact error. Same-origin OS
+  // requests still carry the token; browser WebSocket upgrades cannot set headers,
+  // so the OS realtime RPC stays 403 under service-token auth (documented limitation
+  // — real WARP/OTP cookie sessions carry auth onto the socket and reconnect fine).
+  if (serviceTokenEnv()) {
+    await page.route("**/*", (route) => {
+      const req = route.request();
+      let sameOrigin = false;
+      try {
+        sameOrigin = new URL(req.url()).origin === OS;
+      } catch {
+        sameOrigin = false;
+      }
+      route.continue(
+        sameOrigin
+          ? {
+              headers: {
+                ...req.headers(),
+                "cf-access-client-id": process.env.CF_ACCESS_CLIENT_ID,
+                "cf-access-client-secret": process.env.CF_ACCESS_CLIENT_SECRET,
+              },
+            }
+          : {},
+      );
+    });
+  }
   const consoleBuf = [];
   const failedBuf = [];
   page.on("console", (m) => {

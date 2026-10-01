@@ -50,6 +50,14 @@ function withSecurityHeaders(response: Response): Response {
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  // Everything the worker returns is dynamic or security-header-bearing: the index.html
+  // shell, /health, /api/analytics/live, the /login 302. The CF edge otherwise caches the
+  // shell (cf-cache-status HIT) and serves STALE security headers for minutes after a deploy
+  // — fire-4 shipped a corrected CSP that stayed invisible until a manual purge. no-store
+  // kills that class (new headers are live instantly, no purge needed). The big immutable
+  // hashed /assets/* bypass the worker (run_worker_first "!/assets/*") and keep their own
+  // long-lived cache, so LCP is unaffected — only the ~3 KB shell re-fetches.
+  headers.set("Cache-Control", "no-store");
   return new Response(response.body, { status: response.status, headers });
 }
 

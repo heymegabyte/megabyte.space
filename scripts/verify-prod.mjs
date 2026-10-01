@@ -177,11 +177,15 @@ const tryFetch = async (url, options) => {
     const coop = res.headers.get("cross-origin-opener-policy") || "";
     const corp = res.headers.get("cross-origin-resource-policy") || "";
     const pp = res.headers.get("permissions-policy") || "";
-    const pass = csp === EXPECTED_CSP && coop === "same-origin" && corp === "same-origin" && pp.length > 0;
+    // no-store keeps the CF edge from serving a stale shell (+ stale security headers)
+    // for minutes after a deploy — the fire-4 incident. Guard it so it can't regress.
+    const cc = res.headers.get("cache-control") || "";
+    const pass =
+      csp === EXPECTED_CSP && coop === "same-origin" && corp === "same-origin" && pp.length > 0 && cc.includes("no-store");
     record(
       "apex serves security headers",
       pass,
-      `csp=${csp ? (csp === EXPECTED_CSP ? "exact" : "MISMATCH") : "absent"} coop=${coop || "absent"} corp=${corp || "absent"} pp=${pp ? "present" : "absent"}`,
+      `csp=${csp ? (csp === EXPECTED_CSP ? "exact" : "MISMATCH") : "absent"} coop=${coop || "absent"} corp=${corp || "absent"} pp=${pp ? "present" : "absent"} cache=${cc || "absent"}`,
     );
   }
 }

@@ -12,9 +12,19 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    // Without this, browser navigations (Accept: text/html) to /login are
-    // swallowed by the SPA fallback and never reach the worker's 302.
-    "run_worker_first": ["/login", "/login/", "/health"]
+    // Worker-first for EVERYTHING except hashed assets: the asset layer serving
+    // "/" directly bypassed the worker entirely, so security headers (CSP,
+    // Permissions-Policy, …) never reached real browser navigations and the
+    // /login 302 regressed once before. Hashed /assets/* stay on the fast path.
+    "run_worker_first": ["/*", "!/assets/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "ANALYTICS", "class_name": "AnalyticsCounter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AnalyticsCounter"] }],
+  "vars": {
+    // Killswitch for the live-analytics surface: "0" ⇒ no capture + /api/analytics/live 404s.
+    "ANALYTICS_LIVE": "1"
   },
   "observability": { "enabled": true }
 }

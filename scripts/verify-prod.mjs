@@ -160,6 +160,61 @@ const tryFetch = async (url, options) => {
   }
 }
 
+// 7. The apex serves the full security-header set. The asset layer used to
+//    serve "/" without ever invoking the worker (run_worker_first gap), so
+//    browsers received NO security headers while the worker code looked fine.
+{
+  const EXPECTED_CSP =
+    "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+  const res = await tryFetch(APEX, {
+    redirect: "manual",
+    headers: { Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" },
+  });
+  if (res.error) {
+    record("apex serves security headers", false, `fetch failed: ${res.error}`);
+  } else {
+    const csp = res.headers.get("content-security-policy") || "";
+    const coop = res.headers.get("cross-origin-opener-policy") || "";
+    const corp = res.headers.get("cross-origin-resource-policy") || "";
+    const pp = res.headers.get("permissions-policy") || "";
+    const pass = csp === EXPECTED_CSP && coop === "same-origin" && corp === "same-origin" && pp.length > 0;
+    record(
+      "apex serves security headers",
+      pass,
+      `csp=${csp ? (csp === EXPECTED_CSP ? "exact" : "MISMATCH") : "absent"} coop=${coop || "absent"} corp=${corp || "absent"} pp=${pp ? "present" : "absent"}`,
+    );
+  }
+}
+
+// 8. Live analytics endpoint (ANALYTICS_LIVE flag on): real reconciled counts
+//    from the AnalyticsCounter Durable Object — JSON shape, never the SPA shell
+//    (the asset fallback happily 200s index.html for unknown paths).
+{
+  const res = await tryFetch("https://megabyte.space/api/analytics/live", { redirect: "manual" });
+  if (res.error) {
+    record("analytics live endpoint", false, `fetch failed: ${res.error}`);
+  } else {
+    const type = res.headers.get("content-type") || "";
+    let body = null;
+    try {
+      body = type.includes("application/json") ? await res.json() : null;
+    } catch {
+      body = null;
+    }
+    const pass =
+      res.status === 200 &&
+      body?.ok === true &&
+      Number.isFinite(body?.total) &&
+      Number.isFinite(body?.today) &&
+      body.total >= body.today;
+    record(
+      "analytics live endpoint",
+      pass,
+      `status=${res.status} type=${type.split(";")[0] || "(none)"} total=${body?.total ?? "—"} today=${body?.today ?? "—"}`,
+    );
+  }
+}
+
 const failed = results.filter((r) => !r.pass);
 console.log(`\n${results.length - failed.length}/${results.length} assertions green`);
 process.exit(failed.length === 0 ? 0 : 1);

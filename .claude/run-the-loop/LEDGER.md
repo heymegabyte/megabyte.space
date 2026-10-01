@@ -56,3 +56,20 @@
 - backlog: WS-1 estate baseline + 3 SECURITY items (CSP / COOP-CORP-PP / analytics-live) ticked; WS-7 fire-lock + watchdog-armed ticked; +4 next-wave appended
 - loop-improvement: verify-browser.mjs — the real-browser console+paint gate that catches the CSP-break lying-pass class HTTP verify-prod CANNOT see (this fire's own miss → a durable gate); PLUS the auto-clear watchdog went authored→LIVE this fire
 - attrition: none (classifier recovered; all steps lead-executed + verified with fresh output)
+
+## fire-5 — 2026-10-01 — fire-5-run (Deep-UI-Explorer: first OS-shell inspection)
+
+- roster: lead-direct (standing role 17 Deep UI Explorer + role 10 Hygiene + role 15 Loop Improvement) · rejected: all Agent spawns (single discovery-led surface — lean lead-direct) · budget: ~50% discovery/visual · ~25% explorer hardening (loop) · ~25% hygiene/reconcile
+- [explorer] WS-4 LIVE RUN: `explorer.mjs --surface both` → 7/7 states visited, 0 blocked (apex ×6 + os.shell.root via service token). FIRST-EVER OS-shell capture: access:false (REAL shell, not an Access page), title "Home - Cloudflare OS"; run manifest + coverage-ledger committed — fa51af1f — prod: n/a (read-only discovery)
+- [explorer] FIX: service-token `extraHTTPHeaders` scoped to the OS origin only (page.route) — it was leaking the CF-Access header onto the cross-origin CF Web Analytics beacon → CORS-preflight ARTIFACT error polluting the OS console capture. After the fix the OS console shows ONLY the genuine WS-403 RPC limitation (re-run verified artifact gone) — fa51af1f
+- [discovery] TOP FINDING: the OS shell is OFF-BRAND — stock Cloudflare OS light/cream + ORANGE theme, jarring vs the black/cyan cinematic apex. As a Megabyte surface 4/10. #1 absorption/branding priority → black/cyan theme via STARTER customization (docs/customization.md), NEVER the pinned submodule. Promoted to BACKLOG.
+- [discovery] OS realtime RPC (`wss://os.megabyte.space/api`) 403s under service-token auth — browser WebSocket upgrades cannot carry Access headers; real WARP/OTP cookie sessions reconnect fine. OS dynamic-feature E2E needs WS-8 slice-4 credential-equivalent (or a cookie/WARP context). Documented, NOT a prod defect.
+- [hygiene] removed 14 stray worktrees + branches (8 agent-* at ≤14bced15, salvage-checked empty; 6 pool-* prunable) → only `main` remains
+- journey: explorer state-graph walk (discovery, not a build-diagnose-fix journey) — apex 6 states re-walked (hero 1 upstream err, login-funnel Access-page err — both documented); OS shell reached + console captured honestly
+- long-trail: case-001 — leg-2 (OS shell) REACHED via service token (first time); dynamic RPC legs blocked on the WS-auth limitation above — checkpoint unchanged
+- explorer: provider=local-chromium (walk) + cf-browser-rendering (captures available) · states +1 real (os.shell.root) / 8 total in ledger · vision: 2 screenshots human-model-inspected (hero 8.5, os.shell 4.0); AI-Gateway vision-review.mjs automated path still owed
+- beautify: os.shell 0→4 (first inspection, real evidence) · matrix updated: yes
+- upstream: pin 6478a144 (UNCHANGED — no submodule touch)
+- backlog: WS-4 explorer-bootstrap ticked (live run done); +3 next-wave (OS black/cyan theme · WS-auth-for-OS-E2E = WS-8.4 · AI-Gateway vision live run)
+- loop-improvement: explorer header-scoping fix (honest OS console capture) + documented the service-token↔WebSocket OS limitation as a durable OS-E2E constraint
+- attrition: none

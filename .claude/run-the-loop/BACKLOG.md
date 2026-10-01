@@ -50,10 +50,11 @@
 - Mission: state-graph coverage of BOTH surfaces with real vision verdicts feeding the matrix
   (standing role 17).
 - Cadence: every-loop
-- [ ] Bootstrap `e2e/deep-ui-explorer/` (explorer.mjs · vision-review.mjs ·
-  coverage-ledger.json) with the apex fully walked + the OS shell walked via service-token
-  context — accept: coverage ledger committed; run manifest records provider + session id;
-  every capture has a schema-validated vision verdict via AI Gateway `megabyte-os`.
+- [x] Bootstrap `e2e/deep-ui-explorer/` + LIVE RUN (fire-5, fa51af1f) — `--surface both` walked
+  apex ×6 + OS shell via service token (7/7 visited, 0 blocked); coverage-ledger + run manifest
+  (provider + session) committed; service-token headers scoped to OS origin (beacon-CORS artifact
+  killed). REMAINING: AI Gateway `megabyte-os` schema-validated vision verdict per capture — this
+  fire used human-model vision via screenshot Read; the automated `vision-review.mjs` run is owed.
 
 ### WS-5 — Long-Trail TDD case 001
 - Mission: one checkpointed 60-100-action case ground to completion across fires (standing
@@ -198,6 +199,22 @@
   chromium` documented as one-time setup.
 - [ ] Apex perf: `three-*.js` chunk is 468KB (117KB gz) — ws: WS-1 — accept: lazy WebGL init /
   manualChunks split so LCP ≤2.0s with the hero below the JS budget; feeds the WebGPU ladder item.
+
+> fire-5 (2026-10-01, Deep-UI-Explorer first OS-shell inspection) appends:
+
+- [ ] **OS shell BLACK/CYAN theme** (the estate-path brand break — TOP priority) — stock CF OS ships
+  light/cream + orange; jarring after the black/cyan apex (os.shell vision 4/10). — ws: WS-2/WS-8 —
+  accept: os.megabyte.space shell renders dark `#060610` + cyan `#00E5FF` (sidebar/prompt/cards/
+  buttons) via STARTER customization (investigate `docs/customization.md` theming surface + the
+  megabyte-os router / custom-gatekeeper HTML path), NEVER the pinned submodule; real-browser
+  screenshot vision ≥8; verify-prod extended for the themed shell.
+- [ ] OS E2E credential-equivalent (WS-8 slice 4, now a PRIORITY) — service-token auth can't drive
+  the OS realtime RPC: browser WebSocket upgrades can't carry Access headers → `wss://…/api` 403.
+  — ws: WS-8 — accept: an automation path (service-token→cookie exchange, or the Better-Auth session)
+  lets a headless browser reach the OS shell WITH a live RPC socket; explorer os.shell.root → 0 WS-403.
+- [ ] Deep-UI-Explorer AI-Gateway vision live run — `vision-review.mjs --run <dir>` returns ≥1
+  schema-valid verdict via AI Gateway `megabyte-os` (Workers AI) per capture. — ws: WS-4 — accept:
+  per-image provider+model+tokens recorded; scores auto-feed `.claude/modifier-matrix.json`.
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

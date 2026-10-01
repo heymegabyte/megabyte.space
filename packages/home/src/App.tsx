@@ -1,6 +1,32 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { mountHeroField } from "./webgl";
 
+// First-run overlay (WS-11): the WebGL homepage is an intro LAYER over the OS —
+// shown the first time, dismissed by "Enter the OS", skipped on return visits.
+// Gated by VITE_FIRST_RUN_OVERLAY so the live public apex stays byte-identical
+// until the domain flip lands the OS at the apex.
+const FIRST_RUN_OVERLAY = import.meta.env.VITE_FIRST_RUN_OVERLAY === "true";
+const ENTERED_KEY = "megabyteOS_entered";
+const OS_ENTRY = "/login";
+
+/** True once the visitor has pressed "Enter the OS" at least once. */
+function hasEntered(): boolean {
+  try {
+    return localStorage.getItem(ENTERED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Persist the first-run flag so return visits skip straight to the OS. */
+function markEntered(): void {
+  try {
+    localStorage.setItem(ENTERED_KEY, "1");
+  } catch {
+    /* storage unavailable — the overlay simply shows again, no harm */
+  }
+}
+
 const FEATURES = [
   {
     kicker: "Agent chat",
@@ -67,13 +93,32 @@ function useReveals() {
 }
 
 export default function App() {
+  // A return visitor (flag set) skips straight to the OS. Only fires on "/" so the
+  // OS entry itself is never intercepted, and only when the build flag is on.
+  const skip = FIRST_RUN_OVERLAY && typeof window !== "undefined" && window.location.pathname === "/" && hasEntered();
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useReveals();
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (skip) window.location.replace(OS_ENTRY);
+  }, [skip]);
+
+  useEffect(() => {
+    if (skip || !canvasRef.current) return;
     return mountHeroField(canvasRef.current);
-  }, []);
+  }, [skip]);
+
+  if (skip) {
+    return (
+      <div
+        data-testid="os-redirect"
+        className="flex min-h-[100svh] items-center justify-center bg-[#060610] text-center text-white/80"
+      >
+        <p className="font-display animate-pulse text-lg">Entering Megabyte OS…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -101,6 +146,7 @@ export default function App() {
           </nav>
           <a
             href="/login"
+            onClick={markEntered}
             className="cta-primary font-display rounded-full px-5 py-2 text-sm font-semibold text-[#03030a]"
           >
             Log in
@@ -123,6 +169,7 @@ export default function App() {
             <div className="reveal mt-10 flex flex-wrap items-center gap-4">
               <a
                 href="/login"
+                onClick={markEntered}
                 className="cta-primary font-display rounded-full px-8 py-3.5 text-base font-bold text-[#03030a]"
                 data-testid="hero-login"
               >
@@ -235,6 +282,7 @@ export default function App() {
             <p className="mt-5 text-white/60">One login. Every agent, gadget, and blueprint on the other side.</p>
             <a
               href="/login"
+              onClick={markEntered}
               className="cta-primary font-display mt-9 inline-block rounded-full px-10 py-4 text-lg font-bold text-[#03030a]"
               data-testid="footer-login"
             >

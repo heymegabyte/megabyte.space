@@ -101,3 +101,16 @@
 - backlog: WS-11 Slice 1 ticked; Slices 2-5 remain (the domain flip is Slice 4 — Access host change = Brian-gated)
 - loop-improvement: a durable reusable real-browser overlay verifier (`e2e/first-run-overlay/verify.mjs`) + the same-origin-stub pattern for testing client redirects locally (baked into the harness comments)
 - attrition: none
+
+## fire-8 — 2026-10-01 — fire-8-run (WS-11 Slice 3: origin-preservation prep + rollback runbook)
+
+- roster: lead-direct (Architecture + Documentation + Loop Improvement) · rejected: all Agent spawns (single prep slice) · budget: ~40% verify/baseline · ~50% runbook/docs · ~10% reconcile
+- [prep] `pnpm check` GREEN baseline — all 6 OS workers dry-run clean; confirmed `PUBLIC_BASE_URL` derives to `https://os.megabyte.space` + AUD `b455c445…`; recorded the pre-flip state for rollback — prod: n/a (dry-run, NO deploy)
+- [docs] `docs/ws-11-rollback.md` — the one-way-door runbook: pre-flip baseline, the Context-boundary decision (pin vs derive by a data check — fire-5 saw "no workspaces" ⇒ likely empty ⇒ derive), the wrapper-worker architecture flag (router is upstream → overlay WRAPS it + service-binds), ordered flip steps (Access host = 🔑 Brian-gated), and a rehearsed ROLLBACK (config revert + re-attach homepage + Access restore + `wrangler rollback` + verify)
+- [decision] did NOT pin `context.sharingDomain` this fire — the correct value depends on whether Context data exists (Slice-4 check); documented the criterion rather than staging a guess
+- journey: none (prep fire) · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-11 Slice 3 ticked; remaining Slice 2 (/admin brand — Brian OTP) + Slice 4 (flip — Access host Brian-gated) + Slice 5 (reconcile)
+- loop-improvement: the rollback runbook itself — rollback-first culture for the one-way-door, so the flip is reversible BEFORE it is attempted
+- attrition: none
+- NOTE: NO deploy this fire (validate-only). The flip is Slice 4.

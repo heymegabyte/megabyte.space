@@ -167,7 +167,13 @@
   (verify-prod 8/8 + verify-browser 4/4). REMAINING for the flip: the "reveal/proxy the OS at the
   SAME apex" wiring (vs today's `/login`→os. redirect) + wrapper-worker packaging land in Slice 4.
 - [ ] Slice 2 — `/admin` brand pass (partial fire-5 off-brand fix) — accept: name "Megabyte OS" + accent `#00E5FF` + logo set via an authenticated admin session; screenshot shows cyan accent live. (Needs Brian's OTP or a documented admin-automation path.)
-- [ ] Slice 3 — origin-preservation pre-flip — accept: `context.sharingDomain` pinned; `publicBaseUrl` plan verified; `pnpm check` green; rollback runbook written (restore `customDomain` + Access host).
+- [x] Slice 3 — origin-preservation pre-flip (fire-8) — `pnpm check` GREEN baseline recorded (6 OS
+  workers dry-run clean; `PUBLIC_BASE_URL` derives to `https://os.megabyte.space`, AUD captured);
+  `publicBaseUrl` + Context-boundary behaviour verified; **rollback runbook written**
+  (`docs/ws-11-rollback.md`: flip steps, Context-boundary decision, wrapper-worker architecture flag,
+  rehearsed rollback). NOTE: `context.sharingDomain` deliberately NOT pinned yet — the right value
+  depends on whether Context data exists (a Slice-4 check: empty ⇒ derive, non-empty ⇒ pin); criterion
+  documented instead of staging a guess.
 - [ ] Slice 4 — DOMAIN FLIP (one-way-door, deliberate) — accept: detach megabyte-home from apex → point the `megabyte-os` router `customDomain` to `megabyte.space` → Access app covers the apex → `pnpm deploy` → `verify-prod` rewritten for the new topology all-green; `os.megabyte.space` 301→apex; real-browser: anonymous → Access → first-run overlay once → OS; rollback rehearsed.
 - [ ] Slice 5 — reconcile `verify-prod` + `CLAUDE.md` + `public-front-door` to the shipped topology — accept: docs match live; verify-prod asserts apex = OS + first-run overlay.
 

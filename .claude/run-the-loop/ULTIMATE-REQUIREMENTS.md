@@ -1,5 +1,12 @@
 # ULTIMATE-REQUIREMENTS — megabyte.space steering distillation
 
+> **2026-10-01 Brian supplements (OPERATING-PRINCIPLES § Canonical answers 2026-10-01 is the
+> authoritative text; newest wins on conflict):** auth = Better Auth app identity (Google +
+> GitHub + magic link from day one) with Access kept as thin edge gate (amends req 14's "one
+> identity" implementation); OS skin = Kumo components themed black/cyan (interprets req 1);
+> cadence = continuous 15-min cron + adaptive 3-6-role fires; loop spend = no ceiling,
+> anti-stagnation is the only throttle.
+
 > Source: `~/Downloads/ULTIMATE-megabyte-space-project-steering-run-the-loop-prompt (2).md` (13,994 lines / 364KB, baseline 2026-09-29). Cites (≈Ln) point back into that doc. Brian-global rules (TDD, deploy-verify, flags, a11y basics) are assumed, not restated.
 
 ## Mission

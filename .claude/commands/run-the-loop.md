@@ -28,8 +28,9 @@ improvement to how future loops operate** (§8). A fire that appends zero next-w
 loop-improvement means a role under-delivered.
 
 ## 0 — Orient (cheap; NEVER read giant ledgers in the main thread)
-- **Claim the fire lease FIRST — fires are mutually exclusive.** Lease file: `.claude/run-the-loop/.fire-lease.json`. A LIVE lease (heartbeat < 20 min old) → COALESCE: end this tick immediately (the running fire is already advancing the same backlog). Absent or STALE (heartbeat > 20 min — the prior lead died) → claim by writing `{"fire":"fire-<n>-<slug>","runId":"…","phase":"orient","heartbeat":"<ISO now>"}`. Refresh `heartbeat` after each phase; release (delete the file) in §11. If a ported `scripts/loop-fire-lock.mjs` exists, prefer it (claim/heartbeat/release; exit 3 = coalesce). This is what stops a scheduler from stacking overlapping browser sessions + conflicting commits.
+- **Claim the fire lease FIRST — fires are mutually exclusive.** Lease file: `.claude/run-the-loop/.fire-lease.json`. A LIVE lease (heartbeat < 20 min old) → COALESCE: end this tick immediately (the running fire is already advancing the same backlog). Absent or STALE (heartbeat > 20 min — the prior lead died) → claim by writing `{"fire":"fire-<n>-<slug>","runId":"…","phase":"orient","heartbeat":"<ISO now>"}`. Refresh `heartbeat` after each phase; release (delete the file) in §11. If a ported `scripts/loop-fire-lock.mjs` exists, prefer it (claim/heartbeat/release; exit 3 = coalesce). **Write-tool fallback (harness Bash-classifier outage):** the `Write` tool IS a valid claim/heartbeat/handoff mechanism — write the lease JSON directly with a fresh ISO heartbeat (match the script's schema exactly); to hand off without `rm`, write a deliberately STALE heartbeat + phase `released-handoff` so the next tick reclaims instantly. Proven fire-2→fire-3 (2026-10-01). This is what stops a scheduler from stacking overlapping browser sessions + conflicting commits. **Auto-clear watchdog (Brian 2026-10-01: "automatically clear whenever needed"):** the launchd job `space.megabyte.loop-watchdog` (every 10 min, `scripts/loop-watchdog.sh`) watches the lease + `progress.md` and launches a FRESH headless `claude -p "run the loop"` whenever the loop needs a clean session — lease phase `released-handoff`, heartbeat >25 min stale (dead lead), or unshipped `progress.md` debt with no live fire. A live fresh-heartbeat lease is never preempted. Therefore: handing off per the recipe above IS requesting an auto-clear — no human restart needed; heartbeat honestly every phase so a healthy fire isn't double-driven.
 - **Canonical home = `.claude/run-the-loop/`.** Read the small operator docs, in order:
+  - **`CONSTITUTION.md` — Brian's governing constitution (the Autonomous Visual Product Organization, `/run-the-loop ∞`). SUPREME on conflict: CONSTITUTION > this command > global wrapper.** It governs disposition — visualization/navigation/delight over configuration, visual inspection IS implementation, three nested loops, ten-pass rule, golden paths as executable product design, anti-stagnation, START NOW. This command implements its mechanics for this estate; when they disagree, the constitution wins.
   - `README.md` — what the loop is + how to run one fire.
   - `OPERATING-PRINCIPLES.md` — invariants, gates, the 4 canonical answers, the category budget.
   - **`ULTIMATE-REQUIREMENTS.md`** (agent C authors) + **`PROJECTSITES-ABSORPTION.md`** (agent B authors) — the requirement inputs the loop MUST consult EVERY fire when choosing slices. Reference, never recreate; if absent, note it in the report and proceed from `BACKLOG.md`.
@@ -48,8 +49,15 @@ These are settled. Never re-prompt Brian for them; they govern every fire.
 3. **Autonomy = FULL on reversible prod actions** — `pnpm deploy`, `pnpm --dir packages/home deploy`, starter-layer changes, flag rollouts are standing-authorized. Ship them the same fire when green; never hold as "committed but dark."
 4. **Pause ONLY for destructive/irreversible** — Access app/policy deletion or weakening, secret rotation, zone/DNS mutations beyond the documented rulesets, submodule force-moves, mass outreach, billing/pricing, one-way-door architecture. Everything else is yours to drive to done.
 
-## 1 — Fan out the NAMED ROLES (15 rotating + 2 STANDING + the every-2-fires Upstream lane + dynamic roles) — EVERY fire, in ONE message
-Spawn the roster together in ONE message — fresh, worktree-isolated (mutating) or read-only
+## 1 — Fan out ADAPTIVELY from the named-role catalog (default 3-6 roles + the 2 STANDING; full roster only when the backlog is wide) — in ONE message
+**ADAPTIVE SHAPE (Brian, 2026-10-01):** the lead picks the **3-6 highest-leverage roles** for
+THIS fire from the frontier + the §2 category budget (rotating starving categories), always
+including the 2 STANDING roles (§1.16 Long-Trail, §1.17 Deep UI Explorer). Spawn the FULL
+15-role roster only when the backlog is wide + genuinely independent. Evidence: two 6-agent
+full fan-outs died at spawn/saturation; a lean lead-direct fire shipped 3 verified slices.
+When spawns are impossible (harness outage), the lead executes the briefs DIRECTLY — the
+briefs are the work contract either way.
+Spawn the chosen roles together in ONE message — fresh, worktree-isolated (mutating) or read-only
 (research) — on disjoint subtrees (`packages/home`, starter router/gatekeeper workers, `scripts/`,
 docs; NEVER inside the `cloudflare-os` submodule tree). Keep ≥1 coding role active whenever ready
 work exists. **≤6 concurrent mutating agents** (read-only sweeps are free + uncapped; run >6 units
@@ -81,7 +89,7 @@ BEFORE spawning; run the Agent Diversity Review gate before DONE.
     - **Auth contract:** apex is PUBLIC — full real-browser, homepage-start, click-navigation. The OS is Access-gated — browser context carries the `megabyte-os-e2e` service-token headers (`CF-Access-Client-Id` + `CF-Access-Client-Secret` via Playwright `extraHTTPHeaders`; secret from `get-secret`, never hardcoded); assert the OS SHELL rendered (not an Access login page) before counting any OS state. Secrets/token-shaped strings are scrubbed from any context sent to a vision provider.
     - **Capture contract:** one settled screenshot after EACH meaningful action; each state records stable key, prev-state id, breadcrumb, console errors, failed requests, visible-text sample. The coverage ledger (discovered/visited/blocked/skipped-with-reason) is the resumable cursor — rotate underexplored branches each fire.
     - **Vision contract:** EVERY screenshot goes through a real vision model via AI Gateway `megabyte-os` (Workers AI, keyless) with compact grounded context; findings schema-validated across aesthetics · structure · function · a11y/perf · absorption-placement · architecture-HYPOTHESIS. Scores feed `.claude/modifier-matrix.json` (§7). Provider+model+tokens+cost recorded per image; reviewer failures recorded honestly; a clean screen with zero findings is a VALID result — never manufacture a defect.
-18. **Upstream Sync (scheduled lane — every-2-fires)** — owns the pinned `cloudflare-os` submodule + the starter overlay. Reviews upstream commits/tags/release notes + deprecations; drives each relevant change to an explicit decision (pilot / backlog / watch / reject-with-reason); bumps the pin ONLY to a REVIEWED ref, rebases the overlay + re-applies starter-owned patches, then `pnpm check` → `pnpm deploy` → `verify-prod.mjs` 6/6 IN THE SAME FIRE. Never a blind bump; never edits inside the submodule tree (upstream-needed changes → overlay patch or upstream PR). Records the pin move (old SHA → new SHA + proof) in `LEDGER.md`. Specialist: `dependency-auditor` + `architect`.
+18. **Upstream Sync (scheduled lane — every-2-fires)** — owns the pinned `cloudflare-os` submodule + the starter overlay. Reviews upstream commits/tags/release notes + deprecations; drives each relevant change to an explicit decision (pilot / backlog / watch / reject-with-reason); bumps the pin ONLY to a REVIEWED ref, rebases the overlay + re-applies starter-owned patches, then `pnpm check` → `pnpm deploy` → `verify-prod.mjs` all-green IN THE SAME FIRE. Never a blind bump; never edits inside the submodule tree (upstream-needed changes → overlay patch or upstream PR). Records the pin move (old SHA → new SHA + proof) in `LEDGER.md`. Specialist: `dependency-auditor` + `architect`.
 
 **Dynamic role creation** — when a fire surfaces a concern no canonical role owns (a new integration,
 a recurring incident class, an absorption campaign), MINT a purpose-built role that fire: name it,
@@ -161,7 +169,7 @@ follow the `long-trail-tdd` skill contract when running long stateful cases.
   browse an absorbed surface (tables/grid) → create + edit + persist a record → hard-refresh →
   persistence assert → **error surfaces (~click 32, e.g. an absorbed D1 read hitting a missing
   binding, or a `run_worker_first` regression swallowing a route)** → failing spec → root-cause fix
-  → green → screenshot the fixed state → continue → matrix-score visited surfaces → `verify-prod.mjs` 6/6.
+  → green → screenshot the fixed state → continue → matrix-score visited surfaces → `verify-prod.mjs` all-green.
 
 - **Journey B — "Absorption depth + density" (~30-40 actions):**
   OS shell (service token) → absorbed Notion-like table → add columns + rows → switch to chart view
@@ -205,7 +213,7 @@ A fire that ships zero loop-improvement under-delivered — surface why and do i
 - Commit each slice to **`main`** (conventional commit) + push (rebase if rejected). Main-only; delete each worktree + branch the moment its work lands (cleanup is NOT automatic). Never `git add -A`; never commit a `cloudflare-os` pointer move outside lane §1.18.
 - Wrangler auth (the scoped token LACKS Workers scopes — code 10000): `unset CLOUDFLARE_API_TOKEN; export CLOUDFLARE_API_KEY=$(get-secret CLOUDFLARE_API_KEY) CLOUDFLARE_EMAIL=blzalewski@gmail.com CLOUDFLARE_ACCOUNT_ID=84fa0d1b16ff8086dd958c468ce7fd59`.
 - Deploy the changed surface: OS → `pnpm deploy` (root; builds + deploys the six OS Workers) · homepage → `pnpm --dir packages/home deploy`. ONE deploy stream — agents never deploy independently.
-- **Prod-verify (REQUIRED):** `node scripts/verify-prod.mjs` (**6/6**) + Playwright real-browser on `https://megabyte.space` (0 console errors, H1 + settled WebGL hero, `/login` 302 with BROWSER Accept headers) + service-token fetch of `https://os.megabyte.space` (`CF_ACCESS_CLIENT_ID`/`CF_ACCESS_CLIENT_SECRET` → 200 OS shell, NOT an Access login page). Reconcile data surfaces display-vs-store, never render-alone.
+- **Prod-verify (REQUIRED):** `node scripts/verify-prod.mjs` (**all-green**) + Playwright real-browser on `https://megabyte.space` (0 console errors, H1 + settled WebGL hero, `/login` 302 with BROWSER Accept headers) + service-token fetch of `https://os.megabyte.space` (`CF_ACCESS_CLIENT_ID`/`CF_ACCESS_CLIENT_SECRET` → 200 OS shell, NOT an Access login page). Reconcile data surfaces display-vs-store, never render-alone.
 
 ## 11 — Reconcile + report
 - Tick each advanced frontier line in `BACKLOG.md` + append `LEDGER.md` with the commit SHA + prod proof + journey + beautify deltas. Move a workstream to § Done only when Acceptance is fully met.
@@ -213,6 +221,7 @@ A fire that ships zero loop-improvement under-delivered — surface why and do i
 - **Replenish the backlog:** append the DEDUPLICATED next-wave items (Product Discovery + Technology Scout + Golden-Path findings + the adversarial reviewer's fresh defects) to `BACKLOG.md`. Zero-append = a discovery role under-scanned — rotate its area next fire.
 - **Confirm the ≥1 loop-improvement landed** (§8) and name it in the report.
 - Report: Changes · Next unmet unit per workstream · which golden journey ran + what it fixed · the Deep UI Explorer's provider/session + states visited/deferred + vision count/cost · beautify matrix deltas · upstream pin status · external blockers · Recs (only genuine >2h / design-call / destructive-decision items — ship everything else inline).
+- **Verify the cadence cron is armed** — `CronList` must show the every-15-min durable "run the loop" job; missing or inside ~24h of its 7-day auto-expiry → re-arm via `CronCreate` (`*/15 * * * *`, durable, prompt "run the loop") and record the new job id in `LEDGER.md`. Know the mechanics: durable cron ticks fire INTO the running REPL while idle (same session — same harness state); a fresh session only picks the job up on next LAUNCH. A wedged session therefore can't be rescued by its own cron — that needs a restart or another session.
 - **Release the fire lease LAST** (delete `.fire-lease.json`) — then the next scheduled tick starts promptly instead of coalescing.
 
 ## Discipline (non-negotiable)

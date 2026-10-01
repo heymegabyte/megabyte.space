@@ -4,3 +4,12 @@ packages/*/.wrangler/
 packages/*/wrangler.prod.jsonc
 deployment.local.jsonc
 .playwright-mcp/
+# Loop runtime state — never committed
+.claude/run-the-loop/.fire-lease.json
+.claude/run-the-loop/.watchdog.lock
+.claude/run-the-loop/watchdog.log
+.claude/.worktree-pool/
+# Journey/explorer run artifacts (screenshots etc.) stay local
+e2e/screenshots/
+e2e/deep-ui-explorer/runs/
+.claude/settings.local.json

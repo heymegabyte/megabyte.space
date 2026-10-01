@@ -18,8 +18,10 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "catalog:",
+    "@playwright/test": "^1.63.0",
     "@types/node": "26.1.0",
     "jsonc-parser": "^3.3.1",
+    "playwright": "^1.63.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",

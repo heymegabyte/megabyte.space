@@ -223,10 +223,11 @@
   on `megabyte.space/` ONLY (keep bot protection on the Access-gated os subdomain); real browser → 0
   console errors incl. upstream. 🔑 Brian-gated (zone security setting) — ship the Rule draft + exact
   dash deeplink, don't auto-toggle.
-- [ ] Deploy must PAIR with a cache purge — fire-4 saw `cf-cache-status: HIT` serve the OLD CSP for
-  minutes after deploy until a manual `purge_everything`. — ws: WS-7 — accept: `pnpm --dir
-  packages/home deploy` runs a zone purge of `/` (+ HTML) as its last step, OR the worker sets
-  `Cache-Control: no-store` on HTML navigations so security headers can never be served stale.
+- [x] Deploy-pairs-purge RETIRED via `Cache-Control: no-store` (fire-9, 8327fd1c) — the apex worker
+  stamps `no-store` on every response (shell + /health + /api/analytics/live + /login 302); the CF
+  edge no longer HTTP-caches the shell, so new deploys (+ security headers) are live INSTANTLY with no
+  manual purge. Causal probe proved the worker runs per request (today 119→122). Hashed `/assets/*`
+  bypass the worker and keep their long cache → LCP unaffected. verify-prod #7 now guards `no-store`.
 - [ ] Wire `scripts/verify-browser.mjs` into the ship gate — fire-4 proved HTTP verify-prod is a
   lying-pass for CSP-breaks-page. — ws: WS-7 — accept: the deploy flow runs verify-browser after
   every apex deploy (0 OUR console errors + painted hero) and CI runs it; `npx playwright install

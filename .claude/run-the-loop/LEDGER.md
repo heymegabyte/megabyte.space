@@ -114,3 +114,15 @@
 - loop-improvement: the rollback runbook itself — rollback-first culture for the one-way-door, so the flip is reversible BEFORE it is attempted
 - attrition: none
 - NOTE: NO deploy this fire (validate-only). The flip is Slice 4.
+
+## fire-9 — 2026-10-01 — fire-9-run (WS-7: no-store hardening — deploys live without a manual purge)
+
+- roster: lead-direct (Loop Improvement + Performance/Security) · rejected: all Agent spawns (single bounded slice; WS-11 remaining slices Brian-gated → pivoted to autonomous WS-7 hardening) · budget: ~50% hardening · ~40% verify · ~10% reconcile
+- [hardening] `packages/home` worker stamps `Cache-Control: no-store` on every response (index.html shell + /health + /api/analytics/live + /login 302). The CF edge otherwise HTTP-cached the shell and served STALE security headers for minutes post-deploy (the fire-4 incident needing a manual purge). Hashed `/assets/*` bypass the worker (run_worker_first) and keep their long cache → LCP unaffected — 8327fd1c — prod: deployed 63cccb2e + one-time purge to clear the legacy entry; causal probe proves the worker runs PER request (today 119→122, no stale-cache bypass)
+- [guard] verify-prod assertion #7 now also requires `cache-control: no-store` on the apex so the stale-header class can't regress — 8327fd1c; verify-prod 8/8 + verify-browser 4/4
+- journey: causal analytics probe (worker-runs-per-request) + 8/8 + 4/4
+- long-trail: unchanged · explorer: none · beautify: home.hero re-verified 4/4 (8.5 holds)
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-7 deploy-pairs-purge ticked (no-store chosen over a deploy-script purge — no API dependency, structurally correct)
+- loop-improvement: no-store retires the recurring manual-purge step (done ~5× across fires) AND the stale-header incident class permanently; guarded in verify-prod
+- attrition: none

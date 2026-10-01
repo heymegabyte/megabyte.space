@@ -10,17 +10,18 @@ Two surfaces in one repo:
 - `pnpm check` — validate `deployment.jsonc` + dry-run every OS Worker
 - `pnpm deploy` — build + deploy the six OS Workers (root)
 - `pnpm --dir packages/home deploy` — build + deploy the public homepage
-- `node scripts/verify-prod.mjs` — 5 prod assertions (public apex, /login funnel, Access gate, service-token shell, www)
+- `node scripts/verify-prod.mjs` — 8 prod assertions (apex public homepage, /login funnel, Access gate, service-token shell, og image, www, security headers incl. exact CSP, analytics live endpoint). The deploy gate is ALL-GREEN (script prints N/N).
 
 ## Auth
 
+- **DIRECTION (Brian 2026-10-01): Better Auth = app identity (Google SSO + GitHub SSO + email magic link from day one); Access stays as a thin EDGE gate** (service tokens + WARP intact; stock Access page never human-facing) — staged per `BACKLOG.md` WS-8. Until cutover, everything below remains the LIVE gate.
 - Wrangler: the scoped `CLOUDFLARE_API_TOKEN` from `get-secret` LACKS Workers scopes (code 10000). Use the global-key fallback: `unset CLOUDFLARE_API_TOKEN; export CLOUDFLARE_API_KEY=$(get-secret CLOUDFLARE_API_KEY) CLOUDFLARE_EMAIL=blzalewski@gmail.com CLOUDFLARE_ACCOUNT_ID=84fa0d1b16ff8086dd958c468ce7fd59`.
 - Sign-in to the OS: Cloudflare Access app "Megabyte OS" (org `manhattan.cloudflareaccess.com`, app `5a2a663c-e849-49ff-9a7c-95b3a741c6f7`, AUD `b455c445…e8fa`). OTP-only IdP (dead Authentik hidden), `auto_redirect_to_identity` on, sessions 168h, `allow_authenticate_via_warp` on (zero-touch once Brian's WARP client enrolls in the `manhattan` org). Admins: hey@megabyte.space + blzalewski@gmail.com.
 - E2E service token `megabyte-os-e2e` (client id `e276fb6a924b2419a3f216c9eb131291.access`) — pass `CF_ACCESS_CLIENT_ID`/`CF_ACCESS_CLIENT_SECRET` to `verify-prod.mjs`; rotate via the Access API if lost.
 
 ## Gotchas
 
-- **SPA asset fallback swallows browser navigations before the worker runs.** `megabyte-home`'s `/login` 302 worked under curl (`Accept: */*` → worker) but browsers (`Accept: text/html`) got index.html from the asset layer. Fix: `assets.run_worker_first: ["/login", "/login/", "/health"]`. `verify-prod.mjs` sends browser headers on that assertion as the regression test.
+- **The asset layer serves matching paths WITHOUT invoking the worker** — twice-bitten class. First `/login`'s 302 (browsers got index.html while curl flattered the worker), then the apex itself: `/` was asset-served so the worker's security headers NEVER reached real visitors (looked like "Permissions-Policy stripped"). Fix: `assets.run_worker_first: ["/*", "!/assets/*"]` — the worker always runs except for hashed assets. `verify-prod.mjs` guards both (browser-header /login assertion + exact-CSP header assertion).
 - Fresh-hostname negative-DNS cache: after querying a not-yet-bound hostname, local resolvers cache ENOTFOUND while the edge is live. `sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder`, or cross-check `dig @1.1.1.1` + `curl --resolve`.
 - Wrangler manages the router's custom domains DECLARATIVELY — changing `customDomain` in `deployment.jsonc` detaches the old hostname on the next `pnpm deploy` (that's how the apex was freed for `megabyte-home`).
 - `wrangler.prod.jsonc` files are GENERATED and gitignored — edit `deployment.jsonc` only.

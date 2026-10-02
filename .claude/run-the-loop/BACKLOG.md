@@ -41,10 +41,13 @@
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +
   vision score tracked in `.claude/modifier-matrix.json`.
 - Cadence: every-loop
-- [ ] Seed `.claude/modifier-matrix.json` with the estate's surfaces (apex hero · apex
-  sections · `/login` funnel · OS shell · Workshop · first absorbed surface) at pass 0 + first
-  vision scores — accept: matrix committed with ≥6 scored surfaces + the lowest-scored one
-  named as next fire's beautify target.
+- [x] Seed `.claude/modifier-matrix.json` + deterministic target picker (fire-38, a333e5fe) —
+  12 surfaces scored; `scripts/lowest-beauty-surface.mjs` NAMES the lowest-scored actionable
+  surface as the next fire's target (skips score-0 unbuilt + superseded os.login; ratchet bar
+  9.5). Acceptance met (ran: `→ home.features 8/10 — bento asymmetry`). Beautify continues per-fire.
+- [x] home.features 8→9 (fire-38, a333e5fe) — asymmetric bento (auto-rows-fr 3×3, wide+tall cards)
+  + featured bottom signatures; verify-apex-journey 27/27, verify-prod 9/9, vision 9/10. Next
+  lowest actionable = home.trust (8/10).
 
 ### WS-4 — Deep UI Explorer bootstrap
 - Mission: state-graph coverage of BOTH surfaces with real vision verdicts feeding the matrix
@@ -303,6 +306,21 @@
 - [ ] Brian decision (security-posture, canonical #4): disable `bot_management.enable_js` on zone megabyte.space (75a6f8d5…) to remove CF's edge-injected `/cdn-cgi/challenge-platform` inline script — ws: WS-7 — accept: served apex HTML has 0 inline `<script>` beyond JSON-LD AND verify-apex-journey step 1b stays green with the inline-CSP tolerance REMOVED (no CF challenge to tolerate). Reversible toggle; weakens one bot-JS signal on a public Worker-served marketing apex (no origin to protect; OS is Access-gated separately).
 - [ ] home.how-it-works 9→9.5 — ws: WS-3 — accept: `node scripts/capture-section.mjs https://megabyte.space "#how" /tmp/how.png` + vision ≥9.5; step-card body contrast white/60→/72 + per-step iconography; axe contrast clean.
 - [ ] os.landing 9.5→10 — ws: WS-3/WS-11 — accept: a bento/reactive micro-element in the hero lower-right negative space; verify-os-landing PASS + vision ≥9.5; lower-right no longer reads sparse (fork edit via §1.18).
+
+> fire-38 (2026-10-02, Features asymmetric bento 8→9) appends:
+
+- [ ] home.features 9→9.5 — ws: WS-3 — the tall 'Gadgets' card (row-span-2) still has a mid-gap
+  between body and its bottom signature. — accept: fill it with a reactive micro-element (a tiny
+  live OS-surface preview or an animated capability glyph), `capture-section.mjs "#features"` +
+  vision ≥9.5; tall card no longer reads mid-sparse; axe 0 + reduced-motion gated.
+- [ ] home.trust 8→9 (NEXT lowest-actionable per `lowest-beauty-surface.mjs`) — ws: WS-3 — the
+  trust panel is a single wide card; the right-column mono list is static. — accept: a Beautify-10x
+  pass (e.g. a live gatekeeper-audit ticker or per-row reveal/iconography), capture + vision ≥9;
+  axe 0, reduced-motion safe.
+- [ ] (type-hygiene finding) `packages/home` has ~15 pre-existing `noUncheckedIndexedAccess`-strict
+  tsc errors in NotFound.tsx / StatusView.tsx / webgl.ts (latent; the vite build tolerates them, so
+  they've shipped for many fires). — ws: cleanup — accept: `npx tsc --noEmit` clean in packages/home
+  without loosening tsconfig; no runtime behavior change; verify-apex-journey still 27/27.
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

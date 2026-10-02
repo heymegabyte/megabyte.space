@@ -451,3 +451,25 @@
 - attrition: fire-36's lead (died mid-ship after commit+push; code was safe on origin/main → reconciled, not re-run).
 
 - fire-36 operational addendum (original lead, resumed after fire-37's backfill): the megabyte-os-e2e service token was LOST (/tmp cleared on a machine restart; it was never in get-secret) → blocked the landing screenshot this session. Rotated it via the Access API (token id c2e3a57e), rewrote /tmp, and PERSISTED to `get-secret CF_ACCESS_CLIENT_ID`/`CF_ACCESS_CLIENT_SECRET` (durable) + documented the recovery in CLAUDE.md § Auth, so a /tmp clear never breaks OS verification again. (The verify-os-landing field-paint-wait fix + the landing rebalance itself were already in 048023f4.)
+
+## fire-38 (2026-10-02) — Features asymmetric bento (Beautify-10x 8→9) + beauty-target picker
+
+- Shape: lean lead-direct (proven-reliable; no fan-out). Lease `fire-38-b9fe121b`. Pin 6d02e1ee (unchanged).
+- Slice (WS-3 Beautify-10x, lowest-scored actionable surface = home.features 8): broke the uniform
+  3×2 Features grid into an ASYMMETRIC BENTO (`packages/home/src/App.tsx`): `lg:auto-rows-fr`
+  3-col grid — card0 'Agent chat' wide (`col-span-2`), card1 'Gadgets' tall (`row-span-2`), card4
+  'Scheduler' wide (`col-span-2`); gap-free 3×3, 1-col stack on mobile (spans sm/lg-only). Featured
+  cards get a larger title (`text-2xl`) + a bottom SIGNATURE (cyan gradient hairline + mono kicker,
+  `mt-auto`) that fills the previously-sparse lower region with brand hierarchy. Two deploys: v1
+  (bento, vision 8.5 — featured cards read sparse) → v2 (+signature, vision 9/10).
+- Verify (THIS fire): `pnpm --dir packages/home deploy` → apex **fe78b9ef** (feature SHA a333e5fe).
+  verify-prod **9/9**; verify-apex-journey **27/27** (features 6 cards, axe 0 serious/critical,
+  0 overflow @390, 0 OUR console errors); direct-Read vision of `#features` @1280 = **9/10**.
+- Loop-improvement (§8): `scripts/lowest-beauty-surface.mjs` — deterministic Beautify-10x target
+  picker (reads modifier-matrix, ranks actionable surfaces ascending, skips score-0 unbuilt +
+  superseded os.login, bar 9.5). Replaces the eyeballed matrix scan for role 5. Self-test named
+  `→ home.features 8/10` (the exact target shipped). Next fire's target per the picker = home.trust (8).
+- Matrix: home.features pass 1→2, 8→9. BACKLOG: WS-3 seed+picker ticked, home.features 8→9 ticked;
+  next-wave appended (home.features 9→9.5, home.trust 8→9, packages/home tsc-strict cleanup finding).
+- Blocked (unchanged, Brian-gated): WS-11 Step 5 apex domain move + Access host add; WS-8 Better
+  Auth cutover; WS-2 data-driven OS surfaces (need OS backend RPC). Apex/perimeter converging.

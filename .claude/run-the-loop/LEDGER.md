@@ -186,3 +186,15 @@
 - backlog: idea #3/#10 (Loop Observatory / estate pulse) SEEDED as `/status`; +next-wave (PostHog client key · /status sparkline + last-deploy build-define)
 - loop-improvement: the DO analytics are now PUBLICLY LEGIBLE (a live display-vs-store reconcile surface, not just an endpoint) — "make autonomy legible" per the constitution
 - attrition: none
+
+## fire-15 — 2026-10-01 — fire-15-run (SEO: sitemap auto-freshness; config-protection respected)
+
+- roster: lead-direct (SEO/Hygiene + Loop Improvement) · rejected: all Agent spawns (single bounded slice) · budget: ~60% feature · ~30% verify · ~10% reconcile
+- [seo] `sitemap.xml` now GENERATED with a fresh lastmod every build (`scripts/gen-sitemap.mjs`, wired into `packages/home` build after vite) — the hand-maintained `public/sitemap.xml` had gone STALE (lastmod 2026-09-29 while the apex shipped ~15× since; a stale lastmod tells crawlers "don't re-crawl"). Removed the source file; it's now a derived artifact (drift-detection § build-artifact drift guards) — fd076106 — prod: deployed 793c9e87, live /sitemap.xml lastmod 2026-10-02 (fresh), verify-prod 8/8, deploy instant (no purge — no-store)
+- [config-protection] first attempt wired a build-time timestamp via vite.config `define` for a /status "last deploy" card — BLOCKED by the config-protection hook (build configs aren't for silent agent edits). Respected it: reverted vite.config, pivoted to the sitemap slice (no protected-config touch). Lesson: when a config guard fires, fix via code/scripts, not the config.
+- journey: build (gen-sitemap in chain) → deploy → live sitemap lastmod assert + verify-prod 8/8 · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: sitemap-freshness closed; the /status last-deploy card deferred (needs a non-vite.config build-time source)
+- loop-improvement: generated-artifact-freshness — the sitemap can never go stale again (regenerated each build)
+- attrition: none
+- NOTE: clean bounded autonomous PUBLIC-surface work is genuinely thinning (config-guard hit on a minor feature; slices shrinking). The high-value frontier is now WS-11-gated (the mission unlock — operator surfaces need the gated OS at the apex) or substantial-risky (WebGPU hero). Evidence-based, not depth-caution.

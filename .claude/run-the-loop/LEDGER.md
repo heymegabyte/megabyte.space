@@ -292,3 +292,14 @@
 - backlog: OG card is now a regenerable designed artifact (gen-og-card.mjs) — re-run when the brand/headline changes
 - loop-improvement: a reusable OG-card generator + a premium share experience
 - attrition: none
+
+## fire-24 — 2026-10-02 — fire-24-run (icon: apple-touch-icon 180×180)
+
+- roster: lead-direct (Media/SEO + Loop Improvement) · rejected: all Agent spawns (single icon slice) · budget: ~50% gen · ~40% verify · ~10% reconcile
+- [fix] added the mandated apple-touch-icon (180×180 PNG, `scripts/gen-apple-icon.mjs` — cyan M-hexagon on full-square dark #060610, iOS rounds the corners) + `<link rel="apple-touch-icon">` in the shell. The apex had ONLY an SVG favicon → iOS "Add to Home Screen" fell back to a generic icon (quality-metrics: apple-touch-icon mandatory) — c3b43880 — prod: deployed de01d619, live /apple-touch-icon.png 200 image/png 4KB, link in served HTML, verify-prod 8/8
+- [note] a NEW asset took ~5s to propagate — a fetch 2s post-deploy caught the SPA fallback (text/html) before the asset was ready; re-fetched 200 image/png. (no-store HTML is instant; new asset FILES lag a few seconds — worth a sleep in future asset-add verifies.)
+- journey: probe icons → found missing apple-touch-icon → gen → view (clean) → wire → deploy → verify live · long-trail: unchanged · explorer: none · beautify: iOS icon now branded
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: apple-touch-icon is a regenerable artifact; a full PWA manifest + maskable icon remains optional (marketing page — low priority)
+- loop-improvement: reusable apple-icon generator + an on-brand iOS bookmark/share icon
+- attrition: none

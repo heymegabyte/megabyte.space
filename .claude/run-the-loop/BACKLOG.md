@@ -298,6 +298,12 @@
   the model supports it) gets ≥6/7 schema-valid; verdicts calibrated enough to feed the matrix as a
   real secondary signal (currently human-model scores stay authoritative).
 
+> fire-37 (2026-10-02) appends — resume-reconcile fire; deduped vs above (closes the fire-4 "CF challenge-platform inline residual" tracking gap):
+
+- [ ] Brian decision (security-posture, canonical #4): disable `bot_management.enable_js` on zone megabyte.space (75a6f8d5…) to remove CF's edge-injected `/cdn-cgi/challenge-platform` inline script — ws: WS-7 — accept: served apex HTML has 0 inline `<script>` beyond JSON-LD AND verify-apex-journey step 1b stays green with the inline-CSP tolerance REMOVED (no CF challenge to tolerate). Reversible toggle; weakens one bot-JS signal on a public Worker-served marketing apex (no origin to protect; OS is Access-gated separately).
+- [ ] home.how-it-works 9→9.5 — ws: WS-3 — accept: `node scripts/capture-section.mjs https://megabyte.space "#how" /tmp/how.png` + vision ≥9.5; step-card body contrast white/60→/72 + per-step iconography; axe contrast clean.
+- [ ] os.landing 9.5→10 — ws: WS-3/WS-11 — accept: a bento/reactive micro-element in the hero lower-right negative space; verify-os-landing PASS + vision ≥9.5; lower-right no longer reads sparse (fork edit via §1.18).
+
 ### Discovery contradictions to resolve (convergence judgment calls)
 
 - ULTIMATE non-goals reject Neon+Redis carryover, but PROJECTSITES-ABSORPTION lists them — mark reject/adapter-only; D1/DO/KV-native only.

@@ -2,16 +2,127 @@
   "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
   "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
   "surfaces": {
-    "home.hero": { "beautifyPasses": 1, "aiVisionScore": 8.5, "density": 2, "lastVisit": "2026-10-01", "next": ["WebGPU particle upgrade", "kinetic headline stagger", "scroll-scrub camera path"], "notes": "fire-4: CSP-break found+fixed live (CF Fonts/beacon were blocked → 31 console errors → 0 OURS). Brand fonts restored, gradient headline + WebGL wave field paint (304KB clip), verify-browser.mjs gate 4/4. 8.5 holds. fire-7 re-verified post-overlay-deploy (4/4, first-run overlay code shipped dark)." },
-    "home.features": { "beautifyPasses": 1, "aiVisionScore": 8, "density": 3, "lastVisit": "2026-10-01", "next": ["bento asymmetry", "hover video previews", "live OS stats feed"], "notes": "fire-4 real-browser re-confirmed: 6-card bento (Agent Chat/Gadgets/Gatekeepers/Blueprints/Scheduler/Your Cloud) renders on scroll, reveals fire 5->13, 0 OUR console errors, fonts correct. 8 holds." },
-    "home.how-it-works": { "beautifyPasses": 1, "aiVisionScore": 7.5, "density": 3, "lastVisit": "2026-10-01", "next": ["dedicated timeline viewport screenshot + vision score (fire-2 animated timeline shipped; expect >=8.5)", "inline gadget demo"], "notes": "fire-4: timeline (fire-2) deployed live; section in DOM opacity:1 ('Four moves, zero friction'), reveals fire on scroll. Dedicated timeline viewport score owed next visit — keep 7.5 until captured." },
-    "home.trust": { "beautifyPasses": 1, "aiVisionScore": 8, "density": 4, "lastVisit": "2026-10-01", "next": ["live gatekeeper audit ticker"], "notes": "fire-4: section renders ('Agents move fast. Nothing bad happens.'), reveals fire on scroll, Authentik->OTP/WARP copy truth shipped. 8 holds." },
-    "home.status": { "beautifyPasses": 2, "aiVisionScore": 9, "density": 7, "lastVisit": "2026-10-02", "next": ["live dot → SSE push instead of 30s poll (real-time rule)", "sparkline axis labels / hover tooltip", "day-over-day delta chip"], "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: live 14-day cyan SVG area-sparkline + top-6-paths mini-bars from the AnalyticsCounter DO (daily()/topPaths()/one-round-trip pulse()). fire-35: 'last deployed Xm ago · <sha>' freshness line (gen-build-info.mjs → build-info.json; relative time + commit linked to GitHub) — closes the last-deploy next-item. Zero-PII, reduced-motion safe, black/cyan. verify-apex-journey 26/26; display-vs-store reconciled. Apex 648cbcaa." },
-    "home.404": { "beautifyPasses": 1, "aiVisionScore": 9, "density": 1, "lastVisit": "2026-10-02", "next": ["closest-route suggestion (Levenshtein to nearest known route)", "subtle parallax/WebGL nebula if it stays off the LCP path"], "notes": "fire-33 CREATED: fixed the apex soft-404 (unknown paths were 200+homepage → indexes junk) → real 404 STATUS via a shared known-routes SSOT (worker.ts + main.tsx can't drift) + a gorgeous black/cyan NotFound (white→cyan→purple '404', static nebula glow, 'Lost in the nebula', Back-to-OS + System-status CTAs; no WebGL weight on the error path). verify-apex-journey 25/25 (unknown→404 status + NotFound renders asserted); real-browser screenshot ~9/10." },
-    "os.login": { "beautifyPasses": 0, "aiVisionScore": 6, "density": 2, "lastVisit": "2026-10-01", "next": ["REPLACED-not-branded: Better Auth black/cyan login surface (WS-8 slice 2)"], "notes": "Stock CF Access page; 1 upstream console error (their CSP blocks their SVG). Superseded direction: WS-8" },
-    "os.shell": { "beautifyPasses": 1, "aiVisionScore": 8.5, "density": 5, "lastVisit": "2026-10-02", "next": ["theme the orange 'Reconnecting'/warning status chip to an on-brand amber-cyan (lone remaining orange; only shows under the service-token WS artifact)", "active-nav-item cyan emphasis + sidebar hover polish", "/admin branding via runtime accent (now defaults #00E5FF)", "density pass toward coinbase-pro cockpit", "full data-shell AI-vision once a real SSO session exists (WS-8.4)"], "notes": "fire-30 THEMED black/cyan (WS-1), 4->8.5: dark-first (theme.ts default 'system'->'dark') + last-cascade [data-mode=dark] Kumo token remap in the FORK's workshop-frontend/src/styles.css — surfaces->#060610, brand->#00E5FF, text/accent/border->black/cyan; functional (info/warn/danger/success) + category (compute/storage/ai/media) colors kept (god-tier #5 vendor-token remap). verify-os-theme.mjs real-browser PASS (data-mode=dark, body-bg rgb(6,6,16), live CSS has #00e5ff+#060610); shell.png = full AppShell (sidebar + 'What are we working on?' HomePage + cyan send button + hex-mesh) — coherent with os.landing 9/10. Lone orange = kept 'warning' status on the service-token WS 'Reconnecting' chip (real SSO users won't see it). fork d1c882ec." },
-    "os.admin": { "beautifyPasses": 0, "aiVisionScore": 0, "density": 6, "lastVisit": null, "next": ["first visual inspection fire"] },
-    "os.database-studio": { "beautifyPasses": 0, "aiVisionScore": 0, "density": 9, "lastVisit": null, "next": ["flagship: D1 Notion/Airtable studio per ULTIMATE-REQUIREMENTS §Data-UX"] },
-    "os.landing": { "beautifyPasses": 1, "aiVisionScore": 9, "density": 2, "lastVisit": "2026-10-02", "next": ["balance the empty right ~45% of the hero — WebGL field more present OR a subtle bento/reactive element (biggest lever 9→9.5+)", "WebGPU particle upgrade shared with home.hero", "confirm Enter-the-OS CTA AA contrast over brightest nebula region + prefers-reduced-motion WebGL gate"], "notes": "fire-27 CREATED: WS-11 landing splash LIVE on os.megabyte.space — the apex WebGL homepage ported as a first-view component INSIDE the forked OS frontend (heymegabyte/cloudflare-os@7358a9d8). verify-os-landing real-browser PASS: h1 renders, Enter the OS dismisses, persists on reload, 0 OUR console errors. three.js is a lazy 461K chunk (never bloats the OS shell). fire-28: FORMAL AI-vision score (lead vision model, direct Read of landing.png) = 9/10 — gorgeous black/cyan->purple gradient headline, on-brand mono eyebrow, glowing Enter-the-OS pill, clean 6/inf/1 stat row, 3 dismiss affordances (Enter/Esc/Skip). Both prod gates green (verify-prod 8/8 + verify-os-landing render->dismiss->persist, 0 our console errors). Knock vs 9.5+: right ~45% reads empty; CTA-over-nebula AA + reduced-motion gate to confirm." }
+    "home.hero": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8.5,
+      "density": 2,
+      "lastVisit": "2026-10-01",
+      "next": [
+        "WebGPU particle upgrade",
+        "kinetic headline stagger",
+        "scroll-scrub camera path"
+      ],
+      "notes": "fire-4: CSP-break found+fixed live (CF Fonts/beacon were blocked → 31 console errors → 0 OURS). Brand fonts restored, gradient headline + WebGL wave field paint (304KB clip), verify-browser.mjs gate 4/4. 8.5 holds. fire-7 re-verified post-overlay-deploy (4/4, first-run overlay code shipped dark)."
+    },
+    "home.features": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8,
+      "density": 3,
+      "lastVisit": "2026-10-01",
+      "next": [
+        "bento asymmetry",
+        "hover video previews",
+        "live OS stats feed"
+      ],
+      "notes": "fire-4 real-browser re-confirmed: 6-card bento (Agent Chat/Gadgets/Gatekeepers/Blueprints/Scheduler/Your Cloud) renders on scroll, reveals fire 5->13, 0 OUR console errors, fonts correct. 8 holds."
+    },
+    "home.how-it-works": {
+      "beautifyPasses": 2,
+      "aiVisionScore": 9,
+      "density": 3,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "step-card body contrast white/60->/72 + per-step iconography (next lever 9->9.5)",
+        "inline gadget demo"
+      ],
+      "notes": "fire-2 shipped the animated timeline (beam draws + nodes ignite + cards cascade; reduced-motion fully gated). Stuck at 7.5 pending a dedicated capture. fire-37 CLOSED the owed item: captured #how at 1280 (capture-section.mjs) + direct-Read vision, and shipped a Beautify-10x pass 8.5->9 — a per-step cyan->violet accent cap (color-mix oklch by --step-i) above each step number, echoing the beam gradient, widens+brightens on hover, reduced-motion gated. fire-36's plasma-field continuity (the hero WebGL now bleeds behind this beam) lifted it to 8.5 before the accent. Apex 0ad4565b / megabyte-home 72494353. verify-apex-journey 27/27 (how reached, 4 steps), axe 0 serious/critical."
+    },
+    "home.trust": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8,
+      "density": 4,
+      "lastVisit": "2026-10-01",
+      "next": [
+        "live gatekeeper audit ticker"
+      ],
+      "notes": "fire-4: section renders ('Agents move fast. Nothing bad happens.'), reveals fire on scroll, Authentik->OTP/WARP copy truth shipped. 8 holds."
+    },
+    "home.status": {
+      "beautifyPasses": 2,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "live dot → SSE push instead of 30s poll (real-time rule)",
+        "sparkline axis labels / hover tooltip",
+        "day-over-day delta chip"
+      ],
+      "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: live 14-day cyan SVG area-sparkline + top-6-paths mini-bars from the AnalyticsCounter DO (daily()/topPaths()/one-round-trip pulse()). fire-35: 'last deployed Xm ago · <sha>' freshness line (gen-build-info.mjs → build-info.json; relative time + commit linked to GitHub) — closes the last-deploy next-item. Zero-PII, reduced-motion safe, black/cyan. verify-apex-journey 26/26; display-vs-store reconciled. Apex 648cbcaa."
+    },
+    "home.404": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 1,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "closest-route suggestion (Levenshtein to nearest known route)",
+        "subtle parallax/WebGL nebula if it stays off the LCP path"
+      ],
+      "notes": "fire-33 CREATED: fixed the apex soft-404 (unknown paths were 200+homepage → indexes junk) → real 404 STATUS via a shared known-routes SSOT (worker.ts + main.tsx can't drift) + a gorgeous black/cyan NotFound (white→cyan→purple '404', static nebula glow, 'Lost in the nebula', Back-to-OS + System-status CTAs; no WebGL weight on the error path). verify-apex-journey 25/25 (unknown→404 status + NotFound renders asserted); real-browser screenshot ~9/10."
+    },
+    "os.login": {
+      "beautifyPasses": 0,
+      "aiVisionScore": 6,
+      "density": 2,
+      "lastVisit": "2026-10-01",
+      "next": [
+        "REPLACED-not-branded: Better Auth black/cyan login surface (WS-8 slice 2)"
+      ],
+      "notes": "Stock CF Access page; 1 upstream console error (their CSP blocks their SVG). Superseded direction: WS-8"
+    },
+    "os.shell": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8.5,
+      "density": 5,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "theme the orange 'Reconnecting'/warning status chip to an on-brand amber-cyan (lone remaining orange; only shows under the service-token WS artifact)",
+        "active-nav-item cyan emphasis + sidebar hover polish",
+        "/admin branding via runtime accent (now defaults #00E5FF)",
+        "density pass toward coinbase-pro cockpit",
+        "full data-shell AI-vision once a real SSO session exists (WS-8.4)"
+      ],
+      "notes": "fire-30 THEMED black/cyan (WS-1), 4->8.5: dark-first (theme.ts default 'system'->'dark') + last-cascade [data-mode=dark] Kumo token remap in the FORK's workshop-frontend/src/styles.css — surfaces->#060610, brand->#00E5FF, text/accent/border->black/cyan; functional (info/warn/danger/success) + category (compute/storage/ai/media) colors kept (god-tier #5 vendor-token remap). verify-os-theme.mjs real-browser PASS (data-mode=dark, body-bg rgb(6,6,16), live CSS has #00e5ff+#060610); shell.png = full AppShell (sidebar + 'What are we working on?' HomePage + cyan send button + hex-mesh) — coherent with os.landing 9/10. Lone orange = kept 'warning' status on the service-token WS 'Reconnecting' chip (real SSO users won't see it). fork d1c882ec."
+    },
+    "os.admin": {
+      "beautifyPasses": 0,
+      "aiVisionScore": 0,
+      "density": 6,
+      "lastVisit": null,
+      "next": [
+        "first visual inspection fire"
+      ]
+    },
+    "os.database-studio": {
+      "beautifyPasses": 0,
+      "aiVisionScore": 0,
+      "density": 9,
+      "lastVisit": null,
+      "next": [
+        "flagship: D1 Notion/Airtable studio per ULTIMATE-REQUIREMENTS §Data-UX"
+      ]
+    },
+    "os.landing": {
+      "beautifyPasses": 2,
+      "aiVisionScore": 9.5,
+      "density": 2,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "WebGPU particle upgrade shared with home.hero",
+        "confirm Enter-the-OS CTA AA contrast over brightest nebula region + prefers-reduced-motion WebGL gate",
+        "bento/reactive micro-element in the lower-right negative space (next lever 9.5->10)"
+      ],
+      "notes": "fire-27 CREATED WS-11 landing splash on os.megabyte.space. fire-28: direct-Read vision 9/10. fire-36 REBALANCED 9->9.5: the WebGL plasma wave field now fills the right ~45% that read empty (the biggest-lever knock resolved); gradient headline, mono eyebrow, Enter-the-OS pill, 6/inf/1 stats, 3 dismiss affordances (Enter/Esc/Skip) all clean. fork->6d02e1ee. fire-37 RECONCILED fire-36's orphaned bookkeeping (dead lead left no LEDGER/matrix/lease-release): independently re-verified LIVE — verify-prod 9/9 + verify-os-landing render->dismiss->persist 0-our-errors + direct-Read vision 9.5/10 of landing.png. Remaining knock vs 10: lower-right still slightly sparse; CTA-over-nebula AA + reduced-motion gate still owed."
+    }
   }
 }

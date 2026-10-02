@@ -306,8 +306,12 @@ export default function App() {
 
       <footer className="relative z-10 border-t border-white/10 px-5 py-10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-white/60">
-          <p>
-            © {new Date().getFullYear()} Megabyte Labs · <a className="transition hover:text-[--color-cyan]" href="mailto:hey@megabyte.space">hey@megabyte.space</a>
+          <p className="flex flex-wrap items-center gap-x-1.5">
+            © {new Date().getFullYear()} Megabyte Labs · <a className="transition hover:text-[--color-cyan]" href="mailto:hey@megabyte.space">hey@megabyte.space</a> ·{" "}
+            <a className="inline-flex items-center gap-1.5 transition hover:text-[--color-cyan]" href="/status" data-testid="footer-status">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[--color-cyan] motion-reduce:animate-none" aria-hidden />
+              System status
+            </a>
           </p>
           <p className="font-mono">
             built on{" "}

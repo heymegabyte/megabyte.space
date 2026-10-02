@@ -79,7 +79,7 @@ async function main() {
         review.ok = false;
         review.error = `HTTP ${res.status} ${JSON.stringify(body?.errors || body).slice(0, 300)}`;
       } else {
-        const verdict = validateVerdict(extractJson(raw));
+        const verdict = validateVerdict(parseVerdict(raw));
         if (verdict) {
           review.ok = true;
           review.verdict = verdict;
@@ -140,6 +140,36 @@ function extractJson(text) {
   } catch {
     return null;
   }
+}
+
+/**
+ * Turn a model response into a verdict object. JSON first (when the model obeys the
+ * JSON ask); otherwise PROSE fallback — llama-3.2-11b-vision reliably ignores the
+ * "JSON only" instruction and emits "**Aesthetics: 6/10**" markdown, so parse that
+ * rather than discard a real (if unstructured) verdict. Returns null on too little
+ * signal (honest fail, never fabricate).
+ */
+function parseVerdict(text) {
+  const json = extractJson(text);
+  if (json && json.scores) return json;
+  const s = String(text);
+  const score = (re) => {
+    const m = s.match(re);
+    return m ? Math.max(0, Math.min(10, Number(m[1]))) : null;
+  };
+  const dims = {
+    aesthetics: score(/aesthetic\w*[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i),
+    structure: score(/structur\w*[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i),
+    function: score(/function\w*[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i),
+    a11yPerf: score(/(?:a11y|accessib\w*|performance|perf)[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i),
+    absorptionPlacement: score(/(?:absorption|placement|integration|brand\w*)[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i),
+  };
+  const present = Object.values(dims).filter((v) => v != null);
+  if (present.length < 3) return null; // too little signal — honest fail, don't fabricate
+  const avg = Math.round((present.reduce((a, b) => a + b, 0) / present.length) * 10) / 10;
+  for (const k of Object.keys(dims)) if (dims[k] == null) dims[k] = avg; // model skipped it → neutral avg
+  const overall = score(/overall[^:\n]*:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i) ?? avg;
+  return { scores: dims, overall, findings: [], architectureHypothesis: "parsed from prose (model returned markdown, not JSON)" };
 }
 
 /** Manual schema validation — no deps; repair-or-reject, never raw-through. */

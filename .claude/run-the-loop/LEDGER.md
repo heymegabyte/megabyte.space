@@ -150,3 +150,14 @@
 - loop-improvement: THE fire — a durable build gate closing the fire-3 "Authentik SSO shipped live" incident class (render-clean regressions no console/axe/screenshot catches); extensible DENY per drift-detection
 - attrition: none
 - NOTE: NO deploy (build-time gate). Autonomous next-wave hardening queue now essentially cleared; remaining frontier is Brian-gated (WS-11 Slices 2/4) or fresh-session-substantial (WS-2 absorption, WebGPU ladder).
+
+## fire-12 — 2026-10-01 — fire-12-run (a11y: reduced-motion Hard Gate now tested)
+
+- roster: lead-direct (Accessibility + Testing) · rejected: all Agent spawns (single coverage slice) · budget: 100% a11y test-coverage
+- [a11y] `verify-browser.mjs` now asserts the prefers-reduced-motion static fallback: emulates `reducedMotion:reduce`, loads the apex, asserts branded content + 0 OUR console errors. The reduced-motion Hard Gate (`mountHeroField` returns early → the static gradient carries the hero; webgl.ts:63 + 2 index.css blocks) was IMPLEMENTED but had ZERO automated coverage — the fire-10 lazy-load could have silently broken it — aeb78056 — prod: verify-browser 5/5 (reduced-motion branded=true, 0 OUR errors — fallback clean live)
+- journey: reduced-motion real-browser verification · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: no new tick (the reduced-motion behaviour was already shipped; this adds its missing TEST) — LEDGER-recorded
+- loop-improvement: THE fire — a11y Hard Gate (reduced-motion) now regression-locked in verify-browser (was implemented-but-untested)
+- attrition: none
+- NOTE: autonomous bounded queue genuinely EXHAUSTED (even the a11y gate I checked was already implemented — only its test was missing). Remaining bounded candidates (security.txt/llms.txt, PostHog, SEO polish) + substantial WS-2 best in a FRESH session; WS-11 Slices 2/4 Brian-gated. 12 verified fires this session.

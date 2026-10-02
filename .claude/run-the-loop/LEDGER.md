@@ -210,3 +210,15 @@
 - backlog: axe automated coverage added (idea #20 WCAG-manual-pass partially advanced — axe covers the auto-testable subset); /status could join verify-browser's axe scan next
 - loop-improvement: THE fire — the axe-core gate automates a Hard Gate that had no coverage, and it caught 3 real live AA failures on its first run. This is NOT marginal — the thinning-queue note above was premature; a real high-value slice existed.
 - attrition: none
+
+## fire-17 — 2026-10-01 — fire-17-run (perf: CWV measurement coverage + soft-gate)
+
+- roster: lead-direct (Performance + Loop Improvement) · rejected: all Agent spawns (single measurement/gate slice) · budget: ~50% probe/measure · ~30% gate script · ~20% reconcile
+- [perf] added `scripts/verify-cwv.mjs` — throttled (3G + 4× CPU) LCP/CLS/FCP/TTFB measurement + regression soft-gate (LCP PASS ≤2000 / WARN ≤2500 / FAIL >2500; soft so cold-start variance can't flap deploys, but a real "poor" regression exits 1). CWV was a Hard Gate with ZERO automated coverage — 7c8f8cce — prod: apex LCP ~1570-1640ms PASS (3 warm runs), CLS 0.003 PASS, FCP ~960-1024ms
+- [finding→corrected] the FIRST probe showed LCP 2208ms (FAIL) — but that was a COLD-START outlier (TTFB 628ms vs warm ~90ms); 3 warm runs confirm LCP ~1570-1640ms PASS. The three.js-off-LCP lazy-load (fire-10) + the lean 73KB shell pay off — the apex CWV is genuinely healthy. The initial "LCP fails, needs SSG" read was cold-start variance, corrected by re-measuring.
+- journey: throttled CWV probe → cold outlier → re-measured 3× warm → confirmed PASS → wrote the gate · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: CWV now measured; +1 light next-wave (SSG to tighten cold-start consistency — LOW priority, warm passes, vite.config is config-protected)
+- loop-improvement: CWV measurement coverage; the soft-gate catches a real perf regression without flapping on cold-start variance
+- attrition: none
+- lesson (meta): RE-MEASURE before concluding a perf FAIL — single cold-start samples are noisy (TTFB 628 vs 90). Complements fire-16's "probe the gate before concluding marginal."

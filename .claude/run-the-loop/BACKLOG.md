@@ -270,6 +270,14 @@
   timestamp (Vite `define` build constant) · live dot via DO WebSocket/SSE instead of the 30s poll.
   — ws: WS-2/Observatory — accept: each new element display-vs-store reconciled; vision ≥9.
 
+> fire-17 (2026-10-01, CWV measurement added) appends:
+
+- [ ] SSG / pre-render the apex hero (LOW priority — warm LCP already PASSES ~1570-1640ms) — ws: WS-1
+  — the apex is a client-only Vite SPA, so cold starts spike LCP (2208ms seen once, TTFB 628). SSG
+  (vite-ssg / pre-render the above-fold hero into the HTML shell) would make FCP/LCP cold-start-consistent
+  and satisfy the frontend-stack SSR/SSG mandate. — accept: `node scripts/verify-cwv.mjs` LCP ≤2000 on a
+  COLD run; vite.config is config-protected → authorize via `/update-config`. Fresh-session + full budget.
+
 ### Discovery contradictions to resolve (convergence judgment calls)
 
 - ULTIMATE non-goals reject Neon+Redis carryover, but PROJECTSITES-ABSORPTION lists them — mark reject/adapter-only; D1/DO/KV-native only.

@@ -91,6 +91,37 @@ export class AnalyticsCounter extends DurableObject<Env> {
     );
     return { total, today };
   }
+
+  /** Last `days` of total pageviews per day (oldest→newest), zero-filled for a continuous sparkline. */
+  daily(days: number): { day: string; count: number }[] {
+    const rows = this.sql
+      .exec("SELECT day, SUM(count) AS n FROM visitor_events GROUP BY day ORDER BY day DESC LIMIT ?", days)
+      .toArray() as unknown as { day: string; n: number }[];
+    const map = new Map(rows.map((r) => [r.day, Number(r.n)]));
+    const out: { day: string; count: number }[] = [];
+    const now = new Date();
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setUTCDate(d.getUTCDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      out.push({ day: key, count: map.get(key) ?? 0 });
+    }
+    return out;
+  }
+
+  /** Top `limit` paths by all-time pageviews. */
+  topPaths(limit: number): { path: string; count: number }[] {
+    return (
+      this.sql
+        .exec("SELECT path, SUM(count) AS n FROM visitor_events GROUP BY path ORDER BY n DESC LIMIT ?", limit)
+        .toArray() as unknown as { path: string; n: number }[]
+    ).map((r) => ({ path: String(r.path), count: Number(r.n) }));
+  }
+
+  /** Full build-in-public pulse in ONE round-trip: totals + daily sparkline + top paths. */
+  pulse(): { total: number; today: number; daily: { day: string; count: number }[]; topPaths: { path: string; count: number }[] } {
+    return { ...this.totals(), daily: this.daily(14), topPaths: this.topPaths(6) };
+  }
 }
 
 export default {
@@ -111,8 +142,8 @@ export default {
       if (!flagOn) {
         return withSecurityHeaders(Response.json({ error: "not_found" }, { status: 404 }));
       }
-      const counts = await env.ANALYTICS.getByName("global").totals();
-      return withSecurityHeaders(Response.json({ ok: true, ...counts }));
+      const pulse = await env.ANALYTICS.getByName("global").pulse();
+      return withSecurityHeaders(Response.json({ ok: true, ...pulse }));
     }
 
     // Server-side pageview capture: HTML navigations only, never /api or assets.

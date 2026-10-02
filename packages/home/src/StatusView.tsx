@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 interface Pulse {
   total: number;
   today: number;
+  daily: { day: string; count: number }[];
+  topPaths: { path: string; count: number }[];
 }
 
 type State = { status: "loading" } | { status: "ok"; data: Pulse } | { status: "offline" };
@@ -29,6 +31,71 @@ function Stat({ label, value, live }: { label: string; value: string; live?: boo
   );
 }
 
+/** Cyan area sparkline of daily pageviews (last N days). SVG, zero deps. */
+function Sparkline({ data }: { data: { day: string; count: number }[] }) {
+  if (data.length < 2) return null;
+  const w = 600;
+  const h = 120;
+  const pad = 8;
+  const max = Math.max(1, ...data.map((d) => d.count));
+  const n = data.length;
+  const px = (i: number) => pad + (i / (n - 1)) * (w - pad * 2);
+  const py = (v: number) => h - pad - (v / max) * (h - pad * 2);
+  const line = data.map((d, i) => `${px(i).toFixed(1)},${py(d.count).toFixed(1)}`).join(" ");
+  const area = `${pad},${h - pad} ${line} ${w - pad},${h - pad}`;
+  const last = data[n - 1];
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className="h-28 w-full"
+      preserveAspectRatio="none"
+      role="img"
+      aria-label={`Daily pageviews over the last ${n} days, peak ${max}`}
+    >
+      <defs>
+        <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#00E5FF" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill="url(#spark)" />
+      <polyline
+        points={line}
+        fill="none"
+        stroke="#00E5FF"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+      />
+      <circle cx={px(n - 1)} cy={py(last.count)} r="4" fill="#00E5FF" />
+    </svg>
+  );
+}
+
+/** Top paths as cyan mini-bars (share of the busiest path). */
+function TopPaths({ paths }: { paths: { path: string; count: number }[] }) {
+  if (!paths.length) return null;
+  const max = Math.max(1, ...paths.map((p) => p.count));
+  return (
+    <ul className="space-y-2 font-mono text-sm">
+      {paths.map((p) => (
+        <li key={p.path} className="relative overflow-hidden rounded-lg border border-white/10 bg-black/30 px-4 py-2.5">
+          <span
+            className="absolute inset-y-0 left-0 bg-[--color-cyan]/10"
+            style={{ width: `${(p.count / max) * 100}%` }}
+            aria-hidden
+          />
+          <span className="relative flex items-center justify-between gap-4">
+            <span className="truncate text-white/80">{p.path}</span>
+            <span className="shrink-0 tabular-nums text-[--color-cyan]">{p.count.toLocaleString("en-US")}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function StatusView() {
   const [state, setState] = useState<State>({ status: "loading" });
 
@@ -38,10 +105,19 @@ export default function StatusView() {
       try {
         const res = await fetch("/api/analytics/live", { headers: { Accept: "application/json" } });
         if (!res.ok) throw new Error(String(res.status));
-        const body = (await res.json()) as { ok?: boolean; total?: number; today?: number };
+        const body = (await res.json()) as {
+          ok?: boolean;
+          total?: number;
+          today?: number;
+          daily?: { day: string; count: number }[];
+          topPaths?: { path: string; count: number }[];
+        };
         if (cancelled) return;
         if (body.ok && Number.isFinite(body.total) && Number.isFinite(body.today)) {
-          setState({ status: "ok", data: { total: body.total!, today: body.today! } });
+          setState({
+            status: "ok",
+            data: { total: body.total!, today: body.today!, daily: body.daily ?? [], topPaths: body.topPaths ?? [] },
+          });
         } else {
           setState({ status: "offline" });
         }
@@ -83,6 +159,24 @@ export default function StatusView() {
           <Stat label="Workers on the edge" value="6" />
           <Stat label="Human in the loop" value="1" />
         </section>
+
+        {state.status === "ok" && state.data.daily.length >= 2 && (
+          <section className="mt-12" data-testid="status-sparkline">
+            <p className="eyebrow">Pageviews · last 14 days</p>
+            <div className="card grain mt-4 overflow-hidden p-7">
+              <Sparkline data={state.data.daily} />
+            </div>
+          </section>
+        )}
+
+        {state.status === "ok" && state.data.topPaths.length > 0 && (
+          <section className="mt-10" data-testid="status-top-paths">
+            <p className="eyebrow">Top paths</p>
+            <div className="mt-4">
+              <TopPaths paths={state.data.topPaths} />
+            </div>
+          </section>
+        )}
 
         <p className="mt-10 font-mono text-xs leading-relaxed text-white/60">
           counts only · no IP, no cookies, no fingerprint · refreshes every 30s · served from Cloudflare's

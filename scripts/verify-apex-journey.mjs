@@ -130,6 +130,10 @@ try {
   const apiTotal = typeof api.total === "number" ? api.total : null;
   const shown = apiTotal !== null && bodyTxt.includes(String(apiTotal));
   ok("/status display reconciles with store", apiTotal !== null && shown, `api.total=${apiTotal} shownInDOM=${shown}`);
+  ok("/status sparkline renders", (await page.locator('[data-testid="status-sparkline"] polyline').count()) > 0);
+  const topN = await page.locator('[data-testid="status-top-paths"] li').count();
+  ok("/status top-paths render", topN > 0, `${topN} paths`);
+  ok("/status daily series present in API", Array.isArray(api.daily) && api.daily.length === 14, `${api.daily?.length} days`);
   await page.screenshot({ path: join(SHOT, "7-status.png") });
 
   // 9 — /login funnel (real click from home → leaves apex into the OS/Access)

@@ -139,6 +139,7 @@ try {
   const topN = await page.locator('[data-testid="status-top-paths"] li').count();
   ok("/status top-paths render", topN > 0, `${topN} paths`);
   ok("/status daily series present in API", Array.isArray(api.daily) && api.daily.length === 14, `${api.daily?.length} days`);
+  ok("/status shows last-deployed line", await page.locator('[data-testid="status-deploy"]').isVisible());
   await page.screenshot({ path: join(SHOT, "7-status.png") });
 
   // 8b — soft-404 guard: an unknown path returns a real 404 STATUS + the styled NotFound page

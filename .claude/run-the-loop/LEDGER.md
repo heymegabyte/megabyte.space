@@ -257,3 +257,15 @@
 - backlog: WS-4 automated-vision acceptance now PARTIALLY met (5/7 valid; the AI Gateway path works); +1 next-wave (7/7 + reliability via a stronger vision model or response_format)
 - loop-improvement: THE fire — the WS-4 vision-review automation went from fully-broken (0/7) to working (5/7); the probe→find→fix pattern applied to the explorer's own tooling. Another "probe before concluding marginal" win — it was broken, not done.
 - attrition: none
+
+## fire-21 — 2026-10-02 — fire-21-run (WS-7: watchdog PROVEN + hardened; zombie found)
+
+- roster: lead-direct (Loop Improvement/Ops + Architecture) · rejected: all Agent spawns (single ops slice) · budget: ~50% probe/investigate · ~30% fix/harden · ~20% reconcile
+- [verify] probed WS-7's unverified acceptance (watchdog real trigger→launch cycle): `watchdog.log` PROVES real cycles on BOTH triggers — stale-heartbeat (22:07Z → pid 71197) + released-handoff (00:57Z, from fire-12's handoff → pid 68198); runs=53, last exit 0; single-flight + 30-min backoff visible in-log. WS-7 fully met.
+- [fix/ops] FOUND a stuck headless session (pid 8447: `claude -p /run-the-loop`, 57-min idle, orphaned PPID=1, NOT holding the lease) + a stale watchdog lock (dead pid 68198). Killed/cleared both. HARDENED the watchdog (49956efb): wrap the launched `claude -p` in a 25-min `timeout` (coreutils present) so a hung fire can't zombie forever.
+- [finding→Rec] the stuck sessions are `claude -p /run-the-loop --dangerously-skip-permissions` — NOT my watchdog's form (`"run the loop" --output-format text`). A SEPARATE scheduler (likely a `/loop` cron) launches them and they hang without coalescing (8447 + 89708 both). Outside the repo → Brian should check/bound that `/loop` schedule.
+- journey: watchdog-log probe → proven working → found zombie + unbounded launch → killed + hardened · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-7 watchdog item TICKED (proven + hardened)
+- loop-improvement: watchdog launches are now timeout-bounded (no more infinite zombie); the probe confirmed the auto-clear mechanism genuinely works end-to-end
+- attrition: none

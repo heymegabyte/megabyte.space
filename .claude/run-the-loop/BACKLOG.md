@@ -78,10 +78,11 @@
 - [x] Port the fire-lock script (fire-4, ff2144af) — `scripts/loop-fire-lock.mjs`
   (claim/heartbeat/release + exit 3 coalesce) committed; command §0 prefers it; 7/7 `node:test`
   incl. the stale-lease reclaim case. Used live to claim this fire's lease.
-- [~] Auto-clear watchdog LIVE (fire-4: ARMED — `launchctl bootstrap`'d, `launchctl print` shows
-  `state = running`, 600s interval, runatload; script reviewed + `bash -n` clean; never preempts a
-  live fresh-heartbeat lease) — REMAINING to fully close: observe one real trigger→launch cycle in
-  `watchdog.log` (none fired this fire — fire-4 held a live lease start-to-finish, correct behavior).
+- [x] Auto-clear watchdog LIVE + PROVEN + hardened (fire-4 armed; fire-21 verified + hardened) —
+  `watchdog.log` records REAL trigger→launch cycles on BOTH triggers: stale-heartbeat (22:07Z →
+  pid 71197) AND released-handoff (00:57Z, from fire-12's handoff → pid 68198); `runs=53`, last
+  exit 0; single-flight + 30-min backoff observed in-log. Hardened fire-21 (49956efb) with a 25-min
+  `timeout` on the launched `claude -p` after finding a 57-min idle orphaned zombie. Acceptance met.
 
 ### WS-8 — Better Auth migration (Brian 2026-10-01: Better Auth = app identity; Access stays as thin edge gate)
 - Mission: Better Auth (D1-backed, starter-owned) becomes THE human identity layer — **Google

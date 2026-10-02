@@ -401,3 +401,15 @@
 - backlog: apex soft-404 CLOSED (real-404 doctrine satisfied on the apex); known-routes SSOT established (add a route there when a new apex page ships). Next frontier (scout): WS-8 Better Auth v0, WS-2 Database Studio v0.
 - loop-improvement: the known-routes SSOT pattern (one module imported by worker + SPA, can't drift) is the reusable soft-404 guard; verify-apex-journey now covers the 404 contract; the scoped-console-suppression pattern (suppress an EXPECTED error only during the step that triggers it) is reusable for any intentional-error test.
 - attrition: none (the Cmd+K scout 'miss' = correctly avoided duplicating an existing feature)
+
+## fire-34 — 2026-10-02 — fire-34-apex-cwv (perf/cleanup: CWV gate + prod-gate hardening)
+
+- roster: lead-direct (measure → confirm → harden the gates) · rejected: wide fan-out (single coherent gate slice) · budget: ~50% perf/testing · ~30% verify · ~20% loop-improvement
+- [resume-check] §0: lease free, fire-33 latest (nothing new landed). Fresh fire; claimed fire-34.
+- [ship] b615ffa1 (apex megabyte-home 0c96694a) — (1) scripts/verify-apex-cwv.mjs NEW: throttled (Fast-3G + 4× CPU, via CDP) lab Core Web Vitals gate for the apex, asserting the house cinematic targets (LCP ≤2000ms, CLS ≤0.05). Measured LCP=1848ms + CLS=0.003 + INP-proxy=21ms → PASS; the careful build (lazy WebGL, no-store HTML, preconnect) holds up — no perf FIX needed. (2) verify-prod.mjs +9th assertion: soft-404 guard (unknown HTML → 404, / → 200) so the CANONICAL prod gate covers the fire-33 soft-404 fix, not just the journey. (3) NotFound.tsx: closest-route Levenshtein 'Did you mean …?' suggestion (extra-mile).
+- journey: claim → measure CWV (1848/0.003 within targets) → add soft-404 to verify-prod → 404 closest-route → deploy → verify-prod 9/9 + journey 25/25 · long-trail: unchanged · explorer: apex CWV captured (apex-cwv/apex.png) · beautify: unchanged (home.404 stays 9; closest-route is a minor enhancement)
+- [verify] verify-apex-cwv PASS (LCP 1848ms/CLS 0.003/INP-proxy 21ms, throttled). verify-prod 9/9 (incl. the NEW soft-404 guard: unknown=404 /=200). verify-apex-journey 25/25.
+- upstream: unchanged (apex packages/home + scripts only; the cloudflare-os fork untouched)
+- backlog: apex perf CONFIRMED within cinematic targets + a reusable throttled-CWV regression gate added; soft-404 now in the canonical prod gate (9 assertions). Next frontier (scout): WS-8 Better Auth v0, WS-2 Database Studio v0.
+- loop-improvement: verify-apex-cwv.mjs — reusable throttled-CWV gate (CDP network + CPU throttle → honest lab numbers vs a fast dev machine); the soft-404 assertion GRADUATED from the journey into verify-prod (canonical gate). Deferred Rec: self-host the Google Fonts (privacy + tighter CSP + LCP margin) — a dedicated fire (Vite /assets bundling for immutable caching + a worker no-store exemption + the exact-CSP update in verify-prod).
+- attrition: none

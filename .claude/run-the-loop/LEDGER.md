@@ -303,3 +303,16 @@
 - backlog: apple-touch-icon is a regenerable artifact; a full PWA manifest + maskable icon remains optional (marketing page — low priority)
 - loop-improvement: reusable apple-icon generator + an on-brand iOS bookmark/share icon
 - attrition: none
+
+## fire-25 — 2026-10-02 — fire-25-run (DIRECTION: OS at apex + homepage as a component in the OS fork)
+
+- roster: lead-direct + 1 Explore agent (OS-frontend seam map) · rejected: mutating agents (capture/plan fire) · budget: ~40% explore/map · ~40% capture/plan · ~20% reconcile
+- [direction] Brian REFINED WS-11: "Cloudflare OS shows up on megabyte.space; the current homepage bundled as a COMPONENT shown FIRST in the Cloudflare OS fork (the base UI), unless AI deems otherwise." SUPERSEDES the fire-6 wrapper-worker overlay — the homepage is now a component INSIDE the forked OS frontend; canonical-answer-#2 (pinned core) deliberately reversed for the FRONTEND (fork).
+- [explore] an Explore agent mapped the seam (workshop-frontend, TanStack Router): THE seam = `routes/__root.tsx:126-185` AuthenticatedShell — add a landing gate BEFORE the onboarding check (~L141) via a `hasSeenLandingHomepage` localStorage flag → render `<LandingHomepage onEnter/>` first, else the OS shell. No existing landing (clean slate). Entry main.tsx; Vite build → dist served by the router.
+- [capture] directive + FULL executable plan → `progress.md` (fork → LandingHomepage component → wire __root.tsx → build+deploy+TEST on os. FIRST → domain move → Access host 🔑Brian-gated); CLAUDE.md target + WS-11 mission rewritten (component-in-fork; supersedes wrapper-worker).
+- journey: none (direction-capture + map) · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED — the FORK + repoint happens in the execution fire)
+- backlog: WS-11 rewritten to the component-in-fork architecture; agents confirmed working (Explore) this session
+- loop-improvement: the exact integration seam is mapped + the plan is executable
+- HANDOFF: large one-way-door (fork + frontend integration + domain + Access) captured at ~136K / 25-fires depth → released-handoff lease → fresh full-budget session executes `progress.md` (pausing at the Brian-gated Access host). NOT ship debt — all prior work committed + green.
+- attrition: none

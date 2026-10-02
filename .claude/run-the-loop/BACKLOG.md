@@ -144,14 +144,18 @@
 - [ ] Slice 4 — ops loop: weekly pricing/keyword experiment + sales/visit stats into the
   Observatory — accept: one completed experiment with before/after data
 
-### WS-11 — OS to the apex + first-run WebGL overlay (Brian 2026-10-01 — overrides public-front-door for THIS estate)
-- Mission: `megabyte.space` SERVES the OS. The WebGL homepage becomes a **first-run dismissible
-  intro layer** over it (shown once; an "Enter / go in" button dismisses + persists a flag;
-  suppressed on return). Overlay injected by a WRAPPER worker in FRONT of the OS router — NEVER a
-  `cloudflare-os` submodule patch. `os.megabyte.space` retained as a legacy 301→apex. Access stays
-  the edge gate (→ WS-8 Better Auth later). Brian's words: "CloudFlare OS should be at megabyte.space
-  … make it just show up as a layer that you dismiss that only shows the first time until you press
-  the button to go in."
+### WS-11 — OS at the apex + homepage as a first-view COMPONENT (Brian 2026-10-01/02 — overrides public-front-door for THIS estate)
+- Mission: `megabyte.space` SERVES the OS. The WebGL homepage becomes a **COMPONENT INSIDE the OS
+  frontend** (a FORK we own = the base UI), shown as the FIRST thing after auth, dismissible via
+  "Enter the OS" + persisted once (`hasSeenLandingHomepage`). **REFINED Brian 2026-10-02 (fire-25):**
+  "bundled as a component that shows up as the first thing you see in the CloudFlare OS fork that
+  will be the base of the UI, unless AI deems otherwise" — this SUPERSEDES the earlier wrapper-worker
+  overlay; the homepage lives in the forked `cloudflare-os/packages/workshop-frontend`, not a worker
+  in front. Full executable plan + the confirmed integration seam (`__root.tsx:126-185`
+  `AuthenticatedShell`, gate before the onboarding check) = **`progress.md`** (fire-25). `os.megabyte.space`
+  → legacy 301→apex. Access stays the edge gate (→ WS-8). Canonical-answer-#2 (pinned core) is
+  deliberately reversed for the FRONTEND (fork), with upstream rebased deliberately per lane §1.18.
+- ⚠️ Executes in a FRESH full-budget session (large one-way-door; fire-25 captured the plan at depth).
 - Cadence: PRIORITY — the immediate next fire(s). Best run in a FRESH full-budget session
   (one-way-door infra; `delegate-when-saturated` — don't start this large pass context-saturated).
 - GOTCHAS (from `docs/customization.md`, confirmed fire-6):

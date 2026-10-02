@@ -73,6 +73,12 @@ try {
   const headline = await page.locator("h1").first().innerText();
   const enterBtn = page.locator('[data-testid="enter-os"]');
   const enterVisible = await enterBtn.isVisible();
+  // Let the lazy three.js field paint + nudge the pointer to swell it before the shot, so
+  // the capture reliably shows the WebGL field (not a pre-paint black frame).
+  await page.mouse.move(980, 360);
+  await page.waitForTimeout(3500);
+  await page.mouse.move(1080, 300);
+  await page.waitForTimeout(1200);
   await page.screenshot({ path: join(SHOT_DIR, "landing.png"), fullPage: false });
   console.log(`RENDERED: landing visible, h1="${headline.replace(/\s+/g, " ").trim()}", enter-btn=${enterVisible}`);
 

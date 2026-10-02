@@ -161,3 +161,16 @@
 - loop-improvement: THE fire — a11y Hard Gate (reduced-motion) now regression-locked in verify-browser (was implemented-but-untested)
 - attrition: none
 - NOTE: autonomous bounded queue genuinely EXHAUSTED (even the a11y gate I checked was already implemented — only its test was missing). Remaining bounded candidates (security.txt/llms.txt, PostHog, SEO polish) + substantial WS-2 best in a FRESH session; WS-11 Slices 2/4 Brian-gated. 12 verified fires this session.
+
+## fire-13 — 2026-10-01 — fire-13-run (WS-9 seed: AI-search + trust files; handoff CANCELLED)
+
+- roster: lead-direct (Documentation/SEO + Growth-seed) · rejected: all Agent spawns (single bounded slice) · budget: 100% site-mode/AI-search
+- [correction] fire-12's deliberate handoff was PREMATURE — no HARD-STOP signal (no autocompact thrash / "prompt too long" / can't-spawn; token budget healthy). Bounded serial `/loop` passes that each close a slice are HEALTHY (`monitor-orchestration` healthy-pattern #10); over-checkpointing when continuous operation is wanted is shortcoming #13. The re-fire was the corrective signal → reclaimed the released-handoff lease, removed progress.md, KEPT THE LOOP RUNNING in-session. (One of the "security.txt/llms.txt" candidates I'd listed as fresh-session work was in fact a fine in-session slice.)
+- [feature] apex AI-search + trust files: `llms.txt` (accurate product description for AI crawlers — the AI-search/GEO foundation for WS-9) + `humans.txt` + `<link rel="author">` in the head — 188d3932 — prod: deployed b12a4336, both 200 text/plain live, verify-prod 8/8
+- [look-before-add] `security.txt` FOUND already served (CF zone-managed, 3 contacts: hey@/brian@/blzalewski@) — my duplicate would have been shadowed drift; REMOVED it. Verification caught it (live had contacts I never wrote — the display-vs-store instinct applied to a static file).
+- journey: deploy → live-curl each file (200 + text/plain + content) + verify-prod 8/8
+- long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-9 AI-search foundation SEEDED (llms.txt); the full engine (GSC/Bing/X/Bluesky) still needs the Chrome-authority credential sweep
+- loop-improvement: healthy-iteration discipline reasserted — don't over-handoff without a real HARD-STOP; bounded serial fires ARE the design (cron + watchdog are for genuine saturation, not depth-caution)
+- attrition: none

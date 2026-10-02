@@ -26,10 +26,16 @@ export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 REPO="${1:-$HOME/emdash/repositories/megabyte.space}"
 LEASE="$REPO/.claude/run-the-loop/.fire-lease.json"
 DEBT="$REPO/progress.md"
+DEBT_HASH_FILE="$REPO/.claude/run-the-loop/.watchdog-debt-hash"
 LOCK="$REPO/.claude/run-the-loop/.watchdog.lock"
 LOG="$REPO/.claude/run-the-loop/watchdog.log"
-STALE_SECS=1500   # 25 min — outside the loop's own 20-min stale window
-BACKOFF_SECS=1800 # at most one fresh launch per 30 min
+STALE_SECS=1500      # 25 min — outside the loop's own 20-min stale window
+BACKOFF_SECS=1800    # at most one fresh launch per 30 min
+DEBT_COOLDOWN_SECS=21600  # 6h — a progress.md whose content is UNCHANGED since the last
+                          # fire is gated/stuck debt (e.g. a Brian-gated plan), not a fresh
+                          # checkpoint. Fire it ONCE, then back off 6h instead of relaunching
+                          # every 30 min forever. A CHANGED progress.md (real progress) re-fires
+                          # on the next tick; a DELETED one (shipped) never triggers. (fire-28)
 
 # Styled output for interactive runs; log() is the durable record either way.
 if [ -f "$HOME/.claude/hooks/style.sh" ]; then
@@ -62,7 +68,21 @@ needsFire() {
     return 1 # live fire — never preempt it
   fi
   if [ -f "$DEBT" ]; then
-    log "trigger: progress.md debt with no live fire"
+    # Content-aware dedupe: an UNCHANGED progress.md since the last fire is gated/stuck
+    # debt (a fire already tried + couldn't clear it), not a fresh checkpoint. Fire once,
+    # then back off DEBT_COOLDOWN_SECS instead of relaunching every 30 min forever.
+    local debtHash lastHash lastTime now
+    debtHash="$(shasum -a 256 "$DEBT" 2>/dev/null | cut -d' ' -f1)"
+    lastHash="$(cut -d' ' -f1 "$DEBT_HASH_FILE" 2>/dev/null || true)"
+    lastTime="$(cut -d' ' -f2 "$DEBT_HASH_FILE" 2>/dev/null || printf 0)"
+    now="$(date -u +%s)"
+    if [ -n "$debtHash" ] && [ "$debtHash" = "$lastHash" ] \
+       && [ $((now - lastTime)) -lt "$DEBT_COOLDOWN_SECS" ]; then
+      log "skip: progress.md unchanged since last fire ($(((now - lastTime) / 60))m ago) — gated/stuck debt, not relaunching"
+      return 1
+    fi
+    printf '%s %s\n' "$debtHash" "$now" >"$DEBT_HASH_FILE"
+    log "trigger: progress.md debt with no live fire (hash ${debtHash:0:8})"
     return 0
   fi
   return 1

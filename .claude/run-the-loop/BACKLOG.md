@@ -152,7 +152,7 @@
   will be the base of the UI, unless AI deems otherwise" — this SUPERSEDES the earlier wrapper-worker
   overlay; the homepage lives in the forked `cloudflare-os/packages/workshop-frontend`, not a worker
   in front. Full executable plan + the confirmed integration seam (`__root.tsx:126-185`
-  `AuthenticatedShell`, gate before the onboarding check) = **`progress.md`** (fire-25). `os.megabyte.space`
+  `AuthenticatedShell`, gate before the onboarding check) = Steps 1-6 below + `docs/ws-11-rollback.md` (progress.md retired fire-28 as redundant with this block). `os.megabyte.space`
   → legacy 301→apex. Access stays the edge gate (→ WS-8). Canonical-answer-#2 (pinned core) is
   deliberately reversed for the FRONTEND (fork), with upstream rebased deliberately per lane §1.18.
 - ⚠️ Executes in a FRESH full-budget session (large one-way-door; fire-25 captured the plan at depth).

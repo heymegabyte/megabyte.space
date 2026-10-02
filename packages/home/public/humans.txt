@@ -1,0 +1,12 @@
+/* TEAM */
+Builder: Brian Zalewski
+Contact: hey [at] megabyte.space
+Studio: Megabyte Labs
+Location: United States
+
+/* SITE */
+Last update: 2026-10-01
+Standards: HTML5, CSS3, WebGL
+Components: React 19, Vite, Three.js, Tailwind CSS
+Infrastructure: Cloudflare Workers, Durable Objects, Cloudflare Access
+Built on: Cloudflare OS (github.com/cloudflare/cloudflare-os)

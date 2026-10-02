@@ -207,7 +207,12 @@
 > in progress.md. Items already covered above; no new dedupe-escaping finds this fire except:
 
 - [ ] Explorer first LIVE run — ws: WS-4 — accept: `node e2e/deep-ui-explorer/explorer.mjs --surface apex` writes a run manifest + refreshes the ledger; `vision-review.mjs --run <dir>` returns ≥1 schema-valid verdict via AI Gateway `megabyte-os`
-- [ ] Stale-copy sweep gate — ws: WS-1 — accept: a grep-based check (dead IdP names, retired vendor names) wired into verify-prod or lint so retired-stack words can't ship in user-visible copy (Authentik class; found live fire-3)
+- [x] Stale-copy sweep gate (fire-11, 6da433dd) — `scripts/check-stale-copy.mjs` scans apex source
+  for a HIGH-signal DENY list (`authentik` dead IdP · `lorem ipsum` · `coming soon`), reports
+  file:line + why, exits 1 on a hit. WIRED into `packages/home` build (`build` = vite + gate;
+  `deploy` = `pnpm build && wrangler deploy`) so a stale term fails the build → aborts the deploy.
+  Self-tested RED (catches injected terms) + GREEN (clean). Source-only = no minified-vendor
+  false-positives. Extend DENY when a stack element retires.
 
 > fire-2 (2026-10-01) appends — deduped vs the list above:
 

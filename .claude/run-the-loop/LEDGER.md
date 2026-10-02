@@ -138,3 +138,15 @@
 - backlog: WS-1 three.js-perf ticked; feeds the WebGPU-ladder next-wave item
 - loop-improvement: lighter LCP path is a standing perf win on the signature surface; the lazy-chunk pattern is the base for the WebGPU→WebGL2→static fallback ladder
 - attrition: none
+
+## fire-11 — 2026-10-01 — fire-11-run (gate: stale-copy — retired-stack words can't ship)
+
+- roster: lead-direct (Loop Improvement / Dead-Code-Hygiene) · rejected: all Agent spawns (single bounded gate; WS-11 remaining Brian-gated) · budget: 100% gate-hardening (a loop-improvement fire)
+- [gate] `scripts/check-stale-copy.mjs` — scans apex source for a HIGH-signal DENY list (`authentik` dead IdP from fire-3 · `lorem ipsum` · `coming soon`), reports file:line + why, exits 1 on a hit. WIRED into `packages/home` build (`build` = `vite build && node ../../scripts/check-stale-copy.mjs`; `deploy` = `pnpm build && wrangler deploy`) so a stale term FAILS the build → aborts the deploy — 6da433dd — prod: n/a (build-time gate; `pnpm build` verified exit 0 + gate clean)
+- [verify] self-tested RED (injected "Authentik … coming soon"/"lorem ipsum" → caught with file:line, exit 1) + GREEN (clean, exit 0); source-only scan avoids minified-vendor false-positives breaking the build
+- journey: none (gate fire) · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-1 stale-copy-gate ticked
+- loop-improvement: THE fire — a durable build gate closing the fire-3 "Authentik SSO shipped live" incident class (render-clean regressions no console/axe/screenshot catches); extensible DENY per drift-detection
+- attrition: none
+- NOTE: NO deploy (build-time gate). Autonomous next-wave hardening queue now essentially cleared; remaining frontier is Brian-gated (WS-11 Slices 2/4) or fresh-session-substantial (WS-2 absorption, WebGPU ladder).

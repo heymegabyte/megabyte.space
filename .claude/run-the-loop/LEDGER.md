@@ -269,3 +269,14 @@
 - backlog: WS-7 watchdog item TICKED (proven + hardened)
 - loop-improvement: watchdog launches are now timeout-bounded (no more infinite zombie); the probe confirmed the auto-clear mechanism genuinely works end-to-end
 - attrition: none
+
+## fire-22 — 2026-10-02 — fire-22-run (/status gate — coverage for a shipped surface)
+
+- roster: lead-direct (QA + Loop Improvement) · rejected: all Agent spawns (single gate slice) · budget: ~60% gate · ~30% probe/verify · ~10% reconcile
+- [gate] added `scripts/verify-status.mjs` — real-browser /status gate: heading + telemetry cards render · live DO data loaded (not stuck …/—) · DISPLAY-VS-STORE reconcile (displayed total vs /api/analytics/live) · 0 OUR console errors · axe WCAG 2.2 AA. /status (shipped fire-14) had ZERO standing regression coverage — 37d1881f — prod: n/a (test gate); /status 6/6 green live
+- [reconcile-proof] display=323 vs store=322 (within 1 — count incremented between render + endpoint fetch) — the /status page shows REAL DO data, not a lying-empty (verify-against-source-of-truth applied)
+- journey: /status gate run → 6/6 (healthy) · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: /status now has standing coverage — every shipped public surface (apex + /status) is gated
+- loop-improvement: /status regression gate with a live display-vs-store reconcile; closes the last uncovered shipped-surface
+- attrition: none

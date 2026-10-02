@@ -1,5 +1,4 @@
 import { useEffect, useRef, type CSSProperties } from "react";
-import { mountHeroField } from "./webgl";
 
 // First-run overlay (WS-11): the WebGL homepage is an intro LAYER over the OS —
 // shown the first time, dismissed by "Enter the OS", skipped on return visits.
@@ -104,9 +103,22 @@ export default function App() {
     if (skip) window.location.replace(OS_ENTRY);
   }, [skip]);
 
+  // Lazy-load the WebGL field so the ~468 KB three.js chunk is OFF the LCP path —
+  // the hero text paints first; the field fades in a beat later (progressive, and
+  // a non-issue under prefers-reduced-motion). three.js becomes its own on-demand
+  // chunk instead of a modulepreload in the HTML shell.
   useEffect(() => {
     if (skip || !canvasRef.current) return;
-    return mountHeroField(canvasRef.current);
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+    void import("./webgl").then(({ mountHeroField }) => {
+      if (cancelled || !canvasRef.current) return;
+      cleanup = mountHeroField(canvasRef.current);
+    });
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
   }, [skip]);
 
   if (skip) {

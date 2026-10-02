@@ -20,7 +20,21 @@ const APEX = "https://megabyte.space";
 const SHOT = join(ROOT, "e2e", "screenshots", "apex-journey");
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36";
-const ALLOW = /cloudflareinsights|static\.cloudflare|challenges\.cloudflare|cdn-cgi|\/beacon|web-vitals/i;
+// Tolerated console-error classes (genuinely third-party, NOT ours):
+//  • CF edge resources — Web Analytics beacon, web-vitals, /cdn-cgi/* loads.
+//  • The /cdn-cgi/challenge-platform INLINE script CF edge-injects (bot_management
+//    enable_js). Our strict CSP blocks it CORRECTLY — we ship zero inline scripts
+//    (proven by the "zero inline scripts" assertion in step 1b); its ray-token
+//    rotates per request so it can't be hash-pinned, and disabling the injection is
+//    a zone security-posture call, not a code fix.
+// The OLD single ALLOW regex matched this inline-script CSP violation only by
+// COINCIDENCE — the violation message quotes the directive text which contains
+// `cloudflareinsights` — so it would have ALSO silently hidden a real inline script
+// shipped by US. Step 1b is the honest guard; this classifier just avoids crashing
+// the gate on the known CF injection.
+const CF_RESOURCE = /cloudflareinsights|static\.cloudflare|challenges\.cloudflare|cdn-cgi\/|\/beacon(?:\.min)?\.js|web-vitals/i;
+const INLINE_CSP = /(?:inline script|refused to execute inline script)[\s\S]*content security policy|content security policy[\s\S]*inline/i;
+const isTolerated = (t) => CF_RESOURCE.test(t) || INLINE_CSP.test(t);
 
 const { chromium } = await import("playwright");
 mkdirSync(SHOT, { recursive: true });
@@ -37,7 +51,7 @@ let onApex = true;
 // broken-asset 404 on any other step still fails the gate.
 let testing404 = false;
 page.on("console", (m) => {
-  if (onApex && m.type() === "error" && !ALLOW.test(m.text()) && !(testing404 && /status of 404/i.test(m.text())))
+  if (onApex && m.type() === "error" && !isTolerated(m.text()) && !(testing404 && /status of 404/i.test(m.text())))
     errors.push(m.text());
 });
 page.on("pageerror", (e) => {
@@ -59,6 +73,24 @@ try {
   ok("hero CTA visible", await page.locator('[data-testid="hero-login"]').isVisible());
   ok("WebGL canvas present", (await page.locator("canvas[data-webgl]").count()) > 0);
   await page.screenshot({ path: join(SHOT, "1-hero.png") });
+
+  // 1b — SOURCE INTEGRITY: our served HTML ships ZERO inline executable scripts, so
+  // our strict CSP is never violated BY US. The only blocked inline script is CF's
+  // edge-injected /cdn-cgi/challenge-platform (bot_management enable_js), identified
+  // by __CF$cv$params; any OTHER inline <script> is ours → a real CSP-violating
+  // regression → fail here. This is the honest guard behind tolerating the
+  // inline-script CSP console warning above (which the old ALLOW regex hid blindly).
+  const apexHtml = await (await fetch(`${APEX}/`, { headers: { "User-Agent": UA } })).text();
+  const inlineScripts = [...apexHtml.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi)];
+  const unexpectedInline = inlineScripts.filter(
+    ([, attrs, body]) =>
+      !/application\/ld\+json/i.test(attrs) && !/__CF\$cv\$params|cdn-cgi\/challenge-platform/i.test(body),
+  );
+  ok(
+    "apex ships zero inline scripts (JSON-LD + CF challenge only)",
+    unexpectedInline.length === 0,
+    unexpectedInline.length ? `${unexpectedInline.length} unexpected inline <script>` : "clean",
+  );
 
   // 2 — NAV: Features
   await page.locator('a[href="#features"]').first().click();

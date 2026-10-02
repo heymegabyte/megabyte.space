@@ -87,6 +87,24 @@ const branded = await page.evaluate(() => {
   return t.includes("Megabyte OS") || t.length > 400;
 });
 
+// Reduced-motion Hard Gate: mountHeroField() returns early under
+// prefers-reduced-motion, so the WebGL field never mounts — the static gradient +
+// text must carry the hero cleanly. Assert the page still renders (branded content)
+// with zero OUR console errors (no WebGL init attempted, no broken fallback). This
+// had no automated coverage; the fire-10 lazy-load could have silently broken it.
+const rmContext = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
+const rmPage = await rmContext.newPage();
+const rmErrors = [];
+rmPage.on("console", (m) => {
+  if (m.type() === "error") rmErrors.push(m.text());
+});
+rmPage.on("pageerror", (e) => rmErrors.push(`pageerror: ${e.message}`));
+await rmPage.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
+await rmPage.waitForTimeout(800);
+const rmBranded = await rmPage.evaluate(() => (document.body?.innerText || "").includes("Megabyte OS"));
+const rmOurErrors = rmErrors.filter((e) => !isUpstream(e));
+await rmContext.close();
+
 await browser.close();
 
 const ourErrors = errors.filter((e) => !isUpstream(e));
@@ -97,6 +115,7 @@ const checks = [
   ["WebGL hero canvas present", canvas.present === true, canvas.present ? `${canvas.w}x${canvas.h}` : "absent"],
   ["WebGL hero painted (not black)", painted === true, `${paintedBytes}B clip`],
   ["branded content rendered", branded === true, branded ? "ok" : "blank shell"],
+  ["reduced-motion: clean static fallback", rmBranded === true && rmOurErrors.length === 0, `branded=${rmBranded} ourErrors=${rmOurErrors.length}`],
 ];
 
 for (const [name, pass, detail] of checks) console.log(`${pass ? "✅ PASS" : "❌ FAIL"}  ${name} — ${detail}`);

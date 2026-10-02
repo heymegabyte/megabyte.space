@@ -222,3 +222,15 @@
 - loop-improvement: CWV measurement coverage; the soft-gate catches a real perf regression without flapping on cold-start variance
 - attrition: none
 - lesson (meta): RE-MEASURE before concluding a perf FAIL — single cold-start samples are noisy (TTFB 628 vs 90). Complements fire-16's "probe the gate before concluding marginal."
+
+## fire-18 — 2026-10-01 — fire-18-run (SEO: strict gate + meta-desc fix)
+
+- roster: lead-direct (SEO + Loop Improvement) · rejected: all Agent spawns (single SEO slice) · budget: ~40% probe/fix · ~40% gate · ~20% reconcile
+- [seo] SEO-strict probe FOUND: apex meta description 162 chars (>156 max). FIXED → 153 chars (within 120-156). Title (55), canonical, og 1200×630, both JSON-LD blocks valid — all already PASS — d4755b56 — prod: deployed 0b847edf, verify-seo 5/5 hard + verify-prod 8/8
+- [gate] added `scripts/verify-seo.mjs` — title 50-60 · meta 120-156 · canonical · og 1200×630 · JSON-LD @context/@type valid (HARD) + exactly-1-H1-in-shell (WARN). SEO strict was a Hard Gate with ZERO automated coverage
+- [known-gap] H1-in-shell = 0 (client-rendered React H1 not in the static shell) — WARN, folds into the SSG backlog item (fire-17); non-JS crawlers see no H1 until SSG (Google renders JS, so it does see it)
+- journey: SEO probe → find over-length meta → fix → deploy → verify-seo 5/5 + verify-prod 8/8 · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: SEO automated coverage added; H1-in-shell folds into the SSG item
+- loop-improvement: SEO-strict gate automates a Hard Gate that had no coverage; caught 1 real over-length meta on first run. The Hard-Gate automation sweep (fires 16-18: axe · CWV · SEO) each found real work — three new durable gates + 4 real fixes.
+- attrition: none

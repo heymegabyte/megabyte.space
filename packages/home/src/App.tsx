@@ -26,42 +26,57 @@ function markEntered(): void {
   }
 }
 
+// Asymmetric bento: span + featured drive a 3×3 lg grid that breaks the uniform
+// 3×2 — card 0 is a wide hero tile, card 1 is tall, card 4 is wide. Gap-free on
+// lg; a 1-col stack on mobile (spans are sm/lg-only, so no overflow @390).
 const FEATURES = [
   {
     kicker: "Agent chat",
     title: "Agents that know the company",
     body: "Ask for work, not files. Every agent is preloaded with how Megabyte Labs operates — context, tools, and rules included.",
     accent: "from-cyan-400/20",
+    span: "sm:col-span-2 lg:col-span-2",
+    featured: true,
   },
   {
     kicker: "Gadgets",
     title: "Apps that build themselves",
     body: "Every slide deck, dashboard, and tool is your private instance. Missing a feature? Ask the agent to add it — safely.",
     accent: "from-violet-500/20",
+    span: "lg:row-span-2",
+    featured: true,
   },
   {
     kicker: "Gatekeepers",
     title: "Security that says yes",
     body: "Capability-scoped access to GitHub, Google, email, and more. Every action logged, simulated ahead, approved in bulk.",
     accent: "from-sky-400/20",
+    span: "",
+    featured: false,
   },
   {
     kicker: "Blueprints",
     title: "From prompt to product",
     body: "Slides for tomorrow's meeting, an issue dashboard for a repo, a collaborative whiteboard — one sentence each.",
     accent: "from-cyan-400/20",
+    span: "",
+    featured: false,
   },
   {
     kicker: "Scheduler",
     title: "Work while you sleep",
     body: "Agents run on timers and recurrences. Schedule research, reports, and follow-ups — they arrive finished.",
     accent: "from-violet-500/20",
+    span: "lg:col-span-2",
+    featured: true,
   },
   {
     kicker: "Your cloud",
     title: "Yours, all the way down",
     body: "Open source, running entirely on the Megabyte Labs Cloudflare account. No SaaS middleman, no data leaving home.",
     accent: "from-sky-400/20",
+    span: "",
+    featured: false,
   },
 ];
 
@@ -219,13 +234,24 @@ export default function App() {
             <h2 className="font-display reveal mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
               A workspace that <span className="text-gradient">does the work</span>
             </h2>
-            <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:auto-rows-fr lg:grid-cols-3">
               {FEATURES.map((f) => (
-                <article key={f.title} className={`card reveal grain overflow-hidden p-7`}>
+                <article
+                  key={f.title}
+                  className={`card reveal grain relative flex flex-col overflow-hidden p-7 ${f.span}`}
+                >
                   <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${f.accent} to-transparent opacity-60`} />
                   <p className="eyebrow relative">{f.kicker}</p>
-                  <h3 className="font-display relative mt-3 text-xl font-semibold">{f.title}</h3>
-                  <p className="relative mt-3 leading-relaxed text-white/65">{f.body}</p>
+                  <h3 className={`font-display relative mt-3 font-semibold ${f.featured ? "text-2xl" : "text-xl"}`}>
+                    {f.title}
+                  </h3>
+                  <p className="relative mt-3 max-w-prose leading-relaxed text-white/65">{f.body}</p>
+                  {f.featured && (
+                    <div className="relative mt-auto flex items-center gap-3 pt-7">
+                      <span className="h-px flex-1 bg-gradient-to-r from-[--color-cyan]/50 to-transparent" aria-hidden />
+                      <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[--color-cyan]/70">{f.kicker}</span>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>

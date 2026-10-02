@@ -32,8 +32,13 @@ const errors = [];
 // the Cloudflare Access page (cloudflareaccess.com), whose own CSP blocks its own
 // inline-SVG logo — an upstream CF error on CF's domain, not ours to fix.
 let onApex = true;
+// Suppress the EXPECTED 404 resource-load console message during the intentional
+// soft-404 test navigation — the 404 is what we assert, not a defect. A real
+// broken-asset 404 on any other step still fails the gate.
+let testing404 = false;
 page.on("console", (m) => {
-  if (onApex && m.type() === "error" && !ALLOW.test(m.text())) errors.push(m.text());
+  if (onApex && m.type() === "error" && !ALLOW.test(m.text()) && !(testing404 && /status of 404/i.test(m.text())))
+    errors.push(m.text());
 });
 page.on("pageerror", (e) => {
   if (onApex) errors.push(`pageerror: ${e.message}`);
@@ -135,6 +140,15 @@ try {
   ok("/status top-paths render", topN > 0, `${topN} paths`);
   ok("/status daily series present in API", Array.isArray(api.daily) && api.daily.length === 14, `${api.daily?.length} days`);
   await page.screenshot({ path: join(SHOT, "7-status.png") });
+
+  // 8b — soft-404 guard: an unknown path returns a real 404 STATUS + the styled NotFound page
+  testing404 = true;
+  const nf = await page.goto(`${APEX}/this-page-does-not-exist-xyz`, { waitUntil: "domcontentloaded", timeout: 30000 });
+  ok("unknown path → real 404 status", nf?.status() === 404, `status=${nf?.status()}`);
+  await page.waitForTimeout(500);
+  ok("styled 404 (NotFound) renders", await page.locator('[data-testid="notfound-home"]').isVisible());
+  await page.screenshot({ path: join(SHOT, "8-notfound.png") });
+  testing404 = false;
 
   // 9 — /login funnel (real click from home → leaves apex into the OS/Access)
   await page.goto(`${APEX}/`, { waitUntil: "domcontentloaded", timeout: 30000 });

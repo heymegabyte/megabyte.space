@@ -9,6 +9,7 @@
 // capture) ever reach a real browser. Hashed /assets/* stay on the fast path.
 
 import { DurableObject } from "cloudflare:workers";
+import { isKnownRoute } from "./src/known-routes";
 
 interface Env {
   ASSETS: Fetcher;
@@ -150,11 +151,23 @@ export default {
     if (flagOn && request.method === "GET" && !url.pathname.startsWith("/api/")) {
       const dest = request.headers.get("sec-fetch-dest") || "";
       const accept = request.headers.get("accept") || "";
-      if (dest === "document" || (dest === "" && accept.includes("text/html"))) {
+      if ((dest === "document" || (dest === "" && accept.includes("text/html"))) && isKnownRoute(url.pathname)) {
         ctx.waitUntil(Promise.resolve(env.ANALYTICS.getByName("global").record(url.pathname)));
       }
     }
 
-    return withSecurityHeaders(await env.ASSETS.fetch(request));
+    const assetResponse = await env.ASSETS.fetch(request);
+    // Soft-404 guard: an unknown HTML path gets the SPA index.html fallback at 200.
+    // Rewrite to a real 404 STATUS so junk URLs aren't indexed — the shell still
+    // renders the styled NotFound page. Assets, public files (text/plain, images),
+    // and the known routes ("/", "/status") are left untouched.
+    const navAccept = request.headers.get("accept") || "";
+    const navDest = request.headers.get("sec-fetch-dest") || "";
+    const isDoc = navDest === "document" || (navDest === "" && navAccept.includes("text/html"));
+    const contentType = assetResponse.headers.get("content-type") || "";
+    if (isDoc && assetResponse.status === 200 && contentType.includes("text/html") && !isKnownRoute(url.pathname)) {
+      return withSecurityHeaders(new Response(assetResponse.body, { status: 404, headers: assetResponse.headers }));
+    }
+    return withSecurityHeaders(assetResponse);
   },
 } satisfies ExportedHandler<Env>;

@@ -74,7 +74,7 @@ export default function StatusView() {
         <p className="mt-5 max-w-2xl leading-relaxed text-white/65">
           Megabyte OS is built in public on Megabyte Labs' own Cloudflare edge — no SaaS middleman, no
           data leaving home. These numbers are live, straight from a zero-PII Durable Object counter.
-          {state.status === "offline" && <span className="text-white/40"> (telemetry offline — showing static context)</span>}
+          {state.status === "offline" && <span className="text-white/60"> (telemetry offline — showing static context)</span>}
         </p>
 
         <section className="mt-12 grid gap-5 sm:grid-cols-2">
@@ -84,10 +84,10 @@ export default function StatusView() {
           <Stat label="Human in the loop" value="1" />
         </section>
 
-        <p className="mt-10 font-mono text-xs leading-relaxed text-white/40">
+        <p className="mt-10 font-mono text-xs leading-relaxed text-white/60">
           counts only · no IP, no cookies, no fingerprint · refreshes every 30s · served from Cloudflare's
           global network. source:{" "}
-          <a className="text-white/60 transition hover:text-[--color-cyan]" href="https://github.com/heymegabyte/megabyte.space" rel="noreferrer" target="_blank">
+          <a className="text-[--color-cyan] underline transition hover:text-white" href="https://github.com/heymegabyte/megabyte.space" rel="noreferrer" target="_blank">
             heymegabyte/megabyte.space
           </a>
         </p>

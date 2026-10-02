@@ -305,7 +305,7 @@ export default function App() {
       </main>
 
       <footer className="relative z-10 border-t border-white/10 px-5 py-10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-white/45">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-white/60">
           <p>
             © {new Date().getFullYear()} Megabyte Labs · <a className="transition hover:text-[--color-cyan]" href="mailto:hey@megabyte.space">hey@megabyte.space</a>
           </p>

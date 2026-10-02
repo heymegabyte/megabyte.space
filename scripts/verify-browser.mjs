@@ -16,6 +16,7 @@
 // honest — never counts as passed). Usage: node scripts/verify-browser.mjs [url]
 
 import { chromium } from "playwright";
+import { AxeBuilder } from "@axe-core/playwright";
 
 const URL = process.argv[2] || "https://megabyte.space/";
 
@@ -87,6 +88,25 @@ const branded = await page.evaluate(() => {
   return t.includes("Megabyte OS") || t.length > 400;
 });
 
+// axe-core WCAG 2.2 AA scan — a Hard Gate that had no automated coverage. Only
+// critical/serious impacts fail the gate (minor/moderate are reported, not blocking,
+// to avoid axe-version churn flapping the deploy). axe runs in its OWN fresh context —
+// the main page has an accumulated screenshot/locator state axe's injector rejects.
+let axeBad = [];
+let axeTotal = 0;
+try {
+  const axeContext = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const axePage = await axeContext.newPage();
+  await axePage.goto(URL, { waitUntil: "networkidle", timeout: 30000 });
+  await axePage.waitForTimeout(1000);
+  const axe = await new AxeBuilder({ page: axePage }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  axeTotal = axe.violations.length;
+  axeBad = axe.violations.filter((v) => v.impact === "critical" || v.impact === "serious");
+  await axeContext.close();
+} catch (e) {
+  axeBad = [{ id: `axe-failed:${String(e?.message || e).slice(0, 40)}` }];
+}
+
 // Reduced-motion Hard Gate: mountHeroField() returns early under
 // prefers-reduced-motion, so the WebGL field never mounts — the static gradient +
 // text must carry the hero cleanly. Assert the page still renders (branded content)
@@ -116,6 +136,7 @@ const checks = [
   ["WebGL hero painted (not black)", painted === true, `${paintedBytes}B clip`],
   ["branded content rendered", branded === true, branded ? "ok" : "blank shell"],
   ["reduced-motion: clean static fallback", rmBranded === true && rmOurErrors.length === 0, `branded=${rmBranded} ourErrors=${rmOurErrors.length}`],
+  ["axe WCAG 2.2 AA (0 critical/serious)", axeBad.length === 0, `${axeBad.length} critical/serious of ${axeTotal} total${axeBad.length ? ": " + axeBad.map((v) => v.id).join(",") : ""}`],
 ];
 
 for (const [name, pass, detail] of checks) console.log(`${pass ? "✅ PASS" : "❌ FAIL"}  ${name} — ${detail}`);

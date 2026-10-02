@@ -17,6 +17,7 @@
     "deploy": "node scripts/deploy.ts"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vitest-pool-workers": "catalog:",
     "@playwright/test": "^1.63.0",
     "@types/node": "26.1.0",

@@ -280,3 +280,15 @@
 - backlog: /status now has standing coverage — every shipped public surface (apex + /status) is gated
 - loop-improvement: /status regression gate with a live display-vs-store reconcile; closes the last uncovered shipped-surface
 - attrition: none
+
+## fire-23 — 2026-10-02 — fire-23-run (polish: designed OG social card)
+
+- roster: lead-direct (Media/Visual + Loop Improvement) · rejected: all Agent spawns (single media slice) · budget: ~50% design/gen · ~30% verify · ~20% reconcile
+- [polish] replaced the busy homepage SCREENSHOT og.jpg with a DESIGNED 1200×630 card (`scripts/gen-og-card.mjs`): wordmark + hero headline (cyan→purple gradient) + foot tagline over the black/cyan dot-grid glow field — clean, premium, no nav/CTA chrome; now matches og:image:alt ("wordmark over a WebGL wave field"). Playwright-rendered HTML → JPEG q88 — 5045687d — prod: deployed 6cff4379, live og.jpg ~82KB image/jpeg 200, verify-prod 8/8
+- [finding] the prior og.jpg was a full homepage screenshot (nav+hero+CTAs) that didn't match its own alt text; per site-mode mandate a designed CARD > raw screenshot. Viewed both — the new card is materially cleaner for every social share.
+- journey: view og → found screenshot/alt mismatch → designed card → generated → viewed (gorgeous) → deployed → verify-prod 8/8 · long-trail: unchanged · explorer: none
+- beautify: OG social card upgraded (screenshot → designed card)
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: OG card is now a regenerable designed artifact (gen-og-card.mjs) — re-run when the brand/headline changes
+- loop-improvement: a reusable OG-card generator + a premium share experience
+- attrition: none

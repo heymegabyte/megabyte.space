@@ -181,6 +181,13 @@
   documented instead of staging a guess.
 - [ ] Slice 4 — DOMAIN FLIP (one-way-door, deliberate) — accept: detach megabyte-home from apex → point the `megabyte-os` router `customDomain` to `megabyte.space` → Access app covers the apex → `pnpm deploy` → `verify-prod` rewritten for the new topology all-green; `os.megabyte.space` 301→apex; real-browser: anonymous → Access → first-run overlay once → OS; rollback rehearsed.
 - [ ] Slice 5 — reconcile `verify-prod` + `CLAUDE.md` + `public-front-door` to the shipped topology — accept: docs match live; verify-prod asserts apex = OS + first-run overlay.
+**COMPONENT-IN-FORK EXECUTION (fire-25 REFINED plan — supersedes wrapper-worker Slices 1-5 above):**
+- [x] Step 1 — fork adopted as editable UI base (fire-26/27, e7c76418) — submodule -> `heymegabyte/cloudflare-os` (fork), `.gitmodules` repointed + `branch=megabyte-os` (fire-27 completed the `.gitmodules` half fire-26 left), gitlink `6478a144`->`7358a9d8`. Canonical-answer-#2 reversal for the FRONTEND, recorded here + LEDGER + `docs/ws-11-rollback.md`.
+- [x] Steps 2-3 — `LandingHomepage.tsx` + `landing-webgl.ts` (WebGL hero port, lazy 461K chunk) wired into `__root.tsx` `AuthenticatedShell` before the onboarding check, gated once via `localStorage.megabyteOS_entered` (broken-storage defaults to skip). In the fork @7358a9d8.
+- [x] Step 4 — BUILD + DEPLOY + VERIFY on os.megabyte.space (fire-27, e7c76418) — `pnpm check`+`pnpm deploy` (router `f07ffcb4`, backend `0e6ad6cb`); real-browser `scripts/verify-os-landing.mjs` PASS (splash renders h1 "The operating system for one human and a fleet of agents." -> Enter dismisses -> persists on reload, 0 console errors); `verify-prod` 8/8 (apex untouched). Does NOT touch apex/Access.
+- [ ] Step 5 — KEY BRIAN-GATED (canonical-answer #4, one-way-door): apex DOMAIN MOVE — detach `megabyte-home` -> point `megabyte-os` router `customDomain`->`megabyte.space` -> add `megabyte.space` to the Access app (Brian) -> pin `context.sharingDomain` -> `pnpm deploy` -> `os.`->301 apex. Runbook: `docs/ws-11-rollback.md`. PAUSED until Brian does the Access host add.
+- [ ] Step 6 — post-flip reconcile `verify-prod` + `CLAUDE.md` + `public-front-door` to the apex-is-OS topology; retire/port `packages/home`.
+
 
 ## Next-wave inbox (discovery appends here; convergence dedupes into workstreams)
 

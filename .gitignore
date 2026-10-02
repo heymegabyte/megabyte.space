@@ -7,6 +7,7 @@ deployment.local.jsonc
 # Loop runtime state — never committed
 .claude/run-the-loop/.fire-lease.json
 .claude/run-the-loop/.watchdog.lock
+.claude/run-the-loop/.watchdog-debt-hash
 .claude/run-the-loop/watchdog.log
 .claude/.worktree-pool
 # Journey/explorer run artifacts (screenshots etc.) stay local

@@ -198,3 +198,15 @@
 - loop-improvement: generated-artifact-freshness — the sitemap can never go stale again (regenerated each build)
 - attrition: none
 - NOTE: clean bounded autonomous PUBLIC-surface work is genuinely thinning (config-guard hit on a minor feature; slices shrinking). The high-value frontier is now WS-11-gated (the mission unlock — operator surfaces need the gated OS at the apex) or substantial-risky (WebGPU hero). Evidence-based, not depth-caution.
+
+## fire-16 — 2026-10-01 — fire-16-run (a11y: WCAG 2.2 AA found+fixed + axe gate)
+
+- roster: lead-direct (Accessibility + Loop Improvement) · rejected: all Agent spawns (single a11y slice) · budget: ~40% find+fix · ~40% gate wiring + verify · ~20% reconcile
+- [a11y] axe-core (WCAG 2.2 AA) FOUND real violations on first run — apex footer `text-white/45` contrast 4.46 (<4.5); /status `text-white/40` contrast 3.75 + a source link not distinguishable without colour. FIXED all: apex footer /45→/60, /status metas /40→/60, source link → cyan + underline. Both surfaces now 0 axe violations (apex + /status re-probed clean) — 324e827c — prod: deployed c32be916, verify-prod 8/8 + verify-browser 6/6 (axe clean)
+- [gate] added `@axe-core/playwright` (root devDep) + wired an axe assertion into verify-browser (0 critical/serious = fail). Runs in its OWN fresh context (the main page's accumulated screenshot/locator state makes axe's injector throw "use newContext"). The a11y Hard Gate had ZERO automated coverage before — it bit immediately (3 real live AA failures).
+- journey: axe probe → find → fix → deploy → re-probe both surfaces clean + verify-browser 6/6 · long-trail: unchanged · explorer: none
+- beautify: apex + /status a11y upgraded (contrast → AA); matrix scores unchanged (visuals unchanged, a11y improved)
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: axe automated coverage added (idea #20 WCAG-manual-pass partially advanced — axe covers the auto-testable subset); /status could join verify-browser's axe scan next
+- loop-improvement: THE fire — the axe-core gate automates a Hard Gate that had no coverage, and it caught 3 real live AA failures on its first run. This is NOT marginal — the thinning-queue note above was premature; a real high-value slice existed.
+- attrition: none

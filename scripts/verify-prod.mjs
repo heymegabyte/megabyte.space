@@ -219,6 +219,28 @@ const tryFetch = async (url, options) => {
   }
 }
 
+// 9. Soft-404 guard — an unknown HTML path returns a real 404 STATUS (not a 200
+//    soft-404 that indexes junk URLs); known routes stay 200. Browser headers so
+//    the worker's status-rewrite path (run_worker_first) is exercised.
+{
+  const navHeaders = {
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Dest": "document",
+  };
+  const unknown = await tryFetch("https://megabyte.space/this-path-does-not-exist-xyz", {
+    redirect: "manual",
+    headers: navHeaders,
+  });
+  const known = await tryFetch(APEX, { redirect: "manual", headers: navHeaders });
+  if (unknown.error || known.error) {
+    record("soft-404 guard (unknown → 404, / → 200)", false, `fetch failed: ${unknown.error || known.error}`);
+  } else {
+    const pass = unknown.status === 404 && known.status === 200;
+    record("soft-404 guard (unknown → 404, / → 200)", pass, `unknown=${unknown.status} /=${known.status}`);
+  }
+}
+
 const failed = results.filter((r) => !r.pass);
 console.log(`\n${results.length - failed.length}/${results.length} assertions green`);
 process.exit(failed.length === 0 ? 0 : 1);

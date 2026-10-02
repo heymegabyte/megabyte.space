@@ -365,3 +365,15 @@
 - backlog: WS-1 OS-shell-theme (was os.shell modifier-matrix next[0] 'BLACK/CYAN THEME') DONE; os.shell next = status-chip orange→amber-cyan, active-nav emphasis, /admin branding, density, full-shell vision via real SSO (WS-8.4). Next frontier slices (scout): WS-8 Better Auth v0 (foundational), WS-2 Database Studio v0 (absorption flagship).
 - loop-improvement: scripts/verify-os-theme.mjs — NEW reusable real-browser theme gate (asserts data-mode + near-black body bg + live-CSS brand tokens for any Kumo-themed surface); the god-tier-#5 Kumo-token-remap-in-fork is now the established estate rebrand pattern (recorded in os.shell notes).
 - attrition: none
+
+## fire-31 — 2026-10-02 — fire-31-apex-goldenpath (testing/golden-path + apex de-orphan)
+
+- roster: lead-direct (golden-path engine §6 — build the journey, let it surface a defect, fix, re-verify) · rejected: wide fan-out (single sequential journey) · budget: ~50% testing · ~30% product (de-orphan) · ~20% loop-improvement
+- [resume-check] §0: lease free, git log confirmed fire-30 latest (nothing new landed) — fresh fire; claimed fire-31.
+- [ship] bb20dbd3 (apex megabyte-home ed356e89) — (1) scripts/verify-apex-journey.mjs: NEW 20-step real-browser apex golden-path (fully public — no WS-403 limit); (2) the journey SURFACED /status (the build-in-public Observatory) as an ORPHAN page (no inbound homepage link, reachable only by direct URL) → FIXED with a cyan live-dot 'System status' footer link (reduced-motion gated) → the journey now navigates /status VIA that link (interconnectedness verified).
+- journey: hero (h1 + CTA + WebGL canvas) → nav Features (6 cards) → How (4 steps) → Trust → footer CTA + 18 reveals fired → axe 0 serious/critical → mobile @390 (h1+CTA visible, 0 horizontal overflow) → footer 'System status' link → /status (4 cards, display-vs-store RECONCILED: api.total shown in DOM) → /login funnel (click → lands on manhattan.cloudflareaccess.com Access login) → 0 OUR console errors. 20/20 green. · diagnose-fix: the orphan /status WAS the defect; the footer link is the fix; re-verified the SAME fire.
+- [verify] 20/20 journey (origin-scoped console gate — the lone error was CF's Access-page CSP blocking CF's own inline SVG logo on cloudflareaccess.com, correctly excluded as not-ours); verify-prod 8/8 (apex headers + exact CSP + analytics 498/374 — no regression from the footer change). Screenshots e2e/screenshots/apex-journey/{1-hero..7-status}.png.
+- upstream: unchanged (apex packages/home only; the cloudflare-os fork untouched)
+- backlog: testing/golden-path advanced (apex leg now 20-step covered; OS legs still blocked headless by WS-8.4 service-token WS 403); interconnectedness: /status de-orphaned. Next frontier (scout): WS-8 Better Auth v0, WS-2 Database Studio v0.
+- loop-improvement: scripts/verify-apex-journey.mjs — NEW reusable public-apex golden-path gate (chained nav + section reveals + mobile-overflow + display-vs-store reconcile + funnel + origin-scoped console); the origin-scoped-console pattern (don't count errors on a third-party page you hand off to) is reusable for every funnel test.
+- attrition: none

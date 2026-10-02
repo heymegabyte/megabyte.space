@@ -234,3 +234,15 @@
 - backlog: SEO automated coverage added; H1-in-shell folds into the SSG item
 - loop-improvement: SEO-strict gate automates a Hard Gate that had no coverage; caught 1 real over-length meta on first run. The Hard-Gate automation sweep (fires 16-18: axe · CWV · SEO) each found real work — three new durable gates + 4 real fixes.
 - attrition: none
+
+## fire-19 — 2026-10-01 — fire-19-run (links: validity gate — completes the gate sweep)
+
+- roster: lead-direct (QA/Links + Loop Improvement) · rejected: all Agent spawns (single gate slice) · budget: ~40% probe · ~50% gate · ~10% reconcile
+- [links] probed Hard Gate #10 (all hyperlinks valid): apex + /status links ALL valid — github.com/cloudflare/cloudflare-os + github.com/heymegabyte/megabyte.space both public (200), internal 200, /login resolves (302 for browsers per verify-prod; curl-200 is the known asset-layer SPA fallback for non-Sec-Fetch requests). No broken links.
+- [gate] added `scripts/verify-links.mjs` — loads rendered apex + /status, checks in-page #anchors resolve + same-origin paths not-404 (HARD) + external GET (WARN, so a third-party flake can't block the gate). Hard Gate #10 had ZERO coverage — ffea9c3e — prod: n/a (test gate; links already valid), verify-links clean
+- journey: link probe → all valid → wrote the gate (clean) · long-trail: unchanged · explorer: none · beautify: none
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: link coverage added — the Hard-Gate automation sweep (fires 16-19: a11y · perf · SEO · links) is COMPLETE
+- loop-improvement: link-validity gate closes the last uncovered Hard Gate; the sweep (16-19) added 4 durable gates (axe/CWV/SEO/links) + fixed 4 real issues (3 AA + 1 meta)
+- attrition: none
+- NOTE: the gate-coverage sweep is COMPLETE — every Hard Gate now covered or clean. Clean bounded autonomous public-surface work is genuinely exhausted; the remaining high-value frontier is SSG (fresh-session + config-auth; resolves the 2 standing WARNs) or WS-11 (Brian-gated — the mission unlock).

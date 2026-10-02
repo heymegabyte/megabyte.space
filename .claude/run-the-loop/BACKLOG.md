@@ -259,6 +259,17 @@
   schema-valid verdict via AI Gateway `megabyte-os` (Workers AI) per capture. — ws: WS-4 — accept:
   per-image provider+model+tokens recorded; scores auto-feed `.claude/modifier-matrix.json`.
 
+> fire-14 (2026-10-01, build-in-public /status page shipped) appends:
+
+- [ ] PostHog client analytics on the apex — observability-doctrine solo tier (PostHog + Workers
+  Tracing). — ws: WS-9/observability — accept: `VITE_POSTHOG_KEY` (public `phc_` project key, via the
+  connected PostHog MCP/dashboard — NOT the server `POSTHOG_API_KEY`) provisioned to get-secret;
+  posthog-js init (US host) + `$pageview` + the Enter-OS CTA capture; verify ingestion via the MCP
+  (`$pageview` trend), never a headless browser (bot-filtered).
+- [ ] `/status` enrichment — sparkline from stored day-buckets · top paths · a real last-deploy
+  timestamp (Vite `define` build constant) · live dot via DO WebSocket/SSE instead of the 30s poll.
+  — ws: WS-2/Observatory — accept: each new element display-vs-store reconciled; vision ≥9.
+
 ### Discovery contradictions to resolve (convergence judgment calls)
 
 - ULTIMATE non-goals reject Neon+Redis carryover, but PROJECTSITES-ABSORPTION lists them — mark reject/adapter-only; D1/DO/KV-native only.

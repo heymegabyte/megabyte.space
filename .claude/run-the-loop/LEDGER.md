@@ -174,3 +174,15 @@
 - backlog: WS-9 AI-search foundation SEEDED (llms.txt); the full engine (GSC/Bing/X/Bluesky) still needs the Chrome-authority credential sweep
 - loop-improvement: healthy-iteration discipline reasserted — don't over-handoff without a real HARD-STOP; bounded serial fires ARE the design (cron + watchdog are for genuine saturation, not depth-caution)
 - attrition: none
+
+## fire-14 — 2026-10-01 — fire-14-run (Observatory: build-in-public /status page)
+
+- roster: lead-direct (Feature Delivery + UX/Visual + Golden-Path) · rejected: all Agent spawns (single feature slice) · budget: ~55% feature · ~35% real-browser verify + screenshot · ~10% reconcile
+- [feature] build-in-public `/status` page (Loop Observatory seed — Brian idea-slate #3 + #10): `StatusView.tsx` renders live DO telemetry from `/api/analytics/live` (pageviews served + today) + workers-on-edge + human-in-loop in black/cyan cards; fail-soft ("telemetry offline" if the endpoint is down) + reduced-motion-safe pulse + 30s auto-refresh (no manual button, per real-time-data rule). Routed in main.tsx by pathname (no heavy SPA router for 2 surfaces) — 16c0de4c — prod: deployed f7d405d4; real-browser 8.5/10 — live 181 served / 57 today (display-vs-store reconciled: the DO grew 122→181 across the session, the page reflects it); apex unaffected (verify-prod 8/8 + verify-browser 5/5)
+- [blocked-probe] PostHog client analytics NOT wired — only the SERVER `POSTHOG_API_KEY` exists, not the public `phc_` client key (`VITE_POSTHOG_KEY` absent). Queued as a credential-dependent next-wave item.
+- journey: real-browser /status (load → console → screenshot → vision 8.5 → data-reconcile) + apex regression check · long-trail: unchanged · explorer: none
+- beautify: home.status CREATED 8.5/10 (matrix row added) · apex hero re-verified 5/5
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: idea #3/#10 (Loop Observatory / estate pulse) SEEDED as `/status`; +next-wave (PostHog client key · /status sparkline + last-deploy build-define)
+- loop-improvement: the DO analytics are now PUBLICLY LEGIBLE (a live display-vs-store reconcile surface, not just an endpoint) — "make autonomy legible" per the constitution
+- attrition: none

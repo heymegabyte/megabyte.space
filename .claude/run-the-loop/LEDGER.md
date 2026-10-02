@@ -246,3 +246,14 @@
 - loop-improvement: link-validity gate closes the last uncovered Hard Gate; the sweep (16-19) added 4 durable gates (axe/CWV/SEO/links) + fixed 4 real issues (3 AA + 1 meta)
 - attrition: none
 - NOTE: the gate-coverage sweep is COMPLETE — every Hard Gate now covered or clean. Clean bounded autonomous public-surface work is genuinely exhausted; the remaining high-value frontier is SSG (fresh-session + config-auth; resolves the 2 standing WARNs) or WS-11 (Brian-gated — the mission unlock).
+
+## fire-20 — 2026-10-01 — fire-20-run (WS-4: fix the AI-Gateway vision-review — 0/7 → 5/7)
+
+- roster: lead-direct (WS-4 Deep-UI-Explorer + Loop Improvement) · rejected: all Agent spawns (single fix) · budget: ~50% diagnose · ~40% fix+verify · ~10% reconcile
+- [fix] ran the committed `vision-review.mjs` (AI Gateway `megabyte-os` + Workers AI `llama-3.2-11b-vision`) on the fire-5 capture → it produced 0/7 valid verdicts: the model IGNORES the "JSON only" instruction and returns markdown prose ("**Aesthetics: 6/10**"). FIXED with a `parseVerdict` prose-fallback (JSON-first, then parse "Dimension: N/10"; honest-fail on <3 parseable dims — never fabricate). Now 5/7 valid (2 honest fails = too little model signal) — 4b5fc5d1 — prod: n/a (internal tooling); AI Gateway verified working (~7048 tokens / ~57 neurons per image)
+- [judgment] the Llama 11B vision model is a CRUDE art director (scored the gorgeous hero 5, trust 4) — far harsher + less reliable than frontier human-model vision (hero 8.5). The automated verdicts are a cheap SECONDARY signal; the matrix KEEPS the human scores (not overwritten). `matrixSuggestions` are suggestions, not authority.
+- journey: vision-review run → 0/7 → diagnose (prose not JSON) → prose-parser fix → 5/7 valid · long-trail: unchanged · explorer: tooling FIXED (was fully broken)
+- beautify: matrix unchanged (human scores authoritative; AI secondary/lower-fidelity) · upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-4 automated-vision acceptance now PARTIALLY met (5/7 valid; the AI Gateway path works); +1 next-wave (7/7 + reliability via a stronger vision model or response_format)
+- loop-improvement: THE fire — the WS-4 vision-review automation went from fully-broken (0/7) to working (5/7); the probe→find→fix pattern applied to the explorer's own tooling. Another "probe before concluding marginal" win — it was broken, not done.
+- attrition: none

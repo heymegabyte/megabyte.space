@@ -278,6 +278,14 @@
   and satisfy the frontend-stack SSR/SSG mandate. — accept: `node scripts/verify-cwv.mjs` LCP ≤2000 on a
   COLD run; vite.config is config-protected → authorize via `/update-config`. Fresh-session + full budget.
 
+> fire-20 (2026-10-01, vision-review fixed 0/7→5/7) appends:
+
+- [ ] vision-review 7/7 + reliability — ws: WS-4 — `llama-3.2-11b-vision` ignores JSON asks (prose
+  fallback gets 5/7; 2 honest fails = too little signal) AND is a crude art-director (scored the hero
+  5 vs human 8.5). — accept: either a stronger CF vision model OR `response_format: json_schema` (if
+  the model supports it) gets ≥6/7 schema-valid; verdicts calibrated enough to feed the matrix as a
+  real secondary signal (currently human-model scores stay authoritative).
+
 ### Discovery contradictions to resolve (convergence judgment calls)
 
 - ULTIMATE non-goals reject Neon+Redis carryover, but PROJECTSITES-ABSORPTION lists them — mark reject/adapter-only; D1/DO/KV-native only.

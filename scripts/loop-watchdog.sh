@@ -90,8 +90,17 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-log "launching fresh headless fire (claude -p)"
-( cd "$REPO" && claude -p "run the loop" --output-format text ) >>"$LOG" 2>&1 &
+# Bound the launched session so a hung fire (classifier wedge / stuck wait) can't
+# zombie forever — fire-21 found a 57-min idle orphaned `claude -p` session. 25 min
+# is well above a real fire (~2-6 min). timeout/gtimeout ship with coreutils; fall
+# back to an unbounded launch if neither is present.
+TIMEOUT_BIN="$(command -v timeout || command -v gtimeout || true)"
+log "launching fresh headless fire (claude -p${TIMEOUT_BIN:+ · 25m cap})"
+if [ -n "$TIMEOUT_BIN" ]; then
+  (cd "$REPO" && "$TIMEOUT_BIN" 1500 claude -p "run the loop" --output-format text) >>"$LOG" 2>&1 &
+else
+  (cd "$REPO" && claude -p "run the loop" --output-format text) >>"$LOG" 2>&1 &
+fi
 printf '%s' "$!" >"$LOCK"
 log "launched pid $(cat "$LOCK")"
 emdash_log "fresh loop session launched (pid $(cat "$LOCK"))" info

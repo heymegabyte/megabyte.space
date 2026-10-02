@@ -232,8 +232,11 @@
   lying-pass for CSP-breaks-page. — ws: WS-7 — accept: the deploy flow runs verify-browser after
   every apex deploy (0 OUR console errors + painted hero) and CI runs it; `npx playwright install
   chromium` documented as one-time setup.
-- [ ] Apex perf: `three-*.js` chunk is 468KB (117KB gz) — ws: WS-1 — accept: lazy WebGL init /
-  manualChunks split so LCP ≤2.0s with the hero below the JS budget; feeds the WebGPU ladder item.
+- [x] Apex perf: three.js off the LCP path (fire-10, 7844531c) — WebGL field lazy-loaded (dynamic
+  `import("./webgl")` in the hero effect); three.js (117KB gz) is now an on-demand chunk, NOT a shell
+  modulepreload (0 modulepreloads); critical-path JS dropped ~190→73KB gz. Hero still paints
+  (verify-browser 4/4). Deploy was live WITHOUT a purge — also validated fire-9's no-store. Feeds the
+  WebGPU-ladder item next.
 
 > fire-5 (2026-10-01, Deep-UI-Explorer first OS-shell inspection) appends:
 

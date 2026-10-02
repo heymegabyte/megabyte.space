@@ -126,3 +126,15 @@
 - backlog: WS-7 deploy-pairs-purge ticked (no-store chosen over a deploy-script purge — no API dependency, structurally correct)
 - loop-improvement: no-store retires the recurring manual-purge step (done ~5× across fires) AND the stale-header incident class permanently; guarded in verify-prod
 - attrition: none
+
+## fire-10 — 2026-10-01 — fire-10-run (WS-1 perf: three.js off the LCP critical path)
+
+- roster: lead-direct (Performance + Feature Delivery) · rejected: all Agent spawns (single surgical slice; WS-11 remaining Brian-gated) · budget: ~50% perf · ~40% verify · ~10% reconcile
+- [perf] apex WebGL field LAZY-LOADED — `App.tsx` dynamic `import("./webgl")` inside the hero effect (was a static import pulling three.js into the shell). three.js (468KB / 117KB gz) is now an on-demand chunk, NOT a modulepreload (index.html: 1→0 modulepreloads); critical-path JS ~190→73KB gz. Hero text (the LCP element) paints first; the field fades in after mount — 7844531c — prod: deployed 5e5c18a3, verify-prod 8/8 + verify-browser 4/4 (hero still paints 304KB — no regression)
+- [validated] this deploy was LIVE WITHOUT a manual purge — confirms fire-9's `no-store` fix in practice (first deploy since, needed no purge)
+- journey: deploy → verify (8/8 + 4/4), no long golden-path this fire
+- long-trail: unchanged · explorer: none · beautify: home.hero re-verified 4/4 (8.5 holds; LCP now lighter)
+- upstream: pin 6478a144 (UNCHANGED)
+- backlog: WS-1 three.js-perf ticked; feeds the WebGPU-ladder next-wave item
+- loop-improvement: lighter LCP path is a standing perf win on the signature surface; the lazy-chunk pattern is the base for the WebGPU→WebGL2→static fallback ladder
+- attrition: none

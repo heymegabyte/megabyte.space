@@ -1180,3 +1180,25 @@
   feature-flags mechanism, authed-only flag resolution, the reusable DataTable, the authed-verify recipe) so no
   future absorption fire/agent repeats the REST-vs-RPC / read-aggregate hallucinations.
 - NEXT: extend the DataTable seam (Workspaces/Gadgets table · dashboard) · WS-13 global shell rebrand (the /models page is still orange — cyan only on /signin) · WS-12 P4 DeepSeek.
+
+## fire-72-rebrand (2026-10-03) — ✅ WS-13 Slice A: whole OS shell rebranded orange→cyan (#00E5FF) — Brian SUPREME black+cyan
+
+- Lease `fire-72-rebrand-4b468b4b`. The OS shell shipped upstream Cloudflare ORANGE (`--color-kumo-brand`
+  #ff4801 light / #b84e00 dark) across every button/link/chip/nav-accent/icon — a standing violation of
+  Brian's #7 SUPREME (black #060610 + cyan #00E5FF), jarring on the fresh fire-71 /models + /signin.
+- SHIPPED (fork efa4c3b1 / outer 528140de; deployed 613c626c):
+  - Remapped the brand-family tokens (brand/hover · text-brand/link · accent-100/200 · selection · shadow)
+    orange→CYAN in BOTH light + dark (20 token values, Python with per-replacement asserts → 0 orange hexes left).
+  - Paired `--text-color-kumo-inverse`→#03030a (near-black) so text on the now-LIGHT cyan fills keeps AA contrast;
+    light-mode text-brand uses deeper cyan #0891b2 (legible on white).
+  - SURGICAL FIX: `PersonAvatar` hashed-bg initials → explicit `text-white` — the ONE `kumo-inverse` usage NOT on
+    a brand fill; a blind global dark-inverse flip would've made those initials vanish on dark hashes. Found it by
+    auditing every `kumo-inverse` usage BEFORE the flip (ChatMessage AssistantAvatar is `bg-kumo-brand`, safe).
+- VERIFIED (BA-authed real browser `scripts/verify-shell-cyan.mjs` + screenshots): 0 orange on home + /models,
+  cyan logo/nav-accent/Cube/sort-arrows, the chat SEND BUTTON = cyan fill + dark arrow (the contrast-critical
+  fill+inverse case, correct), 0 console errors, vision 9/10. verify-prod 10/10.
+- Loop-improvement (§8): the brand-rebrand RECIPE (audit tokens + `kumo-inverse`-on-non-brand risk; cyan-is-light
+  so fills→dark-inverse + light-text→deeper-cyan; VERIFY WITH SCREENSHOTS not exact-rgb probes — brand renders via
+  box-shadow/currentColor/color-mix) is written into WS-13 for Slice B + future rebrands. Also hardened the verifier
+  (made the brittle cyan exact-rgb check advisory after it false-negatived a visually-cyan shell).
+- NEXT: WS-13 Slice B (dark base violet hue-285 → black #060610) · extend DataTable seam (Workspaces/Gadgets table) · WS-12 DeepSeek · retire /signin's now-redundant `.signin-cyan`.

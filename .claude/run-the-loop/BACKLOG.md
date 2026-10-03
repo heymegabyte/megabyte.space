@@ -176,9 +176,18 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   fire-70 scoped cyan to /signin only; this arc rebrands the shell globally. Needs AUTHED-surface
   verification (service-token browser), so it's a dedicated arc, never a blind global token flip.
 - Cadence: as-picked (Beautify)
-- [ ] Slice A — remap `--color-kumo-brand`/`-hover` + `--text-color-kumo-brand`/`-link` + `--color-accent-*`
-  to the cyan family (light + dark) AND pair `--text-color-kumo-inverse`→dark (#03030a) so cyan fills keep
-  AA contrast; verify primary-button + link + chip surfaces authed via the service-token browser before ship.
+- [x] Slice A — SHIPPED fire-72 (fork efa4c3b1 / outer 528140de; deployed 613c626c). Remapped the brand-family
+  tokens (brand/hover · text-brand/link · accent-100/200 · selection · shadow) orange→CYAN in BOTH light + dark,
+  paired `--text-color-kumo-inverse`→#03030a so cyan FILLS keep AA contrast. Light-mode text-brand uses deeper
+  cyan #0891b2 (legible on white). FIXED `PersonAvatar` → explicit `text-white` (its hashed-bg initials were the
+  ONE `kumo-inverse` usage NOT on a brand fill — a blind global dark-inverse flip would've made them vanish).
+  VERIFIED (BA-authed real browser `scripts/verify-shell-cyan.mjs` + screenshots): 0 orange on home + /models,
+  cyan logo/nav-accent/icons/send-button, send-button = cyan fill + dark arrow (contrast OK), 0 console errors,
+  vision 9/10. verify-prod 10/10. /signin's scoped `.signin-cyan` is now REDUNDANT (global is cyan) — harmless.
+  RECIPE for Slice B + future rebrands: (1) grep every brand-family token + its `kumo-inverse` usages; (2) the
+  RISK is any `kumo-inverse` on a NON-brand fill (hashed avatar, custom bg) — give those explicit text; (3) cyan
+  is LIGHT → fills need dark inverse + light-mode TEXT needs a deeper cyan; (4) VERIFY WITH SCREENSHOTS, not an
+  exact-rgb computed-style probe (brand renders via box-shadow / currentColor icons / color-mix — exact match misses it).
 - [ ] Slice B — shift the dark base off violet hue 285 toward black #060610 (surfaces/lines/rings), re-check
   contrast on every Kumo surface token; screenshot + vision ≥9/10 on 3+ authed surfaces.
 

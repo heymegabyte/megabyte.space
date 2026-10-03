@@ -17,6 +17,9 @@ interface Env {
   ANALYTICS_LIVE?: string;
   // Bearer token gating POST /api/vitals/reset (self-generated secret). Absent ⇒ reset 404s.
   VITALS_ADMIN_TOKEN?: string;
+  // Better Auth rail (BA-1): service binding to the isolated megabyte-auth worker + its flag.
+  AUTH: Fetcher;
+  BETTER_AUTH?: string;
 }
 
 const OS_ORIGIN = "https://os.megabyte.space";
@@ -198,6 +201,14 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const flagOn = env.ANALYTICS_LIVE === "1";
+
+    // Better Auth rail (BA-1): forward /api/auth/* to the isolated megabyte-auth worker so
+    // auth is baked into megabyte.space. Dark-launched behind BETTER_AUTH — nothing in the UI
+    // uses it yet. Returned as-is (NOT security-header-wrapped) to preserve the session
+    // Set-Cookie + better-auth's own content types.
+    if (env.BETTER_AUTH === "1" && url.pathname.startsWith("/api/auth/")) {
+      return env.AUTH.fetch(request);
+    }
 
     if (url.pathname === "/login" || url.pathname === "/login/") {
       return withSecurityHeaders(Response.redirect(`${OS_ORIGIN}/${url.search}`, 302));

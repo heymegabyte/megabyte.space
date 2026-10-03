@@ -1,0 +1,18 @@
+{
+  "name": "@megabyte/auth",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "auth:generate": "better-auth generate --config src/auth-cli.ts --output schema.sql -y"
+  },
+  "dependencies": {
+    "better-auth": "^1.7.7",
+    "better-auth-cloudflare": "^0.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260929.1",
+    "typescript": "^5.9.0",
+    "wrangler": "^4.40.0"
+  }
+}

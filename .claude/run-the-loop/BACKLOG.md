@@ -102,10 +102,14 @@
   GitHub OAuth apps, callbacks `https://megabyte.space/api/auth/callback/{google,github}`.
 - [x] BA-0 — decide + decompose + provision (fire-44, this fire) — ADR 0001 written; D1 + secret
   provisioned; WS-8 rewritten to the auth-on-action sequence; CLAUDE.md § Auth updated.
-- [ ] BA-1 — Better Auth v0 DARK: `megabyte-auth` D1 + Better Auth server at `/api/auth/*` (on the apex
-  worker or a dedicated service-bound auth worker) + session cookie + magic-link (SES). Flag-gated
-  `better_auth` (default-OFF), ZERO Access change. — accept: `/api/auth/*` responds live (unauth session
-  empty/401); an email+password OR magic-link sign-up→sign-in round-trips via curl; schema in D1.
+- [x] BA-1 — Better Auth v0 DARK (fire-45) — `packages/auth` dedicated ISOLATED `megabyte-auth` worker
+  (`better-auth` + `better-auth-cloudflare` d1Native, email+password) on D1 `megabyte-auth`; the apex
+  FORWARDS `/api/auth/*` → `AUTH` service binding when `BETTER_AUTH="1"`, so it's baked into
+  `megabyte.space/api/auth/*` with zero homepage risk. Full round-trip PROVEN (sign-up→sign-in→
+  get-session, cookie on the apex domain) via BOTH workers.dev AND megabyte.space. `verify-auth.mjs`
+  **4/4**; verify-apex **3/3** (homepage/UX unaffected). Dark: no UI uses it. Access gate UNCHANGED.
+- [ ] BA-1b — magic-link via SES (+ the `verification` flow) so sign-in needs no password — accept:
+  a magic-link email sends via SES + the link signs in; `verify-auth` extended.
 - [ ] BA-2 — our black/cyan login surface on `megabyte.space` (Kumo + theme; magic-link field + provider
   buttons), flag-gated dark beside the current `/login` 302 — accept: vision ≥9; axe + reduced-motion clean;
   flag off ⇒ the 302 is byte-identical.

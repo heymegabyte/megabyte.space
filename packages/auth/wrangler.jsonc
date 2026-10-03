@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "megabyte-auth",
+  "main": "worker.ts",
+  "compatibility_date": "2026-09-01",
+  // better-auth uses a few Node builtins (crypto/util) — nodejs_compat keeps them working on Workers.
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "84fa0d1b16ff8086dd958c468ce7fd59",
+  // No custom domain: this worker is NOT directly routed. The apex worker
+  // (megabyte-home) owns megabyte.space and FORWARDS /api/auth/* here over a
+  // service binding, so auth stays "baked into megabyte.space" with zero risk
+  // to the public homepage if this worker ever fails.
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "megabyte-auth",
+      "database_id": "718b44ef-a33a-4aba-8300-8b70a21dbfd1"
+    }
+  ],
+  "vars": {
+    "BETTER_AUTH_URL": "https://megabyte.space"
+  },
+  "observability": { "enabled": true }
+}

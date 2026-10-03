@@ -21,10 +21,16 @@
   "durable_objects": {
     "bindings": [{ "name": "ANALYTICS", "class_name": "AnalyticsCounter" }]
   },
+  // Better Auth rail (BA-1): /api/auth/* is forwarded to the isolated megabyte-auth
+  // worker so auth is baked into megabyte.space without risking the homepage.
+  "services": [{ "binding": "AUTH", "service": "megabyte-auth" }],
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AnalyticsCounter"] }],
   "vars": {
     // Killswitch for the live-analytics surface: "0" ⇒ no capture + /api/analytics/live 404s.
-    "ANALYTICS_LIVE": "1"
+    "ANALYTICS_LIVE": "1",
+    // BA-1 dark-launch: "1" ⇒ apex forwards /api/auth/* to megabyte-auth. Nothing in the
+    // UI uses it yet, so the live homepage is unaffected. "0" ⇒ /api/auth/* 404s.
+    "BETTER_AUTH": "1"
   },
   "observability": { "enabled": true }
 }

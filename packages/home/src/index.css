@@ -240,6 +240,19 @@ body {
     box-shadow: 0 0 18px 3px rgba(0, 229, 255, 0.35);
   }
 
+  /* Trust pillars cascade in when the card reveals — mirrors .step-card, using
+     the shared step-in keyframe + 'backwards' so .card-style hover stays live.
+     Hover (border/bg/icon-scale) runs via Tailwind transitions, independent of
+     this animation. */
+  .trust-row {
+    opacity: 0;
+  }
+  .reveal.is-in .trust-row {
+    opacity: 1;
+    animation: step-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.15s + var(--row-i) * 0.09s);
+  }
+
   @media (min-width: 768px) {
     .timeline::before,
     .step-node {
@@ -276,5 +289,11 @@ h3 {
   }
   .step-card::before {
     transition: none;
+  }
+  /* Trust rows visible + still, no cascade. */
+  .trust-row,
+  .reveal.is-in .trust-row {
+    opacity: 1;
+    animation: none;
   }
 }

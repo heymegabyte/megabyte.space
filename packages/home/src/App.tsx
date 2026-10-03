@@ -87,6 +87,42 @@ const STEPS = [
   ["04", "Ship", "Share the Gadget with the team — each person gets their own safe, remixable copy."],
 ] as const;
 
+// Trust pillars — each row carries a cyan line-icon + staggers in on reveal
+// (.trust-row, mirrors the how-it-works step cascade) + glows on hover. Honest
+// static properties, not a fabricated "audit ticker".
+const TRUST = [
+  {
+    k: "access",
+    v: "cloudflare zero-trust on every route",
+    icon: <path d="M12 3l7 2.6v5.1c0 4.3-2.9 7.4-7 8.6-4.1-1.2-7-4.3-7-8.6V5.6L12 3z" />,
+  },
+  {
+    k: "simulate",
+    v: "side-effects queued, never auto-fired",
+    icon: <path d="M8 5.5l9.5 6.5L8 18.5z" />,
+  },
+  {
+    k: "audit",
+    v: "every read + write logged per gadget",
+    icon: (
+      <>
+        <path d="M2 12s3.6-6.3 10-6.3 10 6.3 10 6.3-3.6 6.3-10 6.3S2 12 2 12z" />
+        <circle cx="12" cy="12" r="2.6" />
+      </>
+    ),
+  },
+  {
+    k: "sandbox",
+    v: "each app isolated in its own runtime",
+    icon: (
+      <>
+        <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" />
+        <path d="M12 12l8-4.5M12 12v9M12 12L4 7.5" />
+      </>
+    ),
+  },
+];
+
 function useReveals() {
   useEffect(() => {
     const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
@@ -294,14 +330,18 @@ export default function App() {
                   Identity sits behind Cloudflare Access: a one-time email code, with WARP zero-touch on managed devices.
                 </p>
               </div>
-              <ul className="space-y-4 font-mono text-sm">
-                {[
-                  ["access", "cloudflare zero-trust on every route"],
-                  ["simulate", "side-effects queued, never auto-fired"],
-                  ["audit", "every read + write logged per gadget"],
-                  ["sandbox", "each app isolated in its own runtime"],
-                ].map(([k, v]) => (
-                  <li key={k} className="flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-5 py-4">
+              <ul className="space-y-3.5 font-mono text-sm">
+                {TRUST.map(({ k, v, icon }, i) => (
+                  <li
+                    key={k}
+                    className="trust-row group flex items-center gap-4 rounded-xl border border-white/10 bg-black/30 px-4 py-3.5 transition duration-300 hover:border-[--color-cyan]/40 hover:bg-black/50"
+                    style={{ "--row-i": i } as CSSProperties}
+                  >
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-[--color-cyan]/25 bg-[--color-cyan]/10 text-[--color-cyan] transition duration-300 group-hover:border-[--color-cyan]/50 group-hover:bg-[--color-cyan]/20 motion-safe:group-hover:scale-110">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        {icon}
+                      </svg>
+                    </span>
                     <span className="text-[--color-cyan]">{k}</span>
                     <span className="text-white/60">{v}</span>
                   </li>

@@ -26,15 +26,15 @@
       "notes": "fire-4 re-confirmed the uniform 3x2 (8). fire-38 REBALANCED 8->9: broke the uniform grid into an ASYMMETRIC BENTO (lg:auto-rows-fr 3x3 — card0 'Agent chat' wide col-span-2, card1 'Gadgets' tall row-span-2, card4 'Scheduler' wide col-span-2; gap-free; 1-col stack on mobile, 0 overflow @390) + featured cards get a larger title + a bottom SIGNATURE (cyan gradient hairline + mono kicker, mt-auto-anchored) filling the previously-sparse lower region with brand hierarchy; nebula bleeds between cards (hero WebGL continuity). verify-apex-journey 27/27 (6 cards, axe 0, 0 console), verify-prod 9/9, direct-Read vision 9/10. Apex a333e5fe/fe78b9ef. Remaining knock vs 9.5: the tall card still has a mid-gap."
     },
     "home.how-it-works": {
-      "beautifyPasses": 2,
-      "aiVisionScore": 9,
+      "beautifyPasses": 3,
+      "aiVisionScore": 9.5,
       "density": 3,
-      "lastVisit": "2026-10-02",
+      "lastVisit": "2026-10-03",
       "next": [
-        "step-card body contrast white/60->/72 + per-step iconography (next lever 9->9.5)",
-        "inline gadget demo"
+        "inline gadget demo (a mini live OS surface under a step) (9.5->10)",
+        "per-step icon draw-in on reveal (reduced-motion gated)"
       ],
-      "notes": "fire-2 shipped the animated timeline (beam draws + nodes ignite + cards cascade; reduced-motion fully gated). Stuck at 7.5 pending a dedicated capture. fire-37 CLOSED the owed item: captured #how at 1280 (capture-section.mjs) + direct-Read vision, and shipped a Beautify-10x pass 8.5->9 — a per-step cyan->violet accent cap (color-mix oklch by --step-i) above each step number, echoing the beam gradient, widens+brightens on hover, reduced-motion gated. fire-36's plasma-field continuity (the hero WebGL now bleeds behind this beam) lifted it to 8.5 before the accent. Apex 0ad4565b / megabyte-home 72494353. verify-apex-journey 27/27 (how reached, 4 steps), axe 0 serious/critical."
+      "notes": "fire-2 shipped the animated timeline (beam draws + nodes ignite + cards cascade; reduced-motion fully gated). Stuck at 7.5 pending a dedicated capture. fire-37 CLOSED the owed item: captured #how at 1280 (capture-section.mjs) + direct-Read vision, and shipped a Beautify-10x pass 8.5->9 — a per-step cyan->violet accent cap (color-mix oklch by --step-i) above each step number, echoing the beam gradient, widens+brightens on hover, reduced-motion gated. fire-36's plasma-field continuity (the hero WebGL now bleeds behind this beam) lifted it to 8.5 before the accent. Apex 0ad4565b / megabyte-home 72494353. verify-apex-journey 27/27 (how reached, 4 steps), axe 0 serious/critical. fire-53 BEAUTIFY 9->9.5: step-card body contrast white/60->/72 + one semantic cyan line-icon per step (shield=Sign in, chat=Ask, check-circle=Approve, send=Ship; inline SVG, aria-hidden, hover-scale reduced-motion gated). Captured #how@1280 + direct-Read vision 9.5/10 (icons semantically perfect, body legible, beam+plasma continuity intact). apex megabyte-home dc6aa45e. verify-apex-journey 30/30, verify-reduced-motion 8/8, verify-prod 9/9. Knock vs 10: inline gadget demo still owed."
     },
     "home.trust": {
       "beautifyPasses": 2,

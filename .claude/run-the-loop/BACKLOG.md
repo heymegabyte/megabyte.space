@@ -132,15 +132,14 @@
   megabyte.space/api/auth/get-session). Same email identity. Deployed (backend 66b77a33); Access path
   UNBROKEN (verify-os 3/3). BA-session path dark until the relax (every request still carries an Access
   JWT while Access fronts the OS).
-- [ ] BA-4 — anonymous UI + auth-on-action. ⚠️ fire-51 ATTEMPT REVERTED: a `useAuth` whoami-catch →
-  redirect-to-/signin broke the SERVICE-TOKEN OS load — it redirected on ANY whoami rejection, not just
-  auth failure, and the service-token/verify path (whoami rejects but the shell should still render, per
-  the old empty catch) got sent to /signin (verify-os 1/3 → caught → rolled back to known-good, 3/3).
-  LESSON: the frontend whoami rejection is NOT a clean "anonymous" signal; don't redirect on it.
-  BETTER APPROACH: gate at the EDGE — the `megabyte-os` ROUTER (starter-owned, not the fragile capnweb
-  frontend) redirects an HTML navigation with no Better Auth session to /signin (post-relax); the service
-  token / authed requests pass through. Fully testable only at the relax (BA-5). — accept: router redirects
-  anonymous→/signin; service-token + authed paths unchanged (verify-os 3/3); anonymous→/signin→BA→OS green.
+- [x] Cross-subdomain cookies (fire-52 code, SALVAGED + landed fire-53 — auth df2be5c9, deploy acc4d37b) — Better Auth session cookie now `Domain=.megabyte.space`
+  (`advanced.crossSubDomainCookies` + os. in trustedOrigins), so the OS on os.megabyte.space can read the
+  session set on the apex — the flip WITHOUT a full apex re-point. verify-auth 5/5 LIVE (fire-53, rail unbroken).
+- [x] BA-4 — router EDGE gate (fire-52, fork 76ce0131) — `router/src/index.ts`: anonymous HTML navs →
+  megabyte.space/signin, EXEMPT (dark while Access fronts the OS, incl. the service token): cf-access-jwt
+  header, better-auth session cookie, /api/asset/non-nav. Flag-gated `BA_GATE` (unset ⇒ inert). Deployed
+  DARK + verified dark: verify-os 3/3 (service token unaffected — the fire-51 regression did NOT recur;
+  edge gate, not the fragile frontend whoami).
 - [ ] BA-5 — RELAX + verify: remove/weaken the Access app on the OS (and/or re-point to the apex); anonymous
   → OS UI → submit → BA sign-in → works. Rollback = re-assert Access. — accept: real-browser anonymous→OS
   →sign-in→authed green; verify-prod/os rewritten for the new topology.

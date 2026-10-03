@@ -1034,3 +1034,26 @@
   os.→apex 301.
 - Loop-improvement (§8): a topology change MUST pair with a verify-gate rewrite the SAME arc — else future fires
   verify against a dead host (os. 000) + false-fail. The gates now reflect post-flip reality.
+
+## fire-66-preview (2026-10-03) — ✅ P2 anonymous preview + auth-on-action LIVE (the FULL user vision)
+
+- Lease `fire-66-preview-0a262e3d`. Shipped BA-4a+BA-4b ATOMICALLY (the fire-60 lesson) via a fresh agent;
+  reviewed the live-auth diff, deployed, verified real-browser, rollback-staged (fork 793fb4d5).
+- SHIPPED (fork 9806f649 / outer 10976580; deployed megabyte-os 9b0b0082):
+  - BA-4a (server.ts): anonymous capnweb /api connection (PublicApi) instead of 403; authed path (Access JWT OR
+    allowlisted BA session) + Origin CSRF + BA_ALLOWED_EMAILS preserved; AuthenticatedApi still gated.
+  - BA-4b (useAuth.ts): `hasBetterAuthSession()` probe — a BA session auto-authenticates; no session → render
+    anonymous with NO authed RPC (kills the 3 WS "Not authenticated"/handshake console errors). __root.tsx
+    settled-anonymous → the WebGL LandingHomepage preview, onEnter→/signin.
+  - router BA_GATE inert (no anon→/signin 302) — the shell LOADS for preview; /api is the real boundary.
+- VERIFIED (real browser): anonymous megabyte.space → the WebGL preview, 0 console errors (the 3 WS errors
+  GONE); authed BA session → the OS, 0 console errors. verify-prod 10/10, verify-os 2/2 (verify-ba-flip leg 1
+  updated: anon → 200 shell preview, not 302 /signin).
+- ★ THE FULL USER VISION (Brian 2026-10-03) IS NOW LIVE: megabyte.space = the OS · anonymous basic preview (no
+  login wall, no console errors) · Better Auth + GitHub/Google SSO on a protected action · NO Cloudflare Access.
+  P1 (apex) + P2 (preview) + P3 (SSO) all DONE. Remaining of the direction: P4 (DeepSeek routing) + apex CSP + os.→apex 301.
+- Rollback (staged, unused — P2 worked): fork → 793fb4d5 + redeploy.
+- Loop-improvement (§8): the atomic BA-4a+4b landed cleanly (vs the fire-60 revert) BECAUSE it shipped as ONE
+  coordinated change + was verified real-browser (console errors + authed flow) before trusting it. + a dup-const
+  in verify-ba-flip was caught by `node --check` before shipping (always node --check an edited gate).
+- NEXT: P4 DeepSeek model routing · apex CSP hardening · os.→apex 301.

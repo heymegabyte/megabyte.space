@@ -64,16 +64,19 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   keep workers_dev) + deploy home; (4) re-point megabyte-os customDomain os.→megabyte.space + deploy; (5) verify
   via BA session (service token dies at the apex — no Access) using verify-ba-flip as the base; (6) os.→apex 301;
   (7) purge + real-browser pass; (8) bot-fight-mode tune. Rollback staged FIRST.
-- [ ] P2 — AUTH-ON-ACTION, ATOMIC (→WS-8 BA-4a+BA-4b TOGETHER): anonymous preview loads the OS CLEANLY — no
-  "Not authenticated" console errors (fire-60 revert lesson: backend-anonymous + frontend-anonymous-aware are
-  ATOMIC). Backend: allow anonymous PublicApi (BA-4a, reverted fire-60 — re-land WITH 4b). Frontend: drop
-  `VITE_CF_ACCESS_MODE`; render anonymously; do NOT call authed methods on load; auto-establish the
-  AuthenticatedApi from a BA session (so authed users aren't shown logged-out); prompt Better Auth on a
-  protected action. Then flip the router gate redirect→pass-through. Update `verify-ba-flip` (anon→shell loads).
-- [ ] P3 — GitHub + Google SSO (→WS-8): add Better Auth `socialProviders.{github,google}` to
-  `packages/auth/src/auth.ts` + `wrangler secret put` the 4 OAuth secrets on `megabyte-auth`; confirm each app's
-  callback = `https://megabyte.space/api/auth/callback/{github,google}`; GitHub/Google buttons on `/signin` +
-  the seamless in-OS prompt. One-click, automatic.
+- [x] ✅ P2 — AUTH-ON-ACTION DONE + LIVE (fire-66, fork 9806f649): anonymous megabyte.space LOADS the OS
+  (the WebGL LandingHomepage preview) with ZERO console errors — the 3 WS "Not authenticated"/handshake errors
+  are GONE. BA-4a (server.ts: anonymous capnweb PublicApi, not 403; authed path + Origin CSRF + BA_ALLOWED_EMAILS
+  preserved; AuthenticatedApi still gated) + BA-4b (useAuth probes /api/auth/get-session → anonymous renders NO
+  authed RPC, a BA session auto-authenticates; __root.tsx settled-anonymous → LandingHomepage onEnter→/signin) +
+  router BA_GATE inert (no anon→/signin 302). VERIFIED real-browser: anon → preview 0 console errors; authed BA
+  → OS 0 console errors; verify-prod 10/10, verify-os 2/2 (verify-ba-flip leg 1 updated: anon→200 shell preview).
+- [x] ✅ P3 — GitHub + Google SSO DONE + LIVE (fire-60 rail + fire-62 /signin UI + fire-64 at the apex):
+  Better Auth `socialProviders.{github,google}` on `megabyte-auth` (4 OAuth secrets); `/signin` shows Continue
+  with GitHub + Continue with Google + email/password + magic-link; `POST /api/auth/sign-in/social` returns real
+  github.com / accounts.google.com authorize URLs (verify-prod). FOLLOW-UP: confirm each OAuth app's callback =
+  `https://megabyte.space/api/auth/callback/{github,google}` (the authorize URLs generate; the round-trip
+  completes only if the callback is registered — 1-min dashboard check if an SSO round-trip 400s).
 - [ ] P4 — MODEL ROUTING = DeepSeek-default (→WS-12, NEW): the backend routes MOST requests to **DeepSeek**
   (cheap, give-away-free) via AI Gateway `megabyte-os`; **OpenAI + Anthropic ONLY for important work** —
   multi-round prompt generation, judgement, heavy web research. Wire DeepSeek as a gateway provider

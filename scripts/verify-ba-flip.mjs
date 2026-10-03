@@ -5,8 +5,8 @@
  * Proves, against real prod, that the human auth path on the apex is Better Auth (baked into
  * megabyte.space), NOT Cloudflare Access. Post-flip the Cloudflare OS lives AT THE APEX
  * (os.megabyte.space is gone → 000), so all three legs run against megabyte.space:
- *   1. An ANONYMOUS browser navigation to the OS (the apex) is 302'd to OUR Better Auth sign-in
- *      (megabyte.space/signin) by the router's auth gate — NOT to cloudflareaccess.com.
+ *   1. An ANONYMOUS browser navigation to the OS (the apex) LOADS the OS shell preview (200) — NOT a
+ *      /signin redirect, NEVER cloudflareaccess.com. Sign-in is prompted on a protected action (BA-4b).
  *   2. An ALLOWLISTED Better Auth sign-in returns a megabyte.space-scoped session cookie.
  *   3. An authed browser navigation carrying that cookie PASSES the router to the OS shell (200).
  *
@@ -45,15 +45,18 @@ const ok = (name, pass, detail = "") => {
 };
 
 try {
-  // 1. Anonymous HTML nav to the OS → OUR router gate 302s to /signin (NOT cloudflareaccess.com).
+  // 1. BA-4b (anonymous preview): an anonymous HTML nav to the OS now LOADS the shell (200 — the WebGL
+  //    LandingHomepage preview), NOT a /signin redirect and NEVER cloudflareaccess.com. Sign-in is
+  //    prompted on a PROTECTED ACTION (Enter the OS / a protected RPC), not on navigation.
   const anon = await fetch(OS + "/", { headers: NAV, redirect: "manual" });
   const loc = anon.headers.get("location") || "";
-  const toSignin = anon.status >= 300 && anon.status < 400 && /megabyte\.space\/signin/.test(loc);
+  const anonBody = anon.status === 200 ? await anon.text() : "";
+  const loadsShell = anon.status === 200 && /<div id="root"|<script|cloudflare os/i.test(anonBody);
   const toAccess = /cloudflareaccess\.com/.test(loc) || /cdn-cgi\/access/.test(loc);
   ok(
-    "anonymous OS nav → Better Auth /signin (our gate; Access relaxed)",
-    toSignin && !toAccess,
-    `status=${anon.status} loc=${loc.slice(0, 72) || "(none)"}`,
+    "anonymous OS nav → OS shell preview (no /signin redirect, no Access)",
+    loadsShell && !toAccess,
+    `status=${anon.status} bytes=${anonBody.length} loc=${loc.slice(0, 48) || "(none)"}`,
   );
 
   // 2. Allowlisted Better Auth sign-in → cross-subdomain session cookie (.megabyte.space).

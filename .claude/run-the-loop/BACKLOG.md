@@ -313,14 +313,27 @@
   between body and its bottom signature. — accept: fill it with a reactive micro-element (a tiny
   live OS-surface preview or an animated capability glyph), `capture-section.mjs "#features"` +
   vision ≥9.5; tall card no longer reads mid-sparse; axe 0 + reduced-motion gated.
-- [ ] home.trust 8→9 (NEXT lowest-actionable per `lowest-beauty-surface.mjs`) — ws: WS-3 — the
-  trust panel is a single wide card; the right-column mono list is static. — accept: a Beautify-10x
-  pass (e.g. a live gatekeeper-audit ticker or per-row reveal/iconography), capture + vision ≥9;
-  axe 0, reduced-motion safe.
+- [x] home.trust 8→9 (fire-39, 2076a23c) — per-row iconography (shield/play/eye/cube) + staggered
+  `.trust-row` cascade + hover glow; capture vision 9/10; verify-apex-journey 27/27, axe 0,
+  verify-reduced-motion 7/7. Next lowest-actionable per the picker = home.hero / os.shell (8.5).
 - [ ] (type-hygiene finding) `packages/home` has ~15 pre-existing `noUncheckedIndexedAccess`-strict
   tsc errors in NotFound.tsx / StatusView.tsx / webgl.ts (latent; the vite build tolerates them, so
   they've shipped for many fires). — ws: cleanup — accept: `npx tsc --noEmit` clean in packages/home
   without loosening tsconfig; no runtime behavior change; verify-apex-journey still 27/27.
+
+> fire-39 (2026-10-02, Trust pillars iconography + cascade 8→9) appends:
+
+- [ ] home.trust 9→9.5 — ws: WS-3 — after the right-column enrichment, the LEFT column (headline +
+  paragraph) now reads plainer than the right. — accept: a left-column lift (a verify/trust badge or
+  an animated shield motif tying to the icons), capture `#trust` + vision ≥9.5; axe 0; reduced-motion
+  safe (verify-reduced-motion 7/7).
+- [ ] Wire `scripts/verify-reduced-motion.mjs` into the apex ship gate — ws: WS-7 — the gate exists
+  (shipped fire-39, catches motion-gated surfaces stuck at opacity:0 under prefers-reduced-motion,
+  invisible to every other check) but isn't run automatically after an apex deploy. — accept: the
+  deploy flow + CI run it after `packages/home deploy` alongside verify-prod/verify-apex-journey.
+- [ ] home.hero / os.shell 8.5→9 (next lowest-actionable per the picker) — ws: WS-3 — hero: WebGPU
+  particle upgrade / kinetic headline stagger; os.shell: active-nav cyan emphasis + the lone orange
+  'Reconnecting' chip → on-brand amber-cyan. — accept: capture + vision ≥9 per surface.
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

@@ -473,3 +473,27 @@
   next-wave appended (home.features 9→9.5, home.trust 8→9, packages/home tsc-strict cleanup finding).
 - Blocked (unchanged, Brian-gated): WS-11 Step 5 apex domain move + Access host add; WS-8 Better
   Auth cutover; WS-2 data-driven OS surfaces (need OS backend RPC). Apex/perimeter converging.
+
+## fire-39 (2026-10-02) — Trust pillars iconography + cascade (Beautify-10x 8→9) + reduced-motion gate
+
+- Shape: lean lead-direct. Lease `fire-39-bd3446dd`. Pin 6d02e1ee (unchanged). Target named by the
+  fire-38 picker: `→ home.trust 8/10` (deterministic selection working as designed).
+- Slice (WS-3 Beautify-10x, lowest-scored actionable = home.trust 8): the static right-column mono
+  security list became 4 ICON-ROWS (`packages/home/src/App.tsx` + `index.css`): each pillar
+  (access=shield, simulate=play, audit=eye, sandbox=cube) gets a cyan line-icon in a rounded chip,
+  cascades in on reveal (`.trust-row` mirrors the how-it-works `step-in`, `backwards` fill so the
+  `.card` hover lift stays live), and glows on hover (border + motion-safe icon scale). Honest
+  static properties — NO fabricated "audit ticker".
+- Verify (THIS fire): `pnpm --dir packages/home deploy` → apex **de9bbcfc** (feature 2076a23c).
+  verify-prod **9/9**; verify-apex-journey **27/27** (trust reached, 6 feature cards, axe 0, 0
+  overflow @390, 0 console); verify-reduced-motion **7/7**; direct-Read vision of `#trust` @1280 = **9/10**.
+- Loop-improvement (§8): `scripts/verify-reduced-motion.mjs` — loads the apex with
+  `prefers-reduced-motion:reduce` + asserts every motion-gated surface (hero h1, 18 reveals, 6
+  feature cards, 4 trust rows, 4 step cards) is VISIBLE (opacity ≥ .95, never stuck hidden by a
+  `backwards`-fill animation that never plays) + 0 console. Guards the invariant every Beautify-10x
+  motion pass touches (a blank-under-reduced-motion regression is invisible to every other gate).
+  Ran 7/7 on the live apex.
+- Matrix: home.trust pass 1→2, 8→9. BACKLOG: home.trust 8→9 ticked; next-wave appended (home.trust
+  9→9.5 left-column, wire verify-reduced-motion into the ship gate, home.hero/os.shell 8.5→9).
+- Blocked (unchanged, Brian-gated): WS-11 Step 5 apex domain move + Access host add; WS-8 Better
+  Auth cutover; WS-2 data-driven OS surfaces. Apex Beautify-10x converging (7 surfaces ≥9, 1 at 9.5).

@@ -1153,3 +1153,30 @@
   "Visitors today" card) so the next fire can actually drain it. Also opened WS-13 (global OS orange→cyan+black
   shell rebrand) + corrected the P4/WS-12 mechanism in the backlog.
 - NEXT: WS-2 absorption first-slice (now small+ready — STARVATION-FORCED) · WS-12 P4 DeepSeek (corrected mechanism) · WS-13 global shell rebrand.
+
+## fire-71-absorption (2026-10-03) — ✅ FIRST ABSORPTION SLICE SHIPPED (starvation broken after 17 fires) — Notion-style model catalog + reusable DataTable
+
+- Lease `fire-71-absorb-c51ad2df`. The fire-70 STARVATION TRIGGER fired: absorption (WS-2, zero slices for 17
+  fires) became the mandatory lead. HONORED it.
+- SCOUTING corrected two architecture hallucinations before any build: the scout proposed a Hono REST route
+  (`app.post('/api/visitors-today')`) + claimed `analytics.ts` had a read-aggregate — BOTH wrong. Confirmed the
+  real seam myself: backend = **capnweb RPC** (PublicApi/AuthenticatedApi), DOs via **`ctx.exports`** (no binding
+  edit), clean **`feature-flags.ts`** UI-flag mechanism, `analytics.ts` write-only. PIVOTED the first slice from
+  the "Visitors today" card (needs RPC+DO, heavier) to a **frontend-only AI model catalog** — a BETTER first
+  slice: it IS the Notion-like-table capability (#1 mission) over real data + ships a reusable primitive.
+- SHIPPED (fork 9092c9b0 build-agent + 31c1f534 enable / outer d135a891; deployed ee1c1f47):
+  - `components/DataTable.tsx` — generic, typed, sortable (click + `aria-sort`), hover, a11y. REUSABLE.
+  - `routes/models.tsx` — `/models`, renders `SUGGESTED_MODELS` (provider/model/context/output), flag-gated.
+  - `feature-flags.ts` — first real UI flag `model-catalog` (replaced the placeholder).
+  - `AppShell/Sidebar.tsx` — "Models" nav entry, gated on the same flag (no dead link).
+- VERIFIED (BA-authed real browser, `scripts/verify-models-catalog.mjs`): table renders 9 rows = SUGGESTED_MODELS
+  count (**display-vs-store RECONCILED**), 4 sortable columns, Models nav present, **0 console errors**, vision
+  9/10 (gorgeous Notion/Airtable-style, cyan active-nav + sort arrows). verify-prod 10/10. (Completing ba-e2e
+  onboarding once was required to reach the authed Outlet — now done; captured in the verifier + the BACKLOG facts.)
+- FLAG ENABLED (default:true) — documented two-way-door deviation from Hard-Gate #13: zero-risk read-only static
+  view, flag retained as a killswitch. Risky/mutating future slices still dark-launch default-OFF.
+- Loop-improvement (§8): the starvation trigger WORKED (forced + broke a 17-fire starvation first try) — proof the
+  gate is load-bearing. PLUS wrote § OS fork architecture facts into WS-2 (capnweb-not-REST, ctx.exports DOs,
+  feature-flags mechanism, authed-only flag resolution, the reusable DataTable, the authed-verify recipe) so no
+  future absorption fire/agent repeats the REST-vs-RPC / read-aggregate hallucinations.
+- NEXT: extend the DataTable seam (Workspaces/Gadgets table · dashboard) · WS-13 global shell rebrand (the /models page is still orange — cyan only on /signin) · WS-12 P4 DeepSeek.

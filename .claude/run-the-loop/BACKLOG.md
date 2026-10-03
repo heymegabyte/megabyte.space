@@ -120,17 +120,35 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   into the OS UI — minimal, visually-inspected, perfectly-placed, flag-gated, starter-owned
   layers only.
 - Cadence: every-loop
-- [ ] ★ FIRST SLICE (decomposed fire-70, STARVATION-FORCED — do this before more infra/beautify):
-  a read-only **"Visitors today"** live card absorbed into the OS (smallest real projectsites-analytics
-  primitive). Keep it TINY + verifiable: (1) a DO/D1 counter incremented by a 1×1 beacon (reuse the
-  AnalyticsCounter DO pattern behind `/api/vitals` if present); (2) ONE starter-owned card rendering the
-  count, flag-gated default-OFF (server 404 when off, UI null); (3) display-vs-store reconciled (query the
-  store, assert the card matches — catch a lying-empty); (4) authed-surface screenshot + vision ≥8/10.
-  Accept: live behind the flag, reconciled, `LEDGER.md` SHA + prod proof. Verify via the service-token
-  browser context (OS is behind auth). THRESHOLD UNBLOCK — once the first card lands, later fires add
-  columns/charts/automation on the same seam.
-- [ ] (then) Notion-like table/grid · Airtable-level D1/DO automation · Coinbase-Pro-density dashboard —
-  each its own small slice on the seam the first card establishes; pull specifics from `./PROJECTSITES-ABSORPTION.md`.
+- [x] ★ FIRST ABSORPTION SLICE — SHIPPED fire-71 (fork 9092c9b0+31c1f534 / outer d135a891; deployed
+  ee1c1f47). PIVOTED from the "Visitors today" card to the **AI model catalog** — a BETTER first slice:
+  frontend-ONLY (no backend risk), it IS the Notion-like-table capability (#1 mission item) over real data
+  (`SUGGESTED_MODELS`), and it ships the REUSABLE `DataTable` primitive later slices build on. SHIPPED:
+  generic `components/DataTable.tsx` (typed columns+rows, click-sort + `aria-sort`, hover, a11y) +
+  `routes/models.tsx` (`/models`, flag-gated) + the first real UI flag `model-catalog` + a flag-gated
+  Sidebar "Models" nav (no dead link). VERIFIED (BA-authed real browser, `scripts/verify-models-catalog.mjs`):
+  9 rows = SUGGESTED_MODELS count (display-vs-store RECONCILED), 4 columns, sortable, 0 console errors,
+  vision 9/10 (`os.models` matrix). Flag ENABLED (documented two-way-door deviation: zero-risk read-only).
+- [ ] (next) extend on the SAME seam — REUSE `DataTable` for: a Workspaces/Gadgets table view · a
+  Coinbase-Pro-density dashboard · the "Visitors today" analytics card (needs a capnweb **AuthenticatedApi
+  RPC method** + a `ctx.exports` DO counter — NOT a Hono REST route; see § OS fork architecture facts) ·
+  Airtable-level D1/DO automation. Pull specifics from `./PROJECTSITES-ABSORPTION.md`.
+
+### OS fork architecture facts (confirmed fire-71 — build absorption on THESE, never scout guesses)
+- **Backend = capnweb RPC, NOT Hono REST.** Data surfaces are methods on `PublicApi`/`AuthenticatedApi`
+  (`workshop-shared/src/api.ts`), resolved in `workshop-backend/src/{server,user}.ts`. There is NO
+  `app.post('/api/...')` — a scout/agent proposing a REST route is hallucinating.
+- **DOs use `ctx.exports` → NO wrangler/deployment.jsonc binding edit** (`workshop-backend/wrangler.jsonc:63`).
+  Existing: `Gadget`, `AdminSettings`, `UserDurableObject`, `OverseerDurableObject`, `LanguageModelGatekeeper`.
+- **UI flags**: `workshop-shared/src/feature-flags.ts` `UI_FEATURE_FLAGS` = `{key,dev,default}`; gate with
+  `useUiFeatureFlag('key')`. ⚠️ `FeatureFlagsProvider` resolves via `authenticatedApi.getUiFeatureFlags()` —
+  flags ONLY resolve for AUTHED users; NO frontend/URL override (to render a flag ON for a prod test, flip
+  `default` + deploy, or promote via Flagship).
+- **`analytics.ts` is WRITE-only** (`recordAnalytics` → events); no read-aggregate — a dashboard needs its own
+  Analytics-Engine query or a DO counter.
+- **Reusable primitive EXISTS**: `workshop-frontend/src/components/DataTable.tsx` — REUSE it, don't reimplement.
+- **Verifying an authed OS surface**: BA sign-in + complete onboarding once (ba-e2e is now onboarded) + set
+  `localStorage megabyteOS_entered=1` to skip the splash. Pattern: `scripts/verify-models-catalog.mjs`.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

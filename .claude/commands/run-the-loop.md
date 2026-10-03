@@ -117,8 +117,14 @@ Rotate roles fire-to-fire so nothing rots.
 - **Discovery** — 5-10% (Product Discovery + Technology Scout — the backlog replenishers).
 - **Loop-improvement** — 5% (the standing ≥1 improvement, §8).
 
-If a category has starved across the last few fires, the lead over-weights it THIS fire until the
-mix rebalances.
+**STARVATION TRIGGER (hard — Brian's core mission beats easy wins):** a category that has shipped ZERO
+slices for ≥6 consecutive fires becomes the MANDATORY lead of the NEXT fire — the lead opens that fire with
+a ready slice from it, FIRST decomposing a daunting backlog item into a small shippable one (per
+`split-work-into-ledger`) before any easier infra/beautify win. **Standing example: Absorption (WS-2) starved
+fires 52-69 (all auth/apex/model/beautify) because WS-2 was one vague "pick the first slice" item nobody could
+grab — the fix (fire-70) was to DECOMPOSE it into a small ready slice AND add this trigger.** If a category has
+merely UNDER-shipped (not zero) across the last few fires, the lead over-weights it THIS fire until the mix
+rebalances.
 
 ## 3 — Per-role discipline (inside each agent)
 - **TDD:** failing test FIRST → implement → green. Bug fix = failing regression first.

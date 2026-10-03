@@ -94,7 +94,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   ON the AI Gateway (authenticated-gateway/BYOK) — so set DEEPSEEK_API_KEY on the "megabyte-os" gateway (CF
   dashboard/API) + set `CF_AI_GATEWAY_API_TOKEN` (a Run+Read token) as a backend secret IF deepseek is HTTPS-only.
   ALSO: DeepSeek must be added to the `SUGGESTED_MODELS` catalog (workshop-shared) with its provider+model id
-  (`deepseek` / `deepseek-chat`) so `resolveModel`/`getModelList` surface it; (3) `getDefaultModelConfig()` in `ai-gateway.ts` + use it as the fallback at `user.ts:732`;
+  (`deepseek` / `deepseek-chat`) so `resolveModel`/`getModelList` surface it — ⚠️ fire-70 CORRECTION: that
+  needs EXTENDING the FIXED `AiModelProvider` union (`workshop-shared/api.ts`, currently cloudflare|anthropic|
+  openai|google|ollama — NO deepseek) AND adding a getModel() adapter in `ai-models.ts` (DeepSeek is
+  OpenAI-compatible → reuse the `openai-completions` stream with a DeepSeek baseURL + key; `@earendil-works/pi-ai`
+  ships NO deepseek models registry). (3) there is NO `getDefaultModelConfig()` in ai-gateway.ts (the fire-67
+  digest was wrong) — "default" = change the per-chat fallback at `user.ts:701-735` or the QUICK model at
+  `ai-gateway.ts:138`; ✅ fire-70 CHECKED: the "megabyte-os" gateway has authentication=OFF → `CF_AI_GATEWAY_API_TOKEN`
+  is NOT needed; the DeepSeek key is present in get-secret (rides per-request / BYOK-on-gateway);
   (4) ⚠️ TEST a real DeepSeek call succeeds through the OS gateway BEFORE making it the default (else new/
   model-less chats break); (5) behind a default-OFF feature flag (per `feature-flags`), promote after eval.
 
@@ -113,10 +120,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   into the OS UI — minimal, visually-inspected, perfectly-placed, flag-gated, starter-owned
   layers only.
 - Cadence: every-loop
-- [ ] Pick the FIRST absorption slice from `./PROJECTSITES-ABSORPTION.md` (highest value ×
-  lowest overlay risk) — accept: slice live behind a default-OFF flag on
-  `os.megabyte.space`, screenshot + vision verdict ≥8/10, display-vs-store reconciled,
-  `LEDGER.md` entry with SHA + prod proof.
+- [ ] ★ FIRST SLICE (decomposed fire-70, STARVATION-FORCED — do this before more infra/beautify):
+  a read-only **"Visitors today"** live card absorbed into the OS (smallest real projectsites-analytics
+  primitive). Keep it TINY + verifiable: (1) a DO/D1 counter incremented by a 1×1 beacon (reuse the
+  AnalyticsCounter DO pattern behind `/api/vitals` if present); (2) ONE starter-owned card rendering the
+  count, flag-gated default-OFF (server 404 when off, UI null); (3) display-vs-store reconciled (query the
+  store, assert the card matches — catch a lying-empty); (4) authed-surface screenshot + vision ≥8/10.
+  Accept: live behind the flag, reconciled, `LEDGER.md` SHA + prod proof. Verify via the service-token
+  browser context (OS is behind auth). THRESHOLD UNBLOCK — once the first card lands, later fires add
+  columns/charts/automation on the same seam.
+- [ ] (then) Notion-like table/grid · Airtable-level D1/DO automation · Coinbase-Pro-density dashboard —
+  each its own small slice on the seam the first card establishes; pull specifics from `./PROJECTSITES-ABSORPTION.md`.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +
@@ -129,6 +143,26 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [x] home.features 8→9 (fire-38, a333e5fe) — asymmetric bento (auto-rows-fr 3×3, wide+tall cards)
   + featured bottom signatures; verify-apex-journey 27/27, verify-prod 9/9, vision 9/10. Next
   lowest actionable = home.trust (8/10).
+- [x] home.signin 8→9.5 (fire-70, outer 70be693d / fork eba4c548) — the OS brand token was ORANGE
+  (`--color-kumo-brand:#ff4801`, never remapped off upstream) while the homepage CTA is cyan; a SCOPED
+  `.signin-cyan` override (cyan brand + hover + dark #03030a inverse for AA on the light fill + cyan
+  brand/link text) makes the Sign-in button + brand mark + magic-link vibrant cyan #00E5FF, matching the
+  "Enter the OS" CTA. Also dropped the app `<Header>` from /signin (it mounted `<UserMenu>`→throwing
+  `useAuthenticatedApi()` with no AuthProvider → a console error). Real-browser verified
+  (`scripts/verify-signin-cyan.mjs`): rgb(0,229,255) + btn hue 209 + app header absent + 0 console errors;
+  verify-prod 10/10.
+
+### WS-13 — Global OS shell rebrand (orange→cyan+black)
+- Mission: the WHOLE OS shell is still upstream ORANGE-on-VIOLET (`--color-kumo-brand:#ff4801`/`#b84e00`;
+  dark surfaces `oklch(... 285)` violet, not black `#060610`) — violates Brian's SUPREME black+cyan brand.
+  fire-70 scoped cyan to /signin only; this arc rebrands the shell globally. Needs AUTHED-surface
+  verification (service-token browser), so it's a dedicated arc, never a blind global token flip.
+- Cadence: as-picked (Beautify)
+- [ ] Slice A — remap `--color-kumo-brand`/`-hover` + `--text-color-kumo-brand`/`-link` + `--color-accent-*`
+  to the cyan family (light + dark) AND pair `--text-color-kumo-inverse`→dark (#03030a) so cyan fills keep
+  AA contrast; verify primary-button + link + chip surfaces authed via the service-token browser before ship.
+- [ ] Slice B — shift the dark base off violet hue 285 toward black #060610 (surfaces/lines/rings), re-check
+  contrast on every Kumo surface token; screenshot + vision ≥9/10 on 3+ authed surfaces.
 
 ### WS-4 — Deep UI Explorer bootstrap
 - Mission: state-graph coverage of BOTH surfaces with real vision verdicts feeding the matrix

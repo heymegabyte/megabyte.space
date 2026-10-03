@@ -1127,3 +1127,29 @@
   behavior — the anonymous persist lived in a DIFFERENT branch than the authed persist. Always trace a
   persist/guard for BOTH auth states + verify the FULL flow (fresh + RETURN visit) in a real browser, not render.
 - NEXT: /signin vibrant-cyan beautify · P4 DeepSeek impl · absorption slices (core mission, still starved).
+
+## fire-70-signin-cyan (2026-10-03) — ✅ /signin vibrant cyan (matches homepage) + Header console-error fix + absorption-starvation structural fix
+
+- Lease `fire-70-absorb-8500c7af`. Orient (Explore) + my own code read RE-SCOPED the fire: P4 (DeepSeek) is
+  NOT a one-fire slice — it's a vendored `@earendil-works/pi-ai` integration touching the FIXED
+  `AiModelProvider` union (cloudflare|anthropic|openai|google|ollama — no deepseek), `SUGGESTED_MODELS`, the
+  `ai-models.ts` getModel() adapter, `deployment.jsonc`, gateway BYOK + a live test. The orient digest
+  hallucinated `getDefaultModelConfig()` (does not exist). P4 → decomposed arc (WS-12), NOT shipped this fire.
+- SHIPPED (fork eba4c548 / outer 70be693d; deployed megabyte-os a67b6a68):
+  - DISCOVERY: the OS brand token was ORANGE — `--color-kumo-brand:#ff4801` (light) / `#b84e00` (dark), never
+    remapped off upstream cloudflare-os — while the fire-69 homepage CTA is cyan #00E5FF. Root cause of
+    home.signin's 8/10 (cyan→orange whiplash at the funnel). SCOPED `.signin-cyan` token override on /signin
+    (cyan brand + hover + dark #03030a inverse for AA on the light fill + cyan brand/link text).
+  - Header console-error fix: the standalone `/signin` rendered the app `<Header>` → `<UserMenu>` → the THROWING
+    `useAuthenticatedApi()` with no AuthProvider in that branch. `__root.tsx` now omits the Header on /signin
+    (as /signup already did).
+- VERIFIED (real browser, `scripts/verify-signin-cyan.mjs`): brand mark + magic-link = rgb(0,229,255) exactly,
+  submit btn oklch hue 209 (cyan, not orange hue ~40), app `<header>` absent, 0 console errors. verify-prod
+  10/10. Beautify-10x: home.signin 8 → 9.5 (matrix updated).
+- Loop-improvement (§8): absorption (the CORE mission) starved ~17 fires because WS-2 was a single vague "pick
+  the FIRST slice" item (daunting, never grabbed) while infra/beautify slices are small+clean. Fixed TWO ways:
+  (a) a hard STARVATION TRIGGER in the command §2 — a category shipping ZERO slices for ≥6 fires becomes the
+  MANDATORY lead next fire; (b) DECOMPOSED WS-2 into a concrete SMALL ready first slice (a read-only D1/DO
+  "Visitors today" card) so the next fire can actually drain it. Also opened WS-13 (global OS orange→cyan+black
+  shell rebrand) + corrected the P4/WS-12 mechanism in the backlog.
+- NEXT: WS-2 absorption first-slice (now small+ready — STARVATION-FORCED) · WS-12 P4 DeepSeek (corrected mechanism) · WS-13 global shell rebrand.

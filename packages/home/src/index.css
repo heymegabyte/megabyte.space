@@ -253,6 +253,36 @@ body {
     animation-delay: calc(0.15s + var(--row-i) * 0.09s);
   }
 
+  /* Kinetic hero headline — plain words cascade up on LOAD (above the fold, so a
+     pure load animation; no IntersectionObserver), then the gradient punchline
+     fades in last. 'backwards' fill hides each word until its turn. */
+  .kinetic-word {
+    display: inline-block;
+    animation: word-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.12s + var(--w) * 0.06s);
+  }
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .kinetic-fade {
+    animation: kinetic-fade-in 0.9s ease 0.5s backwards;
+  }
+  @keyframes kinetic-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   @media (min-width: 768px) {
     .timeline::before,
     .step-node {
@@ -294,6 +324,13 @@ h3 {
   .trust-row,
   .reveal.is-in .trust-row {
     opacity: 1;
+    animation: none;
+  }
+  /* Kinetic headline fully formed, no cascade/fade. */
+  .kinetic-word,
+  .kinetic-fade {
+    opacity: 1;
+    transform: none;
     animation: none;
   }
 }

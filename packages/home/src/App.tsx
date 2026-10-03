@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 
 // First-run overlay (WS-11): the WebGL homepage is an intro LAYER over the OS —
 // shown the first time, dismissed by "Enter the OS", skipped on return visits.
@@ -222,8 +222,15 @@ export default function App() {
         <section className="flex min-h-[100svh] items-center px-5 pt-24">
           <div className="mx-auto w-full max-w-6xl">
             <p className="eyebrow reveal">Megabyte Labs · internal AI workspace</p>
-            <h1 className="font-display reveal mt-5 max-w-4xl text-[clamp(2.6rem,7vw,5.2rem)] leading-[1.02] font-extrabold tracking-tight">
-              The operating system for <span className="text-gradient">one human and a fleet of agents.</span>
+            <h1 className="font-display mt-5 max-w-4xl text-[clamp(2.6rem,7vw,5.2rem)] leading-[1.02] font-extrabold tracking-tight">
+              {["The", "operating", "system", "for"].map((w, i) => (
+                <Fragment key={w}>
+                  <span className="kinetic-word" style={{ "--w": i } as CSSProperties}>
+                    {w}
+                  </span>{" "}
+                </Fragment>
+              ))}
+              <span className="text-gradient kinetic-fade">one human and a fleet of agents.</span>
             </h1>
             <p className="reveal mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
               Megabyte OS is where documents write themselves, apps grow their own features, and every agent action

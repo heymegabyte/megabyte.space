@@ -449,6 +449,11 @@ export function generateConfigs(config: DeploymentConfig, bases: BaseConfigs): G
     { binding: "GATEKEEPER_SCHEDULER", service: config.workers.scheduler.name },
     { binding: "GATEKEEPER_CUSTOM", service: config.workers.customGatekeeper.name },
   ];
+  // BA-5 (auth-on-action flip): arm the router's Better Auth edge gate. "1" ⇒ an anonymous HTML
+  // navigation (no CF Access JWT, no Better Auth session cookie) is 302'd to megabyte.space/signin.
+  // Dark while Access still fronts the OS (every request carries an Access JWT ⇒ exempt); live once
+  // the Access app is relaxed. Rollback = set "0" (or re-assert the Access policy) + redeploy.
+  router.vars = { ...(router.vars ?? {}), BA_GATE: "1" };
 
   setCommon(workshop, config, config.workers.workshop.name);
   workshop.vars = {
@@ -458,6 +463,11 @@ export function generateConfigs(config: DeploymentConfig, bases: BaseConfigs): G
     // Upstream builds OAuth redirect URIs and other absolute links from this. The backend has no
     // public route of its own, so the router's origin is the only correct value.
     PUBLIC_BASE_URL: origin,
+    // BA-5 (auth-on-action flip): when the Access edge gate is relaxed, the backend's Better Auth
+    // dual-accept (BA-3) authorizes the OS ONLY for these emails — the SAME boundary the Access
+    // "Admins" policy enforced. Without it, relaxed Access + self-service signup would open the OS
+    // to anyone who registers. The E2E account is included so verification can reach the authed OS.
+    BA_ALLOWED_EMAILS: [...config.access.admins, "ba-e2e@megabyte.space"].join(","),
   };
   const gateway = aiGatewayPlan(config);
   if (gateway) {

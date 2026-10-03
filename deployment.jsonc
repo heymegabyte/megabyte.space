@@ -21,7 +21,7 @@
       // Production: use a hostname in an active Cloudflare zone. Wrangler creates DNS and TLS.
       // Evaluation: replace this with "route": { "workersDev": true } and set publicBaseUrl above.
       // https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
-      "route": { "customDomain": "os.megabyte.space" }
+      "route": { "customDomain": "megabyte.space" }
     },
 
     // The Workshop backend. No public route: the router reaches it over a service binding.
@@ -71,7 +71,7 @@
   "context": {
     // Isolates Context data shared by this Workshop deployment.
     // null scopes it to the public origin
-    "sharingDomain": null,
+    "sharingDomain": "https://os.megabyte.space",
 
     // null: Wrangler provisions and remembers a KV namespace on first deploy.
     // string: bind an existing namespace by ID.

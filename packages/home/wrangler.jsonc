@@ -7,7 +7,7 @@
   // workers_dev stays on so the front door always has a fallback origin
   // (and so pre-flight verification can run before the apex swap).
   "workers_dev": true,
-  "routes": [{ "pattern": "megabyte.space", "custom_domain": true }],
+  "routes": [], // WS-11: apex freed — megabyte-os router now owns megabyte.space (fire-64 flip). workers_dev kept as rollback origin.
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

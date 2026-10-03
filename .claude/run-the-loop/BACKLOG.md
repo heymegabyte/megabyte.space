@@ -333,9 +333,11 @@
   REMAINING (smaller): auto-run `verify-apex.mjs` from the deploy script / CI (see next-wave).
 - [x] home.hero 8.5→9 (fire-40, f901b51c) — kinetic headline (per-word cascade + gradient punchline
   fade, reduced-motion gated); verify-apex 3/3, vision 9/10. Next lowest-actionable = os.shell (8.5).
-- [ ] os.shell 8.5→9 — ws: WS-3 — active-nav cyan emphasis + the lone orange 'Reconnecting' chip →
-  on-brand amber-cyan (FORK edit, workshop-frontend, via lane §1.18; OS deploy + service-token
-  verify). — accept: verify-os-theme PASS + capture + vision ≥9.
+- [x] os.shell 8.5→9 (fire-41, 7dde63df, fork 1abec09c) — glowing cyan active-nav rail (SidebarItem,
+  before: pseudo); 6 OS workers deployed (router d855b35a); verify-os 3/3, shell.png vision 9/10.
+  Orange 'Reconnecting' chip skipped (artifact-only). **★ Beautify arc CLOSED: every apex/estate
+  surface is now ≥9 (os.landing 9.5, all others 9). The picker will return no sub-9 target next fire
+  → the loop MUST rebalance to non-Beautify categories (testing/arch/discovery/security/docs).**
 
 > fire-40 (2026-10-02, kinetic hero headline 8.5→9) appends:
 
@@ -350,6 +352,27 @@
   apex/estate surfaces; `os.landing` is 9.5. The remaining ≥9→9.5 levers are big (WebGPU, scroll-scrub)
   or fork-side (os.shell) — signals the next high-value work is WS-8/WS-11 (Brian-gated) or a
   fresh-session big slice, not continuous apex polish.
+
+> fire-41 (2026-10-02, os.shell cyan active-nav rail 8.5→9 — ★ BEAUTIFY ARC CLOSED) appends:
+
+- ★ REBALANCE MANDATE: every apex/estate surface is now ≥9 (`lowest-beauty-surface.mjs` returns the
+  cool os.landing 9.5 as "lowest"). Beautify-10x has NO sub-9 target → the next fires MUST pick
+  NON-Beautify categories (the §2 budget has starved testing/arch/security/docs/discovery across
+  fires 36-41). Concrete ready slices seeded below.
+- [ ] Web Vitals field beacon + `/status` CWV card — ws: WS-9/observability (product, NOT polish) —
+  a dependency-free beacon (PerformanceObserver LCP + layout-shift CLS + nav TTFB) POSTs to a new
+  `/api/vitals` on visibilitychange→hidden; the AnalyticsCounter DO aggregates p50/p75; StatusView
+  renders a "Core Web Vitals (field)" card. — accept: a Playwright pageview writes a sample the DO
+  stores AND /status shows it; display-vs-store reconciled; verify-apex still 3/3.
+- [ ] Architecture orphan/drift sweep — ws: WS-6/arch — run an import-graph orphan check over
+  `packages/home/src` + the starter workers; confirm no built-but-unwired modules; verify the
+  submodule pin matches the LEDGER. — accept: a short findings note + any fix in-fire.
+- [ ] Long-Trail case-001 restart (WS-5, standing role 16 — never started) — ws: WS-5 — design the
+  checkpointed 60-100-action estate-path case + execute ≥20 actions on the PUBLIC apex (the OS legs
+  stay WS-403-blocked). — accept: checkpoint file committed + ≥20 actions with screenshots.
+- NOTE: `scripts/verify-os.mjs` shipped this fire (single OS ship gate = verify-prod + verify-os-theme
+  + verify-os-landing); mirrors `verify-apex.mjs`. Both still invoked manually (see the deploy/CI
+  auto-run next-wave item).
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

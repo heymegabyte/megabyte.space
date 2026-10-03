@@ -523,3 +523,33 @@
 - Apex Beautify-10x SATURATION note: after this fire only os.shell (8.5) is below 9 on the
   apex/estate surfaces (os.landing 9.5). Remaining levers are big (WebGPU/scroll-scrub) or fork-side
   — the next high-value work is WS-8/WS-11 (Brian-gated) or a fresh-session big slice.
+
+## fire-41 (2026-10-02) — OS shell cyan active-nav rail (Beautify-10x 8.5→9) — ★ BEAUTIFY ARC CLOSED
+
+- Shape: lean lead-direct (first FORK-side Beautify fire of this arc). Lease `fire-41-941b70fc`.
+  Picker named `→ os.shell 8.5`; took the high-value lever (active-nav emphasis, all-users-visible)
+  over the picker's next[0] (the artifact-only orange chip — lead judgment).
+- Slice (WS-3 Beautify-10x, last sub-9 surface = os.shell 8.5): the active sidebar item
+  (`cloudflare-os/packages/workshop-frontend/src/components/AppShell/SidebarItem.tsx`) was a
+  near-invisible neutral fill + cyan icon. Added a GLOWING CYAN LEFT-ACCENT RAIL (`before:` pseudo,
+  `--color-kumo-brand` + glow) so the current surface reads at a glance. FORK edit (canonical-answer
+  #2 — the frontend is our owned fork).
+- Pin move (lane §1.18): fork `6d02e1ee → 1abec09c` (committed + pushed to origin megabyte-os);
+  outer gitlink bumped (7dde63df). `pnpm check` green (frontend builds, 6-worker dry-run clean) →
+  `pnpm deploy` all 6 OS workers (router **d855b35a**). NOTE: `check-submodule-resolvable` reads the
+  COMMITTED gitlink, so the outer gitlink commit must land BEFORE `pnpm check` (the old pin is no
+  longer a ref tip once the fork advances).
+- Verify (THIS fire): `node scripts/verify-os.mjs` **3/3** — verify-prod 9/9 (apex untouched + OS
+  service-token shell), verify-os-theme PASS (dark, body-bg rgb(6,6,16)), verify-os-landing
+  render→dismiss→persist (0 console). shell.png direct-Read vision **9/10** — the "Home" item shows
+  the cyan rail clearly. Deliberately skipped the orange 'Reconnecting' chip (artifact-only; global
+  warning remap harms warning legibility).
+- Loop-improvement (§8): `scripts/verify-os.mjs` — the single OS ship gate (mirrors fire-40's
+  verify-apex.mjs). Ran 3/3, exit 0.
+- ★ BEAUTIFY ARC CLOSED: every apex/estate surface is now ≥9 (os.landing 9.5; home.hero/features/
+  trust/how/status/404 + os.shell = 9). `lowest-beauty-surface.mjs` returns only the cool 9.5 as
+  "lowest" → NO sub-9 target remains. The loop MUST rebalance to NON-Beautify categories next fire
+  (§2 budget: testing/arch/security/docs/discovery starved across fires 36-41). Seeded concrete
+  non-Beautify next-wave slices (Web Vitals field beacon + /status CWV card; arch orphan sweep;
+  Long-Trail case-001 restart).
+- Blocked (unchanged): WS-11 Step 5 (apex domain + Access host add), WS-8 Better Auth cutover — Brian-gated.

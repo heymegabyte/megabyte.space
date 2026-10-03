@@ -184,6 +184,20 @@ try {
   await page.screenshot({ path: join(SHOT, "8-notfound.png") });
   testing404 = false;
 
+  // 8c — BA-2 login surface: the dark /signin route renders OUR black/cyan Better Auth
+  // login (email + password + submit), NOT the CF Access page. goto is justified — it's
+  // deliberately unlinked (dark) until BA-4 wires auth-on-action.
+  await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.waitForTimeout(700);
+  ok("/signin login surface renders", /welcome back|create your account/i.test(await textOf("h1")));
+  ok(
+    "/signin has email + password + submit",
+    (await page.locator('input[type="email"]').count()) > 0 &&
+      (await page.locator('input[type="password"]').count()) > 0 &&
+      (await page.locator('[data-testid="auth-submit"]').count()) > 0,
+  );
+  await page.screenshot({ path: join(SHOT, "9-signin.png") });
+
   // 9 — /login funnel (real click from home → leaves apex into the OS/Access)
   await page.goto(`${APEX}/`, { waitUntil: "domcontentloaded", timeout: 30000 });
   onApex = false; // leaving our apex into the OS/Access — their console is not ours

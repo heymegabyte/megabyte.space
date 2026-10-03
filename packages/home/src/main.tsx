@@ -4,6 +4,7 @@ import App from "./App";
 import StatusView from "./StatusView";
 import NotFound from "./NotFound";
 import { isKnownRoute } from "./known-routes";
+import { initVitals } from "./vitals";
 import "./index.css";
 
 // Minimal path routing — the apex homepage, the build-in-public /status page, and a
@@ -13,3 +14,6 @@ const path = window.location.pathname;
 const view = !isKnownRoute(path) ? <NotFound /> : path.replace(/\/+$/, "") === "/status" ? <StatusView /> : <App />;
 
 createRoot(document.getElementById("app")!).render(<StrictMode>{view}</StrictMode>);
+
+// Report real-visitor field Core Web Vitals to the DO (build-in-public /status card).
+initVitals();

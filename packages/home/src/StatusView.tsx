@@ -5,11 +5,19 @@ import { useEffect, useState } from "react";
 // Megabyte OS runs in the open on Megabyte Labs' own Cloudflare account. Fail-soft —
 // if the endpoint is unreachable, the static context still renders ("telemetry offline").
 
+interface VitalRow {
+  metric: string;
+  p50: number | null;
+  p75: number | null;
+  n: number;
+}
+
 interface Pulse {
   total: number;
   today: number;
   daily: { day: string; count: number }[];
   topPaths: { path: string; count: number }[];
+  vitals: VitalRow[];
 }
 
 type State = { status: "loading" } | { status: "ok"; data: Pulse } | { status: "offline" };
@@ -96,6 +104,56 @@ function TopPaths({ paths }: { paths: { path: string; count: number }[] }) {
   );
 }
 
+/** Google CWV p75 bands → good / needs-improvement / poor (field thresholds). */
+function cwvBand(metric: string, p75: number | null): "good" | "ni" | "poor" | "none" {
+  if (p75 === null) return "none";
+  const t: Record<string, [number, number]> = {
+    LCP: [2500, 4000],
+    INP: [200, 500],
+    CLS: [0.1, 0.25],
+    TTFB: [800, 1800],
+  };
+  const band = t[metric];
+  if (!band) return "none";
+  return p75 <= band[0] ? "good" : p75 <= band[1] ? "ni" : "poor";
+}
+
+/** Field Core Web Vitals — p75 headline (good/NI/poor colored) + p50 + sample count. */
+function Vitals({ vitals }: { vitals: VitalRow[] }) {
+  const withData = vitals.filter((v) => v.n > 0);
+  if (!withData.length) return null;
+  const fmt = (metric: string, x: number | null) =>
+    x === null ? "—" : metric === "CLS" ? x.toFixed(3) : Math.round(x).toLocaleString("en-US");
+  const unit = (metric: string) => (metric === "CLS" ? "" : "ms");
+  const color = (band: string) =>
+    band === "good" ? "text-[--color-cyan]" : band === "ni" ? "text-amber-300" : band === "poor" ? "text-rose-400" : "text-white/70";
+  return (
+    <ul className="grid gap-3 sm:grid-cols-2">
+      {withData.map((v) => {
+        const band = cwvBand(v.metric, v.p75);
+        return (
+          <li key={v.metric} className="rounded-xl border border-white/10 bg-black/30 px-5 py-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="font-mono text-sm text-white/70">{v.metric}</span>
+              <span className={`font-display text-2xl font-bold tabular-nums ${color(band)}`}>
+                {fmt(v.metric, v.p75)}
+                <span className="ml-0.5 text-sm font-normal text-white/40">{unit(v.metric)}</span>
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between font-mono text-xs text-white/40">
+              <span>p75 · field</span>
+              <span>
+                p50 {fmt(v.metric, v.p50)}
+                {unit(v.metric)} · n={v.n.toLocaleString("en-US")}
+              </span>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /** Compact "Xm ago" / "Xh ago" / "Xd ago" from an ISO timestamp. */
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -124,12 +182,19 @@ export default function StatusView() {
           today?: number;
           daily?: { day: string; count: number }[];
           topPaths?: { path: string; count: number }[];
+          vitals?: VitalRow[];
         };
         if (cancelled) return;
         if (body.ok && Number.isFinite(body.total) && Number.isFinite(body.today)) {
           setState({
             status: "ok",
-            data: { total: body.total!, today: body.today!, daily: body.daily ?? [], topPaths: body.topPaths ?? [] },
+            data: {
+              total: body.total!,
+              today: body.today!,
+              daily: body.daily ?? [],
+              topPaths: body.topPaths ?? [],
+              vitals: body.vitals ?? [],
+            },
           });
         } else {
           setState({ status: "offline" });
@@ -197,6 +262,15 @@ export default function StatusView() {
             <p className="eyebrow">Top paths</p>
             <div className="mt-4">
               <TopPaths paths={state.data.topPaths} />
+            </div>
+          </section>
+        )}
+
+        {state.status === "ok" && state.data.vitals.some((v) => v.n > 0) && (
+          <section className="mt-10" data-testid="status-vitals">
+            <p className="eyebrow">Core Web Vitals · field (p75)</p>
+            <div className="mt-4">
+              <Vitals vitals={state.data.vitals} />
             </div>
           </section>
         )}

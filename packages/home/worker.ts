@@ -19,6 +19,12 @@ interface Env {
 
 const OS_ORIGIN = "https://os.megabyte.space";
 
+// Field Core Web Vitals we accept from the client beacon. Anything else is dropped
+// at the boundary (no free-form metric names in the store).
+const VITAL_METRICS = ["LCP", "CLS", "INP", "TTFB"] as const;
+type VitalMetric = (typeof VITAL_METRICS)[number];
+const isVitalMetric = (m: unknown): m is VitalMetric => typeof m === "string" && (VITAL_METRICS as readonly string[]).includes(m);
+
 // Allowlist matches what the Cloudflare edge actually serves + injects:
 //   • Cloudflare Fonts rewrites the Google Fonts <link> to SAME-ORIGIN woff2 at
 //     /cf-fonts/* → font-src 'self' (NOT gstatic; the browser never hits gstatic).
@@ -73,6 +79,11 @@ export class AnalyticsCounter extends DurableObject<Env> {
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS visitor_events (path TEXT NOT NULL, day TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (path, day))",
     );
+    // Field Core Web Vitals samples — metric + raw value, zero PII. Growth is
+    // bounded to the most-recent 1000 samples per metric on each insert.
+    this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS vital_samples (id INTEGER PRIMARY KEY AUTOINCREMENT, metric TEXT NOT NULL, value REAL NOT NULL, day TEXT NOT NULL)",
+    );
   }
 
   record(path: string): void {
@@ -119,9 +130,45 @@ export class AnalyticsCounter extends DurableObject<Env> {
     ).map((r) => ({ path: String(r.path), count: Number(r.n) }));
   }
 
-  /** Full build-in-public pulse in ONE round-trip: totals + daily sparkline + top paths. */
-  pulse(): { total: number; today: number; daily: { day: string; count: number }[]; topPaths: { path: string; count: number }[] } {
-    return { ...this.totals(), daily: this.daily(14), topPaths: this.topPaths(6) };
+  /** Record one field Web-Vital sample (metric already validated at the boundary). */
+  recordVital(metric: string, value: number): void {
+    if (!isVitalMetric(metric)) return;
+    if (!Number.isFinite(value) || value < 0 || value > 120000) return;
+    const day = new Date().toISOString().slice(0, 10);
+    this.sql.exec("INSERT INTO vital_samples (metric, value, day) VALUES (?, ?, ?)", metric, value, day);
+    // Keep only the most-recent 1000 samples per metric so the DO never grows unbounded.
+    this.sql.exec(
+      "DELETE FROM vital_samples WHERE metric = ? AND id NOT IN (SELECT id FROM vital_samples WHERE metric = ? ORDER BY id DESC LIMIT 1000)",
+      metric,
+      metric,
+    );
+  }
+
+  /** p50 + p75 per vital from the stored field samples (null when a metric has none). */
+  vitals(): { metric: VitalMetric; p50: number | null; p75: number | null; n: number }[] {
+    return VITAL_METRICS.map((metric) => {
+      const n = Number(this.sql.exec("SELECT COUNT(*) AS c FROM vital_samples WHERE metric = ?", metric).one().c);
+      const pct = (p: number): number | null => {
+        if (n === 0) return null;
+        const offset = Math.min(n - 1, Math.floor(n * p));
+        const row = this.sql
+          .exec("SELECT value FROM vital_samples WHERE metric = ? ORDER BY value ASC LIMIT 1 OFFSET ?", metric, offset)
+          .one();
+        return Number(row.value);
+      };
+      return { metric, p50: pct(0.5), p75: pct(0.75), n };
+    });
+  }
+
+  /** Full build-in-public pulse in ONE round-trip: totals + daily sparkline + top paths + field CWV. */
+  pulse(): {
+    total: number;
+    today: number;
+    daily: { day: string; count: number }[];
+    topPaths: { path: string; count: number }[];
+    vitals: { metric: VitalMetric; p50: number | null; p75: number | null; n: number }[];
+  } {
+    return { ...this.totals(), daily: this.daily(14), topPaths: this.topPaths(6), vitals: this.vitals() };
   }
 }
 
@@ -145,6 +192,23 @@ export default {
       }
       const pulse = await env.ANALYTICS.getByName("global").pulse();
       return withSecurityHeaders(Response.json({ ok: true, ...pulse }));
+    }
+
+    // Field Web Vitals beacon (navigator.sendBeacon POST) — validated at the boundary,
+    // stored in the DO. Always 200 {ok:true} (beacons ignore the response); flag off ⇒ 404.
+    if (url.pathname === "/api/vitals" && request.method === "POST") {
+      if (!flagOn) return withSecurityHeaders(Response.json({ error: "not_found" }, { status: 404 }));
+      let body: unknown = null;
+      try {
+        body = await request.json();
+      } catch {
+        body = null;
+      }
+      const b = body as { metric?: unknown; value?: unknown } | null;
+      if (b && isVitalMetric(b.metric) && typeof b.value === "number") {
+        ctx.waitUntil(Promise.resolve(env.ANALYTICS.getByName("global").recordVital(b.metric, b.value)));
+      }
+      return withSecurityHeaders(Response.json({ ok: true }));
     }
 
     // Server-side pageview capture: HTML navigations only, never /api or assets.

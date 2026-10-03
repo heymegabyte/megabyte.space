@@ -582,3 +582,32 @@
   next-wave seeded (exclude-verify-traffic-from-vitals, /status SSE real-time, home.status 9→9.5).
 - Blocked (unchanged): WS-11 Step 5 + WS-8 cutover — Brian-gated. Rebalance continues: arch/testing/
   security seeded.
+
+## fire-43 (2026-10-02) — Field CWV = real users only (webdriver guard + probe isolation + reset)
+
+- Shape: lean lead-direct. Lease `fire-43-1fd26b6c`. Pin 1abec09c (apex-only). Honesty fix for the
+  fire-42 feature (not a new surface) — a bug/observability-hardening slice.
+- Problem (verify-against-source-of-truth): the fire-42 /status CWV card labeled HEADLESS
+  deploy-verifier samples as "field" data — verify-vitals + every verify-apex-journey run beaconed,
+  seeding 35 headless samples the public card displayed as real-user perf. Invisible to render/console
+  gates; a build-in-public honesty defect.
+- Fix (`worker.ts` + `src/vitals.ts`):
+  1. Beacon self-excludes automation — `if (navigator.webdriver) return;` (Playwright/WebDriver true,
+     real users false). Stops ALL automation pollution, incl. the standing verify-apex-journey.
+  2. `probe` column — verifiers POST `{probe:true}` → stored probe=1, EXCLUDED from the public card
+     (`vitals(includeProbe=false)` filters `probe=0`); `?includeProbe=1` lets a verifier read its writes.
+  3. Bearer `POST /api/vitals/reset` (self-generated `VITALS_ADMIN_TOKEN`, provisioned to the worker +
+     get-secret + /tmp) — purged the 35 pre-guard samples (removed:35). Absent token ⇒ 404.
+- Verify (THIS fire): apex **b12d4891** (fix 0566a8dd). DO migration (`ALTER TABLE … ADD COLUMN probe`,
+  idempotent try/catch) clean — pulse unbroken, pageviews 652 intact. `verify-vitals` rewritten
+  NON-polluting (probe-only) **5/5**: webdriver=true confirmed, headless adds 0 public (35→35 then
+  reset→0), probe POST visible via includeProbe (+4) but public +0, card presence matches data.
+  `verify-apex` **3/3** (journey 28/28; guard HELD through it — public stayed 0). Reset confirmed:
+  public LCP/CLS/INP/TTFB all n=0 (honest-empty), probe samples survive the field-only reset.
+- Loop-improvement (§8): project memory `verifier-must-not-pollute-prod-data` — a real-browser/E2E
+  verifier that WRITES to a prod store corrupts the data it checks; exclude automation + isolate
+  probe data, never stop verifying. Cross-linked to verify-against-source-of-truth. (Durable, prevents
+  the class.) Plus verify-vitals is now itself non-polluting.
+- Matrix: home.status note hardened (score held — correctness fix, card now honest-empty). BACKLOG:
+  exclude-verify-traffic item ticked.
+- Blocked (unchanged): WS-11 Step 5 + WS-8 cutover — Brian-gated.

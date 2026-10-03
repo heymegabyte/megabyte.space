@@ -57,7 +57,7 @@
         "sparkline axis labels / hover tooltip",
         "day-over-day delta chip"
       ],
-      "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: 14-day sparkline + top-paths. fire-35: last-deploy freshness line. fire-42 ADDED a Core Web Vitals (field) card (product/observability, WS-9): a web-vitals beacon → POST /api/vitals → AnalyticsCounter DO (bounded p50/p75) → a 2×2 good/NI/poor-colored card (LCP/CLS/INP/TTFB, zero-PII). Causal-proven (verify-vitals 5/5: real visit → store → display reconcile) + card vision 9/10; density 7→8. Zero-PII, black/cyan. verify-apex-journey 28/28 (+CWV-contract assertion); display-vs-store reconciled. Apex 3b61caec."
+      "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: 14-day sparkline + top-paths. fire-35: last-deploy freshness line. fire-42 ADDED a Core Web Vitals (field) card (product/observability, WS-9): a web-vitals beacon → POST /api/vitals → AnalyticsCounter DO (bounded p50/p75) → a 2×2 good/NI/poor-colored card (LCP/CLS/INP/TTFB, zero-PII). Causal-proven (verify-vitals 5/5: real visit → store → display reconcile) + card vision 9/10; density 7→8. Zero-PII, black/cyan. verify-apex-journey 28/28 (+CWV-contract assertion); display-vs-store reconciled. Apex 3b61caec. fire-43 HARDENED to real-users-ONLY: navigator.webdriver beacon guard (automation never reports) + a probe column (verifiers write probe=1, excluded from the public card) + a Bearer reset that purged 35 pre-guard headless samples → card now honest-empty until real visitors. verify-vitals rewritten non-polluting 5/5. Apex 0566a8dd."
     },
     "home.404": {
       "beautifyPasses": 1,

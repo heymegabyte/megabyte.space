@@ -375,11 +375,11 @@
 
 > fire-42 (2026-10-02, field Core Web Vitals beacon + /status card — first NON-Beautify rebalance fire) appends:
 
-- [ ] Exclude verification traffic from field vitals — ws: WS-9 — the CWV card currently blends
-  headless deploy-verifier samples (verify-vitals + journey /status visits) with real users, so the
-  initial p75 reflects headless perf. — accept: `POST /api/vitals` drops samples from the known
-  verify UA (or a `?probe=1`/header the verifiers send), so stored field data is real-user-only;
-  verify-vitals adapts (asserts via a dedicated probe path that doesn't pollute the public card).
+- [x] Exclude verification traffic from field vitals (fire-43, 0566a8dd) — beacon self-excludes
+  automation (`navigator.webdriver` guard) + a `probe` column isolates verifier samples (POST
+  `{probe:true}`, read via `?includeProbe=1`) from the public card; Bearer `POST /api/vitals/reset`
+  purged the 35 pre-guard headless samples. verify-vitals rewritten NON-polluting (probe-only) 5/5;
+  public field vitals now honest-empty until real visitors; verify-apex 3/3 (guard held through it).
 - [ ] `/status` real-time live dot via DO WebSocket/SSE (replaces the 30s poll) — ws: WS-9 —
   per the real-time-data-no-manual-refresh rule. — accept: pushes update the pulse without a reload;
   display-vs-store reconciled.

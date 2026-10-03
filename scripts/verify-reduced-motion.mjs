@@ -79,6 +79,7 @@ try {
     );
   };
   await checkVisible("h1", "hero h1", 1);
+  await checkVisible(".kinetic-word", "kinetic hero words", 4);
   await checkVisible(".reveal", "reveal elements", 4);
   await checkVisible("#features .card", "feature cards", 6);
   await checkVisible(".trust-row", "trust rows", 4);

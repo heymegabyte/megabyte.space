@@ -497,3 +497,29 @@
   9→9.5 left-column, wire verify-reduced-motion into the ship gate, home.hero/os.shell 8.5→9).
 - Blocked (unchanged, Brian-gated): WS-11 Step 5 apex domain move + Access host add; WS-8 Better
   Auth cutover; WS-2 data-driven OS surfaces. Apex Beautify-10x converging (7 surfaces ≥9, 1 at 9.5).
+
+## fire-40 (2026-10-02) — Kinetic hero headline (Beautify-10x 8.5→9) + single apex ship gate
+
+- Shape: lean lead-direct. Lease `fire-40-e3c41f19`. Pin 6d02e1ee (unchanged). Target named by the
+  picker: `→ home.hero 8.5/10`; took the bounded next[1] "kinetic headline stagger" (next[0]=WebGPU
+  is a fresh-session big slice).
+- Slice (WS-3 Beautify-10x, lowest-scored actionable = home.hero 8.5): the hero H1 was a static
+  block fade-up. Now (`App.tsx` + `index.css`) the plain words ("The operating system for") cascade
+  up on LOAD (`.kinetic-word`, per-word `--w` stagger, pure CSS — above the fold, no IO) and the
+  gradient punchline ("one human and a fleet of agents.") fades in last (`.kinetic-fade`) — the
+  smooth cyan→violet gradient + natural wrapping preserved (gradient stays one inline unit). Fully
+  reduced-motion gated (words snap visible, no cascade).
+- Verify (THIS fire): `pnpm --dir packages/home deploy` → apex **239764d8** (feature f901b51c).
+  `node scripts/verify-apex.mjs` **3/3**: verify-prod 9/9, verify-apex-journey 27/27 (h1 text intact
+  "The operating system for one human and a fleet of agents.", axe 0, 0 overflow @390, 0 console),
+  verify-reduced-motion 8/8 (now incl. "kinetic hero words visible 4 el min-opacity 1"). Direct-Read
+  vision of the settled h1 @1280 = **9/10** (gradient intact, clean 3-line wrap).
+- Loop-improvement (§8): `scripts/verify-apex.mjs` — the SINGLE apex ship gate; runs the three
+  verifiers in sequence, non-zero on any fail (wires verify-reduced-motion into one command, the
+  fire-39 next-wave item). Also extended verify-reduced-motion to assert `.kinetic-word` visibility.
+  Ran 3/3 (exit 0).
+- Matrix: home.hero pass 1→2, 8.5→9. BACKLOG: home.hero 8.5→9 ticked, RM-aggregator ticked;
+  next-wave appended (home.hero 9→9.5 WebGPU, auto-run verify-apex from deploy/CI, os.shell 8.5→9).
+- Apex Beautify-10x SATURATION note: after this fire only os.shell (8.5) is below 9 on the
+  apex/estate surfaces (os.landing 9.5). Remaining levers are big (WebGPU/scroll-scrub) or fork-side
+  — the next high-value work is WS-8/WS-11 (Brian-gated) or a fresh-session big slice.

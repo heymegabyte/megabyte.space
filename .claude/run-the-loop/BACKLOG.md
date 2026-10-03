@@ -327,13 +327,29 @@
   paragraph) now reads plainer than the right. — accept: a left-column lift (a verify/trust badge or
   an animated shield motif tying to the icons), capture `#trust` + vision ≥9.5; axe 0; reduced-motion
   safe (verify-reduced-motion 7/7).
-- [ ] Wire `scripts/verify-reduced-motion.mjs` into the apex ship gate — ws: WS-7 — the gate exists
-  (shipped fire-39, catches motion-gated surfaces stuck at opacity:0 under prefers-reduced-motion,
-  invisible to every other check) but isn't run automatically after an apex deploy. — accept: the
-  deploy flow + CI run it after `packages/home deploy` alongside verify-prod/verify-apex-journey.
-- [ ] home.hero / os.shell 8.5→9 (next lowest-actionable per the picker) — ws: WS-3 — hero: WebGPU
-  particle upgrade / kinetic headline stagger; os.shell: active-nav cyan emphasis + the lone orange
-  'Reconnecting' chip → on-brand amber-cyan. — accept: capture + vision ≥9 per surface.
+- [x] Single apex ship gate aggregating reduced-motion (fire-40, f901b51c) — `scripts/verify-apex.mjs`
+  runs verify-prod + verify-apex-journey + verify-reduced-motion in one command, non-zero on any fail
+  (3/3 green this fire). verify-reduced-motion also extended to assert `.kinetic-word` visibility.
+  REMAINING (smaller): auto-run `verify-apex.mjs` from the deploy script / CI (see next-wave).
+- [x] home.hero 8.5→9 (fire-40, f901b51c) — kinetic headline (per-word cascade + gradient punchline
+  fade, reduced-motion gated); verify-apex 3/3, vision 9/10. Next lowest-actionable = os.shell (8.5).
+- [ ] os.shell 8.5→9 — ws: WS-3 — active-nav cyan emphasis + the lone orange 'Reconnecting' chip →
+  on-brand amber-cyan (FORK edit, workshop-frontend, via lane §1.18; OS deploy + service-token
+  verify). — accept: verify-os-theme PASS + capture + vision ≥9.
+
+> fire-40 (2026-10-02, kinetic hero headline 8.5→9) appends:
+
+- [ ] home.hero 9→9.5 — ws: WS-3 — the WebGPU particle upgrade (WebGPU→WebGL2→Canvas→reduced-motion
+  ladder, honest probe + per-tier screenshot proof) and/or a scroll-scrub camera path locked to the
+  field. BIG slice — best in a fresh full-budget session. — accept: forced-path renders per tier,
+  verify-apex 3/3, vision ≥9.5.
+- [ ] Auto-run `verify-apex.mjs` from the deploy flow / CI — ws: WS-7 — the aggregator exists
+  (fire-40) but is invoked manually. — accept: `pnpm --dir packages/home deploy` (or a thin post-deploy
+  hook) + a CI job run it after an apex deploy, with a ~15s asset-propagation wait first.
+- NOTE (apex Beautify-10x near saturation): after this fire only `os.shell` (8.5) sits below 9 on the
+  apex/estate surfaces; `os.landing` is 9.5. The remaining ≥9→9.5 levers are big (WebGPU, scroll-scrub)
+  or fork-side (os.shell) — signals the next high-value work is WS-8/WS-11 (Brian-gated) or a
+  fresh-session big slice, not continuous apex polish.
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

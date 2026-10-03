@@ -81,7 +81,7 @@ const getSetCookies = (res) =>
     const rootSameOrigin = rootLoc === "" || rootLoc.startsWith(APEX + "/");
     const rootNotAccess = !rootLoc.includes(ACCESS_HOST);
     const body = signin.status === 200 ? await signin.text() : "";
-    const isOS = /cloudflare os/i.test(body);
+    const isOS = /megabyte os/i.test(body);
     const notOldHome = !body.includes('id="app"') && !/megabyte-home/i.test(body);
     const pass = signin.status === 200 && isOS && notOldHome && rootSameOrigin && rootNotAccess && body.length > 500;
     record(
@@ -177,7 +177,7 @@ let sessionCookie = "";
   } else {
     const body = authed.status === 200 ? await authed.text() : "";
     const loc = authed.headers.get("location") || "";
-    const pass = authed.status === 200 && !loc.includes("/signin") && body.length > 500 && /cloudflare os/i.test(body);
+    const pass = authed.status === 200 && !loc.includes("/signin") && body.length > 500 && /megabyte os/i.test(body);
     record(
       "authed nav → OS shell (gate passthrough)",
       pass,

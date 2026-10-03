@@ -1104,3 +1104,26 @@
 - Loop-improvement (§8): after a major direction lands, REBALANCE to the starved categories (§2 budget) +
   re-verify the just-delivered surface VISUALLY — a branding inconsistency on the live first touchpoint was only
   caught by a fresh real-browser screenshot, not the curl gates.
+
+## fire-69-homepage (2026-10-03) — ✅ Brian directive: full OLD HOMEPAGE as the OS first-view + inline boot loader + shown-once
+
+- Lease `fire-69-absorb-9f169257` (pivoted from an absorption orient to Brian's mid-fire directive).
+- DIRECTIVE: "the old homepage as a component ... a loading indicator (embedded HTML/CSS) that fades into ... a
+  full screen version of the previous homepage that can be dismissed ... after dismissing once, the homepage
+  should not show up again."
+- SHIPPED (fork ee46a462 + f6ee87b2 / outer 9e140c13 + 1cb24ae6; deployed):
+  - Delegated the port: `LandingHomepage.tsx` EXPANDED from the hero splash → the FULL previous marketing
+    homepage (hero + features bento + how-it-works timeline + trust + CTA, from packages/home/App.tsx),
+    full-screen + scrollable; scoped `.os-landing` CSS (no collisions); three.js stays a lazy chunk.
+  - `index.html` INLINE HTML/CSS boot loader (black #060610 + pulsing cyan M) that fades out on React mount
+    (main.tsx dismissBootLoader, double-rAF + transitionend) — cross-fades into the homepage.
+  - SHOWN-ONCE fix: the agent left __root.tsx untouched → anonymous showed the homepage EVERY visit (persist
+    was authed-only). The anonymous branch now persists `megabyteOS_entered` on Enter + a return visitor skips
+    straight to /signin (effect).
+- VERIFIED (real browser): fresh anon → FULL homepage (all sections, 0 console errors) → Enter → /signin →
+  RELOAD → homepage does NOT show again. Boot loader served. verify-prod 10/10 + verify-os 2/2 (fixed 2 stale
+  `/cloudflare os/i` brand checks → `/megabyte os/i` after the fire-68 rebrand).
+- Loop-improvement (§8): a delegated UI port told to "keep __root.tsx untouched" MISSED a cross-cutting
+  behavior — the anonymous persist lived in a DIFFERENT branch than the authed persist. Always trace a
+  persist/guard for BOTH auth states + verify the FULL flow (fresh + RETURN visit) in a real browser, not render.
+- NEXT: /signin vibrant-cyan beautify · P4 DeepSeek impl · absorption slices (core mission, still starved).

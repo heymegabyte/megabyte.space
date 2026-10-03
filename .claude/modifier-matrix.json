@@ -76,9 +76,20 @@
       "density": 2,
       "lastVisit": "2026-10-01",
       "next": [
-        "REPLACED-not-branded: Better Auth black/cyan login surface (WS-8 slice 2)"
+        "REPLACED by home.signin (BA-2, fire-46); the stock Access page leaves the human path at BA-5/BA-6"
       ],
-      "notes": "Stock CF Access page; 1 upstream console error (their CSP blocks their SVG). Superseded direction: WS-8"
+      "notes": "Stock CF Access page; superseded by our own login (home.signin). Still the live /login 302 target until BA-5 relaxes Access."
+    },
+    "home.signin": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 3,
+      "lastVisit": "2026-10-02",
+      "next": [
+        "Google + GitHub SSO buttons (once OAuth apps exist) + magic-link field (BA-1b)",
+        "wire as the auth-on-action modal in the OS (BA-4) instead of a standalone page"
+      ],
+      "notes": "fire-46 CREATED (BA-2): our black/cyan Better Auth login at /signin on megabyte.space (same-origin with the BA-1 rail). Megabyte logo + gradient 'Welcome back.' + cyan mono field labels + cta-primary gradient button + sign-in/sign-up toggle + inline error/success. Email+password wired to /api/auth; UI→rail sign-in PROVEN in a real browser (success state). Dark (new /signin route, unlinked; live /login 302 untouched; not in sitemap). Vision 9/10, axe 0 serious/critical, 0 new inline scripts, verify-apex-journey 30/30. Apex 98dbc6ed."
     },
     "os.shell": {
       "beautifyPasses": 2,

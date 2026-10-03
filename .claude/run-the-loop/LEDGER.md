@@ -670,3 +670,25 @@
 - Loop-improvement (§8): `scripts/verify-auth.mjs` (reusable BA-1 regression gate) + CLAUDE.md § Auth now
   documents the full rail architecture — future auth fires have a gate + a map.
 - BACKLOG: BA-1 ticked; BA-1b (magic-link via SES) queued. Next: BA-2 (our black/cyan login surface).
+
+## fire-46 (2026-10-02) — BA-2: our black/cyan Better Auth login surface at /signin (dark)
+
+- Shape: lean lead-direct. Lease `fire-46-e148a653`. Pin 1abec09c (apex-only).
+- Slice (WS-8 BA-2, Brian's directive): shipped OUR login surface on megabyte.space.
+  - `packages/home/src/Login.tsx` — a gorgeous black/cyan card (Megabyte logo + gradient
+    "Welcome back." + cyan mono field labels + cta-primary gradient button + sign-in/sign-up toggle +
+    inline error/success states), same-origin with the BA-1 rail (POST /api/auth/sign-in|sign-up/email).
+  - Wired at a NEW dark `/signin` route (`known-routes.ts` + `main.tsx`) — deliberately NOT gating the
+    live `/login` 302 (so it stays byte-identical/untouched; cleaner than a flag on /login). Not in the
+    sitemap (auth pages aren't indexed).
+- Verify (THIS fire): apex **ba4aa5c3** (feature 98dbc6ed). /signin 200 + CSS text/css; direct-Read
+  vision of the login **9/10**; real-browser: h1 + email/password/submit render, **UI→rail sign-in with
+  the fixed e2e user → success state** (the login WORKS end-to-end), **axe 0 serious/critical**, 0 NEW
+  inline scripts (3 inline = JSON-LD + CF challenge, same as the homepage — the CF-challenge CSP warning
+  is the known tolerated one). `verify-apex` **3/3**, journey **30/30** (+2 /signin render-gate steps).
+- Loop-improvement (§8): the journey now has a standing `/signin` render gate (+ screenshot) so the
+  login surface can't silently regress; `Login.tsx` is the reusable surface BA-4 will mount as the
+  auth-on-action modal.
+- Matrix: new `home.signin` 9/10 (pass 1); os.login note → superseded by home.signin. BACKLOG: BA-2 ticked.
+- Dark: nothing links to /signin yet; the Access gate + live /login are UNCHANGED. Next: BA-1b
+  (magic-link via SES) or BA-3 (backend dual-accept — the OS fork validates a BA session).

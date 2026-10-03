@@ -110,9 +110,11 @@
   **4/4**; verify-apex **3/3** (homepage/UX unaffected). Dark: no UI uses it. Access gate UNCHANGED.
 - [ ] BA-1b — magic-link via SES (+ the `verification` flow) so sign-in needs no password — accept:
   a magic-link email sends via SES + the link signs in; `verify-auth` extended.
-- [ ] BA-2 — our black/cyan login surface on `megabyte.space` (Kumo + theme; magic-link field + provider
-  buttons), flag-gated dark beside the current `/login` 302 — accept: vision ≥9; axe + reduced-motion clean;
-  flag off ⇒ the 302 is byte-identical.
+- [x] BA-2 — our black/cyan login surface (fire-46, 98dbc6ed) — shipped at a NEW dark `/signin` route
+  (cleaner than gating /login: the live `/login` 302 is byte-identical, untouched). `Login.tsx` on
+  megabyte.space, same-origin with the BA-1 rail; email+password wired to /api/auth; inline error/
+  success + sign-in/sign-up toggle. Vision 9/10; UI→rail sign-in proven in a real browser; axe 0;
+  reduced-motion safe; verify-apex-journey 30/30 (+/signin gate). SSO/magic-link buttons = BA-1b + OAuth.
 - [ ] BA-3 — backend DUAL-ACCEPT: the OS backend RPC validates a Better Auth session OR the Access JWT —
   accept: service-token E2E + a real BA-session E2E both green.
 - [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the

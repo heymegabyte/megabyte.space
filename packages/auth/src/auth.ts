@@ -63,7 +63,12 @@ export function makeAuth(env: Env) {
         baseURL: env.BETTER_AUTH_URL,
         basePath: "/api/auth",
         emailAndPassword: { enabled: true },
-        trustedOrigins: ["https://megabyte.space"],
+        // Share the session across megabyte.space + os.megabyte.space so the OS (on os.) can read
+        // the Better Auth session set on the apex — the flip without a full apex re-point.
+        trustedOrigins: ["https://megabyte.space", "https://os.megabyte.space"],
+        advanced: {
+          crossSubDomainCookies: { enabled: true, domain: ".megabyte.space" },
+        },
         plugins: [
           magicLink({
             sendMagicLink: async ({ email, url }) => {

@@ -81,15 +81,15 @@
       "notes": "Stock CF Access page; superseded by our own login (home.signin). Still the live /login 302 target until BA-5 relaxes Access."
     },
     "home.signin": {
-      "beautifyPasses": 1,
+      "beautifyPasses": 2,
       "aiVisionScore": 9,
       "density": 3,
       "lastVisit": "2026-10-02",
       "next": [
-        "Google + GitHub SSO buttons (once OAuth apps exist) + magic-link field (BA-1b)",
+        "Google + GitHub SSO buttons (once OAuth apps exist)",
         "wire as the auth-on-action modal in the OS (BA-4) instead of a standalone page"
       ],
-      "notes": "fire-46 CREATED (BA-2): our black/cyan Better Auth login at /signin on megabyte.space (same-origin with the BA-1 rail). Megabyte logo + gradient 'Welcome back.' + cyan mono field labels + cta-primary gradient button + sign-in/sign-up toggle + inline error/success. Email+password wired to /api/auth; UI→rail sign-in PROVEN in a real browser (success state). Dark (new /signin route, unlinked; live /login 302 untouched; not in sitemap). Vision 9/10, axe 0 serious/critical, 0 new inline scripts, verify-apex-journey 30/30. Apex 98dbc6ed."
+      "notes": "fire-46 CREATED (BA-2): black/cyan Better Auth login at /signin (email+password, UI→rail proven, vision 9/10). fire-47 (BA-1b) ADDED passwordless magic-link: an 'Email me a sign-in link' button + 'OR' divider + a 'Check your inbox' state; full flow proven (request → SES send via aws4fetch → token in D1 → verify → session). verify-auth 5/5, verify-apex-journey 30/30, axe 0, 0 new inline scripts. Dark (new /signin route; live /login 302 untouched). Apex 61518a1b."
     },
     "os.shell": {
       "beautifyPasses": 2,

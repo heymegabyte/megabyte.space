@@ -108,8 +108,10 @@
   `megabyte.space/api/auth/*` with zero homepage risk. Full round-trip PROVEN (sign-up→sign-in→
   get-session, cookie on the apex domain) via BOTH workers.dev AND megabyte.space. `verify-auth.mjs`
   **4/4**; verify-apex **3/3** (homepage/UX unaffected). Dark: no UI uses it. Access gate UNCHANGED.
-- [ ] BA-1b — magic-link via SES (+ the `verification` flow) so sign-in needs no password — accept:
-  a magic-link email sends via SES + the link signs in; `verify-auth` extended.
+- [x] BA-1b — magic-link via SES (fire-47, 61518a1b) — better-auth magicLink plugin; sendMagicLink →
+  SES v2 (aws4fetch SigV4, from hey@megabyte.space, verified prod identity). Login gains "Email me a
+  sign-in link" → "Check your inbox". Full flow PROVEN (request → SES accepted → token in D1 → verify
+  → session cookie on megabyte.space). verify-auth 5/5 (+magic-link leg); verify-apex 30/30; vision 9/10.
 - [x] BA-2 — our black/cyan login surface (fire-46, 98dbc6ed) — shipped at a NEW dark `/signin` route
   (cleaner than gating /login: the live `/login` 302 is byte-identical, untouched). `Login.tsx` on
   megabyte.space, same-origin with the BA-1 rail; email+password wired to /api/auth; inline error/

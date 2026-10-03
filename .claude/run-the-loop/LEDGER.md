@@ -692,3 +692,26 @@
 - Matrix: new `home.signin` 9/10 (pass 1); os.login note → superseded by home.signin. BACKLOG: BA-2 ticked.
 - Dark: nothing links to /signin yet; the Access gate + live /login are UNCHANGED. Next: BA-1b
   (magic-link via SES) or BA-3 (backend dual-accept — the OS fork validates a BA session).
+
+## fire-47 (2026-10-02) — BA-1b: passwordless magic-link via SES
+
+- Shape: lean lead-direct. Lease `fire-47-2af6b74e`. Pin 1abec09c (apex + auth worker; no submodule).
+- Chose BA-1b over BA-3: SES has **megabyte.space verified + ProductionAccess** (checked via aws cli),
+  so magic-link is a clean self-contained slice (no DNS/OAuth/deep-fork work) that upgrades the BA-2
+  login to passwordless — aligned with Brian's "SSO and all that" vision. BA-3 (cross-subdomain + the
+  fork backend `access.ts`) stays the next critical-path slice.
+- Slice (WS-8 BA-1b): better-auth `magicLink` plugin on the `megabyte-auth` worker; `sendMagicLink`
+  sends via **SES v2** signed with **aws4fetch** (SigV4, Workers-safe) from `hey@megabyte.space`. AWS
+  creds → auth-worker secrets. The login (`Login.tsx`) gains an "Email me a sign-in link" button + an
+  "OR" divider + a "Check your inbox" state.
+- Verify (THIS fire): auth worker **2449bbae**, apex **340f72f9** (feature 61518a1b). Full flow PROVEN:
+  POST sign-in/magic-link → `{status:true}` (SES ACCEPTED the send) → token in D1 `verification`
+  (`magic-link:<token>`) → GET magic-link/verify?token=… → 302 + `__Secure-better-auth.session_token`
+  on megabyte.space → get-session = authenticated. UI: real browser clicked "Email me a sign-in link"
+  → "Check your inbox." state. `verify-auth` **5/5** (+magic-link→SES leg, SES simulator recipient so
+  no bounce); `verify-apex` **3/3** (journey 30/30); login vision **9/10**.
+- Loop-improvement (§8): `verify-auth` now covers the magic-link + SES path (standing gate); the
+  SES-from-Workers-via-aws4fetch pattern is documented in `src/auth.ts` + CLAUDE.md § Auth (reusable
+  for any future transactional email from a Worker).
+- Matrix: home.signin pass 1→2 (magic-link). BACKLOG: BA-1b ticked. Next: BA-3 (backend dual-accept —
+  the OS fork validates a BA session; needs cross-subdomain cookies) or SSO (needs OAuth apps).

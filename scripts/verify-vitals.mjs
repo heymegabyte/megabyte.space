@@ -1,94 +1,94 @@
 #!/usr/bin/env node
 /**
- * verify-vitals — CAUSAL field-Web-Vitals proof (verify-against-source-of-truth):
- * a REAL browser visit fires the web-vitals beacon → the AnalyticsCounter DO
- * stores samples → /status displays reconciled p50/p75. Proves the CLIENT beacon
- * works end-to-end, not just the endpoint.
+ * verify-vitals — proves the field-CWV pipeline WITHOUT polluting the public card.
  *
- *  1. baseline — GET /api/analytics/live, record per-metric sample counts (store).
- *  2. act      — real Chromium: load apex, settle LCP, click a nav link (INP),
- *                navigate away (pagehide → web-vitals flush → sendBeacon).
- *  3. store    — poll /api/analytics/live until real metrics' n increases.
- *  4. display  — load /status, assert the CWV card renders; reconcile a shown
- *                p75 value against the API (display-vs-store).
+ *  1. guard    — a HEADLESS visit (navigator.webdriver=true) must add NO public
+ *                sample (the beacon self-excludes automation). This is also why
+ *                the standing verify-apex-journey no longer pollutes field data.
+ *  2. isolation — POST probe samples (probe:true): they appear in
+ *                `?includeProbe=1` but NEVER in the public pulse (probe column).
+ *  3. display   — /status shows the CWV card IFF the public store has field data.
  *
- * Exit 0 = beacon→store→display proven. Exit 1 = a leg failed (named in output).
+ * Writes ONLY probe samples → safe to run any time (no field pollution).
+ * Exit 0 = all green. Exit 1 = a leg failed (named in output).
  */
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const APEX = "https://megabyte.space";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36";
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const steps = [];
 const ok = (name, pass, detail = "") => {
   steps.push({ name, pass });
   console.log(`${pass ? "✅" : "❌"} ${name}${detail ? " — " + detail : ""}`);
 };
-const getPulse = async () => {
-  const r = await fetch(`${APEX}/api/analytics/live`, { headers: { "User-Agent": UA, Accept: "application/json" } });
+const pulse = async (includeProbe = false) => {
+  const r = await fetch(`${APEX}/api/analytics/live${includeProbe ? "?includeProbe=1" : ""}`, {
+    headers: { "User-Agent": UA, Accept: "application/json" },
+  });
   return r.ok ? await r.json() : null;
 };
-const counts = (pulse) => Object.fromEntries((pulse?.vitals ?? []).map((v) => [v.metric, v.n]));
-const totalN = (pulse) => (pulse?.vitals ?? []).reduce((s, v) => s + v.n, 0);
+const totalN = (p) => (p?.vitals ?? []).reduce((s, v) => s + v.n, 0);
 
 const { chromium } = await import("playwright");
 const browser = await chromium.launch({ headless: true });
 try {
-  const before = await getPulse();
-  ok("baseline pulse has vitals array", Array.isArray(before?.vitals), JSON.stringify(counts(before)));
-  const baseTotal = totalN(before);
-
-  // Act — a real visit that will flush web-vitals on pagehide.
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, userAgent: UA });
-  const page = await context.newPage();
+  // 1. GUARD — a headless (webdriver=true) visit must NOT add a public sample.
+  const beforePub = await pulse(false);
+  const ctx = await browser.newContext({ userAgent: UA, viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  const wd = await page.evaluate(() => navigator.webdriver).catch(() => null);
   await page.goto(`${APEX}/`, { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForTimeout(1500); // let LCP resolve
-  await page.locator('a[href="#features"]').first().click().catch(() => {}); // an interaction → INP
-  await page.waitForTimeout(800);
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(1500);
+  await page.locator('a[href="#features"]').first().click().catch(() => {});
+  await page.waitForTimeout(600);
+  await page.goto("about:blank").catch(() => {}); // pagehide would flush — guard must suppress it
   await page.waitForTimeout(500);
-  // Navigating away fires pagehide → web-vitals flushes LCP/CLS/INP/TTFB via sendBeacon.
-  await page.goto("about:blank").catch(() => {});
-  await page.waitForTimeout(400);
-  await context.close();
-
-  // Store — poll until the real visit's samples land (DO write is ctx.waitUntil-async).
-  let after = before;
-  for (let i = 0; i < 12; i++) {
-    await new Promise((r) => setTimeout(r, 1000));
-    after = await getPulse();
-    if (totalN(after) > baseTotal) break;
+  await ctx.close();
+  let afterPub = beforePub;
+  for (let i = 0; i < 6; i++) {
+    await sleep(1000);
+    afterPub = await pulse(false);
+    if (totalN(afterPub) !== totalN(beforePub)) break;
   }
-  const grew = totalN(after) - baseTotal;
-  ok("real visit → DO stored new vital samples", grew > 0, `+${grew} samples, now ${JSON.stringify(counts(after))}`);
-  const withData = (after?.vitals ?? []).filter((v) => v.n > 0).map((v) => v.metric);
-  ok("≥1 field metric populated", withData.length >= 1, withData.join(",") || "none");
+  ok("navigator.webdriver true in automation", wd === true, `webdriver=${wd}`);
+  ok(
+    "headless visit adds NO public field sample (beacon guard)",
+    totalN(afterPub) === totalN(beforePub),
+    `public ${totalN(beforePub)}→${totalN(afterPub)}`,
+  );
 
-  // Display — /status renders the CWV card and reconciles with the API.
-  const page2 = await (await browser.newContext({ viewport: { width: 1280, height: 900 }, userAgent: UA })).newPage();
+  // 2. ISOLATION — probe POSTs land in includeProbe but NOT in the public pulse.
+  const beforeProbe = totalN(await pulse(true));
+  const beforePublic2 = totalN(await pulse(false));
+  for (const [metric, value] of [
+    ["LCP", 1500],
+    ["CLS", 0.02],
+    ["INP", 120],
+    ["TTFB", 140],
+  ]) {
+    await fetch(`${APEX}/api/vitals`, {
+      method: "POST",
+      headers: { "User-Agent": UA, "Content-Type": "application/json" },
+      body: JSON.stringify({ metric, value, probe: true }),
+    });
+  }
+  await sleep(1800);
+  const afterProbe = totalN(await pulse(true));
+  const afterPublic2 = totalN(await pulse(false));
+  ok("probe POST stored (visible via includeProbe)", afterProbe > beforeProbe, `probe-incl ${beforeProbe}→${afterProbe}`);
+  ok("probe samples EXCLUDED from the public card", afterPublic2 === beforePublic2, `public ${beforePublic2}→${afterPublic2}`);
+
+  // 3. DISPLAY — /status renders the CWV card IFF public field data exists.
+  const page2 = await (await browser.newContext({ userAgent: UA, viewport: { width: 1280, height: 900 } })).newPage();
   await page2.goto(`${APEX}/status`, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page2.waitForTimeout(2500);
+  const hasPublicData = (await pulse(false))?.vitals?.some((v) => v.n > 0) ?? false;
   const cardVisible = await page2
     .locator('[data-testid="status-vitals"]')
     .isVisible()
     .catch(() => false);
-  ok("/status renders the Core Web Vitals card", cardVisible);
-  // Reconcile: a populated metric's p75 (as displayed) should appear in the API.
-  const apiPopulated = (after?.vitals ?? []).find((v) => v.n > 0 && v.p75 !== null);
-  if (apiPopulated) {
-    const shown = apiPopulated.metric === "CLS" ? apiPopulated.p75.toFixed(3) : String(Math.round(apiPopulated.p75));
-    const dom = (await page2.locator('[data-testid="status-vitals"]').innerText().catch(() => "")) || "";
-    ok(
-      "display reconciles with store (p75 shown)",
-      dom.includes(apiPopulated.metric) && dom.replace(/[\s,]/g, "").includes(shown),
-      `${apiPopulated.metric} p75=${shown}`,
-    );
-  } else {
-    ok("display reconciles with store (p75 shown)", false, "no populated metric to reconcile");
-  }
+  ok("/status CWV card presence matches public data", cardVisible === hasPublicData, `card=${cardVisible} hasData=${hasPublicData}`);
 } catch (e) {
   ok("exception", false, e.message);
 } finally {

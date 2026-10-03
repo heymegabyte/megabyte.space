@@ -15,6 +15,8 @@ interface Env {
   ASSETS: Fetcher;
   ANALYTICS: DurableObjectNamespace<AnalyticsCounter>;
   ANALYTICS_LIVE?: string;
+  // Bearer token gating POST /api/vitals/reset (self-generated secret). Absent ⇒ reset 404s.
+  VITALS_ADMIN_TOKEN?: string;
 }
 
 const OS_ORIGIN = "https://os.megabyte.space";
@@ -84,6 +86,14 @@ export class AnalyticsCounter extends DurableObject<Env> {
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS vital_samples (id INTEGER PRIMARY KEY AUTOINCREMENT, metric TEXT NOT NULL, value REAL NOT NULL, day TEXT NOT NULL)",
     );
+    // Migration: tag each sample probe(1)/field(0). The public card reads field only
+    // (real users), verifiers write probe samples that never reach it. ADD COLUMN
+    // throws if it already exists — the catch makes it a safe idempotent migration.
+    try {
+      this.sql.exec("ALTER TABLE vital_samples ADD COLUMN probe INTEGER NOT NULL DEFAULT 0");
+    } catch {
+      /* column already present */
+    }
   }
 
   record(path: string): void {
@@ -130,29 +140,33 @@ export class AnalyticsCounter extends DurableObject<Env> {
     ).map((r) => ({ path: String(r.path), count: Number(r.n) }));
   }
 
-  /** Record one field Web-Vital sample (metric already validated at the boundary). */
-  recordVital(metric: string, value: number): void {
+  /** Record one Web-Vital sample. probe=true tags it a verifier sample (never public). */
+  recordVital(metric: string, value: number, probe = false): void {
     if (!isVitalMetric(metric)) return;
     if (!Number.isFinite(value) || value < 0 || value > 120000) return;
     const day = new Date().toISOString().slice(0, 10);
-    this.sql.exec("INSERT INTO vital_samples (metric, value, day) VALUES (?, ?, ?)", metric, value, day);
-    // Keep only the most-recent 1000 samples per metric so the DO never grows unbounded.
+    const p = probe ? 1 : 0;
+    this.sql.exec("INSERT INTO vital_samples (metric, value, day, probe) VALUES (?, ?, ?, ?)", metric, value, day, p);
+    // Keep only the most-recent 1000 samples per metric+class so the DO never grows unbounded.
     this.sql.exec(
-      "DELETE FROM vital_samples WHERE metric = ? AND id NOT IN (SELECT id FROM vital_samples WHERE metric = ? ORDER BY id DESC LIMIT 1000)",
+      "DELETE FROM vital_samples WHERE metric = ? AND probe = ? AND id NOT IN (SELECT id FROM vital_samples WHERE metric = ? AND probe = ? ORDER BY id DESC LIMIT 1000)",
       metric,
+      p,
       metric,
+      p,
     );
   }
 
-  /** p50 + p75 per vital from the stored field samples (null when a metric has none). */
-  vitals(): { metric: VitalMetric; p50: number | null; p75: number | null; n: number }[] {
+  /** p50 + p75 per vital. Public (includeProbe=false) = real FIELD samples only. */
+  vitals(includeProbe = false): { metric: VitalMetric; p50: number | null; p75: number | null; n: number }[] {
+    const filter = includeProbe ? "" : " AND probe = 0";
     return VITAL_METRICS.map((metric) => {
-      const n = Number(this.sql.exec("SELECT COUNT(*) AS c FROM vital_samples WHERE metric = ?", metric).one().c);
+      const n = Number(this.sql.exec(`SELECT COUNT(*) AS c FROM vital_samples WHERE metric = ?${filter}`, metric).one().c);
       const pct = (p: number): number | null => {
         if (n === 0) return null;
         const offset = Math.min(n - 1, Math.floor(n * p));
         const row = this.sql
-          .exec("SELECT value FROM vital_samples WHERE metric = ? ORDER BY value ASC LIMIT 1 OFFSET ?", metric, offset)
+          .exec(`SELECT value FROM vital_samples WHERE metric = ?${filter} ORDER BY value ASC LIMIT 1 OFFSET ?`, metric, offset)
           .one();
         return Number(row.value);
       };
@@ -160,15 +174,23 @@ export class AnalyticsCounter extends DurableObject<Env> {
     });
   }
 
+  /** Clear stored vital samples (FIELD only by default; all when includeProbe). Returns rows removed. */
+  resetVitals(includeProbe = false): number {
+    const before = Number(this.sql.exec("SELECT COUNT(*) AS c FROM vital_samples").one().c);
+    this.sql.exec(includeProbe ? "DELETE FROM vital_samples" : "DELETE FROM vital_samples WHERE probe = 0");
+    const after = Number(this.sql.exec("SELECT COUNT(*) AS c FROM vital_samples").one().c);
+    return before - after;
+  }
+
   /** Full build-in-public pulse in ONE round-trip: totals + daily sparkline + top paths + field CWV. */
-  pulse(): {
+  pulse(includeProbe = false): {
     total: number;
     today: number;
     daily: { day: string; count: number }[];
     topPaths: { path: string; count: number }[];
     vitals: { metric: VitalMetric; p50: number | null; p75: number | null; n: number }[];
   } {
-    return { ...this.totals(), daily: this.daily(14), topPaths: this.topPaths(6), vitals: this.vitals() };
+    return { ...this.totals(), daily: this.daily(14), topPaths: this.topPaths(6), vitals: this.vitals(includeProbe) };
   }
 }
 
@@ -190,12 +212,15 @@ export default {
       if (!flagOn) {
         return withSecurityHeaders(Response.json({ error: "not_found" }, { status: 404 }));
       }
-      const pulse = await env.ANALYTICS.getByName("global").pulse();
+      // ?includeProbe=1 returns verifier samples too (verify-vitals only, never the public card).
+      const includeProbe = url.searchParams.get("includeProbe") === "1";
+      const pulse = await env.ANALYTICS.getByName("global").pulse(includeProbe);
       return withSecurityHeaders(Response.json({ ok: true, ...pulse }));
     }
 
     // Field Web Vitals beacon (navigator.sendBeacon POST) — validated at the boundary,
     // stored in the DO. Always 200 {ok:true} (beacons ignore the response); flag off ⇒ 404.
+    // body.probe===true tags a verifier sample so it never reaches the public card.
     if (url.pathname === "/api/vitals" && request.method === "POST") {
       if (!flagOn) return withSecurityHeaders(Response.json({ error: "not_found" }, { status: 404 }));
       let body: unknown = null;
@@ -204,11 +229,22 @@ export default {
       } catch {
         body = null;
       }
-      const b = body as { metric?: unknown; value?: unknown } | null;
+      const b = body as { metric?: unknown; value?: unknown; probe?: unknown } | null;
       if (b && isVitalMetric(b.metric) && typeof b.value === "number") {
-        ctx.waitUntil(Promise.resolve(env.ANALYTICS.getByName("global").recordVital(b.metric, b.value)));
+        ctx.waitUntil(Promise.resolve(env.ANALYTICS.getByName("global").recordVital(b.metric, b.value, b.probe === true)));
       }
       return withSecurityHeaders(Response.json({ ok: true }));
+    }
+
+    // Admin: clear stored vitals (FIELD by default; ?all=1 clears probe too). Bearer-gated;
+    // absent token ⇒ 404 (never leak the endpoint). Used once to purge pre-guard pollution.
+    if (url.pathname === "/api/vitals/reset" && request.method === "POST") {
+      const token = env.VITALS_ADMIN_TOKEN;
+      if (!token || (request.headers.get("authorization") || "") !== `Bearer ${token}`) {
+        return withSecurityHeaders(Response.json({ error: "not_found" }, { status: 404 }));
+      }
+      const removed = await env.ANALYTICS.getByName("global").resetVitals(url.searchParams.get("all") === "1");
+      return withSecurityHeaders(Response.json({ ok: true, removed }));
     }
 
     // Server-side pageview capture: HTML navigations only, never /api or assets.

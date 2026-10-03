@@ -22,6 +22,10 @@ function send({ name, value }: Metric): void {
 
 /** Wire the four field vitals. Call once after the app mounts. */
 export function initVitals(): void {
+  // Real users only: automation (Playwright/WebDriver/our deploy verifiers) sets
+  // navigator.webdriver === true. Excluding it keeps the public /status CWV card a
+  // true FIELD metric instead of blending headless deploy-verifier samples.
+  if (typeof navigator !== "undefined" && navigator.webdriver) return;
   onLCP(send);
   onCLS(send);
   onINP(send);

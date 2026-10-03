@@ -269,12 +269,17 @@ test("gives the router the public route, the frontend, and every service binding
     { binding: "GATEKEEPER_SCHEDULER", service: "acme-cloudflare-os-scheduler" },
     { binding: "GATEKEEPER_CUSTOM", service: "acme-cloudflare-os-custom" },
   ]);
-  // Inherited untouched: the base config already carries the ASSETS binding, the SPA fallback, and
-  // the /gatekeeper/* prefix an OAuth Gatekeeper redirect needs.
+  // Inherited untouched: the base config already carries the ASSETS binding and the SPA fallback.
+  // run_worker_first is ["/*", "!/assets/*"] so the worker runs on EVERY navigation — the BA_GATE
+  // auth-on-action edge gate can intercept anonymous navs, and the /gatekeeper/* prefix an OAuth
+  // Gatekeeper redirect needs is covered by "/*" (src/index.ts routes it internally). Per-prefix
+  // positives are redundant under "/*" and rejected by wrangler >=4.120.
   assert.deepEqual(generated.router.assets, bases.router.assets);
   assert.equal(generated.router.assets!.binding, "ASSETS");
   assert.equal(generated.router.assets!.directory, "../workshop-frontend/dist");
-  assert.ok(generated.router.assets!.run_worker_first!.includes("/gatekeeper/*"),
+  assert.ok(generated.router.assets!.run_worker_first!.includes("/*"),
+    JSON.stringify(generated.router.assets));
+  assert.ok(generated.router.assets!.run_worker_first!.includes("!/assets/*"),
     JSON.stringify(generated.router.assets));
 });
 

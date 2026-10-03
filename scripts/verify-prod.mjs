@@ -5,8 +5,11 @@
 //   https://megabyte.space/        → PUBLIC cinematic homepage (200, no auth wall,
 //                                    WebGL canvas mount + login CTA present)
 //   https://megabyte.space/login   → 302 into the gated app at os.megabyte.space
-//   https://os.megabyte.space/     → Cloudflare Access gate (302 to manhattan team
-//                                    login) for anonymous visitors
+//   https://os.megabyte.space/     → BA-5 (auth-on-action): CF Access is RELAXED; the
+//                                    starter router's BA_GATE 302s an anonymous HTML
+//                                    navigation to OUR Better Auth /signin on the apex
+//                                    (NOT cloudflareaccess.com). The real boundary is
+//                                    /api (backend dual-accept); the shell is data-less.
 //   os.megabyte.space + service token → Cloudflare OS app shell (200, id="root")
 //   https://www.megabyte.space/    → 301 to the apex
 //
@@ -92,16 +95,30 @@ const tryFetch = async (url, options) => {
   }
 }
 
-// 3. Anonymous os.megabyte.space is gated by Access.
+// 3. Anonymous HTML navigation to os.megabyte.space is gated by the Better Auth edge
+//    gate (BA_GATE) — post-relax it 302s to OUR /signin on the apex, NOT to Cloudflare
+//    Access. Browser-nav headers are required to trip the gate (it keys on an HTML
+//    navigation: sec-fetch-dest=document / Accept: text/html); a cache-buster query
+//    avoids a CF-edge-cached data-less shell masking the redirect for some clients.
 {
-  const res = await tryFetch(OS, { redirect: "manual" });
+  const res = await tryFetch(`${OS}?v=${Date.now()}`, {
+    redirect: "manual",
+    headers: {
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Dest": "document",
+      "Cache-Control": "no-cache",
+    },
+  });
   if (res.error) {
-    record("os subdomain gated by Access", false, `fetch failed: ${res.error}`);
+    record("os anonymous nav → Better Auth /signin", false, `fetch failed: ${res.error}`);
   } else {
     const location = res.headers.get("location") || "";
-    const pass = res.status === 302 && location.includes(ISSUER_HOST);
+    const pass =
+      res.status === 302 && location.includes("megabyte.space/signin") && !location.includes(ISSUER_HOST);
     record(
-      "os subdomain gated by Access",
+      "os anonymous nav → Better Auth /signin",
       pass,
       `status=${res.status} location=${location.slice(0, 80) || "(none)"}`,
     );

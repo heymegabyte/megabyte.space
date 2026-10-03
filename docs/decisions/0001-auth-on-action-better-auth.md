@@ -1,7 +1,12 @@
 # ADR 0001 — Auth-on-action with Better Auth (anonymous OS UI, SSO only on submit)
 
-- **Status:** Accepted — Brian-directed 2026-10-02.
+- **Status:** Accepted — Brian-directed 2026-10-02. **FLIP AUTHORIZED — Brian 2026-10-03** ("will the
+  loop do the flip?" + the standing full-permission directive). BA-5 is NO LONGER Brian-gated: the loop
+  executes the flip (BA-3 → BA-4 → BA-5) autonomously + carefully, reversible, never pausing to ask.
 - **Type:** one-way door (relaxing the Access gate re-exposes the OS; sequence it carefully).
+- **Progress:** BA-3 ✅ DONE (fire-50, fork ab536d4b) — the OS backend accepts a Better Auth session
+  (dual-accept), deployed, Access path verified unbroken (verify-os 3/3). NEXT: BA-4 (anonymous UI +
+  auth-on-action in `workshop-frontend`) → then the relax/flip + verify + rollback-ready.
 - **Supersedes:** the "Access stays as the edge gate / stock Access page never human-facing" framing in
   `CLAUDE.md § Auth` and WS-8's original "Access remains a thin outer edge gate." Access is now removed
   from the HUMAN path entirely (service-token/WARP automation paths may remain until WS-8.4 replaces them).

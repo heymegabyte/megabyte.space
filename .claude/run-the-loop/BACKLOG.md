@@ -124,9 +124,20 @@
   same-origin). **The auth rail + login are COMPLETE + verified at /signin; the only thing left is the
   flip (the big Brian-gated one-way-door that changes the live apex).** Best run as a single fresh-budget
   fire with rollback staged + Brian's go on the live-apex change.
-- [ ] BA-3 — backend DUAL-ACCEPT: the OS backend RPC validates a Better Auth session OR the Access JWT
-  (`workshop-backend/src/access.ts` + `server.ts:844`). Lands IN the coordinated flip fire (above). —
-  accept: service-token E2E + a real BA-session E2E both green (the latter only post-flip).
+- ★ FLIP AUTHORIZED (Brian 2026-10-03, "will the loop do the flip?" + full-permission directive): BA-5 is
+  NO LONGER Brian-gated. The loop executes the flip (BA-3→BA-4→BA-5) autonomously + carefully (reversible,
+  verify each step, rollback-ready). Driving it now.
+- [x] BA-3 — backend DUAL-ACCEPT (fire-50, fork ab536d4b) — `server.ts` auth tries the Access JWT first
+  (unchanged), else falls back to `verifyBetterAuthSession` (access.ts; public subrequest to
+  megabyte.space/api/auth/get-session). Same email identity. Deployed (backend 66b77a33); Access path
+  UNBROKEN (verify-os 3/3). BA-session path dark until the relax (every request still carries an Access
+  JWT while Access fronts the OS).
+- [ ] BA-4 — anonymous UI + auth-on-action in `workshop-frontend`: render without auth; the first protected
+  action (prompt submit) → BA sign-in (our /signin) → resume. Deploy dark (while Access gates, the frontend
+  never sees anonymous). — accept: builds + deploys; authed path unchanged; verified at the relax.
+- [ ] BA-5 — RELAX + verify: remove/weaken the Access app on the OS (and/or re-point to the apex); anonymous
+  → OS UI → submit → BA sign-in → works. Rollback = re-assert Access. — accept: real-browser anonymous→OS
+  →sign-in→authed green; verify-prod/os rewritten for the new topology.
 - [x] BA-2.1 — /signin session-aware (fire-48, b0ba79e7): already-signed-in users see "Already signed in"
   + Continue/Sign-out instead of a redundant form (embarrassingly-easy); both states verified; 30/30.
 - [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the

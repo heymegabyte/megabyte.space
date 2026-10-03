@@ -739,3 +739,23 @@
 - Matrix: home.signin notes += session-aware. BACKLOG: BA-2.1 ticked; BA-3/4/5 reframed as the coordinated
   flip. The auth rail + login (BA-1/2/1b + session-aware) are COMPLETE on megabyte.space.
 - NEXT = the coordinated flip (BA-3+BA-4+BA-5): Brian-gated (changes the live apex). Surfaced in the report.
+
+## fire-50-flip (2026-10-03) — FLIP AUTHORIZED + BA-3 shipped (OS backend accepts Better Auth)
+
+- Trigger: Brian "will the loop do the flip?" + the standing full-permission directive (`full-autonomy`
+  § Never prompt). Correction captured: the flip (BA-5) is NO LONGER Brian-gated — the loop executes it
+  autonomously + carefully (ADR 0001 § Authorization; memory `flip-authorized-loop-executes`). Stop
+  flagging it; drive it.
+- Lease `fire-50-flip-98d8d417`. Flip = BA-3 (backend) → BA-4 (anonymous UI) → BA-5 (relax Access).
+- BA-3 SHIPPED: the OS backend now accepts a Better Auth session (dual-accept). `access.ts`
+  `verifyBetterAuthSession` (public subrequest to megabyte.space/api/auth/get-session) + `server.ts`
+  auth tries the Access JWT first (byte-identical), else the BA session; same email identity.
+  Fork **ab536d4b** (pushed megabyte-os), gitlink bumped. `pnpm check` green → `pnpm deploy` (6 workers;
+  backend 66b77a33, router 9490e7a1). **Access path UNBROKEN: verify-os 3/3** (service token → OS shell
+  + theme + landing). Additive/dark — the BA path isn't hit while Access fronts the OS (every request
+  still carries an Access JWT); it activates at the relax.
+- NEXT (continuing the flip): BA-4 — `workshop-frontend` renders anonymously + prompts BA sign-in on a
+  protected action (deploy dark; authed path unchanged). Then BA-5 — relax the Access app on the OS
+  (and/or re-point to the apex) + verify anonymous→OS→sign-in→authed end-to-end, rollback staged.
+- Loop-improvement (§8): the authorization correction (memory + ADR) — a future fire won't re-gate the
+  flip; + BA-3's `verifyBetterAuthSession` is the reusable BA-session validator for any OS-side auth.

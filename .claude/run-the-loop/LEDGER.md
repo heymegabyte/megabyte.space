@@ -1080,3 +1080,27 @@
   (projectsites.dev's task-routing) that doesn't map to THIS codebase — investigate the ACTUAL architecture +
   reframe to the achievable form BEFORE implementing, else you build a non-mapping abstraction. Captured in the
   P4 reframe; + delegate big-subsystem reads to Explore to keep the lead lean.
+
+## fire-68-brand (2026-10-03) — REBALANCE to Beautify/branding: estate brand "Megabyte OS" at the apex + P4 key-mechanism resolved
+
+- Lease `fire-68-deepseek-impl-0e9c928a`. The user's CORE vision (P1-P3) is LIVE + P4 (DeepSeek) is a complex
+  platform-dependent dedicated-fire task — so REBALANCED to the starved Beautify/UX signature (16 fires were all
+  auth/apex/model). Verified + polished the just-delivered first touchpoint.
+- BEAUTIFY-10x ASSESSMENT (real-browser screenshots @1280+390 of the LIVE apex): the anonymous preview
+  (os.landing / LandingHomepage) is 9.5 gorgeous (black/cyan/purple cinematic WebGL). The /signin is clean +
+  on-brand but PLAINER than the preview AND had a BRANDING INCONSISTENCY — the nav read "Cloudflare OS" (upstream
+  DEFAULT_SITE_NAME) while the card + preview say "Megabyte OS".
+- SHIPPED (fork d6ff04c4 / outer 71831eca; deployed): DEFAULT_SITE_NAME (workshop-shared/api.ts) + index.html
+  <title> → "Megabyte OS" (drives the nav + AI providerLabel). The LandingHomepage "Built on Cloudflare OS"
+  attribution preserved (accurate). VERIFIED LIVE (purge + real browser): nav "Megabyte OS Home Gatekeepers
+  Explore", <title>Megabyte OS</title>. Estate brand now consistent across nav/title/card/preview.
+- P4 side-finding RESOLVED (BACKLOG P4): the gateway key mechanism — providers via WORKERS_AI binding except
+  HTTPS_ONLY (CF_AI_GATEWAY_API_TOKEN); the DeepSeek key is stored ON the gateway; + DeepSeek must be added to
+  SUGGESTED_MODELS. P4 is now fully scoped for a dedicated fire.
+- NOTE: the LIVE apex /signin is the FORK's signin.tsx (fire-62 port, GitHub/Google SSO), not packages/home
+  Login.tsx (retired at the flip). modifier-matrix home.signin updated (branding fixed; ~8; next = vibrant-cyan button).
+- NEXT: /signin vibrant-cyan beautify (→9.5) · P4 DeepSeek impl (dedicated, scoped) · then absorption slices
+  (Notion-like tables / Airtable-automation into the OS — the core mission, starved).
+- Loop-improvement (§8): after a major direction lands, REBALANCE to the starved categories (§2 budget) +
+  re-verify the just-delivered surface VISUALLY — a branding inconsistency on the live first touchpoint was only
+  caught by a fresh real-browser screenshot, not the curl gates.

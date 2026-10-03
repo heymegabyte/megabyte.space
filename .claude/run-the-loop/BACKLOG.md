@@ -88,10 +88,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   research AI features INTO the OS, which would then route to premium models — WS-2/absorption, later).
   IMPLEMENTATION (Approach A, ~2-3h, next focused fire): (1) DeepSeek is NOT on Workers AI → add it as an
   AI-Gateway EXTERNAL provider ("deepseek", OpenAI-compatible, `deepseek-chat`) — `deployment.jsonc`
-  aiGateway.providers += deepseek (+ openai/anthropic); (2) ⚠️ RESOLVE THE KEY MECHANISM FIRST: does the OS
-  reach an external provider via a gateway-STORED BYOK key (CF dashboard/API) or a worker-PASSED key? (read
-  `ai-gateway.ts:356-376` getModelViaGateway + the CF_AI_GATEWAY_API_TOKEN path) — then store DEEPSEEK_API_KEY
-  accordingly; (3) `getDefaultModelConfig()` in `ai-gateway.ts` + use it as the fallback at `user.ts:732`;
+  aiGateway.providers += deepseek (+ openai/anthropic); (2) ✅ KEY MECHANISM RESOLVED (fire-68): the OS reaches
+  providers via the `WORKERS_AI` binding (pre-authed in-account) EXCEPT `HTTPS_ONLY_PROVIDERS`, which ride HTTPS
+  with `CF_AI_GATEWAY_API_TOKEN` (ai-gateway.ts:57/72/78-84). The PROVIDER's own key (DeepSeek API key) is stored
+  ON the AI Gateway (authenticated-gateway/BYOK) — so set DEEPSEEK_API_KEY on the "megabyte-os" gateway (CF
+  dashboard/API) + set `CF_AI_GATEWAY_API_TOKEN` (a Run+Read token) as a backend secret IF deepseek is HTTPS-only.
+  ALSO: DeepSeek must be added to the `SUGGESTED_MODELS` catalog (workshop-shared) with its provider+model id
+  (`deepseek` / `deepseek-chat`) so `resolveModel`/`getModelList` surface it; (3) `getDefaultModelConfig()` in `ai-gateway.ts` + use it as the fallback at `user.ts:732`;
   (4) ⚠️ TEST a real DeepSeek call succeeds through the OS gateway BEFORE making it the default (else new/
   model-less chats break); (5) behind a default-OFF feature flag (per `feature-flags`), promote after eval.
 

@@ -788,3 +788,29 @@
 - [loop-improvement §8] 95181dc9 — scripts/check-fire-committed.mjs: a precise (zero-false-positive) end-of-fire git-status guard failing if watched tracked source (packages/ · scripts/ · deployment.jsonc · .claude canonical home) is left dirty — retires the fire-52 class (ticked-done-but-uncommitted + phantom SHA + no LEDGER). A SHA-resolution gate was built + REJECTED first: confounded by wrangler deploy-version-ids ("apex megabyte-home <id>") + rebased-fork SHAs (12 false positives on first run). Precision > recall (validator-precision-discipline).
 - [verify] verify-prod 9/9 · verify-apex-journey 30/30 · verify-os 3/3 (service-token shell + dark theme + landing render/dismiss/persist) · verify-reduced-motion 8/8 · verify-auth 5/5. Both surfaces green. analytics reconciled display-vs-store (total=738 / today=135).
 - Next: WS-8 BA-5 (the Access relax) is the one canonical-#4-sensitive flip — give it a DEDICATED clean-context fire with full real-browser anonymous→OS→sign-in verification + a rehearsed rollback, NOT an add-on to a heavy salvage fire. Cross-subdomain cookies now unblock it.
+
+## fire-52-xsd (2026-10-03) — cross-subdomain cookies + BA-4 router EDGE gate (dark)
+
+- Lease `fire-52-xsd-5ad775f3`. Two verified flip steps toward the auth-on-action cutover; neither
+  touches the live human path (both additive/dark), both prod-verified.
+- STEP 1 — cross-subdomain cookies: `packages/auth/src/auth.ts` now sets the Better Auth session cookie
+  on `Domain=.megabyte.space` (`advanced.crossSubDomainCookies` + os.megabyte.space in `trustedOrigins`),
+  so the OS on os.megabyte.space can READ the session set on the apex — the flip WITHOUT a full apex
+  re-point. Auth worker deployed version cd943d94. verify-auth **5/5** (rail unbroken; cookie Domain asserted).
+- STEP 2 — BA-4 router EDGE gate (the corrected approach after fire-51): `cloudflare-os/packages/router/
+  src/index.ts` redirects an anonymous HTML navigation to megabyte.space/signin, EXEMPT: a CF Access JWT
+  header, a `better-auth.session_token` cookie, and /api + asset + non-nav requests. Flag-gated by
+  `BA_GATE` (unset ⇒ INERT) so it ships DARK while Access still fronts the OS. Fork 76ce0131 (pushed
+  megabyte-os), gitlink bumped (08c48e8f). `pnpm check` green → `pnpm deploy`.
+- VERIFIED DARK: `node scripts/verify-os.mjs` **3/3 GREEN** (verify-prod + verify-os-theme + verify-os-landing)
+  — the service-token OS load is UNAFFECTED (the fire-51 regression did NOT recur; the edge gate exempts
+  the Access JWT the service token carries). Exactly the BACKLOG BA-4 reframe: gate at the starter-owned
+  ROUTER, not the fragile capnweb frontend whoami.
+- NEXT: BA-5 (the relax) — AUTHORIZED to execute autonomously (standing full-permission + flip-authorized
+  memory). Flip BA_GATE=1 on the router + relax CF Access on os.megabyte.space (reversibly) + switch
+  verify-os/verify-prod from the service token to a Better Auth session + verify anonymous→os→router
+  redirect→/signin→BA sign-in→.megabyte.space cookie→authed OS end-to-end, rollback staged (re-assert
+  Access policy + BA_GATE off). Only fully testable at the relax.
+- Loop-improvement (§8): the edge-gate approach is now SHIPPED + verified-dark (not merely identified as
+  in fire-51) — the reusable "gate the OS without touching the capnweb frontend" pattern; the next fire
+  executes BA-5 with the gate already proven inert against the service-token path.

@@ -759,3 +759,24 @@
   (and/or re-point to the apex) + verify anonymous→OS→sign-in→authed end-to-end, rollback staged.
 - Loop-improvement (§8): the authorization correction (memory + ADR) — a future fire won't re-gate the
   flip; + BA-3's `verifyBetterAuthSession` is the reusable BA-session validator for any OS-side auth.
+
+## fire-51-ba4 (2026-10-03) — BA-4 attempted → REVERTED (caught + rolled back); BA-3 stays live
+
+- Lease `fire-51-ba4-68e00f0f`. Continued the flip: tried BA-4 (anonymous UI + auth-on-action) in the
+  fork frontend. Shipped a `useAuth` whoami-catch → redirect-to-megabyte.space/signin (meant to be dark:
+  fire only on auth failure). Fork 7da74bde, deployed.
+- REGRESSION CAUGHT: verify-os dropped to **1/3** — verify-os-theme + verify-os-landing failed. Diagnosed
+  in a real browser: the SERVICE-TOKEN OS load was being redirected to /signin. Cause: the catch fired on
+  ANY whoami rejection, not just auth failure; the service-token/verify path (whoami rejects but the shell
+  should still render — the OLD empty catch tolerated it) got sent to /signin.
+- ROLLED BACK (never-stop-until-deployed): reverted useAuth to the known-good empty catch (fork 4011d872),
+  rebuilt + redeployed → **verify-os 3/3 GREEN** — the live OS is restored. BA-3 (backend dual-accept)
+  remains live + healthy (it's part of the 3/3).
+- LESSON (→ BACKLOG BA-4): the frontend whoami rejection is NOT a clean "anonymous" signal — a dark auth
+  change MUST be tested against ALL auth paths incl. the SERVICE TOKEN before trusting "dark." BETTER BA-4
+  = gate at the EDGE (the `megabyte-os` ROUTER redirects anonymous HTML navs to /signin), not the fragile
+  capnweb frontend whoami flow. Fully testable only at the relax (BA-5).
+- Net: no forward progress on BA-4, but the regression was caught + cleanly rolled back (OS healthy), and
+  the right BA-4 approach (router-edge gate) is now identified for the next fire. BA-3 stands.
+- Loop-improvement (§8): the BA-4-failure lesson captured (BACKLOG + here) so the next attempt uses the
+  edge-gate approach + tests the service-token path — prevents re-breaking the OS the same way.

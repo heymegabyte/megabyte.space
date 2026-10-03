@@ -132,9 +132,15 @@
   megabyte.space/api/auth/get-session). Same email identity. Deployed (backend 66b77a33); Access path
   UNBROKEN (verify-os 3/3). BA-session path dark until the relax (every request still carries an Access
   JWT while Access fronts the OS).
-- [ ] BA-4 — anonymous UI + auth-on-action in `workshop-frontend`: render without auth; the first protected
-  action (prompt submit) → BA sign-in (our /signin) → resume. Deploy dark (while Access gates, the frontend
-  never sees anonymous). — accept: builds + deploys; authed path unchanged; verified at the relax.
+- [ ] BA-4 — anonymous UI + auth-on-action. ⚠️ fire-51 ATTEMPT REVERTED: a `useAuth` whoami-catch →
+  redirect-to-/signin broke the SERVICE-TOKEN OS load — it redirected on ANY whoami rejection, not just
+  auth failure, and the service-token/verify path (whoami rejects but the shell should still render, per
+  the old empty catch) got sent to /signin (verify-os 1/3 → caught → rolled back to known-good, 3/3).
+  LESSON: the frontend whoami rejection is NOT a clean "anonymous" signal; don't redirect on it.
+  BETTER APPROACH: gate at the EDGE — the `megabyte-os` ROUTER (starter-owned, not the fragile capnweb
+  frontend) redirects an HTML navigation with no Better Auth session to /signin (post-relax); the service
+  token / authed requests pass through. Fully testable only at the relax (BA-5). — accept: router redirects
+  anonymous→/signin; service-token + authed paths unchanged (verify-os 3/3); anonymous→/signin→BA→OS green.
 - [ ] BA-5 — RELAX + verify: remove/weaken the Access app on the OS (and/or re-point to the apex); anonymous
   → OS UI → submit → BA sign-in → works. Rollback = re-assert Access. — accept: real-browser anonymous→OS
   →sign-in→authed green; verify-prod/os rewritten for the new topology.

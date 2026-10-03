@@ -433,3 +433,15 @@ heartbeat <20 min → coalesce this tick), heartbeat per phase, release (delete)
 stale lease (heartbeat >20 min) is reclaimed — a dead lead never wedges the loop. If a ported
 `scripts/loop-fire-lock.mjs` exists, prefer it (exit 3 = coalesce). One fire at a time means
 one browser fleet, one deploy stream, no conflicting commits.
+
+## Lease heartbeat discipline for live-resource ops (fire-54↔55-58 collision, 2026-10-03)
+
+A multi-minute LEAD-DIRECT fire that mutates a LIVE SHARED resource (the Cloudflare Access app, DNS, a prod
+gate, the shared repo) MUST heartbeat the fire lease (`scripts/loop-fire-lock.mjs heartbeat`) immediately
+BEFORE and AFTER each external mutation. Rationale: the loop-watchdog reclaims a lease whose heartbeat is
+>20 min stale and launches a FRESH overlapping fire — and two concurrent sessions mutating the SAME live
+Access app (adding/deleting policies) is dangerous + produced a real collision (fire-54 relaxed+rolled-back
+while fires 55→58 independently relaxed the same app). Guidance: (1) heartbeat around every CF-API mutation,
+deploy, and relax/rollback; (2) if an op will exceed ~10 min of lead-direct work on a live gate, DELEGATE it
+to a worktree agent or checkpoint to a fresh fire rather than holding a lapsing lease; (3) a long investigation
+(reading fork internals) belongs in a fresh Explore agent so the lead stays lean + the lease stays fresh.

@@ -160,15 +160,26 @@
 - ★ BA-4 — anonymous UI + auth-on-ACTION (the FULL-directive gap after fire-58's BA-5; fire-54 adversarial
   finding). BA-5 shipped auth-on-NAVIGATION (anon nav → our /signin), which removes Access but does NOT yet
   "take you directly to the UI" (Brian's words). Two concrete blockers confirmed LIVE in fire-54:
-  - [ ] BA-4a — backend anonymous PublicApi: `workshop-backend/src/server.ts` (~L839, under `CF_ACCESS_AUD`)
-    403s the WHOLE capnweb /api connection for anonymous (confirmed live: anon /api → 403) + requires
-    `Origin===origin`. Allow an anonymous PublicApi connection; gate ONLY protected (AuthenticatedApi) ops.
-    EVALUATE the OS's NATIVE password/auth-gatekeeper first (`auth/config.js`, `getAuthGatekeeperAllowlist`,
-    `auth/login-flow.js`) — it may already model anonymous+prompt-on-action. — accept: anon /api connects
-    (PublicApi); a protected op returns a typed auth-required error, not a blanket 403.
-  - [ ] BA-4b — frontend auth-on-action: drop `VITE_CF_ACCESS_MODE`; `workshop-frontend` renders anonymously;
-    a protected op's auth-required → prompt BA sign-in (inline or /signin) → retry. — accept: a real browser
-    loads the OS anonymously (no redirect, no error), a protected action triggers sign-in, then resumes.
+  - [ ] BA-4a — backend anonymous PublicApi (SCOPED fire-59, fork d302b181). The capnweb `/api` connection is
+    gated as a WHOLE at `workshop-backend/src/server.ts:845` (`if (env.CF_ACCESS_AUD || allowRaw)` → Access-JWT
+    OR allowlisted Better-Auth session OR 403; also `Origin===origin`). There is NO anonymous entry — BOTH
+    PublicApi + AuthenticatedApi sit behind this one gate (confirmed live: anon /api → 403). The OS's NATIVE
+    design DOES have the PublicApi/AuthenticatedApi split (PublicApi = pre-login/public; AuthenticatedApi =
+    per-user) — the Access integration is what gates the whole connection and broke native anonymous PublicApi.
+    THE CHANGE: make the connection establishable anonymously (`accessPayload` undefined ⇒ PublicApiImpl) and
+    gate only AuthenticatedApi ops (by the native user session + `BA_ALLOWED_EMAILS`). DESIGN decision
+    ("which ops are public") is ANSWERED by the native split — don't invent a new taxonomy. RISK: audit every
+    `PublicApiImpl` handler that reads `accessPayload` and make it anonymous-safe before relaxing the gate
+    (the Access integration may have made some assume auth). — accept: anon /api connects (PublicApi stub, not
+    403); a protected/AuthenticatedApi op without a session → typed auth-required error, not a blanket 403.
+  - [ ] BA-4b — frontend auth-on-action (frontend is ALREADY READY, fire-59): `useAuth.ts` non-`CF_ACCESS_MODE`
+    branch renders anonymously + only calls `login(token)` on action. The change = unset `VITE_CF_ACCESS_MODE`
+    (`scripts/deploy.ts` ~L611) + wire the protected-op auth-required → our BA `/signin` (or inline) → retry.
+    — accept: a real browser loads the OS anonymously (no redirect, no error), a protected action triggers
+    sign-in, then resumes.
+  - ⚠️ BA-4a+BA-4b are ATOMIC: unsetting `VITE_CF_ACCESS_MODE` WITHOUT the backend anonymous-PublicApi change
+    = frontend renders anon → backend 403s the connection → broken OS. Ship together, TEST on the live auth
+    path, next focused fire (sensitive — don't rush in a context-heavy session; fire-51/54 lesson).
   - When BA-4a+4b land, flip the router gate from redirect-on-nav → pass-through (anon shell loads), keeping
     the backend as the real boundary; re-verify `verify-ba-flip.mjs` (update leg 1: anon→shell, not →/signin).
 - [x] BA-5 (DUP of the canonical BA-5 line ↑ — now DONE there, fire-58). Left as a pointer; the shipped

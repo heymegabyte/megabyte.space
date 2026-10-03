@@ -888,3 +888,25 @@
   multi-minute lead-direct fire on a live gate RACES the cron. Mitigation: heartbeat the lease immediately
   before/after each sensitive external mutation, and prefer a short/checkpointed fire over a long lead-direct
   one on a live shared resource. (Captured: memory `ba5-relax-needs-auth-on-action` + this entry.)
+
+## fire-59-ba4a (2026-10-03) — BA-4a investigated + precisely scoped (auth-on-action backend); loop-improvement
+
+- Lease `fire-59-ba4a-8addba5f`. Frontier = BA-4a (backend anonymous PublicApi — the remaining gap to Brian's
+  full auth-on-action after fire-58's BA-5 relax). Context-heavy resumed session ⇒ delegated the heavy fork
+  read to a fresh Explore agent (lean lead); scoped BA-4a precisely; did NOT rush the sensitive live-auth
+  backend rewrite (fire-51/54 lesson). Verified slice = the investigation → a ready-to-execute spec.
+- INVESTIGATION (Explore + live evidence): the capnweb `/api` connection is gated as a WHOLE at
+  `server.ts:845` (`if (CF_ACCESS_AUD || allowRaw)`, fork d302b181) — no anonymous entry; both PublicApi +
+  AuthenticatedApi sit behind it (corroborated: anon /api → 403). The OS's NATIVE design HAS the
+  PublicApi/AuthenticatedApi split; the Access integration broke native anonymous PublicApi by gating the
+  whole connection. The FRONTEND is ALREADY auth-on-action-ready (useAuth non-CF_ACCESS_MODE renders anon +
+  login-on-action) — BA-4b ≈ unset `VITE_CF_ACCESS_MODE` + wire the prompt to our BA /signin.
+- SCOPED (BACKLOG BA-4a/BA-4b rewritten, ready-to-execute): THE CHANGE = make the connection establishable
+  anonymously (accessPayload undefined ⇒ PublicApiImpl) + gate only AuthenticatedApi ops by the native session
+  + BA_ALLOWED_EMAILS. DESIGN "which ops public" = the native split (no new taxonomy). RISK = audit
+  PublicApiImpl handlers assuming accessPayload. BA-4a+4b are ATOMIC (ship + test together) on the live auth
+  path — the next focused fire.
+- Loop-improvement (§8): added "Lease heartbeat discipline for live-resource ops" to OPERATING-PRINCIPLES —
+  the concrete fix for the fire-54↔55-58 collision (heartbeat before+after each live mutation; delegate/
+  checkpoint over long lead-direct ops on live gates).
+- NEXT: BA-4a+BA-4b (atomic, next focused fire, fresh context) → flip the router gate to pass-through → BA-6.

@@ -448,12 +448,16 @@ export function generateConfigs(config: DeploymentConfig, bases: BaseConfigs): G
     { binding: "GATEKEEPER_CONTEXT", service: config.workers.context.name },
     { binding: "GATEKEEPER_SCHEDULER", service: config.workers.scheduler.name },
     { binding: "GATEKEEPER_CUSTOM", service: config.workers.customGatekeeper.name },
+    // WS-11 P1: bind the isolated Better Auth worker so the router can forward /api/auth/* to it,
+    // baking Better Auth into whatever hostname the router owns (os. now; the apex after the move).
+    { binding: "AUTH", service: "megabyte-auth" },
   ];
   // BA-5 (auth-on-action flip): arm the router's Better Auth edge gate. "1" ⇒ an anonymous HTML
   // navigation (no CF Access JWT, no Better Auth session cookie) is 302'd to megabyte.space/signin.
   // Dark while Access still fronts the OS (every request carries an Access JWT ⇒ exempt); live once
   // the Access app is relaxed. Rollback = set "0" (or re-assert the Access policy) + redeploy.
-  router.vars = { ...(router.vars ?? {}), BA_GATE: "1" };
+  // BETTER_AUTH="1" forwards /api/auth/* → the AUTH binding (WS-11 P1 auth-rail-forward prerequisite).
+  router.vars = { ...(router.vars ?? {}), BA_GATE: "1", BETTER_AUTH: "1" };
 
   setCommon(workshop, config, config.workers.workshop.name);
   workshop.vars = {

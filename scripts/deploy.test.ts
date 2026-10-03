@@ -268,6 +268,8 @@ test("gives the router the public route, the frontend, and every service binding
     { binding: "GATEKEEPER_CONTEXT", service: "acme-cloudflare-os-context" },
     { binding: "GATEKEEPER_SCHEDULER", service: "acme-cloudflare-os-scheduler" },
     { binding: "GATEKEEPER_CUSTOM", service: "acme-cloudflare-os-custom" },
+    // WS-11 P1: the Better Auth worker, so the router forwards /api/auth/* to it (baked-in auth).
+    { binding: "AUTH", service: "megabyte-auth" },
   ]);
   // Inherited untouched: the base config already carries the ASSETS binding and the SPA fallback.
   // run_worker_first is ["/*", "!/assets/*"] so the worker runs on EVERY navigation — the BA_GATE

@@ -611,3 +611,33 @@
 - Matrix: home.status note hardened (score held — correctness fix, card now honest-empty). BACKLOG:
   exclude-verify-traffic item ticked.
 - Blocked (unchanged): WS-11 Step 5 + WS-8 cutover — Brian-gated.
+
+## fire-44 (2026-10-02) — Auth-on-action with Better Auth: DECIDE + DECOMPOSE + PROVISION (BA-0)
+
+- Shape: lean lead-direct. Lease `fire-44-456f440e`. Pin 1abec09c. **Pivoted from a cleanup fire to
+  Brian's mid-fire directive** (the core WS-8/WS-11 mission, previously Brian-gated, now Brian-DIRECTED).
+- Brian's directive (verbatim intent): log in goes STRAIGHT to the OS UI (anonymous); sign-in (Better
+  Auth) prompts ONLY on a protected action (submit a prompt); Better Auth baked into megabyte.space,
+  NO other domains; today "Log in" wrongly shows the CF Access page.
+- Why this is BA-0 not BA-1: relaxing Access (the visible fix) BEFORE the backend RPC is Better-Auth-
+  protected would expose the OS backend to anonymous users — no safe shortcut. The project's own docs
+  flag WS-8/WS-11 for a "FRESH full-budget session" (large one-way-door); mounting better-auth hastily
+  on the homepage worker would risk the live apex. So fire-44 ships the SAFE foundation + plan, teeing
+  up the integration for a focused session (dedicated auth worker).
+- Delivered (all reversible / zero live-gate change):
+  - **ADR `docs/decisions/0001-auth-on-action-better-auth.md`** — one-way-door self-argument + the fixed
+    safe sequence BA-1…BA-6 (BA-5 = the Access relax, the only Brian-gated execution point) + rollback.
+  - **BACKLOG WS-8 REWRITTEN** to auth-on-action (BA-0 done; BA-1…BA-6 queued). SUPERSEDES the old
+    "Access stays as edge gate" framing.
+  - **CLAUDE.md § Auth** updated to the 2026-10-02 direction.
+  - **PROVISIONED (prereqs):** D1 `megabyte-auth` (`718b44ef-a33a-4aba-8300-8b70a21dbfd1`, ENAM) +
+    `BETTER_AUTH_SECRET` → get-secret. (OAuth apps still needed for SSO, but magic-link/SES works without.)
+- Cleanup-orient findings (the pre-pivot work, banked): packages/home/src = **0 orphans** (all reachable
+  from main.tsx); the many `verify-*` scripts are **deliberate standalone tools, NOT dead** — cataloged
+  in new `scripts/README.md` so a future dead-code sweep won't mis-remove them (noted `verify-cwv` vs
+  `verify-apex-cwv` overlap to consolidate when next touched).
+- Loop-improvement (§8): `scripts/README.md` — the verifier/script catalog (standing gates vs deliberate
+  tools vs generators vs loop infra) — prevents a future sweep from deleting intentional verifiers +
+  documents the test surface.
+- Verify: no deploy this fire (planning + provisioning + docs only; nothing shipped to prod). D1 created
+  (wrangler), secret persisted (chezmoi). Next fire = BA-1 (Better Auth server, dark, dedicated worker).

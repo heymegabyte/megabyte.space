@@ -87,33 +87,38 @@
   exit 0; single-flight + 30-min backoff observed in-log. Hardened fire-21 (49956efb) with a 25-min
   `timeout` on the launched `claude -p` after finding a 57-min idle orphaned zombie. Acceptance met.
 
-### WS-8 — Better Auth migration (Brian 2026-10-01: Better Auth = app identity; Access stays as thin edge gate)
-- Mission: Better Auth (D1-backed, starter-owned) becomes THE human identity layer — **Google
-  SSO + GitHub SSO + email magic link from the beginning** — with a gorgeous black/cyan login
-  (Kumo primitives + Megabyte theme). Cloudflare Access REMAINS as a thin outer edge gate
-  (service tokens + WARP zero-touch); the stock Access page must never be the human-facing
-  experience. Edge-gate relaxation mechanics = slice-design work with ADR + rollback runbook;
-  no Access policy change ships before the dual-accept window is proven.
-- Cadence: every-loop until converged
-- 🔓 No longer Brian-gated (credential-autonomy answer, 2026-10-01 round 3): the loop
-  self-provisions the Google OAuth client (console.cloud.google.com/apis/credentials) +
-  GitHub OAuth app (github.com/settings/developers) via Brian's signed-in Chrome, callbacks
-  `https://megabyte.space/auth/callback/{google,github}`, receipts in LEDGER, secrets into
-  get-secret. BitWarden extension available for fills.
-- [ ] Slice 1 — Better Auth v0 dark: D1 schema + magic-link flow + session cookie from a
-  starter-owned worker path, Google+GitHub provider config stubbed awaiting 🔑 creds — accept:
-  unit+integration green; `/auth/*` behind a default-OFF flag; zero change to the Access gate
-- [ ] Slice 2 — own the /login surface: apex `/login` renders OUR black/cyan login (Kumo+theme,
-  three provider buttons + magic-link field; flag-gated dark-launch beside the Access 302) —
-  accept: screenshot + vision ≥9/10; reduced-motion + axe clean; flag off ⇒ 302 byte-identical
-- [ ] Slice 3 — session gate in the router worker (`megabyte-os`): validate Better Auth session
-  OR Access JWT (dual-accept window) — accept: service-token E2E + real-session E2E both green
-- [ ] Slice 4 — E2E credential equivalent for automation alongside the kept Access service
-  token — accept: long-trail OS legs authenticate headlessly via the new mechanism
-- [ ] Slice 5 — CUTOVER: Better Auth becomes the sole HUMAN path (edge gate made transparent
-  for browser traffic per the ADR'd mechanism; Access service-token/WARP paths intact) —
-  accept: verify-prod rewritten for the new topology all-green; rollback rehearsed; stock
-  Access page unreachable by humans
+### WS-8 — Auth-on-action with Better Auth (Brian 2026-10-02: anonymous OS UI, SSO only on submit, NO Access front-door, NO other domains)
+- Mission: **"Log in" takes you STRAIGHT to the OS UI (anonymous) — sign-in (Better Auth) is prompted
+  ONLY when you perform a protected action (submit a prompt / write a form).** Better Auth is
+  D1-backed + mounted ON `megabyte.space/api/auth/*` ONLY (no `os.` Access page, no cloudflareaccess.com
+  in the human flow). Magic-link (SES) Day-1; Google + GitHub SSO once OAuth apps exist. Full plan +
+  one-way-door self-argument + rollback: **`docs/decisions/0001-auth-on-action-better-auth.md`** (ADR).
+- Cadence: PRIORITY — Brian-directed; BA-1 next. Best in a FRESH full-budget session (large one-way-door;
+  the fork's capnweb RPC ↔ Better-Auth-session wiring is the main unknown — see ADR §Risks).
+- SUPERSEDES the earlier "Access stays as a thin edge gate / stock Access page never human-facing" —
+  Access is REMOVED from the human path (service-token/WARP automation may remain until BA-4).
+- Prereqs PROVISIONED (fire-44): D1 `megabyte-auth` (`718b44ef-a33a-4aba-8300-8b70a21dbfd1`, ENAM);
+  `BETTER_AUTH_SECRET` → get-secret. Still needed (NOT a blocker — magic-link works without): Google +
+  GitHub OAuth apps, callbacks `https://megabyte.space/api/auth/callback/{google,github}`.
+- [x] BA-0 — decide + decompose + provision (fire-44, this fire) — ADR 0001 written; D1 + secret
+  provisioned; WS-8 rewritten to the auth-on-action sequence; CLAUDE.md § Auth updated.
+- [ ] BA-1 — Better Auth v0 DARK: `megabyte-auth` D1 + Better Auth server at `/api/auth/*` (on the apex
+  worker or a dedicated service-bound auth worker) + session cookie + magic-link (SES). Flag-gated
+  `better_auth` (default-OFF), ZERO Access change. — accept: `/api/auth/*` responds live (unauth session
+  empty/401); an email+password OR magic-link sign-up→sign-in round-trips via curl; schema in D1.
+- [ ] BA-2 — our black/cyan login surface on `megabyte.space` (Kumo + theme; magic-link field + provider
+  buttons), flag-gated dark beside the current `/login` 302 — accept: vision ≥9; axe + reduced-motion clean;
+  flag off ⇒ the 302 is byte-identical.
+- [ ] BA-3 — backend DUAL-ACCEPT: the OS backend RPC validates a Better Auth session OR the Access JWT —
+  accept: service-token E2E + a real BA-session E2E both green.
+- [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the
+  first protected RPC (prompt submit) triggers the BA sign-in, then resumes the action — accept: a real
+  browser loads the OS anonymously (no Access page), submit triggers sign-in, post-sign-in the prompt runs.
+- [ ] BA-5 — ONE-WAY DOOR (Brian-gated execution): relax Access so the OS UI loads anonymously (keep
+  service-token/WARP). ONLY after BA-3 green. — accept: anonymous browser reaches the OS UI directly;
+  rollback (re-assert Access policy + flag off) rehearsed per `docs/ws-11-rollback.md`.
+- [ ] BA-6 — cutover: apex "Log in"/"Enter" → OS UI directly (no Access 302); remove the human Access
+  front-door; SSO providers live; `verify-prod` rewritten for the new topology all-green.
 
 ### WS-9 — Growth engine: SEO + social (Brian 2026-10-01 round 3: full engine; auto-publish build-in-public)
 - Mission: automated SEO (on-property technical + fact-checked content, GSC/Bing wired,

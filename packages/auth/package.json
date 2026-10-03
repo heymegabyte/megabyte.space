@@ -7,6 +7,7 @@
     "auth:generate": "better-auth generate --config src/auth-cli.ts --output schema.sql -y"
   },
   "dependencies": {
+    "aws4fetch": "^1.0.20",
     "better-auth": "^1.7.7",
     "better-auth-cloudflare": "^0.3.1"
   },

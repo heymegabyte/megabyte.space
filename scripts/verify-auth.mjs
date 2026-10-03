@@ -51,6 +51,15 @@ try {
   });
   const gsj = gs.status === 200 ? await gs.json().catch(() => null) : null;
   ok("get-session returns the authenticated user", gsj?.user?.email === email, gsj?.user?.email || "no user");
+
+  // 4. magic-link rail + SES send (BA-1b). SES simulator recipient → no real bounce.
+  const ml = await fetch(`${BASE}/api/auth/sign-in/magic-link`, {
+    method: "POST",
+    headers: { "User-Agent": UA, "Content-Type": "application/json", Origin: BASE },
+    body: JSON.stringify({ email: "success@simulation.amazonses.com" }),
+  });
+  const mlj = ml.status === 200 ? await ml.json().catch(() => ({})) : {};
+  ok("magic-link request → SES accepted (status:true)", ml.status === 200 && mlj.status === true, `status=${ml.status}`);
 } catch (e) {
   ok("exception", false, e.message);
 }

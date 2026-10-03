@@ -37,8 +37,34 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [state, setState] = useState<"idle" | "loading" | "error" | "done">("idle");
+  const [state, setState] = useState<"idle" | "loading" | "error" | "done" | "sending" | "sent">("idle");
   const [error, setError] = useState("");
+
+  async function sendLink() {
+    if (!email) {
+      setState("error");
+      setError("Enter your email first, then I'll send a link.");
+      return;
+    }
+    setState("sending");
+    setError("");
+    try {
+      const res = await fetch("/api/auth/sign-in/magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, callbackURL: "/status" }),
+      });
+      if (!res.ok) {
+        setState("error");
+        setError("Couldn't send the link just now — please try again.");
+        return;
+      }
+      setState("sent");
+    } catch {
+      setState("error");
+      setError("Network hiccup — please try again.");
+    }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -88,22 +114,41 @@ export default function Login() {
           </span>
         </a>
 
-        {state === "done" ? (
-          <div className="mt-10 text-center" data-testid="auth-success">
+        {state === "done" || state === "sent" ? (
+          <div className="mt-10 text-center" data-testid={state === "done" ? "auth-success" : "auth-sent"}>
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[--color-cyan]/40 bg-[--color-cyan]/10 text-[--color-cyan]">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M4 12l5 5L20 6" />
+                {state === "done" ? (
+                  <path d="M4 12l5 5L20 6" />
+                ) : (
+                  <>
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="M4 7l8 5 8-5" />
+                  </>
+                )}
               </svg>
             </div>
             <h1 className="font-display mt-6 text-2xl font-bold tracking-tight">
-              You're <span className="text-gradient">in.</span>
+              {state === "done" ? (
+                <>
+                  You're <span className="text-gradient">in.</span>
+                </>
+              ) : (
+                <>
+                  Check your <span className="text-gradient">inbox.</span>
+                </>
+              )}
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-white/60">
-              Signed in as {email}. Your Megabyte OS workspace opens here once the OS moves to this door.
+              {state === "done"
+                ? `Signed in as ${email}. Your Megabyte OS workspace opens here once the OS moves to this door.`
+                : `We sent a one-time sign-in link to ${email}. Open it on this device to continue.`}
             </p>
-            <a href="/status" className="cta-primary font-display mt-8 inline-block rounded-full px-8 py-3 text-sm font-bold text-[#03030a]">
-              See live status →
-            </a>
+            {state === "done" && (
+              <a href="/status" className="cta-primary font-display mt-8 inline-block rounded-full px-8 py-3 text-sm font-bold text-[#03030a]">
+                See live status →
+              </a>
+            )}
           </div>
         ) : (
           <>
@@ -150,6 +195,25 @@ export default function Login() {
                 {state === "loading" ? "One moment…" : mode === "signin" ? "Sign in" : "Create account"}
               </button>
             </form>
+
+            {mode === "signin" && (
+              <>
+                <div className="my-5 flex items-center gap-3">
+                  <span aria-hidden className="h-px flex-1 bg-white/10" />
+                  <span className="font-mono text-xs uppercase tracking-wider text-white/35">or</span>
+                  <span aria-hidden className="h-px flex-1 bg-white/10" />
+                </div>
+                <button
+                  type="button"
+                  onClick={sendLink}
+                  disabled={state === "sending"}
+                  data-testid="auth-magiclink"
+                  className="w-full rounded-full border border-[--color-cyan]/30 px-8 py-3 text-sm font-semibold text-[--color-cyan] transition hover:border-[--color-cyan]/60 hover:bg-[--color-cyan]/5 disabled:opacity-60"
+                >
+                  {state === "sending" ? "Sending…" : "Email me a sign-in link"}
+                </button>
+              </>
+            )}
 
             <p className="mt-6 text-center text-sm text-white/55">
               {mode === "signin" ? (

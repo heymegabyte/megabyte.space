@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 // BA-2: the black/cyan Better Auth login surface on megabyte.space. Same-origin
 // with the auth rail (/api/auth/*, forwarded to megabyte-auth), so no CORS. Dark:
@@ -39,6 +39,29 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "error" | "done" | "sending" | "sent">("idle");
   const [error, setError] = useState("");
+  // null = checking, false = anonymous, { email } = already signed in → don't show a form.
+  const [session, setSession] = useState<{ email: string } | null | false>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/get-session", { headers: { Accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { user?: { email?: string } } | null) => {
+        if (!cancelled) setSession(d?.user?.email ? { email: d.user.email } : false);
+      })
+      .catch(() => {
+        if (!cancelled) setSession(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function signOut() {
+    await fetch("/api/auth/sign-out", { method: "POST", headers: { "Content-Type": "application/json" } }).catch(() => {});
+    setSession(false);
+    setState("idle");
+  }
 
   async function sendLink() {
     if (!email) {
@@ -114,7 +137,28 @@ export default function Login() {
           </span>
         </a>
 
-        {state === "done" || state === "sent" ? (
+        {session ? (
+          <div className="mt-10 text-center" data-testid="auth-already">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[--color-cyan]/40 bg-[--color-cyan]/10 text-[--color-cyan]">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M4 12l5 5L20 6" />
+              </svg>
+            </div>
+            <h1 className="font-display mt-6 text-2xl font-bold tracking-tight">
+              Already <span className="text-gradient">signed in.</span>
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-white/60">You're signed in as {session.email}.</p>
+            <a href="/status" className="cta-primary font-display mt-8 inline-block rounded-full px-8 py-3 text-sm font-bold text-[#03030a]">
+              Continue →
+            </a>
+            <p className="mt-5 text-sm text-white/55">
+              Not you?{" "}
+              <button type="button" className="text-[--color-cyan] transition hover:text-white" onClick={signOut}>
+                Sign out
+              </button>
+            </p>
+          </div>
+        ) : state === "done" || state === "sent" ? (
           <div className="mt-10 text-center" data-testid={state === "done" ? "auth-success" : "auth-sent"}>
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[--color-cyan]/40 bg-[--color-cyan]/10 text-[--color-cyan]">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

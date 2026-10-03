@@ -933,3 +933,20 @@
   re-point customDomain) · P2 BA-4a+4b atomic (anonymous-clean) · P4 DeepSeek-default routing.
 - Loop-improvement (§8): the atomic BA-4a+4b lesson + the full direction decomposition captured so fresh fires
   execute cleanly from the ledger.
+
+## fire-61-apex (2026-10-03) — WS-11 P1 (a): auth-rail-forward on the OS router (apex prerequisite, LIVE)
+
+- Lease `fire-61-apex-6a6cbb58`. Advanced the user's TOP priority (P1 apex move) by its SAFE, additive,
+  verifiable prerequisite — the auth-rail-forward — WITHOUT the sensitive domain flip (deep session; the flip
+  is a focused fresh fire).
+- SHIPPED + VERIFIED: the OS router (`megabyte-os`, fork 079ad28d) forwards `/api/auth/*` → a new `AUTH`
+  service binding (megabyte-auth), flag-gated `BETTER_AUTH=1` (deploy.ts router.services + router.vars; outer
+  7093824c; deploy.test.ts updated). Mirrors `packages/home/worker.ts`. VERIFIED LIVE: `os.megabyte.space/api/
+  auth/ok` → `{ok:true}` 200 (forwarded to the auth worker), apex `/api/auth/ok` 200 (unchanged), verify-os 3/3.
+- WHY: Better Auth is now baked into the OS router's hostname — so when the apex move re-points the router
+  `customDomain` os.→megabyte.space, Better Auth works at the apex IMMEDIATELY (no auth gap at the flip).
+- NEXT (P1 remaining — the sensitive flip, focused fire): (b) re-point customDomain os.→apex; (c) confirm
+  LandingHomepage at apex; (d) retire packages/home; (e) rollback staged. Then P2 (auth-on-action atomic) + P4.
+- Loop-improvement (§8): the "decompose a sensitive architectural move into a SAFE additive prerequisite
+  (shippable now) + the sensitive flip (fresh fire)" pattern + the durable `deploy.test.ts`-pins-router-config
+  gotcha → OPERATING-PRINCIPLES.

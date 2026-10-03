@@ -25,8 +25,10 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 - [ ] P1 — APEX MOVE (→WS-11): megabyte.space serves the OS (OS router owns the apex; the WebGL homepage is
   the dismissible first-view component, CONFIRMED working on os.). SENSITIVE/atomic sub-steps, fresh focused
-  fire: (a) move the auth rail FIRST — the OS router (`megabyte-os`) must forward `/api/auth/*` → the `AUTH`
-  service binding (as `megabyte-home` does today) BEFORE the flip, else Better Auth breaks at the apex;
+  fire: (a) ✅ DONE fire-61 (fork 079ad28d, outer 7093824c) — the OS router forwards `/api/auth/*` → the `AUTH`
+  binding (megabyte-auth), flag `BETTER_AUTH=1`; verified LIVE: `os.megabyte.space/api/auth/ok` → `{ok:true}`
+  200, verify-os 3/3. Better Auth is now baked into the OS router, so it works the instant the router takes
+  the apex. REMAINING (the sensitive flip — next focused fire):
   (b) re-point `megabyte-os` router `customDomain` os.→`megabyte.space` in `deployment.jsonc` (detaches os. on
   deploy — keep os. as a 301/alias); (c) confirm `LandingHomepage` first-view renders at the apex; (d) retire
   `packages/home`; (e) rollback = re-point customDomain back + `docs/ws-11-rollback.md`.

@@ -445,3 +445,10 @@ while fires 55→58 independently relaxed the same app). Guidance: (1) heartbeat
 deploy, and relax/rollback; (2) if an op will exceed ~10 min of lead-direct work on a live gate, DELEGATE it
 to a worktree agent or checkpoint to a fresh fire rather than holding a lapsing lease; (3) a long investigation
 (reading fork internals) belongs in a fresh Explore agent so the lead stays lean + the lease stays fresh.
+
+## deploy.test.ts pins the generated router config (fire-61)
+
+`scripts/deploy.test.ts` asserts `generated.router.services` (and other generated-config shapes) with
+`assert.deepEqual`. `pnpm check` runs it. So ANY change to `router.services` / `router.vars` / a worker's
+bindings in `scripts/deploy.ts` MUST update the matching assertion in `deploy.test.ts` IN THE SAME COMMIT,
+or `pnpm check` (hence deploy) fails. Caught fire-61 when adding the `AUTH` binding to the OS router.

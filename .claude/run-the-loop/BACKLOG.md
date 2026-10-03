@@ -17,6 +17,35 @@
 
 ## Workstreams
 
+## ★ TOP PRIORITY — Brian direction 2026-10-03 (EXECUTE; all secrets present, zero external blockers)
+Headline reset: **megabyte.space LOADS the OS**, anonymous preview works, a SEAMLESS Better Auth
+(GitHub+Google SSO) prompt fires on any protected action, DeepSeek-default backend. Drive these before
+lower workstreams. Secrets verified PRESENT in get-secret: GITHUB_CLIENT_ID/SECRET, GOOGLE_CLIENT_ID/SECRET,
+DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
+
+- [ ] P1 — APEX MOVE (→WS-11): megabyte.space serves the OS (OS router owns the apex; the WebGL homepage is
+  the dismissible first-view component, CONFIRMED working on os.). SENSITIVE/atomic sub-steps, fresh focused
+  fire: (a) move the auth rail FIRST — the OS router (`megabyte-os`) must forward `/api/auth/*` → the `AUTH`
+  service binding (as `megabyte-home` does today) BEFORE the flip, else Better Auth breaks at the apex;
+  (b) re-point `megabyte-os` router `customDomain` os.→`megabyte.space` in `deployment.jsonc` (detaches os. on
+  deploy — keep os. as a 301/alias); (c) confirm `LandingHomepage` first-view renders at the apex; (d) retire
+  `packages/home`; (e) rollback = re-point customDomain back + `docs/ws-11-rollback.md`.
+- [ ] P2 — AUTH-ON-ACTION, ATOMIC (→WS-8 BA-4a+BA-4b TOGETHER): anonymous preview loads the OS CLEANLY — no
+  "Not authenticated" console errors (fire-60 revert lesson: backend-anonymous + frontend-anonymous-aware are
+  ATOMIC). Backend: allow anonymous PublicApi (BA-4a, reverted fire-60 — re-land WITH 4b). Frontend: drop
+  `VITE_CF_ACCESS_MODE`; render anonymously; do NOT call authed methods on load; auto-establish the
+  AuthenticatedApi from a BA session (so authed users aren't shown logged-out); prompt Better Auth on a
+  protected action. Then flip the router gate redirect→pass-through. Update `verify-ba-flip` (anon→shell loads).
+- [ ] P3 — GitHub + Google SSO (→WS-8): add Better Auth `socialProviders.{github,google}` to
+  `packages/auth/src/auth.ts` + `wrangler secret put` the 4 OAuth secrets on `megabyte-auth`; confirm each app's
+  callback = `https://megabyte.space/api/auth/callback/{github,google}`; GitHub/Google buttons on `/signin` +
+  the seamless in-OS prompt. One-click, automatic.
+- [ ] P4 — MODEL ROUTING = DeepSeek-default (→WS-12, NEW): the backend routes MOST requests to **DeepSeek**
+  (cheap, give-away-free) via AI Gateway `megabyte-os`; **OpenAI + Anthropic ONLY for important work** —
+  multi-round prompt generation, judgement, heavy web research. Wire DeepSeek as a gateway provider
+  (`deployment.jsonc` aiGateway.providers) + a `routeModel(task)` policy in the backend (default→DeepSeek;
+  prompt-gen/judge/research→OpenAI|Anthropic). Evals per `contract-first-ai`.
+
 ### WS-1 — Estate path (the priority journey)
 - Mission: apex WebGL homepage → `/login` 302 → Access gate → OS shell → absorbed surfaces —
   green + gorgeous + embarrassingly easy, end-to-end, every fire.

@@ -910,3 +910,26 @@
   the concrete fix for the fire-54↔55-58 collision (heartbeat before+after each live mutation; delegate/
   checkpoint over long lead-direct ops on live gates).
 - NEXT: BA-4a+BA-4b (atomic, next focused fire, fresh context) → flip the router gate to pass-through → BA-6.
+
+## fire-60-ba4ab (2026-10-03) — BA-4a shipped→REVERTED (atomic lesson) + GitHub/Google SSO rail LIVE + Brian direction reset
+
+- Lease `fire-60-ba4ab-6b4d600f`. Delegated BA-4a (backend anonymous PublicApi) to a fresh-context agent
+  (clean audit), shipped it (fork fc8673d7) — it PROVED BA-4a+BA-4b are ATOMIC: with the frontend still
+  CF_ACCESS_MODE, the now-allowed service-token/anonymous /api connection made the frontend call authed
+  methods on load → 8 "Not authenticated with Access" console errors (verify-os-landing 2/3). REVERTED
+  (fork f734f676, outer ba27b149) → verify-os 3/3 restored. Net: no forward backend code, but the atomic
+  coupling is PROVEN (not just predicted).
+- ★ BRIAN DIRECTION RESET (2026-10-03, mid-fire) — captured durably (CLAUDE.md § REFINED 2026-10-03 + memory
+  `megabyte-os-apex-direction-2026-10-03` + BACKLOG § ★ TOP PRIORITY P1-P4): (1) megabyte.space LOADS the OS
+  (apex move, EXECUTE-prioritized); (2) anonymous preview + auth-on-ACTION (atomic); (3) GitHub+Google SSO
+  automatic; (4) DeepSeek-default routing (OpenAI+Anthropic only for prompt-gen/judge/web-research). ALL
+  secrets PRESENT in get-secret → zero external blockers. Decomposed → WS-11/WS-8/WS-12.
+- SHIPPED + VERIFIED — GitHub + Google SSO rail (P3): `packages/auth/src/auth.ts` socialProviders.{github,google}
+  (conditional/graceful) + 4 OAuth secrets on `megabyte-auth` (de23b686). verify-auth 5/5 (rail intact);
+  `POST megabyte.space/api/auth/sign-in/social {github|google}` returns the real github.com /
+  accounts.google.com authorize URLs. Remaining for P3: /signin UI buttons + seamless in-OS prompt (with BA-4b);
+  confirm each OAuth app callback = https://megabyte.space/api/auth/callback/{github,google}.
+- NEXT (fresh focused fires, all unblocked): P1 apex move (forward /api/auth/* on the OS router FIRST, then
+  re-point customDomain) · P2 BA-4a+4b atomic (anonymous-clean) · P4 DeepSeek-default routing.
+- Loop-improvement (§8): the atomic BA-4a+4b lesson + the full direction decomposition captured so fresh fires
+  execute cleanly from the ledger.

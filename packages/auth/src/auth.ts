@@ -10,6 +10,12 @@ export interface Env {
   // AWS SES (the estate's email rail) — megabyte.space is a verified SES identity (prod access).
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_ACCESS_KEY: string;
+  // GitHub + Google SSO (Brian 2026-10-03: seamless social sign-in). Optional — social providers
+  // are wired only when the pair is present, so a missing secret degrades to email+magic-link.
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
 }
 
 const SES_ENDPOINT = "https://email.us-east-1.amazonaws.com/v2/email/outbound-emails";
@@ -63,6 +69,17 @@ export function makeAuth(env: Env) {
         baseURL: env.BETTER_AUTH_URL,
         basePath: "/api/auth",
         emailAndPassword: { enabled: true },
+        // GitHub + Google SSO (Brian 2026-10-03). Each provider is added only when BOTH its id and
+        // secret are present, so an unprovisioned provider silently degrades rather than breaking the
+        // rail. Callback URLs: https://megabyte.space/api/auth/callback/{github,google}.
+        socialProviders: {
+          ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET
+            ? { github: { clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET } }
+            : {}),
+          ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+            ? { google: { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET } }
+            : {}),
+        },
         // Share the session across megabyte.space + os.megabyte.space so the OS (on os.) can read
         // the Better Auth session set on the apex — the flip without a full apex re-point.
         trustedOrigins: ["https://megabyte.space", "https://os.megabyte.space"],

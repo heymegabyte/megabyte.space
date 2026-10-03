@@ -95,3 +95,24 @@ header + JWKS; `server.ts:844` then uses `payload.email`), a hard dependency sur
 `megabyte.space`. BA-3 + BA-4 + BA-5 are a **single coordinated flip fire** (best fresh-budget, with
 rollback staged + ideally Brian's go on the live-apex change). Until then the auth rail + login are
 complete + verified at `/signin`; the only thing missing is flipping the OS onto them.
+
+## Discovery addendum (fire-54, 2026-10-03) — the relax is proven but reframes to auth-on-action
+
+Executing the authorized BA-5 relax against prod proved the mechanism (add a bypass-everyone Access
+policy → Access stops intercepting; delete it → restored — one reversible API call each way) AND
+surfaced that the relax ALONE yields a BROKEN anonymous OS, not Brian's auth-on-ACTION UX:
+
+1. **Backend gates the whole connection.** `workshop-backend/src/server.ts` (~L839) requires a valid
+   Access JWT OR Better Auth session for the ENTIRE capnweb `/api` connection (plus an `Origin===origin`
+   check). Anonymous ⇒ 403, so an anonymous shell can't connect. Auth-on-action needs an anonymous
+   PublicApi connection with only protected (AuthenticatedApi) ops gated.
+2. **Frontend assumes Access.** Built `VITE_CF_ACCESS_MODE=true`; `useAuth` calls `authenticateFromCfAccess()`.
+   Anonymous errors instead of rendering. Auth-on-action needs: render anonymously → on a protected op's
+   403, prompt Better Auth sign-in → retry.
+3. **Router-redirect is the wrong model.** The fire-52 `BA_GATE` edge gate (anonymous nav → /signin) is
+   auth-on-NAVIGATION, contradicting "take you directly to the UI". Kept deployed but INERT; superseded.
+
+Sequence going forward: **BA-4a (backend anon PublicApi) → BA-4b (frontend auth-on-action) → BA-5
+(re-relax + verify).** Already live + dark + correct: `BA_ALLOWED_EMAILS` backend allowlist (preserves the
+Access "Admins" boundary), cross-subdomain cookie, BA-3 dual-accept. Rollback is always: delete the bypass
+Access policy on app `5a2a663c-…`. Gate: `scripts/verify-ba-flip.mjs`.

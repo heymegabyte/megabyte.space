@@ -840,3 +840,51 @@
 - backlog: +1 next-wave (CF-edge-cache on the gated path) · 2 frontier lines ticked (canonical BA-5 [x] + DUP [x]); **BA-6 now the WS-8 frontier**
 - loop-improvement: run-the-loop §9 — "topology/auth flip ⇒ sweep ALL `scripts/verify-*.mjs` + the long journeys for the OLD assertion host in the SAME fire" (fire-57 flipped the gate but left verify-prod #3 AND verify-apex-journey's funnel on the pre-relax cloudflareaccess.com — two false-REDs this fire salvaged; a backlog item's named-file list is a FLOOR, not the complete set)
 - attrition: fire-57 lead died in purge (lease stale 29.6m) — salvaged its committed BA-5 work (`3149ce1f` live) + its uncommitted deploy.test.ts; no commit lost
+
+## fire-54-ba5 (2026-10-03) — BA-5 relax ATTEMPTED → proven + REVERTED; flip reframed to auth-on-action
+
+- Lease `fire-54-ba5-7c3066b3`. Drove the authorized flip (BA-5 relax) lead-direct. Shipped boundary-
+  preserving groundwork, PROVED the relax mechanism works + is reversible, and made the discovery that
+  reframes the remaining flip work. Live OS ended cleanly GATED + healthy (no exposure, nothing broken).
+- SHIPPED (committed 54622313 + fork 55225299; deployed router 9227a679 / backend 44d014c7; all DARK
+  while Access fronts — verify-os 3/3):
+  - BA_GATE setter plumbing (`deploy.ts` router.vars BA_GATE="1") — the MISSING setter for the fire-52
+    router gate (it had no way to be turned on; now plumbed, though its redirect model is superseded below).
+  - Backend BA allowlist (`deploy.ts` workshop.vars BA_ALLOWED_EMAILS = admins + ba-e2e@; `server.ts`
+    enforces it on the BA-session accept) — preserves the EXACT Access "Admins" boundary so relaxing
+    Access can't widen the OS to self-service email+password signups.
+  - `scripts/verify-ba-flip.mjs` — the RED→GREEN flip gate (anonymous→our /signin OR shell; allowlisted
+    BA cookie→OS; distinguishes OUR gate from cloudflareaccess.com).
+- RELAX PROVEN + REVERTED (reversibility confirmed): added a bypass-everyone Access policy (precedence 3 —
+  precedence 1 collided w/ "Admins", err 12130) → Access stopped intercepting (anon 302→cloudflareaccess
+  became 200; BA cookie reached the OS shell). Then DELETED the bypass policy → Access FULLY restored:
+  anon / → the CF Access "Sign in" interstitial (200 HTML), anon /admin → 403, verify-os 3/3. One-call
+  relax, one-call rollback.
+- ★ DISCOVERY (reframes BA-4/BA-5): the relax ALONE does NOT deliver Brian's auth-on-ACTION UX ("take you
+  directly to the UI; prompt sign-in only on a protected action"). Two live blockers: (1) the BACKEND gates
+  the WHOLE capnweb /api connection on auth (CF_ACCESS_AUD ⇒ anonymous → 403, server.ts ~L839), so an
+  anonymous shell can't connect → broken; it must allow an anonymous PublicApi connection + gate only
+  protected ops. (2) the FRONTEND is VITE_CF_ACCESS_MODE=true (assumes an Access JWT) → anonymous errors;
+  it must render anonymously + prompt BA sign-in ON a protected action. The fire-52 router-REDIRECT gate
+  (anon nav → /signin) is auth-on-NAVIGATION, which CONTRADICTS "take you directly to the UI" — superseded.
+  BA_GATE stays deployed but INERT (dark; asset layer bypasses `/` anyway).
+- NEXT: BA-4a (backend anonymous PublicApi + gate only protected ops), BA-4b (frontend drop CF_ACCESS_MODE,
+  render anonymous, prompt-on-action), THEN BA-5 (re-relax + verify auth-on-action, rollback = delete bypass).
+  The relax is a proven 1-call op; gated on BA-4a/4b, not on Brian.
+- Loop-improvement (§8): discovery captured durably (ADR 0001 + BACKLOG + memory `ba5-relax-needs-auth-on-action`)
+  + the reusable `verify-ba-flip.mjs` RED→GREEN gate — the next fire won't ship a broken anonymous OS.
+
+- ★ fire-54 RECONCILE CORRECTION (concurrent-fire collision): fire-54 ran CONCURRENTLY with watchdog-launched
+  fires 55→58 (shared repo + shared Access app). My fire-54 relax+rollback was SUPERSEDED — fire-55 SALVAGED
+  my groundwork (verify-ba-flip + BA_GATE/allowlist dark-arm, pushed, verified 9/9) and fires 56→58 LANDED
+  BA-5 live (their own bypass policy + BA_GATE=1, fork d302b181, DONE + verified 3/3; my rollback deleted a
+  DIFFERENT policy id, so it did not undo theirs). Net LIVE state: BA-5-relax DONE (auth-on-NAVIGATION: anon
+  → our /signin, no Access; verify-ba-flip 3/3, local==origin, lease free). My session's standing contribution
+  = independent confirmation + the ADVERSARIAL FINDING that auth-on-nav ≠ Brian's auth-on-ACTION ("take you
+  directly to the UI"): anon /api still 403s (backend gates the whole connection — by design per fire-58, but
+  the blocker for a working anonymous shell) → now the ENRICHED open BA-4 (BA-4a backend anonymous PublicApi +
+  BA-4b frontend render-anon + prompt-on-action). Loop-improvement/lesson: the loop-watchdog can launch
+  OVERLAPPING fires on the SAME slice + SAME live resource (here, two sessions mutating one Access app) — a
+  multi-minute lead-direct fire on a live gate RACES the cron. Mitigation: heartbeat the lease immediately
+  before/after each sensitive external mutation, and prefer a short/checkpointed fire over a long lead-direct
+  one on a live shared resource. (Captured: memory `ba5-relax-needs-auth-on-action` + this entry.)

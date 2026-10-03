@@ -157,9 +157,20 @@
   console-noise under automation (filtered as not-ours; real humans typically never trip it).
 - [x] BA-2.1 — /signin session-aware (fire-48, b0ba79e7): already-signed-in users see "Already signed in"
   + Continue/Sign-out instead of a redundant form (embarrassingly-easy); both states verified; 30/30.
-- [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the
-  first protected RPC (prompt submit) triggers the BA sign-in, then resumes the action — accept: a real
-  browser loads the OS anonymously (no Access page), submit triggers sign-in, post-sign-in the prompt runs.
+- ★ BA-4 — anonymous UI + auth-on-ACTION (the FULL-directive gap after fire-58's BA-5; fire-54 adversarial
+  finding). BA-5 shipped auth-on-NAVIGATION (anon nav → our /signin), which removes Access but does NOT yet
+  "take you directly to the UI" (Brian's words). Two concrete blockers confirmed LIVE in fire-54:
+  - [ ] BA-4a — backend anonymous PublicApi: `workshop-backend/src/server.ts` (~L839, under `CF_ACCESS_AUD`)
+    403s the WHOLE capnweb /api connection for anonymous (confirmed live: anon /api → 403) + requires
+    `Origin===origin`. Allow an anonymous PublicApi connection; gate ONLY protected (AuthenticatedApi) ops.
+    EVALUATE the OS's NATIVE password/auth-gatekeeper first (`auth/config.js`, `getAuthGatekeeperAllowlist`,
+    `auth/login-flow.js`) — it may already model anonymous+prompt-on-action. — accept: anon /api connects
+    (PublicApi); a protected op returns a typed auth-required error, not a blanket 403.
+  - [ ] BA-4b — frontend auth-on-action: drop `VITE_CF_ACCESS_MODE`; `workshop-frontend` renders anonymously;
+    a protected op's auth-required → prompt BA sign-in (inline or /signin) → retry. — accept: a real browser
+    loads the OS anonymously (no redirect, no error), a protected action triggers sign-in, then resumes.
+  - When BA-4a+4b land, flip the router gate from redirect-on-nav → pass-through (anon shell loads), keeping
+    the backend as the real boundary; re-verify `verify-ba-flip.mjs` (update leg 1: anon→shell, not →/signin).
 - [x] BA-5 (DUP of the canonical BA-5 line ↑ — now DONE there, fire-58). Left as a pointer; the shipped
   proof + rollback live on the canonical line above.
 - [ ] BA-6 — cutover: apex "Log in"/"Enter" → OS UI directly (no Access 302); remove the human Access

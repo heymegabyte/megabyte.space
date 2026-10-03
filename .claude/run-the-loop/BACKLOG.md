@@ -39,6 +39,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   (b) re-point `megabyte-os` router `customDomain` os.→`megabyte.space` in `deployment.jsonc` (detaches os. on
   deploy — keep os. as a 301/alias); (c) confirm `LandingHomepage` first-view renders at the apex; (d) retire
   `packages/home`; (e) rollback = re-point customDomain back + `docs/ws-11-rollback.md`; (f) bot-challenge tune.
+  ✅ RUNBOOK CORRECTED fire-63 — `docs/ws-11-rollback.md` § CORRECTED flip procedure (no-Access/BA_GATE
+  direction; the old wrapper-worker + Access-add steps are superseded). The flip is now a clean, documented,
+  reversible re-point with ALL prereqs ready — READY TO EXECUTE as the next focused fire: (1) Context empty→
+  sharingDomain null; (2) record rollback versions; (3) free the apex (drop megabyte.space from packages/home,
+  keep workers_dev) + deploy home; (4) re-point megabyte-os customDomain os.→megabyte.space + deploy; (5) verify
+  via BA session (service token dies at the apex — no Access) using verify-ba-flip as the base; (6) os.→apex 301;
+  (7) purge + real-browser pass; (8) bot-fight-mode tune. Rollback staged FIRST.
 - [ ] P2 — AUTH-ON-ACTION, ATOMIC (→WS-8 BA-4a+BA-4b TOGETHER): anonymous preview loads the OS CLEANLY — no
   "Not authenticated" console errors (fire-60 revert lesson: backend-anonymous + frontend-anonymous-aware are
   ATOMIC). Backend: allow anonymous PublicApi (BA-4a, reverted fire-60 — re-land WITH 4b). Frontend: drop

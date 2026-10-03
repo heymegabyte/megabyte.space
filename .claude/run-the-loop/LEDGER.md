@@ -970,3 +970,24 @@
   ALL ready: auth-rail-forward (fire-61) + /signin-serving + gate-exempt (fire-62) + homepage-component (fire-26).
 - Loop-improvement (§8): when `cf-mitigated: challenge` blocks headless verification, verify-by-construction +
   note it (real browsers pass) rather than chase a headless bypass — per fetch-defaults' bot-challenge ladder.
+
+## fire-63-apexflip (2026-10-03) — WS-11 runbook CORRECTED for the no-Access/BA_GATE direction (flip READY)
+
+- Lease `fire-63-apexflip-7951aa61`. Prepared the apex flip (the user's headline) via its required one-way-door
+  prep. The WS-11 runbook was STALE (assumed a wrapper worker + Access-stays), which violates its own "never
+  run without an accurate runbook open" rule — so I corrected it rather than execute a primary-domain re-point
+  against a stale procedure in a deep session.
+- DISCOVERY — the flip under the CURRENT direction differs from the stale runbook: (a) homepage = `LandingHomepage`
+  COMPONENT in the OS frontend (fire-26), NOT a wrapper worker; (b) NO Access on the apex — `BA_GATE` (our Better
+  Auth) is the gate; (c) apex owner = the `megabyte-os` ROUTER directly; (d) verification SHIFTS to a Better Auth
+  session (the Access service token dies at the apex — no Access app there). The flip is effectively
+  apex-re-point + implicit Access-removal + verification-shift.
+- SHIPPED: `docs/ws-11-rollback.md` § CORRECTED flip procedure (8 steps, reversible, rollback-staged-first) +
+  BACKLOG P1 → READY-TO-EXECUTE. ALL prereqs confirmed: auth-rail-forward (fire-61) + /signin+gate-exempt
+  (fire-62) + homepage-component (fire-26).
+- NEXT (THE FLIP — immediate next focused fire): free the apex (drop megabyte.space from packages/home, keep
+  workers_dev) → re-point megabyte-os customDomain os.→megabyte.space → verify via BA session → os.→apex 301 →
+  purge + real-browser → bot-fight-mode tune. Then P2 (anonymous preview: BA-4a+4b + BA_GATE pass-through).
+- Loop-improvement (§8): caught + fixed a STALE one-way-door runbook BEFORE use — a sensitive-flip runbook must
+  be re-validated against the CURRENT direction before execution (a stale runbook gives false confidence, worse
+  than none). The flip now executes from an accurate, current procedure.

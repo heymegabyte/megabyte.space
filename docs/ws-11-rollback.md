@@ -80,3 +80,48 @@ internal route); the wrapper owns `megabyte.space`. This is Slice-4 design work 
 - `cloudflare-os` submodule stays pinned (`6478a144`) — overlay is wrapper-owned, never a submodule patch.
 - `run_worker_first` + the full security-header set stay on every apex response.
 - Better Auth (WS-8) is the eventual human identity; Access stays the edge gate through this migration.
+
+---
+
+## ⚠️ CORRECTED flip procedure (2026-10-03 direction — NO Access on the apex, BA_GATE is the gate)
+
+The procedure ABOVE is SUPERSEDED. It assumed (a) a WRAPPER worker owns the apex + serves the overlay,
+and (b) Cloudflare Access stays the edge gate (add megabyte.space to the Access app). BOTH are now wrong
+per Brian's 2026-10-02/03 direction + `CLAUDE.md`: the homepage is a **`LandingHomepage` COMPONENT inside
+the OS frontend** (fire-26, no wrapper worker), and **Access is REMOVED from the human path** — the apex
+is gated by our **Better Auth `BA_GATE`** (anonymous HTML nav → our `/signin`; GitHub/Google SSO), NOT Access.
+
+**Prerequisites — ALL DONE (so the flip is now a clean re-point):**
+- auth-rail-forward: the `megabyte-os` router forwards `/api/auth/*` → the `AUTH` (megabyte-auth) binding, `BETTER_AUTH=1` (fire-61; verified `os./api/auth/ok` 200).
+- `/signin` served by the OS router + `__root.tsx` standalone + `BA_GATE` exempts `/signin`/`/signup` (fire-62).
+- homepage = `LandingHomepage` first-view component in the OS frontend (fire-26).
+
+**Corrected flip sequence (one focused fire; reversible at each step; rollback staged FIRST):**
+1. **Context boundary:** confirm Context is empty (playground; fire-5 saw "No workspaces yet"). Empty → leave
+   `context.sharingDomain: null` (derives cleanly to `https://megabyte.space`). If NON-empty → pin
+   `sharingDomain: "https://os.megabyte.space"` in the SAME deploy.
+2. **Record rollback:** `wrangler deployments list --name megabyte-os` + `--name megabyte-home` (version IDs).
+3. **Free the apex:** drop the `megabyte.space` customDomain route in `packages/home/wrangler.jsonc` (keep
+   `workers_dev: true` → megabyte-home stays live on workers.dev as the rollback origin) → `pnpm --dir packages/home deploy`.
+4. **Re-point the OS router:** `deployment.jsonc` `workers.router.route.customDomain` `os.megabyte.space` →
+   `megabyte.space` (apply the sharingDomain decision) → `pnpm check` → `pnpm deploy`. Wrangler detaches os.,
+   attaches the apex. (NO Access step — the apex has no Access app; `BA_GATE` is the gate.)
+5. **Verification shifts to a Better Auth SESSION** (the Access service token no longer works at the apex —
+   there's no Access app there). Rewrite `verify-prod.mjs`/`verify-os.mjs` for the no-Access topology:
+   anonymous apex HTML nav → `/signin` (our BA, NOT cloudflareaccess.com); allowlisted BA sign-in → `.megabyte.space`
+   cookie → apex → OS shell; `/api/auth/ok` 200; the WebGL `LandingHomepage` first-view renders post-auth.
+   Use `scripts/verify-ba-flip.mjs` as the base (already BA-session-based).
+6. **Keep os.:** add a zone redirect `os.megabyte.space/* → https://megabyte.space/$1` (301). The os. Access
+   app can be deleted/relaxed once os. is a pure redirect (no longer serves the OS).
+7. **Purge** the zone cache. Real-browser pass (a human browser passes the CF bot-challenge that blocks curl/headless).
+8. ⚠️ **bot-fight-mode:** ensure the apex doesn't serve the aggressive `cf-mitigated: challenge` on `/signin`
+   that os. does (fire-62 finding) — tune bot-fight-mode / add a managed-challenge exception so anonymous is friction-free.
+
+**Rollback (unchanged in spirit):** `deployment.jsonc` router customDomain → `os.megabyte.space` + `sharingDomain`
+→ null + `pnpm deploy`; restore `megabyte.space` in `packages/home/wrangler.jsonc` + `pnpm --dir packages/home deploy`;
+remove the os.→apex redirect; `wrangler rollback` both workers to the recorded pre-flip version IDs; flush local DNS.
+
+**Note:** the clean ANONYMOUS-PREVIEW end-state (megabyte.space loads the OS shell WITHOUT an immediate /signin)
+additionally needs P2 (BA-4a backend anonymous PublicApi + BA-4b frontend anonymous-aware + `BA_GATE` → pass-through).
+This flip with `BA_GATE=1` delivers "megabyte.space loads the OS → /signin → SSO → OS" (Brian's "then shuttled to
+SSO"); the anonymous preview is the subsequent P2 step ("then fix it for a basic preview").

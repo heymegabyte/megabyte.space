@@ -553,3 +553,32 @@
   non-Beautify next-wave slices (Web Vitals field beacon + /status CWV card; arch orphan sweep;
   Long-Trail case-001 restart).
 - Blocked (unchanged): WS-11 Step 5 (apex domain + Access host add), WS-8 Better Auth cutover — Brian-gated.
+
+## fire-42 (2026-10-02) — Field Core Web Vitals (beacon → DO → /status card) — FIRST non-Beautify rebalance
+
+- Shape: lean lead-direct. Lease `fire-42-33aeff2e`. Pin 1abec09c (unchanged — apex-only fire).
+  The Beautify arc closed (fire-41), so the picker returns only ≥9 surfaces → rebalanced to
+  product/observability (WS-9), per the §2 budget (Beautify-skewed across fires 36-41).
+- Slice (WS-9 observability, product NOT polish): real-visitor field Core Web Vitals.
+  - Beacon: `packages/home/src/vitals.ts` — `web-vitals` (added dep, v6.2.2) `onLCP/onCLS/onINP/onTTFB`
+    → `navigator.sendBeacon('/api/vitals', {metric,value})` on page hide; zero-PII; wired in main.tsx.
+  - Backend: `worker.ts` — flag-gated `POST /api/vitals` (metric allowlist + value bounds; bogus
+    dropped, always 200); `AnalyticsCounter` DO `vital_samples` table + `recordVital` (bounded
+    1000/metric) + `vitals()` (p50/p75 via SQL OFFSET) folded into `pulse()`.
+  - Display: `StatusView.tsx` — "Core Web Vitals · field (p75)" 2×2 card, good/NI/poor by Google
+    p75 bands, p50 + n footer; shows only when a metric has samples.
+- Verify (THIS fire): apex **7df4cf54** (feature 3b61caec). `verify-vitals.mjs` **5/5** causal proof —
+  a REAL browser visit fired ALL 4 vitals (LCP/CLS/INP/TTFB) → DO stored +4 → /status card renders →
+  display reconciles (LCP p75 shown). `verify-apex` **3/3** (journey **28/28** incl. the new
+  CWV-contract assertion; verify-prod 9/9; reduced-motion 8/8). Card direct-Read vision **9/10**
+  (LCP 804ms / CLS 0.008 / INP 48ms / TTFB 106ms p75, all good-band cyan).
+- Boundary hygiene: DO migration (CREATE TABLE IF NOT EXISTS) ran clean — existing pulse (total 637)
+  unbroken; `vitals` array present with honest n=0 before any samples.
+- Loop-improvement (§8): a NON-MUTATING CWV-contract guard added to verify-apex-journey
+  ("/status pulse exposes field CWV array (4 metrics)") — guards the new pulse contract in the
+  standing gate WITHOUT writing samples. `verify-vitals.mjs` MUTATES prod field data (synthetic
+  headless samples) → deliberately NOT in the auto-gate (would pollute the public card's p75).
+- Matrix: home.status pass 2→3, density 7→8 (score 9 held). BACKLOG: both Web-Vitals items ticked;
+  next-wave seeded (exclude-verify-traffic-from-vitals, /status SSE real-time, home.status 9→9.5).
+- Blocked (unchanged): WS-11 Step 5 + WS-8 cutover — Brian-gated. Rebalance continues: arch/testing/
+  security seeded.

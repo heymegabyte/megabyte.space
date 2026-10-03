@@ -202,7 +202,7 @@
 - [ ] Flag-gated Tables-mode grid MVP (default-OFF `database_studio` flag) — ws: NEW-database-studio — accept: paginated sortable grid of one `studio` table, 0 console errors, vision ≥8/10 (ULTIMATE §Data-UX 16/17/52)
 - [ ] Display-vs-store reconcile harness for the grid — ws: NEW-database-studio — accept: `e2e/studio-verify/reconcile.mjs` diffs `SELECT COUNT(*)` vs rendered rows, flags LYING-EMPTY/WRONG-SOURCE (ULTIMATE §Quality 74)
 - [ ] Starter-owned analytics ingestion (absorption #1) — ws: NEW-analytics — accept: Analytics Engine/D1 `visitor_events` captures apex pageviews; `GET /api/analytics/live` returns real reconciled count (ULTIMATE §Dashboards 45)
-- [ ] Web Vitals beacon + p50/p75 card from stored events — ws: NEW-analytics — accept: card matches a synthetic Playwright pageview (ULTIMATE §Quality 77)
+- [x] Web Vitals beacon + p50/p75 card from stored events (fire-42, 3b61caec) — shipped; card matches the Playwright pageview (verify-vitals reconcile). (ULTIMATE §Quality 77)
 - [ ] Cloudflare Flagship foundation, starter-owned (absorption #4) — ws: NEW-feature-flags — accept: `[[flagship]]` binding + OpenFeature provider; `database_studio` + `analytics_live` flags default-OFF; server 404 when off
 - [ ] WebGPU probe + fallback chain on the apex hero (WebGPU→WebGL2→Canvas→reduced-motion) — ws: WS-1 — accept: each forced path renders settled hero, 0 console errors (ULTIMATE §WebGL 53-55)
 - [ ] View Transitions between apex sections — ws: WS-1 — accept: `@view-transition{navigation:auto}`; input never blocked; reduced-motion disables (ULTIMATE §WebGL 61)
@@ -359,11 +359,10 @@
   cool os.landing 9.5 as "lowest"). Beautify-10x has NO sub-9 target → the next fires MUST pick
   NON-Beautify categories (the §2 budget has starved testing/arch/security/docs/discovery across
   fires 36-41). Concrete ready slices seeded below.
-- [ ] Web Vitals field beacon + `/status` CWV card — ws: WS-9/observability (product, NOT polish) —
-  a dependency-free beacon (PerformanceObserver LCP + layout-shift CLS + nav TTFB) POSTs to a new
-  `/api/vitals` on visibilitychange→hidden; the AnalyticsCounter DO aggregates p50/p75; StatusView
-  renders a "Core Web Vitals (field)" card. — accept: a Playwright pageview writes a sample the DO
-  stores AND /status shows it; display-vs-store reconciled; verify-apex still 3/3.
+- [x] Web Vitals field beacon + `/status` CWV card (fire-42, 3b61caec) — web-vitals beacon →
+  flag-gated POST /api/vitals → AnalyticsCounter DO (bounded 1000/metric, p50/p75) → good/NI/poor
+  CWV card. Causal-proven (verify-vitals.mjs 5/5: real visit → all 4 vitals stored → /status
+  reconciles LCP p75); verify-apex 3/3 (journey 28/28 + CWV-contract guard); card vision 9/10.
 - [ ] Architecture orphan/drift sweep — ws: WS-6/arch — run an import-graph orphan check over
   `packages/home/src` + the starter workers; confirm no built-but-unwired modules; verify the
   submodule pin matches the LEDGER. — accept: a short findings note + any fix in-fire.
@@ -373,6 +372,22 @@
 - NOTE: `scripts/verify-os.mjs` shipped this fire (single OS ship gate = verify-prod + verify-os-theme
   + verify-os-landing); mirrors `verify-apex.mjs`. Both still invoked manually (see the deploy/CI
   auto-run next-wave item).
+
+> fire-42 (2026-10-02, field Core Web Vitals beacon + /status card — first NON-Beautify rebalance fire) appends:
+
+- [ ] Exclude verification traffic from field vitals — ws: WS-9 — the CWV card currently blends
+  headless deploy-verifier samples (verify-vitals + journey /status visits) with real users, so the
+  initial p75 reflects headless perf. — accept: `POST /api/vitals` drops samples from the known
+  verify UA (or a `?probe=1`/header the verifiers send), so stored field data is real-user-only;
+  verify-vitals adapts (asserts via a dedicated probe path that doesn't pollute the public card).
+- [ ] `/status` real-time live dot via DO WebSocket/SSE (replaces the 30s poll) — ws: WS-9 —
+  per the real-time-data-no-manual-refresh rule. — accept: pushes update the pulse without a reload;
+  display-vs-store reconciled.
+- [ ] home.status 9→9.5 — ws: WS-3 (deferred, low marginal value) — sparkline axis labels/hover +
+  day-over-day delta chip + the CWV card's good/NI/poor legend. — accept: capture + vision ≥9.5.
+- NOTE: the §2 budget is rebalancing — fire-42 was product/observability (WS-9). Still-starved
+  categories with seeded ready work: architecture (orphan sweep, fire-41 seed), testing (Long-Trail
+  case-001 restart, fire-41 seed), security (CSP strict-dynamic ratchet), docs.
 
 ### Discovery contradictions to resolve (convergence judgment calls)
 

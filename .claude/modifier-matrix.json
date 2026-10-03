@@ -48,16 +48,16 @@
       "notes": "fire-4: section renders, 8 holds. fire-39 ENRICHED 8->9: the static right-column security list is now 4 icon-rows (access=shield, simulate=play, audit=eye, sandbox=cube; cyan line-icons in rounded chips) that cascade in on reveal (.trust-row mirrors the how-it-works step-in, 'backwards' fill keeps .card hover live) + glow on hover (border + motion-safe icon scale). Honest static properties, NO fabricated ticker. verify-apex-journey 27/27, verify-prod 9/9, verify-reduced-motion 7/7 (trust rows visible under reduced-motion), direct-Read vision 9/10. Apex 2076a23c/de9bbcfc. Knock vs 9.5: left column now plainer than the enriched right."
     },
     "home.status": {
-      "beautifyPasses": 2,
+      "beautifyPasses": 3,
       "aiVisionScore": 9,
-      "density": 7,
+      "density": 8,
       "lastVisit": "2026-10-02",
       "next": [
         "live dot → SSE push instead of 30s poll (real-time rule)",
         "sparkline axis labels / hover tooltip",
         "day-over-day delta chip"
       ],
-      "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: live 14-day cyan SVG area-sparkline + top-6-paths mini-bars from the AnalyticsCounter DO (daily()/topPaths()/one-round-trip pulse()). fire-35: 'last deployed Xm ago · <sha>' freshness line (gen-build-info.mjs → build-info.json; relative time + commit linked to GitHub) — closes the last-deploy next-item. Zero-PII, reduced-motion safe, black/cyan. verify-apex-journey 26/26; display-vs-store reconciled. Apex 648cbcaa."
+      "notes": "fire-14 CREATED build-in-public /status. fire-32 ENHANCED 8.5→9: 14-day sparkline + top-paths. fire-35: last-deploy freshness line. fire-42 ADDED a Core Web Vitals (field) card (product/observability, WS-9): a web-vitals beacon → POST /api/vitals → AnalyticsCounter DO (bounded p50/p75) → a 2×2 good/NI/poor-colored card (LCP/CLS/INP/TTFB, zero-PII). Causal-proven (verify-vitals 5/5: real visit → store → display reconcile) + card vision 9/10; density 7→8. Zero-PII, black/cyan. verify-apex-journey 28/28 (+CWV-contract assertion); display-vs-store reconciled. Apex 3b61caec."
     },
     "home.404": {
       "beautifyPasses": 1,

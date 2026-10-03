@@ -1057,3 +1057,26 @@
   coordinated change + was verified real-browser (console errors + authed flow) before trusting it. + a dup-const
   in verify-ba-flip was caught by `node --check` before shipping (always node --check an edited gate).
 - NEXT: P4 DeepSeek model routing · apex CSP hardening · os.→apex 301.
+
+## fire-67-deepseek (2026-10-03) — P4 (DeepSeek routing) INVESTIGATED + reframed to the OS reality (scoped)
+
+- Lease `fire-67-deepseek-30a086ac`. The last piece of Brian's direction (P4 DeepSeek-default). Delegated the
+  OS model-subsystem map to a fresh Explore agent (ai-models.ts 33K + ai-gateway.ts + agent/overseer); scoped
+  it accurately — did NOT rush a model-routing change that could break user chats.
+- ★ KEY FINDING: the OS has NO "prompt generation / judgement / web research" TASK distinction — that's a
+  projectsites.dev concept, not THIS OS. The OS resolves a model per chat/gadget → preferredModel → first
+  available (user.ts:701-735) + a hardcoded quick model (Llama 70B fast). So Brian's P4-as-described
+  (task-routing) doesn't map; the ACHIEVABLE P4 = DeepSeek as the cheap DEFAULT model (users still pick premium
+  per chat). The task-based premium-routing is an ABSORPTION item (projectsites' prompt-gen/judge/research
+  features → into the OS → premium models).
+- SCOPED (BACKLOG P4, Approach A ready-to-execute): DeepSeek NOT on Workers AI → AI-Gateway external provider +
+  resolve the key mechanism (gateway-stored BYOK vs worker-passed) + getDefaultModelConfig() (ai-gateway.ts) +
+  fallback (user.ts:732) + TEST a DeepSeek call BEFORE defaulting + default-OFF flag.
+- NEXT: implement P4 Approach A (dedicated fire). THEN ★ REBALANCE — the user's CORE vision (megabyte.space =
+  OS + anonymous preview + BA/SSO, no Access) is LIVE (P1-P3); ~16 fires were all auth/apex/model, so the CORE
+  MISSION (absorb projectsites.dev into the OS) + UX/Beautify-10x + Testing are STARVED. After P4, rotate to
+  absorption/UX per the §2 category budget.
+- Loop-improvement (§8): a user-described requirement can encode a SIBLING project's mental-model
+  (projectsites.dev's task-routing) that doesn't map to THIS codebase — investigate the ACTUAL architecture +
+  reframe to the achievable form BEFORE implementing, else you build a non-mapping abstraction. Captured in the
+  P4 reframe; + delegate big-subsystem reads to Explore to keep the lead lean.

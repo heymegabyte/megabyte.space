@@ -77,11 +77,23 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   github.com / accounts.google.com authorize URLs (verify-prod). FOLLOW-UP: confirm each OAuth app's callback =
   `https://megabyte.space/api/auth/callback/{github,google}` (the authorize URLs generate; the round-trip
   completes only if the callback is registered — 1-min dashboard check if an SSO round-trip 400s).
-- [ ] P4 — MODEL ROUTING = DeepSeek-default (→WS-12, NEW): the backend routes MOST requests to **DeepSeek**
-  (cheap, give-away-free) via AI Gateway `megabyte-os`; **OpenAI + Anthropic ONLY for important work** —
-  multi-round prompt generation, judgement, heavy web research. Wire DeepSeek as a gateway provider
-  (`deployment.jsonc` aiGateway.providers) + a `routeModel(task)` policy in the backend (default→DeepSeek;
-  prompt-gen/judge/research→OpenAI|Anthropic). Evals per `contract-first-ai`.
+- [ ] P4 — MODEL ROUTING = DeepSeek-default (→WS-12, NEW). ★ SCOPED fire-67 (Explore mapped the OS model
+  subsystem). KEY FINDING: the OS has NO "prompt generation / judgement / web research" TASK distinction —
+  that's a projectsites.dev concept; it does NOT map to THIS OS. The OS is a user-picks-models workspace
+  (model resolved at `user.ts:701-735`: user's per-chat/gadget choice → `preferredModel` → first available)
+  + a hardcoded QUICK model for backend titles/binding-names (`ai-gateway.ts:138` `@cf/meta/llama-3.3-70b-
+  instruct-fp8-fast`, Workers AI). So the ACHIEVABLE P4 = **DeepSeek as the cheap DEFAULT model** (users can
+  still pick OpenAI/Anthropic per chat for "important work" — their choice overrides). The task-based
+  premium-routing the user described is really an ABSORPTION item (bring projectsites' prompt-gen/judgement/
+  research AI features INTO the OS, which would then route to premium models — WS-2/absorption, later).
+  IMPLEMENTATION (Approach A, ~2-3h, next focused fire): (1) DeepSeek is NOT on Workers AI → add it as an
+  AI-Gateway EXTERNAL provider ("deepseek", OpenAI-compatible, `deepseek-chat`) — `deployment.jsonc`
+  aiGateway.providers += deepseek (+ openai/anthropic); (2) ⚠️ RESOLVE THE KEY MECHANISM FIRST: does the OS
+  reach an external provider via a gateway-STORED BYOK key (CF dashboard/API) or a worker-PASSED key? (read
+  `ai-gateway.ts:356-376` getModelViaGateway + the CF_AI_GATEWAY_API_TOKEN path) — then store DEEPSEEK_API_KEY
+  accordingly; (3) `getDefaultModelConfig()` in `ai-gateway.ts` + use it as the fallback at `user.ts:732`;
+  (4) ⚠️ TEST a real DeepSeek call succeeds through the OS gateway BEFORE making it the default (else new/
+  model-less chats break); (5) behind a default-OFF feature flag (per `feature-flags`), promote after eval.
 
 ### WS-1 — Estate path (the priority journey)
 - Mission: apex WebGL homepage → `/login` 302 → Access gate → OS shell → absorbed surfaces —

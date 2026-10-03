@@ -814,3 +814,15 @@
 - Loop-improvement (§8): the edge-gate approach is now SHIPPED + verified-dark (not merely identified as
   in fire-51) — the reusable "gate the OS without touching the capnweb frontend" pattern; the next fire
   executes BA-5 with the gate already proven inert against the service-token path.
+
+## fire-55 — 2026-10-03 — fire-55-ba5-salvage (resumed fire-54's dead mid-verify lead)
+- roster: lead-direct (RESUME-CHECK salvage; no fan-out) · rejected: full 15-role fan-out (salvage scope = complete fire-54's in-flight slice, not new breadth) · budget: 100% auth-salvage
+- [salvage] fire-54 BA-5 DARK-ARM (router `BA_GATE=1` + backend `BA_ALLOWED_EMAILS`, fork 55225299) was committed+deployed but UNPUSHED + verify gate untracked + no LEDGER entry (lead died mid-`verify`, lease stale 27m) — pushed `54622313` + committed verify gate `b9430ee5` — prod: verify-prod **9/9 all-green**; CF API confirms router `BA_GATE=1` + backend `BA_ALLOWED_EMAILS=hey,blzalewski,ba-e2e` LIVE; `verify-ba-flip` **1/3 = correct RED-before baseline** (leg2 BA sign-in→cookie GREEN; legs1+3 RED ⇒ Access still fronts, gate dark); service-token shell **200** ⇒ `BA_ALLOWED_EMAILS` does NOT gate the Access-JWT path (no admin lockout)
+- journey: estate-path prod verification (apex 200 → /login 302 → os→Access 302 → service-token shell 200 → BA rail sign-in→.megabyte.space cookie) — found+fixed: **clean** (dark-arm broke nothing; no defect surfaced)
+- long-trail: none (salvage fire — no new case claimed)
+- explorer: none (infra/auth salvage — no visual surface visited)
+- beautify: none (no visual surface created/visited; matrix unchanged — honest for an infra fire)
+- upstream: pin 55225299 (unchanged; submodule clean, no in-tree edits)
+- backlog: BA-5 sharpened with the EXACT relax target (Access app `5a2a663c` "Megabyte OS" os.megabyte.space AUD b455c445…; policies Admins `37265f3e` + E2E-svc `e264de54`; service-token-under-bypass caveat) + stale "Brian-gated" BA-5 label reconciled to loop-authorized + stale dup BA-4 marked done; 0 new next-wave (frontier already rich)
+- loop-improvement: CLAUDE.md § Gotchas — **pnpm-toolchain gotcha** (pnpm absent on PATH; node 26 ships no corepack → run `npx -y pnpm@11.17.0 <cmd>`), so a future fire never stalls its `pnpm check`/`pnpm deploy` on a missing toolchain (this fire hit it + resolved it live)
+- attrition: fire-54 lead died mid-verify (lease stale 27m) — salvaged its committed+deployed work; no commit lost

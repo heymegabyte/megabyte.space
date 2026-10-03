@@ -140,17 +140,25 @@
   header, better-auth session cookie, /api/asset/non-nav. Flag-gated `BA_GATE` (unset ⇒ inert). Deployed
   DARK + verified dark: verify-os 3/3 (service token unaffected — the fire-51 regression did NOT recur;
   edge gate, not the fragile frontend whoami).
-- [ ] BA-5 — RELAX + verify: remove/weaken the Access app on the OS (and/or re-point to the apex); anonymous
-  → OS UI → submit → BA sign-in → works. Rollback = re-assert Access. — accept: real-browser anonymous→OS
-  →sign-in→authed green; verify-prod/os rewritten for the new topology.
+- [ ] BA-5 — RELAX + verify (loop-AUTHORIZED per ↑127; DARK-ARM LIVE+pushed fire-54/55: router `BA_GATE=1` +
+  backend `BA_ALLOWED_EMAILS` deployed, verify-prod 9/9, `verify-ba-flip` RED-before baseline committed + ready).
+  NEXT-FIRE one-motion (fresh budget; toolchain `npx -y pnpm@11.17.0 deploy`):
+  (1) relax Access app `5a2a663c` ("Megabyte OS", os.megabyte.space, AUD b455c445…) — policies Admins `37265f3e`
+  (allow) + E2E-svc `e264de54` (non_identity). CAVEAT: under a Bypass/allow-everyone policy NO cf-access-jwt
+  header is injected, so the router `BA_GATE` must exempt the automation path by a NON-JWT signal (CF-Access-Client-Id
+  header or /api bypass) or the E2E/WARP path 302s to /signin — RESOLVE + re-verify the service-token leg BEFORE relaxing.
+  (2) ATOMICALLY rewrite verify-prod.mjs + verify-os.mjs for the flipped topology (the "os gated by Access→cloudflareaccess.com"
+  assertion INVERTS to "→megabyte.space/signin") — else the standing gate goes red the instant Access relaxes.
+  (3) real-browser anonymous→OS→BA sign-in→authed GREEN + `verify-ba-flip` 3/3. Rollback = re-assert the Access
+  policy (`docs/ws-11-rollback.md`) + `BA_GATE=0`.
 - [x] BA-2.1 — /signin session-aware (fire-48, b0ba79e7): already-signed-in users see "Already signed in"
   + Continue/Sign-out instead of a redundant form (embarrassingly-easy); both states verified; 30/30.
 - [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the
   first protected RPC (prompt submit) triggers the BA sign-in, then resumes the action — accept: a real
   browser loads the OS anonymously (no Access page), submit triggers sign-in, post-sign-in the prompt runs.
-- [ ] BA-5 — ONE-WAY DOOR (Brian-gated execution): relax Access so the OS UI loads anonymously (keep
-  service-token/WARP). ONLY after BA-3 green. — accept: anonymous browser reaches the OS UI directly;
-  rollback (re-assert Access policy + flag off) rehearsed per `docs/ws-11-rollback.md`.
+- [~] BA-5 (DUP — SUPERSEDED by the canonical BA-5 line ↑): NO LONGER Brian-gated — loop-authorized per ↑127
+  (memory flip-authorized-loop-executes). Keep service-token/WARP on relax; rollback rehearsed per
+  `docs/ws-11-rollback.md`. The canonical BA-5 above carries the one-motion execution plan + exact Access IDs.
 - [ ] BA-6 — cutover: apex "Log in"/"Enter" → OS UI directly (no Access 302); remove the human Access
   front-door; SSO providers live; `verify-prod` rewritten for the new topology all-green.
 

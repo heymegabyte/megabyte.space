@@ -29,6 +29,8 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 - Zone redirect ruleset keeps pre-existing rules (`/source.sh`, `public.megabyte.space/github-awesome.json`) + our `www → apex` 301. Redirects run before Access + Workers.
 - AI models flow through AI Gateway `megabyte-os` (Workers AI, keyless). Add providers in `deployment.jsonc` + gateway-stored keys.
 
+- **`pnpm` is often ABSENT on the loop's shell** (node 26 via Homebrew ships no `corepack`, no global `pnpm`). Do NOT stall a fire on a missing toolchain — run every pnpm command through the pinned on-demand fetch: `npx -y pnpm@11.17.0 check` / `… deploy` / `… --dir packages/home deploy` (package.json pins `pnpm@11.17.0`). The pure-node verifiers (`node scripts/verify-prod.mjs`, `verify-ba-flip.mjs`, …) need no pnpm. (fire-55.)
+
 ## Upgrades
 
 The `cloudflare-os` submodule is now OUR FORK (`heymegabyte/cloudflare-os` @ `megabyte-os`; `upstream` remote = cloudflare/cloudflare-os). To take an upstream release: `git -C cloudflare-os fetch upstream`, rebase/merge `megabyte-os` onto the reviewed ref (keep our `workshop-frontend` landing edits), `git push origin megabyte-os`, bump the gitlink in this repo → `pnpm check` → `pnpm deploy`. Homepage (`packages/home`) deploys independently until WS-11 retires it.

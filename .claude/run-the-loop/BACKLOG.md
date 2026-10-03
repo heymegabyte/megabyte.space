@@ -140,25 +140,28 @@
   header, better-auth session cookie, /api/asset/non-nav. Flag-gated `BA_GATE` (unset ⇒ inert). Deployed
   DARK + verified dark: verify-os 3/3 (service token unaffected — the fire-51 regression did NOT recur;
   edge gate, not the fragile frontend whoami).
-- [ ] BA-5 — RELAX + verify (loop-AUTHORIZED per ↑127; DARK-ARM LIVE+pushed fire-54/55: router `BA_GATE=1` +
-  backend `BA_ALLOWED_EMAILS` deployed, verify-prod 9/9, `verify-ba-flip` RED-before baseline committed + ready).
-  NEXT-FIRE one-motion (fresh budget; toolchain `npx -y pnpm@11.17.0 deploy`):
-  (1) relax Access app `5a2a663c` ("Megabyte OS", os.megabyte.space, AUD b455c445…) — policies Admins `37265f3e`
-  (allow) + E2E-svc `e264de54` (non_identity). CAVEAT: under a Bypass/allow-everyone policy NO cf-access-jwt
-  header is injected, so the router `BA_GATE` must exempt the automation path by a NON-JWT signal (CF-Access-Client-Id
-  header or /api bypass) or the E2E/WARP path 302s to /signin — RESOLVE + re-verify the service-token leg BEFORE relaxing.
-  (2) ATOMICALLY rewrite verify-prod.mjs + verify-os.mjs for the flipped topology (the "os gated by Access→cloudflareaccess.com"
-  assertion INVERTS to "→megabyte.space/signin") — else the standing gate goes red the instant Access relaxes.
-  (3) real-browser anonymous→OS→BA sign-in→authed GREEN + `verify-ba-flip` 3/3. Rollback = re-assert the Access
-  policy (`docs/ws-11-rollback.md`) + `BA_GATE=0`.
+- [x] BA-5 — RELAX + verify **DONE + LIVE-VERIFIED** (fires 56→58, fork `d302b181`).
+  (1) CF Access on os.megabyte.space RELAXED to bypass-everyone (fire-56; pre-relax Access app/policies
+  snapshotted to `packages/.../ws-11-rollback-state/*` for rollback). (2) Router `BA_GATE=1` armed (fire-57):
+  an anonymous HTML nav to os.megabyte.space 302s to OUR Better Auth `/signin` on the apex — NOT
+  cloudflareaccess.com. CAVEAT RESOLVED: service-token (cf-access-client-id), BA-session cookie, and Access-JWT
+  are all exempt, so automation still reaches the shell 200 (verify-prod #4 green). The gate is UX-only; the REAL
+  boundary is `/api` (backend dual-accept, fail-closed CWE-306, email-verified authz CWE-345 — the data-less
+  shell is safe to serve). (3) Both stale verifiers rewritten for the flipped topology (fire-58): `verify-prod.mjs`
+  #3 (`f1c75cc6`) + `verify-apex-journey.mjs` funnel (`fba9ce5f`) now assert →megabyte.space/signin, never
+  cloudflareaccess.com. **VERIFIED LIVE (fire-58):** real browser anonymous os→302 `/signin`; `verify-ba-flip`
+  **3/3** (anon→/signin · BA sign-in→.megabyte.space cookie · authed→OS shell 200); `verify-prod` **9/9** ·
+  `verify-os` **3/3** · `verify-apex-journey` **30/30**. Rollback staged (`docs/ws-11-rollback.md` + `BA_GATE=0`
+  + re-assert the Access policy). Known-minor (replenished below, not blocking): the gated path is CF-edge-cached
+  for some non-browser client fingerprints (data-less shell only); /signin shows CF-injected bot-challenge CSP
+  console-noise under automation (filtered as not-ours; real humans typically never trip it).
 - [x] BA-2.1 — /signin session-aware (fire-48, b0ba79e7): already-signed-in users see "Already signed in"
   + Continue/Sign-out instead of a redundant form (embarrassingly-easy); both states verified; 30/30.
 - [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the
   first protected RPC (prompt submit) triggers the BA sign-in, then resumes the action — accept: a real
   browser loads the OS anonymously (no Access page), submit triggers sign-in, post-sign-in the prompt runs.
-- [~] BA-5 (DUP — SUPERSEDED by the canonical BA-5 line ↑): NO LONGER Brian-gated — loop-authorized per ↑127
-  (memory flip-authorized-loop-executes). Keep service-token/WARP on relax; rollback rehearsed per
-  `docs/ws-11-rollback.md`. The canonical BA-5 above carries the one-motion execution plan + exact Access IDs.
+- [x] BA-5 (DUP of the canonical BA-5 line ↑ — now DONE there, fire-58). Left as a pointer; the shipped
+  proof + rollback live on the canonical line above.
 - [ ] BA-6 — cutover: apex "Log in"/"Enter" → OS UI directly (no Access 302); remove the human Access
   front-door; SSO providers live; `verify-prod` rewritten for the new topology all-green.
 
@@ -240,6 +243,7 @@
 
 
 ## Next-wave inbox (discovery appends here; convergence dedupes into workstreams)
+- [ ] HARDENING (low, not blocking — fire-58): the `BA_GATE` path on os.megabyte.space is CF-edge-cached for some NON-browser client fingerprints — a curl nav (even cache-busted) gets the data-less 200 shell while Node-fetch + real browsers get the 302 `/signin` (curl HEAD saw a cached 302, `cf-cache-status: HIT`). NO data leak (shell is data-less; `/api` dual-accept + fail-closed is the real boundary; real browsers ALWAYS gate to /signin). — ws: WS-8 — accept: `Response.redirect` in the fork router (`packages/router/src/index.ts`, Upstream Sync lane §1.18) carries `Cache-Control: no-store` (or the gated `/` nav is marked non-cacheable) so the gate is deterministic for every client; verify-prod #3 stays green. Submodule change → route via the Upstream Sync lane.
 
 > fire-1 (2026-09-30, aborted on session limit; Brian canceled loops) — Product Discovery + Security
 > ran read-only and returned; the 6 mutating agents died at `subagent_tokens: 0` before committing.

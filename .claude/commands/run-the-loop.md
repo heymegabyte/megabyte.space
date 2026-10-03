@@ -209,6 +209,7 @@ A fire that ships zero loop-improvement under-delivered — surface why and do i
 - Homepage (`packages/home`): typecheck + build (its `deploy` builds first — a red build never ships); Vitest/Playwright where touched.
 - Never edit generated `wrangler.prod.jsonc` (gitignored) — `deployment.jsonc` is the single config source.
 - Claim ONLY what you ran THIS fire — paste the command output; a prior run or "looks correct" is not evidence.
+- **Topology/auth flip ⇒ sweep EVERY verifier in the SAME fire.** When a flip INVERTS an assertion (e.g. the BA-5 Access relax: `anonymous os → cloudflareaccess.com` becomes `anonymous os → megabyte.space/signin`), `grep -l cloudflareaccess scripts/verify-*.mjs` AND re-run the long journeys (`verify-apex-journey`, long-trail cases) — rewrite EVERY stale assertion the same fire. A backlog item's named-file list ("rewrite verify-prod + verify-os") is a FLOOR, not the complete set: fire-57 flipped the fork gate but left verify-prod #3 AND verify-apex-journey's funnel asserting the pre-relax `cloudflareaccess.com` — two false-REDs fire-58 salvaged. The adversarial-review phase (§5, re-run the estate path end-to-end) is what catches the verifiers the named list misses — NEVER skip it after a flip.
 
 ## 10 — Ship (prod pre-authorized per canonical answer #3)
 - Commit each slice to **`main`** (conventional commit) + push (rebase if rejected). Main-only; delete each worktree + branch the moment its work lands (cleanup is NOT automatic). Never `git add -A`; never commit a `cloudflare-os` pointer move outside lane §1.18.

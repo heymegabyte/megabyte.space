@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 /**
- * verify-os — the single OS ship gate (counterpart to verify-apex.mjs). Runs the
- * OS-relevant verifiers in sequence and fails if ANY fails, so a fork/OS fire
- * runs one command after `pnpm deploy` instead of remembering three.
+ * verify-os — the single OS ship gate (counterpart to verify-apex.mjs). POST-FLIP (fire-64), the
+ * Cloudflare OS lives AT THE APEX (megabyte.space); os.megabyte.space is detached (→ 000). So this
+ * aggregator runs the two apex/Better-Auth verifiers in sequence and fails if ANY fails:
+ *   - verify-prod   — the apex serves the OS + auth-on-action (anon→/signin, authed→shell) + SSO +
+ *                     the BA rail + www→apex + security headers.
+ *   - verify-ba-flip — the auth-on-action proof end to end (anon nav → /signin, allowlisted BA
+ *                     sign-in → session cookie, authed nav → OS shell passthrough).
+ * The retired os.-theme / os.-landing sub-calls were dropped — they targeted the dead os. subdomain.
  *
- * Needs the megabyte-os-e2e service token in the environment (or /tmp fallback):
- *   export CF_ACCESS_CLIENT_ID=$(get-secret CF_ACCESS_CLIENT_ID) \
- *          CF_ACCESS_CLIENT_SECRET=$(get-secret CF_ACCESS_CLIENT_SECRET)
- * The child verifiers inherit this env (and also read /tmp/cfos-st-*.txt).
+ * Needs the BA e2e creds in the environment (exported from get-secret; child verifiers inherit it):
+ *   export BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD)
  *
  * Run after `pnpm deploy` (allow ~15s for the router's hashed-asset propagation).
  *
  * Usage: node scripts/verify-os.mjs
  * Exit 0 = all gates green. Exit 1 = ≥1 gate failed (named in the summary).
- * Exit 2 = verify-os-landing hit the service-token WS/SPA-auth artifact (not an
- *          OS bug — the curl-level proof in verify-prod still stands).
+ * Exit 2 = BA creds missing (a child exited 2 — not an OS bug).
  */
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -22,22 +24,25 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const GATES = [
-  ["verify-prod", "verify-prod.mjs"], // apex + OS service-token shell (#4) + headers
-  ["verify-os-theme", "verify-os-theme.mjs"], // dark black/cyan shell live
-  ["verify-os-landing", "verify-os-landing.mjs"], // landing render→dismiss→persist
+  ["verify-prod", "verify-prod.mjs"], // apex serves OS + auth-on-action + SSO + BA rail + headers
+  ["verify-ba-flip", "verify-ba-flip.mjs"], // auth-on-action proof end to end
 ];
 
 const results = [];
 for (const [name, file] of GATES) {
   console.log(`\n━━━ ${name} ━━━`);
   const r = spawnSync("node", [join(ROOT, "scripts", file)], { stdio: "inherit" });
-  // verify-os-landing exit 2 = known service-token/headless artifact, not a failure.
-  const artifact = name === "verify-os-landing" && r.status === 2;
-  results.push({ name, ok: r.status === 0 || artifact, artifact });
+  // Exit 2 = creds missing (not a prod/OS failure) — propagate it as a distinct "skipped" signal.
+  results.push({ name, ok: r.status === 0, credsMissing: r.status === 2 });
 }
 
 console.log("\n━━━ OS gate summary ━━━");
-for (const r of results) console.log(`  ${r.ok ? (r.artifact ? "⚠️ " : "✅") : "❌"} ${r.name}${r.artifact ? " (service-token WS artifact — curl proof stands)" : ""}`);
-const failed = results.filter((r) => !r.ok);
-console.log(`\n${results.length - failed.length}/${results.length} gates green`);
+for (const r of results) {
+  const glyph = r.ok ? "✅" : r.credsMissing ? "⚠️ " : "❌";
+  console.log(`  ${glyph} ${r.name}${r.credsMissing ? " (BA creds missing — export BA_E2E_EMAIL/PASSWORD)" : ""}`);
+}
+const credsMissing = results.some((r) => r.credsMissing);
+const failed = results.filter((r) => !r.ok && !r.credsMissing);
+console.log(`\n${results.filter((r) => r.ok).length}/${results.length} gates green`);
+if (credsMissing) process.exit(2);
 process.exit(failed.length ? 1 : 0);

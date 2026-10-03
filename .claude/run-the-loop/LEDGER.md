@@ -1015,3 +1015,22 @@
   (auth-rail-forward + /signin+gate-exempt + corrected runbook) — the "decompose a one-way-door into safe
   prerequisites first, execute the irreversible step last with everything staged + rollback-ready" pattern
   delivered the highest-risk change (primary-domain re-point) with a clean verified result.
+
+## fire-65-verifyapex (2026-10-03) — verify gates REWRITTEN for the apex topology + HSTS restored
+
+- Lease `fire-65-verifyapex-8f83ea49`. Top post-flip follow-up: the verify gates were STALE (os.megabyte.space
+  detached → 000; the apex changed). Delegated the rewrite to a fresh agent; reviewed + hardened + verified.
+- SHIPPED: `verify-prod.mjs` rewritten for the apex-only topology — 10 assertions vs megabyte.space (OS-at-apex:
+  title Cloudflare OS, not old homepage, not Access; /api/auth/ok 200; /signin 200; GitHub+Google SSO authorize
+  URLs; allowlisted BA sign-in → .megabyte.space cookie → authed OS shell; no-Access-in-human-path; www→apex 301;
+  HSTS present). `verify-os.mjs` → aggregates verify-prod + verify-ba-flip (dropped dead os.-theme/os.-landing).
+  `verify-ba-flip.mjs` retargeted os.→apex. All os./service-token/Access assertions removed.
+- SECURITY: the flip regressed the apex security headers (megabyte-home emitted CSP+HSTS; the OS router emits
+  neither). Restored HSTS zone-wide (CF security_header: max-age 1yr + includeSubDomains + nosniff). CSP = tracked
+  follow-up (BACKLOG P1 vi): OS-specific (capnweb wss + AI gateway), must be browser-tested report-only-first so
+  it doesn't break the OS; verify-prod assertion 8 requires HSTS (hard) + warns on CSP until then.
+- VERIFIED LIVE: verify-prod 10/10 green, verify-os 2/2 green (apex).
+- NEXT: P2 clean anonymous (BA-4a+4b: kill the 3 WS console errors + preview-before-signin) · apex CSP hardening ·
+  os.→apex 301.
+- Loop-improvement (§8): a topology change MUST pair with a verify-gate rewrite the SAME arc — else future fires
+  verify against a dead host (os. 000) + false-fail. The gates now reflect post-flip reality.

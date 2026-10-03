@@ -1,23 +1,22 @@
 #!/usr/bin/env node
 /**
- * verify-ba-flip — BA-5 flip gate (the auth-on-action cutover).
+ * verify-ba-flip — the auth-on-action gate (post-apex-flip, fire-64).
  *
- * Proves, against real prod, that once the Cloudflare Access edge gate is RELAXED on
- * os.megabyte.space the human auth path is Better Auth (baked into megabyte.space), not Access:
- *   1. An ANONYMOUS browser navigation to the OS is 302'd to OUR Better Auth sign-in
- *      (megabyte.space/signin) by the router's BA_GATE — NOT to cloudflareaccess.com.
- *   2. An ALLOWLISTED Better Auth sign-in returns a cross-subdomain (.megabyte.space) session cookie.
+ * Proves, against real prod, that the human auth path on the apex is Better Auth (baked into
+ * megabyte.space), NOT Cloudflare Access. Post-flip the Cloudflare OS lives AT THE APEX
+ * (os.megabyte.space is gone → 000), so all three legs run against megabyte.space:
+ *   1. An ANONYMOUS browser navigation to the OS (the apex) is 302'd to OUR Better Auth sign-in
+ *      (megabyte.space/signin) by the router's auth gate — NOT to cloudflareaccess.com.
+ *   2. An ALLOWLISTED Better Auth sign-in returns a megabyte.space-scoped session cookie.
  *   3. An authed browser navigation carrying that cookie PASSES the router to the OS shell (200).
- *
- * RED→GREEN: run BEFORE the relax and it fails leg 1 (Access still fronts ⇒ loc=cloudflareaccess.com);
- * run AFTER the relax and all three are green. That transition IS the proof the flip landed.
  *
  * Creds (export from get-secret):
  *   export BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD)
  * Exit 0 = flip green · 1 = a leg failed · 2 = creds missing (not a flip bug).
  */
 const APEX = "https://megabyte.space";
-const OS = "https://os.megabyte.space";
+// Post-flip the OS IS the apex — no os.megabyte.space target remains (it's detached, 000).
+const OS = APEX;
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36";
 // Browser-navigation headers — the router's BA_GATE keys its redirect on an HTML navigation

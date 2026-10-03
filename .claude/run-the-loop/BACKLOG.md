@@ -35,7 +35,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   (ii) os.megabyte.space → apex 301 (re-add os. DNS + redirect rule) for old links (os. currently 000);
   (iii) P2 clean anonymous: 3 WS console errors (anonymous capnweb /api handshake) + "preview before sign-in"
   — needs BA-4a+BA-4b (anonymous-aware frontend) + BA_GATE pass-through; (iv) Access app on os. now orphaned
-  (harmless — clean up later).
+  (harmless — clean up later). (v) ✅ fire-65: verify-prod/verify-os/verify-ba-flip REWRITTEN for the apex
+  topology (os. targets gone) → verify-prod 10/10, verify-os 2/2; HSTS restored zone-wide (CF security_header).
+  (vi) ⚠️ APEX CSP — the flip regressed the estate's CSP-L3 posture: the forked OS router emits NO
+  content-security-policy (megabyte-home's CSP was homepage-specific). Craft an OS-specific CSP (capnweb wss
+  connect-src + AI-gateway + script/style/img for the OS), browser-TEST it doesn't break the capnweb app
+  (report-only first → tune → enforce), then restore the hard CSP assertion in verify-prod. Security slice.
 - [x] (superseded) P1 — APEX MOVE (→WS-11): megabyte.space serves the OS (OS router owns the apex; the WebGL homepage is
   the dismissible first-view component, CONFIRMED working on os.). SENSITIVE/atomic sub-steps, fresh focused
   fire: (a) ✅ DONE fire-61 (fork 079ad28d, outer 7093824c) — the OS router forwards `/api/auth/*` → the `AUTH`

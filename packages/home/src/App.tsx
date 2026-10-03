@@ -80,11 +80,55 @@ const FEATURES = [
   },
 ];
 
+// Each step carries a cyan line-icon echoing the per-step accent cap above it:
+// shield+keyhole = sign-in/identity, chat bubble = ask/describe, check = approve,
+// share arrow = ship/share. Decorative (aria-hidden) — the number + title carry meaning.
 const STEPS = [
-  ["01", "Sign in", "One login through Megabyte Labs' identity — a one-time email code, zero-touch on managed devices."],
-  ["02", "Ask", "Describe the document, app, or task. Attach repos, docs, or data through Gatekeepers."],
-  ["03", "Approve", "Agents queue side-effects instead of stalling. Review the log, approve in one sweep."],
-  ["04", "Ship", "Share the Gadget with the team — each person gets their own safe, remixable copy."],
+  {
+    n: "01",
+    title: "Sign in",
+    body: "One login through Megabyte Labs' identity — a one-time email code, zero-touch on managed devices.",
+    icon: (
+      <>
+        <path d="M12 3l7 2.6v5.1c0 4.3-2.9 7.4-7 8.6-4.1-1.2-7-4.3-7-8.6V5.6L12 3z" />
+        <circle cx="12" cy="10.5" r="1.6" />
+        <path d="M12 12.1v2.4" />
+      </>
+    ),
+  },
+  {
+    n: "02",
+    title: "Ask",
+    body: "Describe the document, app, or task. Attach repos, docs, or data through Gatekeepers.",
+    icon: (
+      <>
+        <path d="M4 5.5h16v10H8l-4 3.5z" />
+        <path d="M8 9h8M8 12h5" />
+      </>
+    ),
+  },
+  {
+    n: "03",
+    title: "Approve",
+    body: "Agents queue side-effects instead of stalling. Review the log, approve in one sweep.",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M8 12.2l2.6 2.6L16 9.4" />
+      </>
+    ),
+  },
+  {
+    n: "04",
+    title: "Ship",
+    body: "Share the Gadget with the team — each person gets their own safe, remixable copy.",
+    icon: (
+      <>
+        <path d="M21 4L3 11l6.5 2.5L12 20l3-6.5L21 4z" />
+        <path d="M9.5 13.5L21 4" />
+      </>
+    ),
+  },
 ] as const;
 
 // Trust pillars — each row carries a cyan line-icon + staggers in on reveal
@@ -309,12 +353,19 @@ export default function App() {
               Four moves, <span className="text-gradient">zero friction</span>
             </h2>
             <ol className="timeline reveal mt-14 grid gap-5 md:mt-24 md:grid-cols-4 md:pt-10">
-              {STEPS.map(([n, title, body], i) => (
+              {STEPS.map(({ n, title, body, icon }, i) => (
                 <li key={n} className="card step-card p-7" style={{ "--step-i": i } as CSSProperties}>
                   <span className="step-node" aria-hidden="true" />
-                  <span className="step-num font-mono text-sm text-[--color-cyan]">{n}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="step-icon grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-[--color-cyan]/25 bg-[--color-cyan]/10 text-[--color-cyan] transition duration-300">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        {icon}
+                      </svg>
+                    </span>
+                    <span className="step-num font-mono text-sm text-[--color-cyan]">{n}</span>
+                  </div>
                   <h3 className="font-display mt-3 text-lg font-semibold">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/60">{body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/72">{body}</p>
                 </li>
               ))}
             </ol>

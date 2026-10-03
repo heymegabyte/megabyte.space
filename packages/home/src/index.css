@@ -205,6 +205,23 @@ body {
     opacity: 1;
   }
 
+  /* Per-step line-icon chip — mirrors the trust-row chip + the step accent cap:
+     brightens its border/bg and lifts on card hover, in step with the cap widening.
+     Motion is transform/opacity only; reduced-motion kills the scale below. */
+  .step-icon {
+    border-color: color-mix(in oklch, var(--color-cyan) 25%, transparent);
+  }
+  .step-card:hover .step-icon {
+    border-color: color-mix(in oklch, var(--color-cyan) 55%, transparent);
+    background: color-mix(in oklch, var(--color-cyan) 20%, transparent);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.3);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .step-card:hover .step-icon {
+      scale: 1.08;
+    }
+  }
+
   .step-num {
     display: inline-block;
     letter-spacing: 0.14em;

@@ -1,0 +1,81 @@
+{
+  "result": {
+    "id": "5a2a663c-e849-49ff-9a7c-95b3a741c6f7",
+    "uid": "5a2a663c-e849-49ff-9a7c-95b3a741c6f7",
+    "type": "self_hosted",
+    "name": "Megabyte OS",
+    "aud": "b455c445ec6c8b874f840bfa16d27a1a293eac851e416f50c2e582495151e8fa",
+    "created_at": "2026-09-29T21:38:09Z",
+    "updated_at": "2026-09-29T22:31:44Z",
+    "domain": "os.megabyte.space",
+    "self_hosted_domains": [
+      "os.megabyte.space"
+    ],
+    "destinations": [
+      {
+        "type": "public",
+        "uri": "os.megabyte.space"
+      }
+    ],
+    "app_launcher_visible": true,
+    "allowed_idps": [
+      "7237c7fb-b953-42e3-9d03-2deae14c76ef"
+    ],
+    "tags": [],
+    "auto_redirect_to_identity": true,
+    "policies": [
+      {
+        "created_at": "2026-09-29T21:38:10Z",
+        "decision": "allow",
+        "exclude": [],
+        "id": "37265f3e-958e-4153-93d7-341c2c6d5d26",
+        "include": [
+          {
+            "email": {
+              "email": "hey@megabyte.space"
+            }
+          },
+          {
+            "email": {
+              "email": "blzalewski@gmail.com"
+            }
+          }
+        ],
+        "name": "Admins",
+        "require": [],
+        "uid": "37265f3e-958e-4153-93d7-341c2c6d5d26",
+        "updated_at": "2026-09-29T21:38:10Z",
+        "reusable": false,
+        "precedence": 1
+      },
+      {
+        "created_at": "2026-09-29T21:38:11Z",
+        "decision": "non_identity",
+        "exclude": [],
+        "id": "e264de54-c243-4dbd-bdd1-4a118fe6e8aa",
+        "include": [
+          {
+            "service_token": {
+              "token_id": "c2e3a57e-ee6d-4483-a884-d82c85a8a22d"
+            }
+          }
+        ],
+        "name": "E2E service token",
+        "require": [],
+        "uid": "e264de54-c243-4dbd-bdd1-4a118fe6e8aa",
+        "updated_at": "2026-09-29T21:38:11Z",
+        "reusable": false,
+        "precedence": 2
+      }
+    ],
+    "session_duration": "168h",
+    "enable_binding_cookie": false,
+    "http_only_cookie_attribute": true,
+    "allow_authenticate_via_warp": true,
+    "options_preflight_bypass": false,
+    "eager_redirect_cookie_setting": true
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}

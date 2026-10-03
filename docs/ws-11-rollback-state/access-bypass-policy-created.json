@@ -1,0 +1,22 @@
+{
+  "result": {
+    "created_at": "2026-10-03T15:33:40Z",
+    "decision": "bypass",
+    "exclude": [],
+    "id": "ab4cbdd9-1212-42c7-b084-2d5c058ea5be",
+    "include": [
+      {
+        "everyone": {}
+      }
+    ],
+    "name": "BA-5 public bypass (auth-on-action)",
+    "require": [],
+    "uid": "ab4cbdd9-1212-42c7-b084-2d5c058ea5be",
+    "updated_at": "2026-10-03T15:33:40Z",
+    "reusable": false,
+    "precedence": 3
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}

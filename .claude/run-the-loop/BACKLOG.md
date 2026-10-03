@@ -28,10 +28,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   fire: (a) ✅ DONE fire-61 (fork 079ad28d, outer 7093824c) — the OS router forwards `/api/auth/*` → the `AUTH`
   binding (megabyte-auth), flag `BETTER_AUTH=1`; verified LIVE: `os.megabyte.space/api/auth/ok` → `{ok:true}`
   200, verify-os 3/3. Better Auth is now baked into the OS router, so it works the instant the router takes
-  the apex. REMAINING (the sensitive flip — next focused fire):
+  the apex. ✅ ALSO DONE fire-62 (fork 793fb4d5): the OS frontend now has its OWN `/signin` route (BA login +
+  GitHub/Google SSO buttons, `routes/signin.tsx`), added to `__root.tsx` `standalone` (renders anonymously, not
+  the LoginPage wall), and the router BA_GATE now EXEMPTS `/signin`+`/signup` (redirecting /signin→/signin would
+  loop at the apex). signin asset shipped; verify-os 3/3. ⚠️ FINDING for the flip: os.megabyte.space serves an
+  aggressive CF bot JS-challenge (`cf-mitigated: challenge`, "Just a moment…") on /signin for non-human
+  fingerprints (curl + headless both blocked) — a REAL browser passes it; the apex (megabyte.space, NOT
+  aggressively challenged) should resolve it. TUNE bot-fight-mode / add a managed-challenge exception for the
+  apex so anonymous preview is friction-free. REMAINING (the sensitive flip — next focused fire):
   (b) re-point `megabyte-os` router `customDomain` os.→`megabyte.space` in `deployment.jsonc` (detaches os. on
   deploy — keep os. as a 301/alias); (c) confirm `LandingHomepage` first-view renders at the apex; (d) retire
-  `packages/home`; (e) rollback = re-point customDomain back + `docs/ws-11-rollback.md`.
+  `packages/home`; (e) rollback = re-point customDomain back + `docs/ws-11-rollback.md`; (f) bot-challenge tune.
 - [ ] P2 — AUTH-ON-ACTION, ATOMIC (→WS-8 BA-4a+BA-4b TOGETHER): anonymous preview loads the OS CLEANLY — no
   "Not authenticated" console errors (fire-60 revert lesson: backend-anonymous + frontend-anonymous-aware are
   ATOMIC). Backend: allow anonymous PublicApi (BA-4a, reverted fire-60 — re-land WITH 4b). Frontend: drop

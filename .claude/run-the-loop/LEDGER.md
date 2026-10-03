@@ -950,3 +950,23 @@
 - Loop-improvement (§8): the "decompose a sensitive architectural move into a SAFE additive prerequisite
   (shippable now) + the sensitive flip (fresh fire)" pattern + the durable `deploy.test.ts`-pins-router-config
   gotcha → OPERATING-PRINCIPLES.
+
+## fire-62-signin (2026-10-03) — OS /signin route + GitHub/Google SSO UI + BA_GATE /signin-exempt (apex prereq)
+
+- Lease `fire-62-signin-0f3104c7`. Advanced P1 (apex move) via its ADDITIVE, non-breaking prerequisite — the OS
+  frontend's OWN sign-in page. Delegated the port to a fresh agent (frontend fork, clean context).
+- SHIPPED (fork 6213c948 + 793fb4d5; outer ae28073c + 4ca3eaf2; deployed):
+  - `workshop-frontend/src/routes/signin.tsx` (NEW) — ported from packages/home Login.tsx: email+password +
+    magic-link + session-aware, PLUS prominent GitHub + Google SSO buttons (POST /api/auth/sign-in/social →
+    authorize URL). Kumo black/cyan, a11y + reduced-motion safe. Same-origin /api/auth/* (OS router forwards it).
+  - `__root.tsx` standalone allowlist += /signin (renders anonymously, not the LoginPage wall).
+  - router BA_GATE EXEMPTS /signin+/signup (redirecting /signin→/signin loops at the apex; anon must reach it).
+    signin asset shipped (/assets/signin-*.js).
+- VERIFIED: verify-os 3/3 (OS unbroken); build green (tsc + vite); route registered (routeTree.gen.ts). Anonymous
+  RENDER verified-by-construction — an os.-specific CF bot JS-challenge (`cf-mitigated: challenge`, "Just a
+  moment…") blocks curl + headless on /signin; a real human browser passes it, and the apex isn't aggressively
+  challenged. Captured as a flip finding (tune bot-fight-mode on the apex).
+- NEXT: P1 (b-f) the re-point + bot-challenge tune (+ P2 BA-4a+4b for the clean anonymous preview). Prereqs now
+  ALL ready: auth-rail-forward (fire-61) + /signin-serving + gate-exempt (fire-62) + homepage-component (fire-26).
+- Loop-improvement (§8): when `cf-mitigated: challenge` blocks headless verification, verify-by-construction +
+  note it (real browsers pass) rather than chase a headless bypass — per fetch-defaults' bot-challenge ladder.

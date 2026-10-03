@@ -198,14 +198,20 @@ try {
   );
   await page.screenshot({ path: join(SHOT, "9-signin.png") });
 
-  // 9 — /login funnel (real click from home → leaves apex into the OS/Access)
+  // 9 — /login funnel (real click from home). Post BA-5 relax: an anonymous visitor is
+  //     carried apex → OS → OUR Better Auth /signin (the router's BA_GATE), NEVER to
+  //     cloudflareaccess.com (Access is relaxed out of the human path).
   await page.goto(`${APEX}/`, { waitUntil: "domcontentloaded", timeout: 30000 });
-  onApex = false; // leaving our apex into the OS/Access — their console is not ours
+  onApex = false; // leaving our apex downstream — that console is not ours
   await page.locator('[data-testid="hero-login"]').first().click();
   await page.waitForLoadState("domcontentloaded").catch(() => {});
   await page.waitForTimeout(1500);
   const url = page.url();
-  ok("/login funnel leaves apex into OS/Access", /os\.megabyte\.space|cloudflareaccess\.com/i.test(url), url.slice(0, 70));
+  ok(
+    "/login funnel → OS or Better Auth /signin (not Access)",
+    /os\.megabyte\.space|megabyte\.space\/signin/i.test(url) && !/cloudflareaccess\.com/i.test(url),
+    url.slice(0, 70),
+  );
 
   // 10 — console clean
   ok("zero OUR console errors", errors.length === 0, errors.slice(0, 3).join(" | "));

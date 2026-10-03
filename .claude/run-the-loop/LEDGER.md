@@ -991,3 +991,27 @@
 - Loop-improvement (§8): caught + fixed a STALE one-way-door runbook BEFORE use — a sensitive-flip runbook must
   be re-validated against the CURRENT direction before execution (a stale runbook gives false confidence, worse
   than none). The flip now executes from an accurate, current procedure.
+
+## fire-64-flip (2026-10-03) — ✅✅ THE APEX FLIP: megabyte.space now SERVES THE OS (Better Auth + GitHub/Google SSO, NO Access)
+
+- Lease `fire-64-flip-78a13e2d`. EXECUTED the apex flip (WS-11 P1) — the user's headline — following the
+  CORRECTED runbook, step-by-step, rollback-staged. THE MILESTONE: megabyte.space IS the OS.
+- STEPS (all verified): (1) `pnpm check` validated the re-pointed config (`PUBLIC_BASE_URL → https://megabyte.space`).
+  (2) Freed the apex: `packages/home/wrangler.jsonc` routes `[]` → `pnpm --dir packages/home deploy` (megabyte-home
+  → workers.dev, a6787c6a; apex detached). (3) Re-pointed: `deployment.jsonc` router customDomain os.→megabyte.space
+  + sharingDomain pinned os. → `pnpm deploy` (megabyte-os 54121665; "megabyte.space (custom domain)"). (4) Purged the zone cache.
+- VERIFIED LIVE: anonymous megabyte.space → real browser renders "Sign in to your workspace" with **Continue with
+  GitHub + Continue with Google** + email/password + magic-link (title "Cloudflare OS"); `/api/auth/ok` 200 (the
+  fire-61 auth-rail-forward now serves the apex); `/signin` 200 (NO cf-mitigated bot-challenge — apex zone is clean,
+  unlike os.); NO Cloudflare Access in the human path. Brian's core vision — megabyte.space loads the OS + Better
+  Auth + GitHub/Google SSO, no Access — is LIVE.
+- os.megabyte.space → 000 (detached; customDomain moved to the apex). Old os. links break until a 301 (follow-up);
+  the os. Access app is now orphaned (harmless).
+- FOLLOW-UPS (BACKLOG P1): (i) verify-prod/verify-os STALE (os. gone) → rewrite for the apex-only topology (BA
+  session) = TOP next; (ii) os.→apex 301; (iii) P2 clean anonymous (3 WS console errors anonymous capnweb /api +
+  preview-before-signin via BA-4a+4b + BA_GATE pass-through); (iv) clean up the orphaned os. Access app.
+- Rollback (staged, unused — the flip worked): `docs/ws-11-rollback.md`.
+- Loop-improvement (§8): the flip landed cleanly BECAUSE all prerequisites were staged across fires 61-63
+  (auth-rail-forward + /signin+gate-exempt + corrected runbook) — the "decompose a one-way-door into safe
+  prerequisites first, execute the irreversible step last with everything staged + rollback-ready" pattern
+  delivered the highest-risk change (primary-domain re-point) with a clean verified result.

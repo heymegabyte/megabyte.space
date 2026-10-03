@@ -23,7 +23,20 @@ Headline reset: **megabyte.space LOADS the OS**, anonymous preview works, a SEAM
 lower workstreams. Secrets verified PRESENT in get-secret: GITHUB_CLIENT_ID/SECRET, GOOGLE_CLIENT_ID/SECRET,
 DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
-- [ ] P1 — APEX MOVE (→WS-11): megabyte.space serves the OS (OS router owns the apex; the WebGL homepage is
+- [x] ✅✅ P1 — APEX MOVE DONE + LIVE (fire-64, 57d6e1c4): **megabyte.space now SERVES THE OS** — the
+  `megabyte-os` router owns the apex (customDomain os.→megabyte.space; megabyte-home detached to workers.dev
+  as the rollback origin; sharingDomain pinned to os. to preserve Context). VERIFIED LIVE: anonymous
+  megabyte.space → "Sign in to your workspace" with **Continue with GitHub + Continue with Google** +
+  email/password + magic-link (real browser), `/api/auth/ok` 200, `/signin` 200 (NO bot-challenge at the apex),
+  title "Cloudflare OS". **NO Cloudflare Access in the human path — Better Auth + SSO.** Zone cache purged.
+  Rollback staged (`docs/ws-11-rollback.md`; versions megabyte-os 54121665 / megabyte-home a6787c6a).
+  FOLLOW-UPS (not blocking the headline): (i) **verify-prod.mjs/verify-os.mjs are now STALE** (os. detached →
+  000; apex changed) — rewrite for the apex-only topology (BA session, not the service token) = TOP next item;
+  (ii) os.megabyte.space → apex 301 (re-add os. DNS + redirect rule) for old links (os. currently 000);
+  (iii) P2 clean anonymous: 3 WS console errors (anonymous capnweb /api handshake) + "preview before sign-in"
+  — needs BA-4a+BA-4b (anonymous-aware frontend) + BA_GATE pass-through; (iv) Access app on os. now orphaned
+  (harmless — clean up later).
+- [x] (superseded) P1 — APEX MOVE (→WS-11): megabyte.space serves the OS (OS router owns the apex; the WebGL homepage is
   the dismissible first-view component, CONFIRMED working on os.). SENSITIVE/atomic sub-steps, fresh focused
   fire: (a) ✅ DONE fire-61 (fork 079ad28d, outer 7093824c) — the OS router forwards `/api/auth/*` → the `AUTH`
   binding (megabyte-auth), flag `BETTER_AUTH=1`; verified LIVE: `os.megabyte.space/api/auth/ok` → `{ok:true}`

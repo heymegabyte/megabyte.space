@@ -89,7 +89,7 @@
         "Google + GitHub SSO buttons (once OAuth apps exist)",
         "wire as the auth-on-action modal in the OS (BA-4) instead of a standalone page"
       ],
-      "notes": "fire-46 CREATED (BA-2): black/cyan Better Auth login at /signin (email+password, UI→rail proven, vision 9/10). fire-47 (BA-1b) ADDED passwordless magic-link: an 'Email me a sign-in link' button + 'OR' divider + a 'Check your inbox' state; full flow proven (request → SES send via aws4fetch → token in D1 → verify → session). verify-auth 5/5, verify-apex-journey 30/30, axe 0, 0 new inline scripts. Dark (new /signin route; live /login 302 untouched). Apex 61518a1b."
+      "notes": "fire-46 CREATED (BA-2): black/cyan Better Auth login at /signin (email+password, UI→rail proven, vision 9/10). fire-47 (BA-1b) ADDED passwordless magic-link: an 'Email me a sign-in link' button + 'OR' divider + a 'Check your inbox' state; full flow proven (request → SES send via aws4fetch → token in D1 → verify → session). verify-auth 5/5, verify-apex-journey 30/30, axe 0, 0 new inline scripts. Dark (new /signin route; live /login 302 untouched). Apex 61518a1b. fire-48: SESSION-AWARE — on mount /signin checks get-session; if signed in it shows 'Already signed in as {email}' + Continue + Sign out instead of a redundant form (embarrassingly-easy); both states verified in a real browser. Apex b0ba79e7."
     },
     "os.shell": {
       "beautifyPasses": 2,

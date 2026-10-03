@@ -64,3 +64,29 @@ fixed:
 - D1 `megabyte-auth` (`718b44ef-a33a-4aba-8300-8b70a21dbfd1`, ENAM). `BETTER_AUTH_SECRET` → `get-secret`.
 - Still needed: Google + GitHub OAuth apps (callbacks `https://megabyte.space/api/auth/callback/{google,github}`)
   — magic-link works without them, so NOT a blocker for BA-1/BA-2.
+
+## Discovery (fire-48): BA-3 → BA-4 → BA-5 are ONE coordinated flip, not three independent slices
+
+While scoping BA-3 (the OS backend `workshop-backend/src/access.ts` verifies the `cf-access-jwt-assertion`
+header + JWKS; `server.ts:844` then uses `payload.email`), a hard dependency surfaced:
+
+- **Nothing reaches the OS backend without first passing the Cloudflare Access EDGE gate.** So EVERY
+  request that reaches the backend today already carries an Access JWT — the Better-Auth-session path
+  (BA-3) is **unreachable / un-E2E-testable while Access gates the edge**. The same is true for BA-4:
+  the OS frontend can't render anonymously while Access blocks `os.megabyte.space`.
+- Therefore **BA-3 (backend dual-accept) + BA-4 (anonymous UI + auth-on-action) only ACTIVATE once
+  Access is relaxed / the OS moves to the anonymous apex (BA-5).** They are a single coordinated change,
+  gated on the flip — not three slices that land one-per-fire.
+- **Cross-subdomain cookies are therefore throwaway:** the clean end-state is the OS AT `megabyte.space`
+  (same-origin with the auth rail), so the BA session cookie is same-origin — no `.megabyte.space`
+  cookie-domain hack needed. Don't build it.
+- **The flip IS the Brian-gated one-way-door (BA-5).** It: detaches `megabyte-home` from the apex →
+  points the `megabyte-os` router at `megabyte.space` → serves the OS anonymously (Access NOT applied to
+  the apex) → relies on BA-3 (backend accepts the BA session) + BA-4 (UI prompts sign-in on submit) being
+  deployed. It changes the LIVE apex fundamentally; reversible by re-pointing the workers, but disruptive
+  (cert/DNS, OS `publicBaseUrl` derives from the domain — pin `context.sharingDomain` first per WS-11).
+
+**Revised remaining plan:** BA-1 ✅ · BA-2 ✅ · BA-1b ✅ are the done, shippable, dark pieces on
+`megabyte.space`. BA-3 + BA-4 + BA-5 are a **single coordinated flip fire** (best fresh-budget, with
+rollback staged + ideally Brian's go on the live-apex change). Until then the auth rail + login are
+complete + verified at `/signin`; the only thing missing is flipping the OS onto them.

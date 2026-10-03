@@ -715,3 +715,27 @@
   for any future transactional email from a Worker).
 - Matrix: home.signin pass 1→2 (magic-link). BACKLOG: BA-1b ticked. Next: BA-3 (backend dual-accept —
   the OS fork validates a BA session; needs cross-subdomain cookies) or SSO (needs OAuth apps).
+
+## fire-48 (2026-10-02) — /signin session-aware + ★ discovery: BA-3/4/5 are ONE coordinated flip
+
+- Shape: lean lead-direct. Lease `fire-48-7a7d06b1`. Pin 1abec09c (apex-only; did NOT touch the live fork backend).
+- ★ KEY DISCOVERY (while scoping BA-3): nothing reaches the OS backend (`workshop-backend/src/access.ts`
+  verifies the Access JWT; `server.ts:844` uses `payload.email`) without first passing the Cloudflare
+  Access EDGE gate — so the Better-Auth-session path (BA-3) + anonymous UI (BA-4) are UN-E2E-TESTABLE
+  while Access gates the edge. They only ACTIVATE once Access is relaxed (BA-5). **BA-3 + BA-4 + BA-5 are
+  a single coordinated flip, gated on the big Brian-gated one-way-door, NOT three one-per-fire slices.**
+  Cross-subdomain cookies = throwaway (end-state is OS-at-apex, same-origin). Documented in ADR 0001 §
+  Discovery + BACKLOG WS-8. This reshapes the remaining plan — avoided building throwaway cross-subdomain
+  work + a risky un-verifiable fork-backend change this fire.
+- Safe slice shipped (BA-2.1): `/signin` is session-aware — on mount it checks `get-session`; a
+  signed-in visitor sees "Already signed in as {email}" + Continue + Sign out instead of a redundant
+  form (embarrassingly-easy-to-use). Anon still gets the form.
+- Verify (THIS fire): apex **82d01a09** (feature b0ba79e7). Real browser: anon /signin → the form;
+  sign-in via the form → reload /signin → "Already signed in" with the email. `verify-apex` **3/3**
+  (journey 30/30 — anon /signin still shows the form, no regression).
+- Loop-improvement (§8): the coordinated-flip discovery documented in ADR 0001 + BACKLOG — a planning
+  correction that saves a future fire from building throwaway cross-subdomain cookies + a risky,
+  un-verifiable fork-backend change before the flip.
+- Matrix: home.signin notes += session-aware. BACKLOG: BA-2.1 ticked; BA-3/4/5 reframed as the coordinated
+  flip. The auth rail + login (BA-1/2/1b + session-aware) are COMPLETE on megabyte.space.
+- NEXT = the coordinated flip (BA-3+BA-4+BA-5): Brian-gated (changes the live apex). Surfaced in the report.

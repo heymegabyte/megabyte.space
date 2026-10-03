@@ -117,8 +117,18 @@
   megabyte.space, same-origin with the BA-1 rail; email+password wired to /api/auth; inline error/
   success + sign-in/sign-up toggle. Vision 9/10; UI→rail sign-in proven in a real browser; axe 0;
   reduced-motion safe; verify-apex-journey 30/30 (+/signin gate). SSO/magic-link buttons = BA-1b + OAuth.
-- [ ] BA-3 — backend DUAL-ACCEPT: the OS backend RPC validates a Better Auth session OR the Access JWT —
-  accept: service-token E2E + a real BA-session E2E both green.
+- ★ DISCOVERY (fire-48, see ADR 0001 § Discovery): **BA-3 + BA-4 + BA-5 are ONE coordinated flip**, not
+  three independent slices. Nothing reaches the OS backend without passing the Access EDGE gate, so the
+  Better-Auth path (BA-3) + anonymous UI (BA-4) are un-E2E-testable until Access is relaxed (BA-5). They
+  all ACTIVATE together at the flip. Cross-subdomain cookies = throwaway (end-state is OS-at-apex,
+  same-origin). **The auth rail + login are COMPLETE + verified at /signin; the only thing left is the
+  flip (the big Brian-gated one-way-door that changes the live apex).** Best run as a single fresh-budget
+  fire with rollback staged + Brian's go on the live-apex change.
+- [ ] BA-3 — backend DUAL-ACCEPT: the OS backend RPC validates a Better Auth session OR the Access JWT
+  (`workshop-backend/src/access.ts` + `server.ts:844`). Lands IN the coordinated flip fire (above). —
+  accept: service-token E2E + a real BA-session E2E both green (the latter only post-flip).
+- [x] BA-2.1 — /signin session-aware (fire-48, b0ba79e7): already-signed-in users see "Already signed in"
+  + Continue/Sign-out instead of a redundant form (embarrassingly-easy); both states verified; 30/30.
 - [ ] BA-4 — anonymous UI + auth-on-action in the fork: `workshop-frontend` renders unauthenticated; the
   first protected RPC (prompt submit) triggers the BA sign-in, then resumes the action — accept: a real
   browser loads the OS anonymously (no Access page), submit triggers sign-in, post-sign-in the prompt runs.

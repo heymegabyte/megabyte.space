@@ -55,7 +55,9 @@ const RAW: RawGoldenPath[] = [
   { id: 'GP-033', title: 'A2UI approval', products: M },
   { id: 'GP-034', title: 'Browser Run visual repair loop', products: M },
   { id: 'GP-035', title: 'Responsive deep journey', products: PS },
-  { id: 'GP-036', title: 'Keyboard / odd interactions', products: M },
+  // Keyboard core (Tab/Enter/Escape/⌘K/focus-visible/no-trap) covered by journey-keyboard.mjs;
+  // Shift+Tab / right-click / hover / drag / back-forward still pending → 'partial'.
+  { id: 'GP-036', title: 'Keyboard / odd interactions', products: M, coverage: 'partial', instance: 'scripts/journey-keyboard.mjs' },
   { id: 'GP-037', title: 'Loading / failure states', products: M },
   { id: 'GP-038', title: 'Computer backend routing', products: M },
   { id: 'GP-039', title: 'Computer fallback', products: M },

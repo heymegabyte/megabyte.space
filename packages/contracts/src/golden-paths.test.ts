@@ -34,13 +34,14 @@ describe('golden-path registry (GP-001…050)', () => {
     expect(goldenPathById('GP-999')).toBeUndefined()
   })
 
-  it('tracks coverage honestly — GP-046 (command palette) is the one partial instance', () => {
+  it('tracks coverage honestly — GP-036 + GP-046 are the partial instances', () => {
     const covered = goldenPathsByCoverage('covered')
     const partial = goldenPathsByCoverage('partial')
     expect(covered.length).toBe(0) // nothing fully covered yet
-    expect(partial.map((g) => g.id)).toEqual(['GP-046'])
+    expect(partial.map((g) => g.id)).toEqual(['GP-036', 'GP-046'])
+    expect(goldenPathById('GP-036')?.instance).toBe('scripts/journey-keyboard.mjs')
     expect(goldenPathById('GP-046')?.instance).toBe('scripts/journey-os-nav.mjs')
-    // The vast majority are honestly pending until the factory is built.
-    expect(goldenPathsByCoverage('pending').length).toBe(49)
+    // The majority are honestly pending until the factory is built.
+    expect(goldenPathsByCoverage('pending').length).toBe(48)
   })
 })

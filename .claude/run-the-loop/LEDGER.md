@@ -1639,3 +1639,18 @@
   wrapper around in-row action buttons — make a cell the activator) in BACKLOG facts.
 - NEXT: light-mode contrast (dark is default + axe-clean; light secondary) · the 8 manual WCAG-2.2 criteria axe can't
   test · GP-036 keyboard journey · WS-M2 Connections.
+
+## fire-95-keyboard-journey (2026-10-04) — ✅ GP-036 keyboard operability — the OS is keyboard-accessible (manual WCAG axe can't test)
+- Completed the a11y arc's OPERABILITY side (axe proved structure; this proves operation). Shipped `scripts/journey-
+  keyboard.mjs` (parent repo dc5a15f0): keyboard-ONLY force-login (Tab past the SSO buttons → email → password → Enter
+  submits) + ⌘K via keyboard (open → type → Enter navigates → Escape closes) + focus-visibility check on every tabbed
+  control + no-trap. Covers the manual WCAG 2.2 criteria axe can't auto-test (2.1.1 Keyboard, 2.4.7 Focus Visible, 2.1.2
+  No Trap).
+- VERIFIED (real browser, PROD): **7/7** — email reachable by Tab (2 past SSO), keyboard-only sign-in works, focus
+  always visible, ⌘K opens+Enter-navigates (→/models), Escape closes (no trap), 0 console errors. No defect — the OS a11y
+  operability baseline is genuinely solid (per §6, retained + proven).
+- Registry: marked **GP-036 'partial'** (instance journey-keyboard.mjs) in `@megabyte/contracts` — keyboard core covered;
+  Shift+Tab/right-click/hover/drag/back-forward still pending. Now 2 partial (GP-036 + GP-046), 48 pending. 25/25 vitest.
+- Loop-improvement (§8): registered journey-keyboard.mjs as the loop's keyboard-operability golden-path (run in rotation);
+  together with the axe gate (fire-93/94) the OS now has BOTH structural + operational a11y verified on the key surfaces.
+- NEXT: the remaining GP-036 odd-interactions (right-click/drag/back-forward) · light-mode contrast · WS-M2 Connections.

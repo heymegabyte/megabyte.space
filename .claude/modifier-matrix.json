@@ -120,6 +120,30 @@
         "flagship: D1 Notion/Airtable studio per ULTIMATE-REQUIREMENTS §Data-UX"
       ]
     },
+    "os.analytics": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-04",
+      "next": [
+        "chart hover-tooltip + y-axis reference (9->9.5)",
+        "per-stat-card sparkline / mini-trend",
+        "wire LIVE data (D1 visitor_events → aggregates) replacing sample data — the real ->10"
+      ],
+      "notes": "fire-147 CREATED/SHIPPED (salvaged fire-146 DEMO-8, lead died uncommitted mid-slice; ULTIMATE-REQUIREMENTS §45 observability surface). Gorgeous black/cyan dashboard: 4 stat cards (visitors/pageviews/session/conversion w/ trend chips) + a 14-day visitors bar chart (cyan gradient bars, transition-[height] animate-in) + top pages + traffic sources + device mix + Core Web Vitals, honestly labeled 'Preview · sample data' (never lies-empty). Wired Operate rail + ⌘K + an Editor Resources 'Analytics' panel (status: preview). BA-authed real-browser verified (verify-analytics.mjs, green-sweep's 23rd check): reachable via rail, 6 content needles, 0 console errors. Direct-Read vision 9/10 — clean, dense, on-brand, the chart is gorgeous. Knock vs 9.5: no chart hover-tooltip/axis; stat cards a touch sparse in the lower region. Fork 4479f2fc / outer fff9a126."
+    },
+    "os.activity": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 8,
+      "lastVisit": "2026-10-04",
+      "next": [
+        "align the pending-row action column (resolved status text vs the Approve/Reject buttons sit at different x) — 9->9.3",
+        "differentiate the two section cards (approval gate vs recent feed read as same-weight borders) — subtle elevation/tint on the gate",
+        "wire a REAL listRecentActions() cross-gadget aggregation (fan out Overseer.listActions) to replace sample data — the real ->10"
+      ],
+      "notes": "fire-147 CREATED/SHIPPED (salvage-committed fire-147-salvage; BACKLOG Activity/Runs, North-Star HITL-governance surface). /activity = global Activity & Approvals: a 'Needs your approval' HITL gate (3 sample pending — Resend broadcast / deploy / Square charge — Approve/Reject resolve LOCALLY, verified 3->2 on prod) + a grouped 'Recent activity' feed (Today/Yesterday; action/observation/bindHook icons, Approved/Denied/Observed/Enabled status dots, Auto chips) mirroring the real ActionLogEntry model + Activity.tsx vocabulary. Honestly labeled 'Preview · sample data'. Wired Operate rail (ListChecks) + ⌘K + AdminPage catalog (0 orphan). BA-authed real-browser verified (verify-activity.mjs, green-sweep's 24th check): reachable via rail, 6 content needles, HITL Approve decrements, 0 console errors. Direct-Read vision 9/10 — clean, dense, on-brand, interactive, honest. Knock vs 9.5: pending-row action-column alignment; the two section cards read same-weight. Fork 1879d778 / outer: salvage commit (see LEDGER fire-147-salvage)."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

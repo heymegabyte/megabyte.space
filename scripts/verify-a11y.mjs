@@ -82,6 +82,8 @@ for (const [path, signal] of [
   ['/goals', /goal|outcome|coming soon/i], // WS-DEMO: Goals demo surface (fire-130)
   ['/automations', /automation|schedule|coming soon/i], // WS-DEMO: Automations demo surface (fire-133)
   ['/agents', /agent|coworker|coming soon/i], // WS-DEMO: Agents demo surface (fire-140)
+  ['/activity', /activity|approval|waiting|recent/i], // WS-DEMO: Activity & Approvals demo surface (fire-147)
+  ['/analytics', /analytics|visitors|sample data/i], // WS-DEMO: Analytics dashboard (fire-146 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],
   ['/models', /model|available|provider/i],

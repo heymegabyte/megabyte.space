@@ -1230,3 +1230,29 @@
   decomposition (3 ready slices w/ confirmed architecture) make the next WS-12 fire a clean execution, not a
   re-investigation.
 - NEXT: WS-12 Slice 1 (DeepSeek infra — gateway token + BYOK, verify existing inference unbroken) · reuse the Notion-grade DataTable for a Workspaces/Gadgets table · WS-13 Slice B (violet→black base).
+
+## fire-74-deepseek-spec+row-detail (2026-10-03) — ✅ WS-12 fully spec'd (dedicated-session task) + DataTable row-detail/copy-id (os.models complete)
+
+- Lease `fire-74-deepseek-infra-e6183668`. Attacked WS-12 (DeepSeek — the user's fire-60 direction, 7 fires
+  deferred) but RESOLVED it's a delicate DEDICATED-SESSION task, not a loop-tail slice — then shipped a clean
+  compounding slice.
+- WS-12 — FINAL grounding + EXECUTION SPEC written to BACKLOG: gateway auth OFF; the BYOK stored-keys REST paths
+  404 (likely dashboard-only → a Brian-gated step); the binding sentinel is `"cloudflare-gateway-binding"` +
+  binding requests are pre-authed in-account (so enabling gateway auth is ~0.8 SAFE for existing inference, but
+  MUST be confirmed). CONSTRUCTOR TRAP: deepseek in `HTTPS_ONLY_PROVIDERS` without `CF_AI_GATEWAY_API_TOKEN`
+  THROWS → breaks ALL inference. Two approaches spec'd: (A) BYOK (auth+token+stored key) / (B) passthrough
+  (proven curl; modify getModelViaGateway). VERIFY via the home chat composer (existing model + deepseek both
+  respond + deepseek in /models). WHY not this fire: it mutates PROD AI inference (the working core) + needs a
+  designed before/after inference check — rushing it at a loop tail = reckless; the seam is agent-hostile
+  (the fire-71 scout hallucinated a REST route) so it's lead-direct.
+- SHIPPED (fork aace4b97 / outer <this> ; deployed 1e18b913) — the reusable DataTable is now COMPLETE as a
+  read-only Notion/Airtable surface: generic `onRowClick` (keyboard-activatable, cyan hover/focus) + a Kumo
+  Dialog model detail on /models (provider chip, name, mono model-id, context/output, "Copy model ID" → cyan
+  "Copied!"). Every future absorption table inherits row-interactivity.
+- VERIFIED (BA-authed real browser, `scripts/verify-models-detail.mjs`): row-click → dialog opens → copy shows
+  "Copied!" → Esc closes → 0 console errors; vision 9/10.
+- Loop-improvement (§8): the WS-12 EXECUTION SPEC (A/B approaches + the constructor-trap + the home-composer
+  verify path) makes the dedicated WS-12 fire a clean execution; PLUS a durable discipline added to the loop
+  command — delicate PROD-MUTATING work (auth/inference/billing) gets grounded + spec'd for a dedicated session,
+  never rushed at a loop tail.
+- NEXT: WS-12 (dedicated session — approach B passthrough, lead-direct, home-composer verify) · reuse the full DataTable for a Workspaces/Gadgets table · 'set-default-model' action (os.models →10).

@@ -123,6 +123,21 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   - [ ] WS-12 Slice 3 (DeepSeek-DEFAULT, the user's "mostly DeepSeek"): make deepseek the QUICK model
     (ai-gateway.ts:138) + the per-chat fallback (user.ts:701-735); keep OpenAI/Anthropic selectable for
     "important work." Flag-gated; TEST model-less chats still work before promoting.
+  - ★ fire-74 EXECUTION SPEC (DEDICATED-SESSION task — prod-inference risk + heavy verify; do NOT rush at a loop tail):
+    FINDINGS: gateway auth is OFF; the BYOK stored-keys REST paths 404 (`/gateways/{gw}/keys`, `/ai-gateway/secrets`)
+    — BYOK may be dashboard-only (→ a Brian-gated step; URL: https://dash.cloudflare.com/?to=/:account/ai/ai-gateway).
+    The binding-auth sentinel is `"cloudflare-gateway-binding"` (ai-models.ts:424); binding requests are pre-authed
+    IN-ACCOUNT (ai-gateway.ts comment) → enabling gateway auth is ~0.8-likely SAFE for existing Workers-AI inference,
+    but MUST be confirmed (before/after authed-chat). CONSTRUCTOR TRAP: adding deepseek to `HTTPS_ONLY_PROVIDERS`
+    WITHOUT `CF_AI_GATEWAY_API_TOKEN` makes `AiGatewayConfig` THROW (ai-gateway.ts:79) → breaks ALL inference.
+    TWO APPROACHES: (A) BYOK — enable gateway auth + mint `CF_AI_GATEWAY_API_TOKEN` + store the DeepSeek key on the
+    gateway; the OS code already handles it (cf-aig-authorization + suppress Authorization). (B) PASSTHROUGH (proven
+    by the fire-73 curl, no auth/BYOK) — modify `getModelViaGateway` so deepseek sends `Authorization: Bearer
+    <DEEPSEEK_KEY>` to `${gatewayUrl}/deepseek` (NOT the suppression) + handle its transport before the binding/HTTPS
+    split so the constructor doesn't throw. B avoids the auth-toggle + BYOK-API but is a more invasive ai-models.ts
+    change. VERIFY PATH (tractable): drive the home-dashboard chat composer ("What are we working on?" + model picker)
+    — (1) existing cloudflare model still responds, (2) deepseek responds, (3) deepseek shows in /models. Do it
+    lead-direct (agents hallucinate this seam — the fire-71 scout invented a REST route); revert on any inference break.
 
 ### WS-1 — Estate path (the priority journey)
 - Mission: apex WebGL homepage → `/login` 302 → Access gate → OS shell → absorbed surfaces —

@@ -2214,3 +2214,14 @@
 - loop-improvement (§8): the CWV gate now reports the LCP element — future perf regressions are diagnosable at a glance, not just "LCP too high". MEASURED before touching anything (avoided the fire-141 blind vendor-split that would've been wrong — the WebGL/three was never the blocker; the eager app shell is).
 - attrition: none.
 - NEXT: the apex-LCP fix is a DEDICATED perf arc (SSR the landing OR split the anon entry) — big + architectural, do it in a focused session not a loop tail; meanwhile continue rebalancing (testing/arch/docs) · cron a6d5c7ab drains WS-DEMO remainder · product frontier still WS-N2.
+
+## fire-143-anon-critical-trim (2026-10-04) — ✅ PERF: lazy-load authed-only chrome → leaner anon bundle (WS-PERF slice 1)
+- roster: solo-lead (took a SAFE, bounded slice of the fire-142 perf arc rather than deferring the whole thing — measure-driven) · budget: perf
+- [Perf] lazy authed-only chrome — fork 994c23f5 / parent HEAD — prod: index 1,423→1,227KB (417→367KB gz), **apex LCP 7.5s→7.07s (measured)**, **green-sweep 22/22** (authed flow intact with the lazy chunks). Router 91564b83.
+  - WHAT: `AppShell`/`OnboardingWizard`/`AccountSelectionModal`/`CommandPaletteHost` are authed-only but were EAGER-imported in `__root.tsx` → bundled into the anon-critical `index.js` even though an anonymous visitor (LandingHomepage → /signin) never renders them. `lazy()`d all four behind a `<Suspense fallback={<ShellSpinner/>}>` (reusing the onboarding-check spinner) → they're now separate chunks (AppShell 31KB, Onboarding 24KB, AccountSelection 12KB) loaded only post-auth.
+  - RESULT: −50KB gz off the anon critical path; LCP improved ~300-400ms. MARGINAL vs the ≤2000ms target — which CONFIRMS the remaining bottleneck is the core-lib index shell (React+Kumo+TanStack+capnweb+LandingHomepage+AuthContext, still 367KB gz), NOT the authed components. So the target genuinely needs (a) SSR the landing or (b) a separate tiny anon entry — more lazy-loading won't get there.
+- journey: `verify-apex-cwv` re-measured (7.07s, LCP=hero H1); green-sweep's authed ba-e2e flow confirms AppShell/Onboarding/etc. still render correctly behind Suspense (no broken authed state).
+- backlog: WS-PERF slice 1 ✅ ticked; the arc's real win (SSR/anon-split) remains for a dedicated session, now with sharper root-cause (it's the core-lib shell).
+- loop-improvement (§8): shipped a measure→change→re-measure perf loop (not a blind guess) — the lazy-split is a real −50KB gz win with 0 authed regression, AND it SHARPENED the arc's scope (proved the bottleneck is the core-lib index, so the dedicated fire goes straight to SSR/anon-split instead of more chunk-splitting).
+- attrition: none.
+- NEXT: WS-PERF's real fix (SSR the landing OR a tiny separate anon entry) is a dedicated focused session (core-lib shell is the weight); continue rebalancing (testing/arch/docs) meanwhile · product frontier still WS-N2 · cron a6d5c7ab drains WS-DEMO remainder.

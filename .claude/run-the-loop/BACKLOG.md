@@ -56,6 +56,7 @@ Directive: implement every documented-but-unbuilt feature "at least enough to DE
 ### WS-PERF — apex LCP (DEDICATED perf arc — measured fire-142)
 - [ ] **Apex LCP ≈7.5s** (throttled Fast-3G + 4× CPU; house target ≤2000ms). CLS 0 ✅, FCP ~1.1s ✅. The LCP element is the hero **H1** — it waits for the full OS app bundle (`index.js` ~417KB gz) to download+parse+EXECUTE before rendering (the WebGL is already lazy, so NOT the blocker; `LandingHomepage` is eager in `__root.tsx` → the anon landing loads the entire authed SPA to paint a headline).
 - Fix options (big/architectural — dedicated session, measure after each): (a) SSR/pre-render the landing's above-fold hero (TTFR mandate); (b) split the anon landing/signin into a TINY separate entry (anon visitors don't download the authed OS); (c) trim the eager `index.js` shell (audit Kumo/capnweb/phosphor/TanStack eager usage). Routes are already code-split — the shell is the weight. (a)/(b) are the real wins.
+- [x] slice 1 (fire-143, fork 994c23f5): lazy-loaded the authed-only chrome (AppShell/OnboardingWizard/AccountSelectionModal/CommandPaletteHost) off the anon critical path → index 1,423→1,227KB (−50KB gz); LCP 7.5s→7.07s (measured). MARGINAL — confirmed the remaining bottleneck is the CORE-LIB index shell (React/Kumo/TanStack/capnweb), so the target needs (a) SSR or (b) anon-entry-split, NOT more lazy-loading.
 - Gate: `node scripts/verify-apex-cwv.mjs` (now reports the LCP element). Run-on-demand (not in green-sweep).
 
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)

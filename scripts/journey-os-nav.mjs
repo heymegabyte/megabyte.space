@@ -93,6 +93,12 @@ await step("pulse-action", async () => {
   const act = page.locator("button", { hasText: /enable providers|view gadgets|browse integrations|build your first|connect/i }).first();
   if (await act.count()) await act.click({ timeout: 6000 });
 }, /^\/(models|gadgets|gatekeepers|providers)/, /.+/);
+// fire-141: the demo surfaces (Operate group + Context) added to the nav tour — they postdate fire-85
+// so the primary nav journey didn't cover them; now it walks the full current rail.
+await step("sidebar→goals", sidebarClick("Goals"), /^\/goals/, /goal|outcome|coming soon/i);
+await step("sidebar→agents", sidebarClick("Agents"), /^\/agents/, /agent|coworker|coming soon/i);
+await step("sidebar→automations", sidebarClick("Automations"), /^\/automations/, /automation|schedule|coming soon/i);
+await step("sidebar→context", sidebarClick("Context"), /^\/context/, /context|skill|coming soon/i);
 await step("cmdk→models", cmdkGo("models", /models/i), /^\/models/, /model|available|provider/i);
 await step("sidebar→explore", sidebarClick("Explore"), /^\/explore/, /.+/);
 await step("sidebar→blueprints", sidebarClick("Blueprints"), /^\/blueprints/, /.+/);

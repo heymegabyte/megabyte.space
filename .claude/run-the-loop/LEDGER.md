@@ -2191,3 +2191,14 @@
 - loop-improvement (§8): broke the 12-fire WS-N2 deferral by distinguishing the REVERSIBLE demo preview (shippable now, delivers Brian's repeated ask) from the ONE-WAY-DOOR data-model decision (still Brian's) — a re-prompt on the same surface meant I was under-delivering (prompt-as-training-signal); the fix was to ship the reversible slice + keep the irreversible decision open.
 - attrition: none (one transient console-error flake, confirmed not a real regression).
 - NEXT: WS-DEMO is DONE (all primitives surfaced). The frontier is now genuinely **WS-N2 (the real Agents data model — Brian's one-way-door call)** or net-new backends; rebalance future fires to testing/arch/perf/docs · cron a6d5c7ab drains any remainder.
+
+## fire-141-extend-nav-journey (2026-10-04) — ✅ TESTING: the primary nav tour now covers the full demo-complete rail (it had drifted)
+- roster: solo-lead (REBALANCED off 13 straight product/demo fires → testing; considered a perf vendor-split [risky: could pull lazy-only deps eager, no measured LCP problem — skipped] + a new feature-tour [redundant with journey-os-nav] → chose EXTENDING the existing nav journey, the non-redundant gap) · budget: testing
+- [Testing] extend journey-os-nav — parent HEAD — prod: **journey-os-nav 15/15 (was 11), 0 console errors** + green-sweep 22/22. No deploy (verifier-only; surfaces already live).
+  - GAP: `journey-os-nav` (fire-85, the OS's LONG sidebar+⌘K nav tour) PREDATES the demo surfaces — it toured Pulse/Models/Explore/Blueprints/Outputs/Gadgets/editor but NOT Goals/Agents/Automations/Context (fires 130-140). The primary nav journey had drifted from the current rail.
+  - FIX: added 4 steps (sidebar→goals/agents/automations/context) using the journey's own helpers — each asserts URL + a surface marker + 0 new console errors via real rail-click. The nav tour now walks the full current grouped rail (Operate + Library demo surfaces included).
+- journey: journey-os-nav itself (extended) — 15/15 UI-click steps, 0 console errors, incl. the 4 new demo surfaces reachable via the grouped sidebar.
+- backlog: none ticked (testing-coverage); WS-DEMO stays DONE.
+- loop-improvement (§8): closed a journey-coverage DRIFT — the primary nav tour now matches the current surface set (it had lagged ~10 fires of new surfaces); a future surface added to the rail should be added here too (same as the a11y/reachability coverage note).
+- attrition: none.
+- NEXT: rebalance continues — testing (a long-trail stateful case), architecture (drift sweep via the pnpm-check gates), perf (MEASURE CWV first, then decide), or docs; the product frontier stays WS-N2-blocked · cron a6d5c7ab drains any WS-DEMO remainder.

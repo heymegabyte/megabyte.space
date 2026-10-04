@@ -2236,3 +2236,14 @@
 - loop-improvement (§8): raised the /admin demo from all-mock toward REAL where data exists (flags live-read) — the pattern (prefer real data via an existing hook/RPC over mock) applied; FLAG_META falls back to the key so a new flag appears automatically (no drift).
 - attrition: none.
 - NEXT: /admin is comprehensive; WS-DEMO done; the real remaining work is WS-PERF (SSR/anon-split, dedicated) or WS-N2 (Brian) · keep rebalancing (testing/arch/docs) · cron a6d5c7ab drains remainder.
+
+## fire-145-visual-qa-frost (2026-10-04) — ✅ UX/VISUAL: visual-QA the demo surfaces → the coming-soon preview was too dim to demo; lightened the frost
+- roster: solo-lead (VISUAL-QA — the dimension my 17 functional fires never checked; the visual-qa agent is retired so I did it inline: real screenshots + AI-vision Read) · budget: ux/visual
+- [UX] ComingSoonPreview frost lightened — fork 6d33d5fc / parent HEAD — prod: before/after screenshot (AI-vision) + green-sweep 22/22. Router d3c64450.
+  - FINDING: screenshotting /goals showed the coming-soon MOCK (the goal→task breakdown, example agents — the thing meant to DEMO the feature) was nearly ILLEGIBLE behind `bg-kumo-base/55` + `backdrop-blur-[3px]`. Every functional gate PASSED (renders, a11y, demo-surfaces needles, green-sweep) — but "renders" ≠ "reads well in a demo". For a PREVIEW, the content must be glimpseable.
+  - FIX: `/55`→`/40` scrim + blur `3px`→`1.5px`. After-screenshot confirms the goals→tasks (On track · 4 opportunities · 3 tasks · 62%, DONE/RUNNING/QUEUED) + composer now read CLEARLY while the opaque "coming soon" card still pops. Shared component → fixes ALL 5 coming-soon surfaces (Goals/Agents/Automations/Context) at once. Fixed the stale usage comment too.
+- journey: before/after real-browser screenshots (journey-os-nav re-captures /goals); green-sweep 22/22 confirms the lighter frost broke nothing (content MORE visible → needles + a11y still pass).
+- backlog: none ticked (visual polish); the demo surfaces now actually SHOW their preview content.
+- loop-improvement (§8): a concrete reminder that FUNCTIONAL-green ≠ VISUALLY-good — 17 fires of render/a11y/sweep gates all passed a surface that was too dim to demo. Screenshot + AI-vision the demo surfaces; the loop should visual-QA, not just functional-verify, when demo-quality is the goal. (The visual-qa specialist agent is retired — do it inline.)
+- attrition: none (the /tmp screenshot script failed to resolve playwright [runs outside the repo node_modules] → used the existing journey-os-nav .journey/*.png captures instead — lesson: screenshot helpers must live in scripts/).
+- NEXT: more visual-QA passes on the live surfaces (editor/Pulse/admin tabs an admin can see); WS-PERF (dedicated) / WS-N2 (Brian) remain the big items · cron a6d5c7ab drains WS-DEMO remainder.

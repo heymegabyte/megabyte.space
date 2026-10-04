@@ -2225,3 +2225,14 @@
 - loop-improvement (§8): shipped a measure→change→re-measure perf loop (not a blind guess) — the lazy-split is a real −50KB gz win with 0 authed regression, AND it SHARPENED the arc's scope (proved the bottleneck is the core-lib index, so the dedicated fire goes straight to SSR/anon-split instead of more chunk-splitting).
 - attrition: none.
 - NEXT: WS-PERF's real fix (SSR the landing OR a tiny separate anon entry) is a dedicated focused session (core-lib shell is the weight); continue rebalancing (testing/arch/docs) meanwhile · product frontier still WS-N2 · cron a6d5c7ab drains WS-DEMO remainder.
+
+## fire-144-admin-feature-flags (2026-10-04) — ✅ PRODUCT (WS-DEMO): /admin Feature flags tab — REAL live data (not mock)
+- roster: solo-lead (the one genuinely-missing /admin surface the docs mandate — the feature-flags rule's "admin flag visibility"; built it REAL-data to raise the bar over the mock /admin tabs) · budget: product/demo
+- [Feature] /admin **Feature flags** tab — fork 6c626a2d / parent HEAD — prod: build clean + green-sweep 22/22. Router cd2e9cea.
+  - WHAT: a table of every UI feature flag (Model catalog / Gadgets table / Pulse) with its LIVE On/Off status — read from `useUiFeatureFlags()` (the real resolved flag record), not mock data. Human labels via a `FLAG_META` map (falls back to the raw key for any new flag → no drift). The feature-flags rule mandates an admin flag-visibility surface; this delivers it.
+  - REAL-DATA: unlike the fire-134/135 mock Metrics/Permissions/Provenance tabs, this reads actual state — a quality step up for the /admin demo. (Toggling would need a flag-write backend — Flagship/D1 per the rule — out of scope; visibility is the slice.)
+- journey: admin-gated (ba-e2e not admin) → build + green-sweep 22/22 (no regression). Same gate as the other /admin tabs.
+- backlog: WS-DEMO — /admin now has General/Platform/Metrics/Permissions/Provenance/**Feature flags**/Gatekeepers/Formats/Access. Genuinely comprehensive.
+- loop-improvement (§8): raised the /admin demo from all-mock toward REAL where data exists (flags live-read) — the pattern (prefer real data via an existing hook/RPC over mock) applied; FLAG_META falls back to the key so a new flag appears automatically (no drift).
+- attrition: none.
+- NEXT: /admin is comprehensive; WS-DEMO done; the real remaining work is WS-PERF (SSR/anon-split, dedicated) or WS-N2 (Brian) · keep rebalancing (testing/arch/docs) · cron a6d5c7ab drains remainder.

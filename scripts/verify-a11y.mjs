@@ -121,6 +121,19 @@ if (await openLink.count()) {
   await page.waitForFunction(() => document.body.innerText.trim().length > 200, { timeout: 20000 }).catch(() => {})
   await page.waitForTimeout(2500)
   out.push(await audit('/workspace (editor)'))
+
+  // 12b. The editor's Resources tab (ResourcesPanel) — a 16-card grid with Live/Preview/Soon chips +
+  // "View →" jumps. Its chips previously used brand-on-tint text (sub-AA in light); audit it so that
+  // class can't regress unseen (the Resources tab is reachable only by clicking it inside the editor).
+  const resTab = page.getByRole('button', { name: /^Resources$/ }).first()
+  if (await resTab.count().then((c) => c > 0).catch(() => false)) {
+    await resTab.click({ timeout: 8000 }).catch(() => {})
+    await page.waitForFunction(() => /Live|Preview|Soon/.test(document.body.innerText), { timeout: 8000 }).catch(() => {})
+    await page.waitForTimeout(1000)
+    out.push(await audit('/workspace editor — Resources tab'))
+  } else {
+    console.log('\nℹ️  skipped Resources-tab audit — tab not present (chat-mode pane)')
+  }
 } else {
   console.log('\nℹ️  skipped /workspace editor audit — no gadget to open')
 }

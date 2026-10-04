@@ -1654,3 +1654,20 @@
 - Loop-improvement (§8): registered journey-keyboard.mjs as the loop's keyboard-operability golden-path (run in rotation);
   together with the axe gate (fire-93/94) the OS now has BOTH structural + operational a11y verified on the key surfaces.
 - NEXT: the remaining GP-036 odd-interactions (right-click/drag/back-forward) · light-mode contrast · WS-M2 Connections.
+
+## fire-96-gadget-rename (2026-10-04) — ✅ Product: inline gadget RENAME (embarrassingly-easy CRUD on real data)
+- Broke the "baseline-solid testing" streak with a real user-facing feature. Confirmed the API exposes it first
+  (`api.ts:1609` gadget stub `setTitle(title)`; `getPreferredModel()` also returns `string|null` for a future set-default
+  detector). Shipped (fork 9e41b651 → gitlink 33c7156a; deployed megabyte-os v0d15bc4f): a pencil on each /gadgets row
+  flips the title into an inline input (Enter saves · Escape cancels · blur saves). `EditableGadgetTitle` owns its own
+  edit/draft state so keystrokes don't rebuild the column defs (input keeps focus); parent `handleRename` is optimistic +
+  reverts on RPC error via `openGadget(id).setTitle()` (mirrors the fire-80 pin pattern). a11y-safe (form input + sibling
+  pencil — no nested-interactive).
+- VERIFIED (BA-authed real browser, reversible `verify-gadget-rename.mjs` 6/6): pencil opens the input, title updates
+  optimistically on Enter, **PERSISTS across reload** (setTitle RPC — display-vs-store reconciled), **original restored**
+  (ba-e2e state untouched), 0 console errors. Regressions GREEN: **a11y still 0 serious** (the input/pencil restructure
+  added no nesting), gadget-pin 5/5, gadgets-table title-link opens. +os.gadgets beautify pass 4.
+- Loop-improvement (§8): the self-stated-child pattern (a cell component owning its edit state so keystrokes don't
+  rebuild the parent's `useMemo` columns — keeping input focus) is the template for future inline-edit cells.
+- NEXT: gadget delete-with-undo (destructive — needs a confirm + careful verify that doesn't lose ba-e2e's gadget) ·
+  set-default-model Pulse detector (getPreferredModel===null, now confirmed) · WS-M2 Connections.

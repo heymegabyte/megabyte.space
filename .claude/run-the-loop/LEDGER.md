@@ -1688,3 +1688,20 @@
   the test account can't trigger ships only logic-verified. Captured in BACKLOG facts.
 - NEXT: gadget delete-with-undo (dedicated fire) · a reversible setPreferredModel(null) causal test to positively assert
   the fire-97 detector · WS-M2 Connections.
+
+## fire-98-light-a11y (2026-10-04) — ✅ a11y gate GREEN in BOTH themes (light-mode contrast → axe 0)
+- Extended `verify-a11y.mjs` with `--light` (forces `gadgets:theme-mode=light`). Light mode had the whole muted/brand
+  contrast class failing (dark was axe-0 since fire-93/94). Drove it to **axe 0 serious/critical** across /signin +
+  Pulse/Gadgets/Models — a LAYERED fix (each surfaced the next): light `--text-color-kumo-inactive` oklch(66→47%) (the
+  ×30 #95918f set) → `--text-color-kumo-subtle` oklch(52→48%) (#6c6865 recessed-chip near-miss) → the "Available" badge's
+  cyan-on-cyan-tint text (2.86:1 same-hue) → neutral `text-kumo-strong` on the kept cyan tint (CheckGlyph decorative).
+  Deployed v f0017d05; **light 0 + dark 0** verified.
+- INCIDENT (fixed-forward): `pnpm build | tail -2 && git commit` — the pipe made the chain see TAIL's exit (0), not the
+  build's FAILURE, so a broken fork commit (JSX comment before the root element + a `className` on CheckGlyph which takes
+  only `size`) was pushed + the gitlink bumped before `pnpm deploy`'s build caught it. Prod never deployed broken (deploy
+  build failed → no deploy); fixed the JSX + rebuilt green + re-pushed (fork a78d34c6 / gitlink 9df9fa21).
+- Loop-improvement (§8), captured in BACKLOG facts: (1) **never `build | tail && commit`** — the pipe masks the build's
+  exit; run the build as its own step + confirm `✓ built` before committing to the fork. (2) **audit ALL muted/brand
+  tokens at once** for a theme-contrast pass (inactive + subtle + brand-on-tint) rather than one-at-a-time (5 iterations
+  this fire). (3) a JSX comment before a `return (`'s root element + a `className` on a size-only glyph are build-fails.
+- NEXT: gadget delete-with-undo (dedicated) · the fire-97 reversible causal test · WS-M2 Connections.

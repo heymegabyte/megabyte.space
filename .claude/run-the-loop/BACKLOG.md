@@ -316,6 +316,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   wire a REVERSIBLE causal test (set the state → assert → restore, like verify-gadget-pin/rename) rather than ship
   logic-only. Gadget `deleteSelf()` exists (api.ts) — delete-with-undo is a dedicated fire (destructive; verify via a
   throwaway `newWorkspace()`, never ba-e2e's real gadget).
+- **Build gate: never `build | tail && commit` (fire-98)**: piping the frontend build through `tail`/`grep` makes the
+  `&&` chain read the PIPE's exit (0), not the build's — a failing build slips through to a fork commit + gitlink bump
+  before `pnpm deploy` catches it (pushed a broken commit fire-98; prod stayed safe since deploy's build failed → no
+  deploy). Run the build as its OWN step and confirm `✓ built` before committing to the fork. Also: a JSX comment before
+  a `return ( … )` ROOT element is a syntax error (put it above `return`); a `className` on size-only CheckGlyph is TS2322.
+- **a11y: axe 0 in BOTH themes (fire-98)**: dark (fire-93/94) + light (fire-98) axe-AA-clean across /signin + Pulse/
+  Gadgets/Models. For a theme-contrast pass, audit ALL muted/brand tokens at once (`--text-color-kumo-inactive` +
+  `-subtle` + brand-text-on-tint) — they fail at different surfaces (one-at-a-time took 5 iterations). `verify-a11y.mjs --light`.
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +
   vision score tracked in `.claude/modifier-matrix.json`.

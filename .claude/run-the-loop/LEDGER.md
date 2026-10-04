@@ -2168,3 +2168,14 @@
 - loop-improvement (§8): captured the innerText-applies-text-transform gotcha (above) so future verifiers matching uppercased UI text use `/i`; + kept Tasks cohesive (no rail bloat) rather than minting another route.
 - attrition: none (one self-caught verifier-needle miss, fixed same fire).
 - NEXT (WS-DEMO via cron): the demo set is now comprehensive (all primitives surfaced bar Agents); remaining = Platform Costs Σ-spend (admin-gated) OR real backends OR **WS-N2 (Brian) for Agents — the one true unlock** · cron a6d5c7ab drains it.
+
+## fire-139-sidebar-grouping (2026-10-04) — ✅ UX: grouped the sidebar into Operate/Build/Library (fix the rail bloat the demo fires introduced)
+- roster: solo-lead (REBALANCED off the saturated WS-DEMO product arc → UX; fixed a real regression I introduced — the rail grew to ~11 flat items as Goals/Automations/Context were added fires 130-133) · budget: ux/embarrassingly-easy
+- [UX] sidebar section grouping — fork a9757001 / parent HEAD — prod: **green-sweep 22/22** (journeys click every nav item by LABEL → all still reachable; a11y both themes clean) + **visually verified** (screenshot: clean OPERATE/BUILD/LIBRARY headers). Router a8750127.
+  - WHAT: grouped the flat primary nav into **Operate** (Pulse/Goals/Automations) · **Build** (Home/Workspaces/Gadgets/Outputs) · **Library** (Blueprints/Explore/Context & Skills/Models + the dynamic gatekeeper apps). Section headers (uppercase, subtle) match the existing FAVORITES/RECENT WORKSPACES style; hide when the rail is collapsed. Labels + routes UNCHANGED (so journeys that click by label + the reachability gate are unaffected).
+  - WHY: the embarrassingly-easy SUPREME mandate — a 11-item flat wall isn't scannable; I CAUSED the bloat across the demo fires, so fixing it is owed. Serves gorgeous-by-default (now organized, on-brand).
+- journey: green-sweep's journey-os-nav/deep click Pulse/Goals/Gadgets/etc. by label (order-independent) → confirmed every regrouped item still reachable; a11y audited the rail both themes; + a real-browser screenshot (AI-vision) confirmed the grouping renders gorgeous.
+- backlog: none ticked (UX polish); WS-DEMO stays saturated.
+- loop-improvement (§8): rebalanced the category mix (11 straight product/demo fires → UX) per the §3 budget + fixed a self-introduced regression; verified a VISUAL change with an actual screenshot read (AI-vision), not just functional gates.
+- attrition: none (the 2-part nav rewrite — regroup + de-dupe the moved items — landed clean, labels confirmed unique).
+- NEXT: WS-DEMO is saturated (all primitives bar WS-N2-Agents surfaced; rail now tidy) — the honest frontier is **WS-N2 (Brian's call)** or net-new backends; future fires should rebalance across testing/arch/perf/docs rather than mint more demo surfaces · cron a6d5c7ab still drains any WS-DEMO remainder.

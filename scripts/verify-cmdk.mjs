@@ -85,7 +85,7 @@ await page.waitForTimeout(1000);
 if (await openPalette()) {
   await page.fill(`${DIALOG} input`, "gadgets").catch(() => {});
   await page.waitForTimeout(400);
-  const gRow = page.locator(ROWS, { hasText: /^gadgets$/i }).first();
+  const gRow = page.locator(ROWS, { hasText: /gadgets/i }).first();
   if (await gRow.count()) {
     await gRow.click().catch(() => {});
     await page.waitForTimeout(1500);

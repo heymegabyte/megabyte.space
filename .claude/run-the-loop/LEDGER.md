@@ -1934,3 +1934,14 @@
 - loop-improvement (§8): added a COVERAGE NOTE to `verify-a11y.mjs` — "when adding a surface, cross-check `ls src/routes/*.tsx`; menu-reached routes (UserMenu/Header) evade nav-based memory" (both /providers + /profile were missed that way). Prevents the next unaudited-surface gap. a11y coverage 12→14 surfaces.
 - attrition: none.
 - NEXT: ⌘K actions (command-actions primitive — genuinely-new, not a detector/costs re-skin), OR the dedicated-session create E2E, OR WS-N2 (Brian) · run green-sweep every few fires.
+
+## fire-118-cmdk-actions (2026-10-04) — ✅ PRODUCT: ⌘K becomes the universal ACTION surface — Profile / Switch theme / Sign out (command-actions primitive)
+- roster: solo-lead (took the fire-117 NEXT pick — ⌘K actions, the genuinely-new slice, not another detector/costs re-skin) · rejected: cost-spike detector (deferred — ⌘K-actions is higher North-Star leverage §44/§29); the dedicated-session create E2E (correctly dedicated-session) · budget: product/feature-delivery
+- [Feature] ⌘K command-ACTIONS — fork f2c08e15 / parent HEAD — prod: **verify-cmdk profileNavigates+themeToggles+signOutPresent all true, 0 console errors** + green-sweep 20/20. Router 23d5cf19.
+  - WHAT: `CommandPalette.tsx` extended from nav+create to the universal action surface (North-Star §44 command-actions / §29 Raycast ⌘K). Three new entries appended to the `nav` array after the gatekeepers: **Profile** (navigates /profile — the LAST menu-reached route still absent from ⌘K, exactly the /providers-class gap fire-103 closed for nav), **Switch theme** (cycles system→light→dark via `useTheme`; hint shows `${themeMode} → ${next}` fresh each render since `nav` is a plain const recomputed per render), **Sign out** (`logout` off `useAuthenticatedApi`).
+  - IMPL: imports `CircleHalf/SignOut/User` + `useTheme` + `ThemeMode`; module `THEME_SEQUENCE=['system','light','dark']` + `nextThemeMode`; destructured `logout` + `{themeMode,setThemeMode}`. No new state — reads live context.
+- journey: ⌘K → search "profile"/"switch theme"/"sign out" → Profile navigates, theme flips `data-mode`, Sign out present (NEVER clicked — would end the session). verify-cmdk drives all three on PROD, BA-authed real Chromium.
+- backlog: none ticked (North-Star command-actions advance, no single WS line); the create E2E stays dedicated-session · WS-N2 awaits Brian's agents-vs-gadgets call.
+- loop-improvement (§8): extended `verify-cmdk.mjs` to gate ⌘K **actions** (profileNavigates/themeToggles/signOutPresent + a `reopenOnPulse` helper + the system-resolve retry×2 edge), not just nav destinations — the ⌘K gate now proves the command surface DOES things, not merely that it lists them.
+- attrition: none.
+- NEXT: cost-spike / quick-model-unset detector (buildable-now), OR the dedicated-session create E2E, OR WS-N2 (Brian's agents-vs-gadgets design call) · run green-sweep every few fires.

@@ -93,10 +93,45 @@ if (await openPalette()) {
   }
 }
 
+// 7. Global ACTIONS (fire-118 — the command-actions primitive). Profile navigates; Switch theme flips
+//    data-mode (ephemeral, safe); Sign out is PRESENT but NEVER clicked (it would end the session).
+async function reopenOnPulse() {
+  await page.goto(`${APEX}/pulse`, { waitUntil: "domcontentloaded", timeout: 40000 });
+  await page.waitForSelector("aside", { timeout: 25000 }).catch(() => {});
+  await page.waitForTimeout(700);
+  return openPalette();
+}
+let profileNavigates = false, themeToggles = false, signOutPresent = false;
+if (await reopenOnPulse()) {
+  await page.fill(`${DIALOG} input`, "profile").catch(() => {});
+  await page.waitForTimeout(400);
+  const pRow = page.locator(ROWS, { hasText: /profile/i }).first();
+  if (await pRow.count()) { await pRow.click().catch(() => {}); await page.waitForTimeout(1500); profileNavigates = /\/profile/.test(page.url()); }
+}
+// Switch theme — click up to twice (the system→same-resolved edge may not flip data-mode on one click).
+for (let attempt = 0; attempt < 2 && !themeToggles; attempt++) {
+  if (!(await reopenOnPulse())) break;
+  await page.fill(`${DIALOG} input`, "theme").catch(() => {});
+  await page.waitForTimeout(400);
+  const before = await page.evaluate(() => document.documentElement.getAttribute("data-mode"));
+  const tRow = page.locator(ROWS, { hasText: /switch theme/i }).first();
+  if (!(await tRow.count())) break;
+  await tRow.click().catch(() => {});
+  await page.waitForTimeout(600);
+  const after = await page.evaluate(() => document.documentElement.getAttribute("data-mode"));
+  themeToggles = before !== after;
+}
+if (await reopenOnPulse()) {
+  await page.fill(`${DIALOG} input`, "sign out").catch(() => {});
+  await page.waitForTimeout(400);
+  signOutPresent = (await page.locator(ROWS, { hasText: /sign out/i }).count()) > 0;
+}
+
 await browser.close();
 console.log(JSON.stringify({
   opened, emptyCount: emptyLabels.length, present, missing,
   filteredCount: filtered.length, filterNarrows, modelsNavigates, gadgetsNavigates,
+  profileNavigates, themeToggles, signOutPresent,
   consoleErrors: errors.length,
 }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
@@ -112,6 +147,12 @@ if (!modelsNavigates) { console.log("❌ FAIL: Models command did not navigate t
 else console.log("✅ PASS: Models command navigates → /models");
 if (!gadgetsNavigates) { console.log("❌ FAIL: Gadgets command did not navigate to /gadgets"); ok = false; }
 else console.log("✅ PASS: Gadgets command navigates → /gadgets");
+if (!profileNavigates) { console.log("❌ FAIL: Profile command did not navigate to /profile"); ok = false; }
+else console.log("✅ PASS: Profile action navigates → /profile");
+if (!themeToggles) { console.log("❌ FAIL: Switch-theme command did not flip data-mode"); ok = false; }
+else console.log("✅ PASS: Switch-theme action flips the theme (data-mode)");
+if (!signOutPresent) { console.log("❌ FAIL: Sign out command is not in ⌘K"); ok = false; }
+else console.log("✅ PASS: Sign out action present in ⌘K (not clicked — would end the session)");
 if (errors.length) { console.log("❌ FAIL: console errors"); ok = false; }
 else console.log("✅ PASS: 0 console errors");
 process.exit(ok ? 0 : 1);

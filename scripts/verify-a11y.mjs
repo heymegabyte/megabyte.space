@@ -14,14 +14,23 @@ if (!EMAIL || !PASSWORD) { console.log('missing BA creds'); process.exit(2) }
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
+const LIGHT = process.argv.includes('--light')
+const MODE = LIGHT ? 'light' : 'dark (default)'
 const browser = await chromium.launch()
 // axe-core/playwright requires a page from an explicit browser context (not the default newPage()).
 const context = await browser.newContext({
   viewport: { width: 1280, height: 900 },
   userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36',
 })
-await context.addInitScript(() => { try { localStorage.setItem('megabyteOS_entered', '1') } catch {} })
+// `--light` forces the light theme (gadgets:theme-mode) so axe audits the light palette too.
+await context.addInitScript((light) => {
+  try {
+    localStorage.setItem('megabyteOS_entered', '1')
+    if (light) localStorage.setItem('gadgets:theme-mode', 'light')
+  } catch {}
+}, LIGHT)
 const page = await context.newPage()
+console.log(`a11y audit — theme: ${MODE}`)
 
 async function audit(label) {
   const r = await new AxeBuilder({ page }).withTags(WCAG).analyze()

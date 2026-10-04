@@ -1454,3 +1454,23 @@
   Retires the half-reconcile-drift class fire-82→83 exhibited.
 - NEXT: WS-N2 /agents surface · WS-N3 ext (⌘K actions) · WS-N1 persist/snooze opportunities · run the product-
   propagation audit · (cosmetic) delete the unrouted `megabyte-home` script.
+
+## fire-84-cost-strip (2026-10-03) — ✅ WS-N4 FIRST SLICE: /gadgets cost/activity governance strip (Costs/Metrics primitive)
+- Lease `fire-84-cost-strip-98341607`. Product slice advancing the North Star (rebalances after fire-83 Docs). Picked
+  WS-N4 over WS-N2 /agents because the DATA is CONFIRMED (gadgets carry `totalCost`/`pinned`/`lastActive`, verified
+  fires 79-80) — /agents needs a confirmed agent store first (avoid a lying-empty table).
+- SHIPPED (fork 64fa1022 → gitlink 9ae3ce6b; deployed megabyte-os v4fb47bc4): a calm Coinbase-Pro-dense `CostSummaryStrip`
+  above the /gadgets table — **Total spend** (cyan brand accent + per-gadget avg) · **Gadgets** · **Favorites** ·
+  **Last active** — a `<dl>` of 4 stat cards computed over the ALREADY-RESOLVED rows (NO new RPC). Rendered only when
+  ≥1 gadget so it never shows an all-zero lying-empty band. `formatUsd` (2dp ≥$1, 4dp below).
+- VERIFIED (BA-authed real browser, `verify-cost-strip.mjs`, 5/5) — RECONCILES display-vs-store, not render-alone: strip
+  Gadgets (1) === table rows (1) · Favorites (0) === pressed stars (0) · **Total spend ($0.0075) === Σ of the table's
+  cost cells ($0.0075)** · 0 console errors. +os.gadgets beautify pass 3.
+- Adversarial/regression (same route touched): `verify-gadgets-table.mjs` 4/4 + `verify-gadget-pin.mjs` 5/5 (pin
+  interaction intact, ba-e2e state restored) + `verify-prod.mjs` 10/10 (apex gate).
+- Loop-improvement (§8): codified the **fork-commit `git -C` footgun** in BACKLOG § OS fork architecture facts — a `cd
+  cloudflare-os` in a compound Bash command leaves the shell in the submodule so the next parent `git add cloudflare-os`
+  fails exit 128 (hit this fire); use `git -C cloudflare-os add/commit/push` from the repo root, never `cd`.
+- NEXT: WS-N4 ext (account-level AI-spend view + per-action provenance) · WS-N2 /agents (scout the agent store first) ·
+  WS-N3 ext (⌘K actions) · extract `CostSummaryStrip`→ a generic `SummaryStrip` when /models or /agents needs one
+  (inverted-abstraction-pyramid: 2nd use triggers the extract) · run the product-propagation audit.

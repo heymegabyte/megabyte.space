@@ -43,7 +43,8 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 - [ ] NEXT: ⌘K ACTIONS beyond navigation — "New gadget", "Dismiss all opportunities", quick-switch — and the secondary routes (/admin, /profile, /context, /providers, /gatekeepers). Then promote ⌘K to a global command bus other surfaces push actions into.
 
 ### WS-N4 — Governance / Control-Tower (ServiceNow/PostHog) — cost + observability everywhere
-- [ ] FIRST SLICE: a cost/activity summary strip on /gadgets (Σ spend · count · favorites · last-active); extend to an account-level AI-spend view + per-action provenance.
+- [x] FIRST SLICE (fire-84): `CostSummaryStrip` on /gadgets — Total spend (cyan + per-gadget avg) · Gadgets · Favorites · Last active, over the already-resolved rows (no new RPC), hidden when empty. Verified `verify-cost-strip.mjs` 5/5 — RECONCILES vs the table rows (count, favorites, Σ spend). fork 64fa1022 / gitlink 9ae3ce6b.
+- [ ] NEXT: account-level AI-spend view (Σ across all gadgets + trend) + per-action provenance (which model/agent/run spent what); extract `CostSummaryStrip` → a generic `SummaryStrip` primitive when /models or /agents needs one.
 
 ### WS-N5…N9 (audit-driven, decomposed when prerequisites/data exist)
 - N5 Data-as-intelligence (Coda/Airtable: AI/computed fields, NL-query on the tables) · N6 Knowledge/Onyx
@@ -238,6 +239,11 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   Blueprints→`/explore` mapping because prior fires wired only the sidebar. The palette = `role="dialog"
   [aria-label="Command palette"]`, rows = `button[data-index]`; open via `Meta/Ctrl+k` or the
   `gadgets:open-command-palette` CustomEvent. Proof pattern: `scripts/verify-cmdk.mjs`.
+- **Fork-commit uses `git -C`, never `cd` (fire-84)**: commit fork changes with `git -C cloudflare-os add/commit/push`
+  from the repo root. A `cd cloudflare-os` in a compound Bash command leaves the shell IN the submodule, so the next
+  parent-repo `git add cloudflare-os` (the gitlink bump) fails `fatal: pathspec 'cloudflare-os' did not match` (exit
+  128). Recipe: `git -C cloudflare-os add <path> && git -C cloudflare-os commit -m … && git -C cloudflare-os push origin
+  megabyte-os` → then from root `git add cloudflare-os scripts/… && git commit && git push origin main` → `pnpm deploy`.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

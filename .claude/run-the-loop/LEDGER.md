@@ -1202,3 +1202,31 @@
   box-shadow/currentColor/color-mix) is written into WS-13 for Slice B + future rebrands. Also hardened the verifier
   (made the brittle cyan exact-rgb check advisory after it false-negatived a visually-cyan shell).
 - NEXT: WS-13 Slice B (dark base violet hue-285 → black #060610) · extend DataTable seam (Workspaces/Gadgets table) · WS-12 DeepSeek · retire /signin's now-redundant `.signin-cyan`.
+
+## fire-73-datatable+deepseek-grounding (2026-10-03) — ✅ DataTable now Notion-grade (search+filter) + WS-12 DeepSeek PROVEN & decomposed
+
+- Lease `fire-73-deepseek-2dd46881`. Intended WS-12 (DeepSeek — the user's fire-60 "cheap backend" direction),
+  but a cheap PROBE-FIRST revealed WS-12 is a 3-slice ARC, not one fire — so I grounded it + shipped a clean
+  compounding slice instead.
+- WS-12 GROUNDING (cheap curl BEFORE committing the fire — the discipline): proved in ONE curl that
+  `gateway/v1/{acct}/megabyte-os/deepseek/chat/completions` + `Authorization: Bearer <DEEPSEEK_KEY>` returns
+  "Hi there" (gateway→deepseek passthrough works; gateway auth OFF; key valid). THEN read `getModelViaGateway`
+  (ai-models.ts:442) → the OS is BYOK: it sends `cf-aig-authorization` + SUPPRESSES `Authorization`/`x-api-key`
+  (line 462) + THROWS for an HTTPS provider without `CF_AI_GATEWAY_API_TOKEN` (line 452). So the OS way needs a
+  gateway token + the DeepSeek key STORED on the gateway — a careful arc (risks the OS's existing Workers-AI
+  binding transport). DECOMPOSED into WS-12 Slices 1 (infra) / 2 (code) / 3 (default-routing) in BACKLOG with the
+  exact seams. NOT forced this fire.
+- SHIPPED (fork 72b0cf02 / outer <this> ; deployed 27aada5e) — the reusable DataTable is now NOTION-GRADE:
+  - `DataTable.tsx` += generic `searchable` + `getSearchText` (+ placeholder/label): a cyan search box,
+    Escape-clears, filter-THEN-sort, tailored "No matches" state. Backward-compatible (all optional).
+  - `routes/models.tsx` += provider filter CHIPS (All/Cloudflare/Anthropic/OpenAI/Google, cyan-active
+    `aria-pressed`, `role=group`) + search wired (provider+name+id) + a "N of 9" count.
+  - Every FUTURE absorption table inherits sort+search+filter free (the primitive compounds).
+- VERIFIED (BA-authed real browser, `scripts/verify-models-filter.mjs`): 9 rows → search "claude" = 3 Anthropic
+  → OpenAI chip = 3 (aria-pressed=true) → 0 console errors; vision 9.5 (chips+search on-brand cyan). verify-prod
+  (estate path) stays green.
+- Loop-improvement (§8): the PROBE-FIRST discipline (prove an external integration's mechanism with a cheap
+  curl BEFORE committing a fire to it — it revealed WS-12's BYOK arc before a line of code) + the WS-12
+  decomposition (3 ready slices w/ confirmed architecture) make the next WS-12 fire a clean execution, not a
+  re-investigation.
+- NEXT: WS-12 Slice 1 (DeepSeek infra — gateway token + BYOK, verify existing inference unbroken) · reuse the Notion-grade DataTable for a Workspaces/Gadgets table · WS-13 Slice B (violet→black base).

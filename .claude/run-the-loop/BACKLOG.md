@@ -104,6 +104,25 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   is NOT needed; the DeepSeek key is present in get-secret (rides per-request / BYOK-on-gateway);
   (4) ⚠️ TEST a real DeepSeek call succeeds through the OS gateway BEFORE making it the default (else new/
   model-less chats break); (5) behind a default-OFF feature flag (per `feature-flags`), promote after eval.
+- ★ fire-73 GROUNDING (mechanism PROVEN, architecture CONFIRMED — WS-12 is a 3-slice ARC, not one fire):
+  PROVEN by curl — `gateway.ai.cloudflare.com/v1/{acct}/megabyte-os/deepseek/chat/completions` with
+  `Authorization: Bearer <DEEPSEEK_API_KEY>` returns "Hi there" (gateway→deepseek passthrough works; gateway
+  auth OFF; key valid). BUT the OS does NOT use passthrough: `getModelViaGateway` (ai-models.ts:442) is BYOK —
+  it sends `cf-aig-authorization` + SUPPRESSES `Authorization`/`x-api-key` (line 462) so gateway-STORED keys
+  apply, and line 452-454 THROWS for any HTTPS provider without `CF_AI_GATEWAY_API_TOKEN`. The 3 real slices:
+  - [ ] WS-12 Slice 1 (infra, ⚠️ RISK to existing inference): mint `CF_AI_GATEWAY_API_TOKEN` (CF API, AI-Gateway
+    Run+Read; `cloudflare-native-provisioning`) → `megabyte-os-backend` secret; store the DeepSeek key on the
+    megabyte-os gateway (BYOK, CF API); verify a BYOK curl (cf-aig-authorization + NO Authorization → DeepSeek
+    responds). ⚠️ the OS's Workers AI rides the BINDING transport (sentinel) — verify EXISTING inference UNBROKEN
+    (before/after authed-chat check) in the SAME fire; gateway-auth changes are the risk.
+  - [ ] WS-12 Slice 2 (code): `AiModelProvider` union += "deepseek" (workshop-shared/api.ts); `SUGGESTED_MODELS`
+    += `deepseek-chat`; `gatewayNativeModel()` (ai-models.ts:178) += deepseek case (`api:"openai-completions"`,
+    `baseUrl:`${gatewayUrl}/deepseek``); `HTTPS_ONLY_PROVIDERS` (ai-gateway.ts:23) += "deepseek"; deployment.jsonc
+    `CF_AI_GATEWAY_PROVIDERS` += deepseek. → deepseek auto-appears in /models + is selectable. Verify: a live
+    deepseek inference in an authed OS chat + it shows in the catalog.
+  - [ ] WS-12 Slice 3 (DeepSeek-DEFAULT, the user's "mostly DeepSeek"): make deepseek the QUICK model
+    (ai-gateway.ts:138) + the per-chat fallback (user.ts:701-735); keep OpenAI/Anthropic selectable for
+    "important work." Flag-gated; TEST model-less chats still work before promoting.
 
 ### WS-1 — Estate path (the priority journey)
 - Mission: apex WebGL homepage → `/login` 302 → Access gate → OS shell → absorbed surfaces —

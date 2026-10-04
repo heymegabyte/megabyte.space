@@ -23,6 +23,14 @@
  * `outer <this>` is a DELIBERATE self-referential convention (the recording commit's own SHA is
  * unknowable at write time), never a lie, so it is NOT scanned.
  *
+ * THIRD GUARD (fire-148): SUBMODULE SYNC. The PID-205 / fire-147 stranding class — a fire commits
+ * INSIDE the cloudflare-os fork but dies before (a) bumping the superproject gitlink, or (b) pushing
+ * the submodule commit to origin. Result: prod/git drift + the gitlink pointing at an unreachable
+ * (unpushed) SHA. GUARD 1 MISSES it: `cloudflare-os` (the gitlink) is NOT in WATCHED, so a dirty
+ * ` M cloudflare-os` slips through — which is EXACTLY how PID 205's a11y commit stranded (fire-148
+ * had to salvage it). This guard closes the gap: the fork pointer must be committed AND the
+ * submodule HEAD must be reachable from the pushed fork branch (origin/megabyte-os).
+ *
  * Usage: node scripts/check-fire-committed.mjs [--ci]
  *   Run it last in a fire, before `loop-fire-lock release`.
  */
@@ -69,11 +77,32 @@ try {
   });
 } catch { /* BACKLOG absent — nothing to scan */ }
 
+// GUARD 3 — SUBMODULE SYNC (fire-148). The cloudflare-os fork pointer must be committed (no dirty
+// gitlink) AND the submodule's checked-out HEAD must be pushed (reachable from origin/megabyte-os).
+const SUBMODULE = "cloudflare-os";
+const submoduleIssues = [];
+try {
+  const gitlinkStatus = execFileSync("git", ["status", "--porcelain", "--", SUBMODULE], { cwd: ROOT, encoding: "utf8" }).trim();
+  if (gitlinkStatus) {
+    submoduleIssues.push(`gitlink uncommitted ('${gitlinkStatus}') — commit the ${SUBMODULE} pointer bump (fork advanced without a superproject commit)`);
+  }
+  const subHead = execFileSync("git", ["-C", SUBMODULE, "rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
+  let pushed = false;
+  try {
+    execFileSync("git", ["-C", SUBMODULE, "merge-base", "--is-ancestor", subHead, "origin/megabyte-os"], { cwd: ROOT });
+    pushed = true;
+  } catch { /* non-zero = not an ancestor = unpushed */ }
+  if (!pushed) {
+    submoduleIssues.push(`submodule HEAD ${subHead.slice(0, 8)} NOT pushed to origin/megabyte-os — push the fork (the gitlink points at an unreachable SHA)`);
+  }
+} catch { /* submodule absent or git error — not a stranding signal, skip quietly */ }
+
 const out = {
   meta: { repo: ROOT },
   dirty,
   placeholders,
-  summary: { dirty: dirty.length, placeholders: placeholders.length, exit: (dirty.length || placeholders.length) && CI ? 1 : 0 },
+  submoduleIssues,
+  summary: { dirty: dirty.length, placeholders: placeholders.length, submoduleIssues: submoduleIssues.length, exit: (dirty.length || placeholders.length || submoduleIssues.length) && CI ? 1 : 0 },
 };
 process.stdout.write(JSON.stringify(out, null, 2) + "\n");
 
@@ -89,5 +118,11 @@ if (placeholders.length) {
   for (const p of placeholders) process.stderr.write(`   L${p.line}  ${p.text}\n`);
 } else {
   process.stderr.write(`✅ no placeholder-SHA ticked items in BACKLOG — the fire credited real commits.\n`);
+}
+if (submoduleIssues.length) {
+  process.stderr.write(`\n⚠️  ${submoduleIssues.length} ${SUBMODULE} submodule-sync issue(s) — the PID-205/fire-147 stranding class; resolve before releasing the lease:\n`);
+  for (const s of submoduleIssues) process.stderr.write(`   ${s}\n`);
+} else {
+  process.stderr.write(`✅ ${SUBMODULE} fork synced — gitlink committed + submodule HEAD pushed to origin.\n`);
 }
 process.exit(out.summary.exit);

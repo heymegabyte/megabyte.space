@@ -31,8 +31,14 @@ await page.waitForTimeout(800);
 async function goPulse() {
   await page.goto(`${APEX}/pulse`, { waitUntil: "domcontentloaded", timeout: 40000 });
   await page.waitForSelector("aside", { timeout: 25000 }).catch(() => {});
-  await page.waitForFunction(() => /opportunit|all clear/i.test(document.body.innerText), { timeout: 20000 }).catch(() => {});
-  await page.waitForTimeout(1500);
+  // Wait for the load to FINISH — the subtitle "Opportunities…" is always present, so gate on a
+  // real card OR a genuine empty/error state (skeleton gone), never the static text.
+  await page.waitForFunction(() => {
+    const hasCard = [...document.querySelectorAll("button")].some((b) => /^\s*Dismiss\s*$/i.test(b.textContent || ""));
+    const settledEmpty = /all clear|couldn.t load your opportunities/i.test(document.body.innerText);
+    return hasCard || settledEmpty;
+  }, { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(1200);
 }
 // Each opportunity card has exactly one "Dismiss" button → count cards by Dismiss buttons.
 const cardCount = () => page.locator('button', { hasText: /^\s*Dismiss\s*$/i }).count();
@@ -53,17 +59,22 @@ const pulseNavFirst = await page.evaluate(() => {
 });
 await page.screenshot({ path: "scripts/.pulse-proof.png" });
 
-// Dismiss persists.
-let dismissPersists = false;
+// Dismiss → inline Undo round-trip (server-backed now, NOT localStorage). Undo restores it so
+// ba-e2e's server state is left exactly as found. The Undo line is session-scoped, so it is clicked
+// in the SAME page session right after dismissing (before any reload) — cross-context SERVER-SIDE
+// persistence is proven separately by verify-pulse-persist.mjs.
+let dismissWorks = false, undoVisible = false, cardsRestored = cards1;
 if (cards1 > 0) {
   await page.locator('button', { hasText: /^\s*Dismiss\s*$/i }).first().click().catch(() => {});
-  await page.waitForTimeout(800);
-  await goPulse();
-  dismissPersists = (await cardCount()) === cards1 - 1;
+  await page.waitForTimeout(700);
+  const afterDismiss = await cardCount();
+  undoVisible = await page.locator('[data-testid="pulse-undo-dismiss"]').isVisible().catch(() => false);
+  dismissWorks = afterDismiss === cards1 - 1;
+  // Undo (server-side restore) — returns ba-e2e to its original state.
+  await page.locator('[data-testid="pulse-undo-dismiss"]').click().catch(() => {});
+  await page.waitForTimeout(700);
+  cardsRestored = await cardCount();
 }
-await page.evaluate(() => { try { localStorage.removeItem("megabyteOS_pulse_dismissed"); } catch {} });
-await goPulse();
-const cardsRestored = await cardCount();
 
 // An action navigates.
 let actionNavigates = false;
@@ -75,7 +86,7 @@ if (await action.count()) {
 }
 
 await browser.close();
-console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dismissPersists, cardsRestored, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dismissWorks, undoVisible, cardsRestored, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -91,8 +102,12 @@ if (hasDefaultModelOpp) console.log("✅ PASS: set-default-model opportunity pre
 else console.log("ℹ️  set-default-model opportunity absent (ba-e2e already has a default, or 0 usable models) — expected-conditional");
 if (!pulseNavFirst) { console.log("❌ FAIL: Pulse is not the first nav entry"); ok = false; }
 else console.log("✅ PASS: Pulse is the first nav entry (proactive entry point)");
-if (!dismissPersists) { console.log("⚠️  dismiss-persist not confirmed"); }
-else console.log("✅ PASS: Dismiss persists across reload + restores on clear");
+if (cards1 > 0 && !dismissWorks) { console.log("❌ FAIL: Dismiss didn't remove the card"); ok = false; }
+else if (cards1 > 0) console.log("✅ PASS: Dismiss removes the card");
+if (cards1 > 0 && !undoVisible) { console.log("❌ FAIL: the inline Undo affordance didn't appear after Dismiss"); ok = false; }
+else if (cards1 > 0) console.log("✅ PASS: inline Undo affordance appears after Dismiss");
+if (cards1 > 0 && cardsRestored !== cards1) { console.log(`❌ FAIL: Undo didn't restore (${cardsRestored}/${cards1}) — ba-e2e may be left dirty!`); ok = false; }
+else if (cards1 > 0) console.log(`✅ PASS: Undo restores server-side (${cardsRestored}/${cards1}) — ba-e2e left clean`);
 if (!actionNavigates) { console.log("❌ FAIL: the opportunity action didn't navigate"); ok = false; }
 else console.log(`✅ PASS: opportunity action navigates (→ ${page.url().replace(APEX, "")})`);
 if (errors.length) { console.log("❌ FAIL: console errors"); ok = false; }

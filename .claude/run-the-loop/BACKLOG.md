@@ -31,7 +31,8 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 - [ ] FIRST SLICE (fire-81): a `/pulse` surface computing 2-4 REAL opportunities (e.g. "only N of M models
   usable → enable providers" from listModels; "build your first gadget" / cost insight from listGadgets) as
   cards with Explain + Implement(navigate) + Dismiss(local). Flag-gated + nav. The Opportunity primitive.
-- [ ] (next) persist + dismiss server-side; snooze/schedule/approval; more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
+- [x] persist + dismiss SERVER-SIDE (fire-101, fork 5a0df9d1): per-user UserDO singleton `dismissedOpportunities` + capnweb get/dismiss/restoreOpportunity; pulse.tsx seeds from the server (not localStorage) so dismissals sync cross-device + survive storage-clear; calm inline Undo. Proven by `verify-pulse-persist.mjs` (fresh-context B saw the dismissal ⇒ server-side) + `verify-pulse.mjs`.
+- [ ] (next) SNOOZE/schedule/require-approval (a `snoozedUntil` map on the same UserDO singleton + a Snooze action beside Dismiss); more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
 
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·

@@ -18,6 +18,7 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 const CHECKS = [
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-pulse.mjs', [], '0 console errors'],
+  ['verify-pulse-persist.mjs', [], '0 console errors'],
   ['verify-cmdk.mjs', [], '0 console errors'],
   ['verify-cost-strip.mjs', [], '0 console errors'],
   ['verify-gadgets-table.mjs', [], '0 console errors'],

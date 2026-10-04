@@ -1767,3 +1767,14 @@
 - loop-improvement (§8): added `verify-pulse-snooze.mjs` to `green-sweep.mjs` (15 checks now) — snooze gets the same cross-context server-side reconciliation net as dismiss.
 - attrition: none.
 - NEXT: WS-N1 require-approval / schedule actions on an opportunity, OR a snooze-duration picker (a small popover beside Snooze: 1d / 3d / 1w), OR the next backend pillar (WS-M2 Connections read-only / WS-N2 /agents real store) · run green-sweep every few fires.
+
+## fire-103-connections-reachable (2026-10-04) — ✅ WS-M2 (read-only step) + interconnectedness: ⌘K reaches the connection surfaces + both proven honest
+- roster: solo-lead (rotated OFF the Pulse surface after 2 fires per the §3 budget; a confirmed interconnectedness gap + a testing/reconcile slice — architecture+testing categories, which had starved) · rejected: a full unified Connections PAGE (too big for one fire + would duplicate the rich 32K gatekeepers.tsx + providers.tsx — interconnectedness anti-pattern) · budget: architecture + testing
+- [Architecture/Product] ⌘K now reaches `/providers` + `/gatekeepers` — fork fd11f607 / parent HEAD — prod: `verify-connections.mjs` 8/8 + **green-sweep 16/16**. Router 4e5a3b46.
+  - Confirmed gap: the two connection surfaces are reached only from the Header (`/gatekeepers`) + user menu (`/providers`), NOT the ⌘K palette — yet their sibling `/models` was there. The palette "mirrored the Sidebar 1:1", which under-served the universal-command principle (⌘K to anything). Added both as always-on destinations (Lightning / PlugsConnected, "Connections" hint so "connect"/"integration" searches hit).
+  - WS-M2 read-only inventory + reconcile display-vs-store (verify-against-source-of-truth): rather than build a duplicate unified page, PROVED the two existing surfaces are honest — `/gatekeepers` always renders its real vendor/connect inventory (not lying-empty); `/providers` shows real provider cards OR the honest "No AI providers yet" empty, never the error state; ⌘K search→navigate reaches both; 0 console errors.
+- journey: ⌘K search ("gatekeeper"/"providers") → click → navigates to the surface; both connection surfaces walked BA-authed. found+fixed: the ⌘K-can't-reach-connections gap (the fix itself).
+- backlog: WS-M2 — read-only reachability+honesty step done; the unified inventory UX (DataTable, AI health/quota via getCloudflareUsage, MCP registry, Git) remains the frontier.
+- loop-improvement (§8): added `verify-connections.mjs` to `green-sweep.mjs` (16 checks) — guards ⌘K-reaches-connections + display-vs-store honesty against regression.
+- attrition: none.
+- NEXT: WS-M2 unified Connections inventory (one DataTable over accounts + AI providers/health + quota, read-only, reconciled), OR surface the invisible AI quota (`getCloudflareUsage`) on /providers, OR WS-N2 /agents store · run green-sweep every few fires.

@@ -1812,3 +1812,14 @@
 - loop-improvement (§8): the a11y gate now covers EVERY primary static surface (was 4/11) and fired on first run — catching 4 real violations the narrow gate structurally couldn't see; any future regression on any primary surface now fails the sweep.
 - attrition: none.
 - NEXT: audit the fullscreen editor a11y (click-nav into an existing gadget + axe), OR WS-M2 unified Connections inventory, OR WS-N2 /agents store · run green-sweep every few fires.
+
+## fire-107-editor-a11y (2026-10-04) — ✅ a11y coverage COMPLETE (12/12 surfaces incl. the fullscreen editor) → fixed 2 more real WCAG AA violations
+- roster: solo-lead (completes the fire-106 a11y arc — the OS's most complex surface was the last unaudited one; testing/a11y) · rejected: WS-M2 inventory / WS-N2 agents (bigger, still queued) · budget: testing + ux/a11y
+- [Testing/Bugfix] `verify-a11y.mjs` extended to audit the fullscreen workspace EDITOR (12th surface, via click-nav into an existing gadget) + fixed the 2 real WCAG 2.2 AA violations it caught — fork 2c629385 / parent HEAD — prod: **verify-a11y 0 serious/critical × 12 surfaces × BOTH themes** + green-sweep 16/16. Router 5623b686.
+  - button-name (critical): the editor's "Add resource" composer button hides its visible label responsively (`styles.attachLabelText`) → icon-only, no accessible name. Added `aria-label` (its sibling "Select model" button already had one).
+  - color-contrast (serious, LIGHT only): inline `.markdownContent code` used `--color-kumo-brand` = #0098b3 → 3.07:1 on the light tint at 11.9px. Light-scoped override to #0e7490 (~4.8:1, computed); dark keeps #00e5ff (already AA — why dark was clean).
+- journey: the editor audit (the OS's most complex surface) × 2 themes — found+fixed: 2 real WCAG AA violations never seen before (the editor was never audited).
+- backlog: QUALITY editor-a11y ticked [x] — a11y coverage is now COMPLETE (every primary surface + the editor, both themes, 0 violations).
+- loop-improvement (§8): `verify-a11y` now audits ALL 12 surfaces (incl. the dynamic-route editor via click-nav) in both themes — the OS's entire a11y surface is gated against regression; completes the 4→12 expansion arc (fires 106-107).
+- attrition: none.
+- NEXT: the frontier pillars — WS-M2 unified Connections inventory (listConnectedAccounts + a read-only /connections DataTable unifying accounts + AI providers), OR WS-N2 /agents store · run green-sweep every few fires.

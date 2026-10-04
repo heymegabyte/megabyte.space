@@ -2,10 +2,10 @@
 /**
  * fire-93 accessibility audit (expanded fire-106): axe-core (WCAG 2.2 AA) over the force-login gate
  * (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets, Outputs,
- * Blueprints, Explore, Models, Providers, Gatekeepers. Reports violations per surface; FAILS on any
- * serious/critical violation (axe 0-violations is a required gate per quality-metrics). The fullscreen
- * workspace EDITOR (dynamic /workspace/$id) is audited separately — backlog. BA-authed real Chromium,
- * PROD. Needs BA creds. Runs in both themes: default (dark) and `--light`.
+ * Blueprints, Explore, Models, Providers, Gatekeepers — PLUS the fullscreen workspace EDITOR
+ * (dynamic /workspace/$id, reached by click-nav into an existing gadget). Reports violations per
+ * surface; FAILS on any serious/critical violation (axe 0-violations is a required gate per
+ * quality-metrics). BA-authed real Chromium, PROD. Needs BA creds. Both themes: dark + `--light`.
  */
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
@@ -85,6 +85,22 @@ for (const [path, signal] of [
   await page.waitForFunction((re) => new RegExp(re.source, re.flags).test(document.body.innerText), signal, { timeout: 20000 }).catch(() => {})
   await page.waitForTimeout(1200)
   out.push(await audit(path))
+}
+
+// 12th surface — the fullscreen workspace EDITOR (dynamic /workspace/$id). Reached by click-nav into
+// an existing gadget (no static path). The OS's most complex surface; its a11y was never audited.
+await page.goto(`${APEX}/gadgets`, { waitUntil: 'domcontentloaded', timeout: 40000 })
+await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})
+await page.waitForTimeout(1200)
+const openLink = page.getByRole('link', { name: /^Open / }).first()
+if (await openLink.count()) {
+  await openLink.click({ timeout: 8000 }).catch(() => {})
+  await page.waitForFunction(() => /\/workspace\//.test(location.pathname), { timeout: 20000 }).catch(() => {})
+  await page.waitForFunction(() => document.body.innerText.trim().length > 200, { timeout: 20000 }).catch(() => {})
+  await page.waitForTimeout(2500)
+  out.push(await audit('/workspace (editor)'))
+} else {
+  console.log('\nℹ️  skipped /workspace editor audit — no gadget to open')
 }
 
 await browser.close()

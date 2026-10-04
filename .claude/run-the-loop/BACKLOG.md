@@ -163,7 +163,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   Sidebar "Models" nav (no dead link). VERIFIED (BA-authed real browser, `scripts/verify-models-catalog.mjs`):
   9 rows = SUGGESTED_MODELS count (display-vs-store RECONCILED), 4 columns, sortable, 0 console errors,
   vision 9/10 (`os.models` matrix). Flag ENABLED (documented two-way-door deviation: zero-risk read-only).
-- [ ] (next) extend on the SAME seam — REUSE `DataTable` for: a Workspaces/Gadgets table view · a
+- [x] Workspaces/Gadgets table view DONE (fire-79, fork 9c2fa09a) — `/gadgets` DataTable over `listGadgets()`
+  (swatch/Title/Last-active/Created/Cost, sort+search, row-click→/workspace); display-vs-store reconciled with the
+  fire-78 gadget, 0 errors, vision 9.5. THE ABSORPTION-TABLE RECIPE (reuse for every future one): a listRPC →
+  DataTable (swatch via getGradient + sortable columns + searchable) → onRowClick `useNavigate` → `gadgets-table`-
+  style UI flag + a flag-gated Sidebar nav entry → commit `routeTree.gen.ts` (new route). Mirror `routes/gadgets.tsx`.
+- [ ] (next) extend on the SAME seam — REUSE `DataTable` for: a
   Coinbase-Pro-density dashboard · the "Visitors today" analytics card (needs a capnweb **AuthenticatedApi
   RPC method** + a `ctx.exports` DO counter — NOT a Hono REST route; see § OS fork architecture facts) ·
   Airtable-level D1/DO automation. Pull specifics from `./PROJECTSITES-ABSORPTION.md`.

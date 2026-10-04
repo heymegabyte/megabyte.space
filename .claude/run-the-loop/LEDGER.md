@@ -1341,3 +1341,23 @@
   (b) standardized the reliable authed-verifier auth: WAIT FOR the `auth-success` signal before navigating (a fixed
   post-submit timeout flakes → lands on /signin), the template for every BA-authed script.
 - NEXT: reuse the DataTable for a Workspaces/Gadgets table (now there's real data) · extend the journey build→use→output to completion · WS-12.
+
+## fire-79-gadgets-table (2026-10-03) — ✅ Workspaces/Gadgets DataTable — the FIRST absorption table over REAL dynamic data
+
+- Lease `fire-79-gadgets-table-b5d6d264`. Drained the top data-backed NEXT: now that fire-78 created a real gadget,
+  built the Notion-style Gadgets table — the absorption capability over REAL user data (not a static catalog).
+- SHIPPED (fork 9c2fa09a / outer <this> ; deployed 47812374) — delegated, mirroring /models:
+  - `routes/gadgets.tsx` (NEW) — `/gadgets`: fetches `authenticatedApi.listGadgets()` (fail-soft) → a DataTable:
+    gradient swatch + Title / Last active / Created / Cost ($totalCost) columns, sortable + searchable, row-click →
+    `useNavigate({to:'/workspace/$id', params:{id}})`. Flag-gated `gadgets-table` (enabled; benign read-only).
+  - `feature-flags.ts` += `gadgets-table`; `Sidebar.tsx` += a flag-gated "Gadgets" nav (GridFour icon);
+    `routeTree.gen.ts` regenerated + committed (the agent applied the fire-71 lesson from the BACKLOG facts).
+- VERIFIED (BA-authed real browser, `verify-gadgets-table.mjs`): columns Workspace/Last-active/Created/Cost; 1 row =
+  the fire-78-created gadget ("Simple Click Counter", $0.0075) → DISPLAY-VS-STORE RECONCILED (I built it live, it
+  appears); row-click opens the EXACT workspace (/workspace/becb37…); 0 console errors. Vision 9.5; +os.gadgets 9.5.
+- SIGNIFICANCE: the DataTable primitive (fires 71-74) now PAYS OFF — a new data-backed absorption table built fast
+  by reusing it. The absorption mission (Notion-like tables) is now demonstrated on real dynamic data.
+- Loop-improvement (§8): documented the ABSORPTION-TABLE RECIPE in the BACKLOG OS-fork facts (listRPC → DataTable
+  with swatch/sort/search → onRowClick-navigate → flag + nav entry) so future absorption surfaces are consistent +
+  fast. Minor cleanup noted: gadgets.tsx redefined `formatRelativeTime` (RecentApps has one) — extract a shared util.
+- NEXT: gadgets row actions (delete/share/pin — GadgetList has the handlers) · more absorption surfaces on the recipe · WS-12.

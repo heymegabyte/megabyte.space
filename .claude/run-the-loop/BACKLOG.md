@@ -36,7 +36,7 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 - [x] DETECTOR: reconnect-expired-integration (fire-113, fork 48cca893): fires when ≥1 connected integration's credentials expired (→ /gatekeepers); Pulse consolidated onto `listConnectedAccounts` (count + validity from one read, `getConnectedAccountCount` removed).
 - [ ] (next) MORE DETECTORS — the cheapest high-value "ready work" class (recipe: add a branch to `computeOpportunities` fed by a signal ALREADY on the Pulse load + a deterministic case in `pulseOpportunities.test.ts`; keep it genuinely-true, never padded). Candidates by available signal:
   - **cost-spike** — a gadget whose `totalCost` jumped vs its peers/history (signal: `listGadgets` totalCost; needs a baseline — simplest: "your priciest gadget is $X" when one dominates).
-  - **stale-gadget** — a gadget not opened in N days (signal: `lastActive` on `listGadgets`) → "revisit or archive".
+  - [x] **stale-gadget** (fire-115, fork a5a58cbf) — fires when a gadget is untouched ≥14 days (names the stalest) → revisit/archive. Zero new plumbing (reads `gadgets[].lastActive`); `now` injected for a deterministic unit test.
   - **quick-model-unset** — models usable but `getQuickModel()===null` (sibling of set-default; a distinct quick-task default).
   - later (as data sources arrive): SEO/errors/stale-knowledge/agent-perf.
 - [ ] (next) schedule/require-approval actions on an opportunity; a snooze-duration picker (1d/3d/1w popover); auto-execute high-confidence low-risk per policy.

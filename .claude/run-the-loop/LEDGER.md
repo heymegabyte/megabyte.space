@@ -1901,3 +1901,14 @@
 - loop-improvement (§8): the product's value-path ENTRY is now a standing green-sweep gate (20 checks), and the biggest remaining coverage gap (full gadget-creation E2E) is now a DESIGN-RESOLVED, ready dedicated-session backlog item — no longer a vague "untested core," but a scoped task any future dedicated fire can execute safely.
 - attrition: none.
 - NEXT: the DEDICATED-SESSION full create→generate→editor E2E (the product core), OR a Pulse detector (cost-spike/stale-gadget), OR WS-N2 /agents (design call) · run green-sweep every few fires.
+
+## fire-115-stale-gadget-detector (2026-10-04) — ✅ PRODUCT (North-Star Opportunity engine): stale-gadget detector — resurface neglected workspaces
+- roster: solo-lead (product — grows the Opportunity engine; the cheapest ready slice, zero new plumbing) · rejected: the full create E2E (dedicated-session, delicate mutation — don't rush at a loop tail); WS-N2 (design call) · budget: product
+- [Feature Delivery] stale-gadget detector — fork a5a58cbf / parent HEAD — prod: **10/10 vitest** (deterministic) + **green-sweep 20/20**. Router 954d46b9.
+  - NEW detector `stale-gadget`: "Revisit N" — fires when a gadget hasn't been opened in ≥14 days (names the STALEST), nudging revisit-or-archive → /gadgets. ZERO new plumbing — reads `gadgets[].lastActive` already passed to computeOpportunities. A `now` param is INJECTED (not read inside) so the time-dependent branch stays a pure, deterministically-testable function (the injectable-clock technique — see memory).
+  - verifiability: ba-e2e's 1 gadget is always fresh (verifiers open it) → the detector is correctly ABSENT in prod; the POSITIVE proof is the unit test (20d → present, stalest-named). Consistent with fire-97/105.
+- journey: green-sweep — found: `verify-anon-console` FLAKED once (a transient console error on the anonymous load — unrelated to the authed-Pulse change; passed standalone + on sweep re-run). WATCH-ITEM: if it recurs, capture the specific transient error + add a targeted filter (don't mask real errors).
+- backlog: WS-N1 stale-gadget candidate ticked [x]; cost-spike + quick-model-unset remain ready.
+- loop-improvement (§8): sharpened [[pure-logic-unit-test-beats-mutable-account-verify]] with the INJECTABLE-CLOCK technique — time-dependent pure logic takes `now` as a PARAM (prod passes Date.now(), the test passes a fixed clock) → deterministic without touching the real clock. Reusable for any future time-based detector/logic.
+- attrition: none (the anon-console flake was transient, cleared on re-run — not salvage-class).
+- NEXT: another detector (cost-spike), OR the DEDICATED-SESSION create E2E, OR WS-N2 /agents (design call) · run green-sweep every few fires; watch verify-anon-console for repeat flakes.

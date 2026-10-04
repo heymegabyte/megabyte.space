@@ -2016,3 +2016,15 @@
 - attrition: none.
 - MINOR FOLLOW-UP (not worth a comment-only redeploy): `cloudflare-os/.../routes/__root.tsx` lines ~93-96 still label the force-login flow "anonymous preview + auth-on-action" / "/signin: the protected action" — a terminology nit (behavior is correct); fix it when that file is next touched for a real change.
 - NEXT: the dedicated-session create→generate→editor E2E, OR WS-N2 (Brian's agents-vs-gadgets call), OR wire check-route-reachability into CI · run green-sweep every few fires.
+
+## fire-125-component-orphan-sweep (2026-10-04) — ✅ ARCHITECTURE: fork-aware dead-component sweep (SQL-editor-lesson class) → 0 fork orphans + a fork-aware gate
+- roster: solo-lead (continued the fire-122 interconnectedness thread into its higher-value class — orphaned COMPONENTS, not just routes; create E2E dedicated-session, WS-N2 Brian-blocked) · rejected: deleting the 6 unreferenced components (they're UPSTREAM — deleting = rebase pain, per look-before-delete + CLAUDE.md § Upgrades) · budget: architecture/drift
+- [Architecture] component-orphan sweep + fork-aware gate — parent HEAD — no deploy (detector script; no app change).
+  - SWEEP: grepped all `workshop-frontend/src/components/**` for 0-importer files. First-pass path-grep flagged 9; the robust identifier grep (`\bbasename\b` excl self — catches import+JSX+type) cleared 3 FALSE POSITIVES (SectionEyebrow/RecentApps/ChatMessage ARE used) → 6 genuinely unreferenced: ConnectionChips, TabButton, chat/{AppPreview,ConnectionConfigModal,DataTab,PermissionToast}.
+  - TRIAGE (the key insight): all 6 are **UPSTREAM** (present at `git merge-base HEAD upstream/main` = 6478a144; last touched by upstream commits). They're inherited cloudflare-os surface our OS variant doesn't wire — NOT our orphans. Deleting upstream files = merge conflicts on every `git fetch upstream` rebase. So: **LEAVE them** (rebase hygiene). ZERO fork-added orphans → the fork is clean.
+  - OUTCOME: a confirmation (like fire-123's security audit) — no fork dead-components to fix — PLUS a shipped gate.
+- journey: n/a (architecture sweep) — the gate run IS the verification (0 fork-added orphans, 6 upstream informational).
+- backlog: none ticked (clean).
+- loop-improvement (§8): shipped `scripts/check-dead-components.mjs` — a FORK-AWARE interconnectedness gate (sibling of fire-122's check-route-reachability). Flags 0-importer components but classifies UPSTREAM (info, leave) vs FORK-ADDED (fail, actionable) vs UNKNOWN (never false-fail if upstream unfetched). Catches the NEXT orphan WE introduce without nagging about upstream surface. Saved memory `[[fork-orphan-triage-upstream-vs-fork-added]]` — every future orphan/dead-code sweep on this fork triages by origin first.
+- attrition: none.
+- NEXT: the dedicated-session create→generate→editor E2E, OR WS-N2 (Brian's agents-vs-gadgets call), OR wire check-route-reachability + check-dead-components into a single CI/pre-commit interconnectedness gate · run green-sweep every few fires.

@@ -41,7 +41,7 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 ### WS-N3 — Command-K universal surface (Raycast) — a PROPAGATION HABIT
 - [x] FIRST SLICE (fire-82): CommandPalette now mirrors the Sidebar primary nav 1:1 — added Pulse/Models/Gadgets/Outputs/Explore, fixed Blueprints→`/blueprints`, flag-gated identically to the sidebar. Verified `verify-cmdk.mjs` 6/6 (opens · all 8 present · filters · Models+Gadgets navigate · 0 errors). fork 7643d702 / gitlink c7594fe6.
 - [ ] NEXT: ⌘K ACTIONS beyond navigation — "New gadget", "Dismiss all opportunities", quick-switch — and the secondary routes (/admin, /profile, /context, /providers, /gatekeepers). Then promote ⌘K to a global command bus other surfaces push actions into.
-- [ ] ⌘K GLOBAL (fire-85 finding): mount the ⌘K handler + palette in `__root.tsx` (not only `AppShell`) so it ALSO opens inside the FULLSCREEN workspace editor — the Raycast universal-command escape-hatch applied to the one surface that currently lacks it (today the editor's only exit is its own Home link). Shell-structure change — keep the palette's authed-API deps intact; verify with `journey-os-nav.mjs` extended to open ⌘K inside /workspace.
+- [x] ⌘K GLOBAL (fire-86): extracted `CommandPaletteHost`, mounted once in `__root.tsx` outside the fullscreen/AppShell split → ⌘K now opens inside the FULLSCREEN workspace editor. TDD RED→GREEN via `journey-os-nav.mjs` step 11 (10/11 pre-deploy → 11/11 after). fork d8229bf1 / gitlink d0bc3612 / deploy v8232de37.
 
 ### WS-N4 — Governance / Control-Tower (ServiceNow/PostHog) — cost + observability everywhere
 - [x] FIRST SLICE (fire-84): `CostSummaryStrip` on /gadgets — Total spend (cyan + per-gadget avg) · Gadgets · Favorites · Last active, over the already-resolved rows (no new RPC), hidden when empty. Verified `verify-cost-strip.mjs` 5/5 — RECONCILES vs the table rows (count, favorites, Σ spend). fork 64fa1022 / gitlink 9ae3ce6b.
@@ -53,6 +53,27 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   fix→verify→auto-remediate — wire the loop's own golden-path failures) · N8 Cross-surface/MCP exposure
   (an MCP server exposing listGadgets/listModels; CLI; webhooks) · N9 Creation canvas/variants (Replit/Figma:
   variants + point-and-edit in the editor). Each gets a first slice when the audit surfaces it as highest-value.
+
+## ★★★ MASTER DIRECTIVE — ULTIMATE Megabyte OS + ProjectSites (Brian 2026-10-03) — platform/factory architecture
+Full decision record + authority order + 50 Golden Paths: `MASTER-DIRECTIVE.md`. Sibling-kernel model (Megabyte frontier ·
+ProjectSites simplified · share infra+primitives, preserve experiences). Decisions recorded: Daytona REMOVED · Inngest
+platform-wide · `@cloudflare/computer` preferred Cloud runtime (behind WorkspaceRuntime) · Browser Run canonical · Superset
+behind adapter · OpenCode=engine · DeepSeek-default(=WS-12) · canonical-domain-first(already satisfied). Drain ONE verified
+slice per fire (split-work-into-ledger); reconcile vs reality, never re-propose shipped work.
+- [ ] **WS-M1 Shared contracts (Phase 1 — FIRST vertical slice §152)**: Zod schemas + inferred types for `WorkspaceRuntime` · `CodingEngine` · `Worker` · `WorkerPool` · `Loop` · `Run` · `Task` · `Capability` · `Connection` · `Evidence` · `GoldenPath`. Colocate in a shared package; unit-test each schema; NO new UI yet. Acceptance: every contract has a Zod schema + `z.infer` type + a passing unit test; the GoldenPath type backs a machine-readable GP-001…050 registry stub.
+- [ ] **WS-M2 Connections (Phase 2)**: AI-accounts/health/quota + MCP registry + Git connections — the unified Connections UX (reuse DataTable). Read-only inventory first; reconcile display-vs-store.
+- [ ] **WS-M3 Superset adapter (Phase 3)**: `SupersetRuntimeAdapter` (hosts/profiles/sessions/workspaces/terminals/diffs/quota) — Megabyte UI never depends on Superset schemas/RPC.
+- [ ] **WS-M4 Cloudflare Computer (Phase 4)**: `CloudflareComputerRuntime` (workspace/fs/git/exec) + backend selection (isolate vs shell vs container) + isolation + fallback.
+- [ ] **WS-M5 Inngest scheduler (Phase 5)**: shared `packages/orchestration`; durable task graph · 30-slot pool · retries · refill · loops · approvals; idempotency+dedupe+correlation IDs; never duplicate a Workflows state machine.
+- [ ] **WS-M6 Multi-provider run (Phase 6)**: one goal fans out across ≥2 agent/runtime types (competition/review for important work).
+- [ ] **WS-M7 Browser Run (Phase 7)**: universal browser verification for UI work (canonical; agents don't each run a browser).
+- [ ] **WS-M8 MCP / Code Mode (Phase 8)**: progressive capability discovery + approval; bounded generated programs (scoped caps, net/time/op/spend/output limits, abort); MCP Apps with text fallback.
+- [ ] **WS-M9 Data Studio (Phase 9)**: native D1/KV/R2/DO/Postgres adapters (grid/SQL/schema/relations); no iframed vendor shells; tenant isolation mandatory.
+- [ ] **WS-M10 Crawl / knowledge (Phase 10)**: native `/crawl` (sitemap→links→dedupe→Queues fan-out→HTTP/Browser-Run→Markdown→R2/D1→index) + DataForSEO + Onyx synchronized knowledge (provenance, freshness, access-revocation).
+- [ ] **WS-M11 Adaptive interface (Phase 11)**: A2UI/AG-UI mapped to native Kumo components (controlled catalog; ordered events/reconnect/replay/snapshots/deltas/cancel); selective PartyServer/Yjs collaboration.
+- [ ] **WS-M12 ProjectSites lifecycle (Phase 12)**: GitHub SSO · per-site private repo · Preview/Promote (hide Git) · Data/resources · generated-site quality eval. (Sibling repo — coordinate via shared contracts.)
+- [ ] **WS-M13 Autonomous convergence (Phase 13)**: global `/run-the-loop` → durable per-project child loops (leases, depth/iteration caps, ~30-cycle bound, crash recovery).
+- [ ] **WS-M-GP Golden-Path registry**: encode GP-001…050 (`MASTER-DIRECTIVE.md` index) as typed `GoldenPath` records with steps/assertions/evidence/cleanup; wire into the loop's golden-path rotation (§6). The existing `journey-os-nav.mjs` is the first click-driven instance (≈ GP-046 command-palette + cross-surface nav).
 
 ## ★ TOP PRIORITY — Brian direction 2026-10-03 (EXECUTE; all secrets present, zero external blockers)
 Headline reset: **megabyte.space LOADS the OS**, anonymous preview works, a SEAMLESS Better Auth

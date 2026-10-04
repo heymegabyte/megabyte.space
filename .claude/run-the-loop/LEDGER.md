@@ -1495,3 +1495,33 @@
   the fullscreen editor — the Raycast universal-command principle applied to the one surface that currently lacks it.
 - NEXT: WS-N3 ext ⌘K-global (works in the fullscreen editor) + ⌘K actions · WS-N2 /agents (scout store first) · WS-N4
   ext (account-level AI-spend) · run the product-propagation audit.
+
+## fire-86-cmdk-global (2026-10-03) — ✅ WS-N3 ext: ⌘K is now GLOBAL (works in the fullscreen workspace editor)
+- Lease `fire-86-cmdk-global-cd49d32f`. Shipped the fire-85-surfaced gap: ⌘K lived only in `AppShell`, which the
+  fullscreen workspace editor bypasses (`__root.tsx:225` `fullscreen = isWorkspaceEditor`), so the editor had no
+  command-palette escape hatch (only its own Home link).
+- SHIPPED (fork d8229bf1 → gitlink d0bc3612; deployed megabyte-os v8232de37): extracted `CommandPaletteHost` (owns
+  `paletteOpen` + the ⌘K keydown + the OPEN_COMMAND_PALETTE_EVENT listener + renders `<CommandPalette>`), mounted it
+  ONCE in `__root.tsx` OUTSIDE the fullscreen/AppShell split; removed the ⌘K wiring from `AppShell`. Behavior-identical
+  on AppShell routes (palette renders null until opened → zero DOM/RPC when closed); newly available in the editor.
+- TDD RED→GREEN (real browser, PROD): extended `journey-os-nav.mjs` step 11 to open ⌘K INSIDE the editor + navigate out.
+  Pre-deploy = **10/11 (RED on cmdk-in-editor)**; post-deploy = **11/11 GREEN, 0 console errors**. The escape hatch works.
+- Loop-improvement (§8): reused the fire-84 `git -C` fork-commit recipe (no `cd`) — clean, no exit-128.
+- NEXT: ⌘K ACTIONS (New gadget / Dismiss-all) + secondary routes · WS-N2 /agents · the MASTER-DIRECTIVE intake (below).
+
+## fire-87-master-directive-intake (2026-10-03) — ★★ ULTIMATE Megabyte OS + ProjectSites master directive: INTAKE (decompose, not execute)
+- Brian pasted the 155-section "ULTIMATE MEGABYTE OS + PROJECTSITES CLAUDE CODE MASTER PROMPT" — a build-and-converge
+  directive spanning a sibling-kernel product model, a Foreman/Inngest/WorkspaceRuntime/CodingEngine factory, 30-agent
+  fan-out, Browser Run, Code Mode/MCP, Data Studio, /crawl, Onyx knowledge, and 50 Golden Paths (GP-001…050). Per
+  `split-work-into-ledger`, a directive this big = LEDGER INTAKE first, NOT a single-turn build; the prompt's own
+  authority order puts VERIFIED REPO STATE above it + says don't start a competing loop (I held fire-86's lease).
+- INTAKE this fire (the deliverable): (a) recorded the superseding DECISIONS in `CONSTITUTION.md` (sibling-kernel model,
+  Daytona REMOVED, Inngest platform-wide, `@cloudflare/computer` preferred Cloud runtime, Browser Run canonical browser,
+  authority order, capability-graph workspaces); (b) wrote `.claude/run-the-loop/MASTER-DIRECTIVE.md` (distilled decision
+  record + pillar map + the 50 Golden Paths index + the authority order); (c) decomposed into NEW backlog workstreams
+  `BACKLOG.md § ★★★ MASTER DIRECTIVE` (WS-M1…M13 mapped to the prompt's Phases 0-13) + a Golden-Path registry stub.
+- Reconciled against reality (NOT re-proposed): the North Star (Autonomous Business OS) already = NORTH-STAR.md; DeepSeek-
+  default = WS-12; canonical-domain-first ALREADY satisfied here (apex=OS, os. retired fire-82/83). Flagged ONE concrete
+  decision-aligned slice done this turn: (see below).
+- NEXT: drain WS-M1 (shared contracts: WorkspaceRuntime/CodingEngine/Worker/Loop/Task Zod schemas) as the first vertical
+  slice per §152; then WS-M2 Connections (AI-accounts/health/quota) — both high-value, bounded, and buildable on the fork.

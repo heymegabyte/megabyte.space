@@ -42,6 +42,8 @@ Every feature should therefore ask:
 
 # THE PRIME DIRECTIVE
 
+> **CANONICAL ARCHITECTURE (Brian 2026-10-03): see `MASTER-DIRECTIVE.md`** — Megabyte + ProjectSites are SIBLING products on a SHARED KERNEL; increase capability faster than complexity; authority order = newest user decision → verified repo state → vendor docs → this constitution/ledger → the master directive → older prompts. Superseding decisions recorded there: Daytona removed · Inngest platform-wide · `@cloudflare/computer` preferred Cloud runtime (behind WorkspaceRuntime) · Browser Run canonical · Superset behind adapter · OpenCode=engine · DeepSeek-default · canonical-domain-first. Decomposed in `BACKLOG.md § ★★★ MASTER DIRECTIVE` (WS-M1…M13 + 50 Golden Paths); drained ONE verified slice per fire.
+
 Optimize for:
 
 > **VERIFIED HUMAN DELIGHT × VERIFIED CAPABILITY × PRODUCT COMPLETENESS × BUSINESS VALUE × LEARNING RATE**

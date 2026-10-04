@@ -17,6 +17,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 const SURFACES = [
   { label: "Goals", path: "/goals", needles: [/coming soon/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i] },
   { label: "Automations", path: "/automations", needles: [/coming soon/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i] },
+  { label: "Agents", path: "/agents", needles: [/coming soon/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i] },
 ];
 
 const browser = await chromium.launch();

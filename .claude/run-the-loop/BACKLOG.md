@@ -324,6 +324,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - **a11y: axe 0 in BOTH themes (fire-98)**: dark (fire-93/94) + light (fire-98) axe-AA-clean across /signin + Pulse/
   Gadgets/Models. For a theme-contrast pass, audit ALL muted/brand tokens at once (`--text-color-kumo-inactive` +
   `-subtle` + brand-text-on-tint) — they fail at different surfaces (one-at-a-time took 5 iterations). `verify-a11y.mjs --light`.
+- **Coherence checkpoint: `scripts/green-sweep.mjs` (fire-100)**: runs ALL prod verifiers + journeys + a11y (both themes)
+  in one command → single pass/fail tally; the cross-fire-regression net no single-surface fire gives. Run it every few
+  fires + before any milestone (`BA_E2E_* node scripts/green-sweep.mjs`). fire-100: 13/13 green (OS coherent after 100
+  fires). **Frontier note:** incremental surface polish is SATURATING — the OS core is complete/a11y-clean/CRUD-complete;
+  the high-leverage work is now the backend FACTORY pillars (WS-M2/M5/M9/M10) + North-Star depth (WS-N1 persist, WS-N2
+  /agents), each needing a real capnweb-RPC + DO/D1 backend build.
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +
   vision score tracked in `.claude/modifier-matrix.json`.

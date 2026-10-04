@@ -1723,3 +1723,27 @@
 - Loop-improvement (§8): reinforced REUSE-over-reimplement — grepped for an existing delete pattern FIRST + found
   DeleteConfirmationDialog + GadgetList; built on them (interconnectedness). +os.gadgets beautify pass 5.
 - NEXT: (optional) upgrade the confirm to a Gmail-style undo toast · account-level AI-spend view · WS-M2 Connections.
+
+## fire-100-coherence-checkpoint (2026-10-04) — ✅ MILESTONE: whole-OS green-sweep 13/13 + state-of-OS + frontier reset
+- Milestone fire. AUDITED the unexamined surfaces first (no net-new gap): /workspaces = GadgetList grid, /gadgets =
+  table (two views of one dataset — reasonable), /explore = BlueprintsPage, /blueprints = BlueprintList, /outputs built,
+  home = a polished composer (provisional-gadget pre-create, draft persistence, task-suggestions). The OS CORE is
+  complete + polished + a11y-clean + CRUD-complete. No stubs/dead-ends.
+- COHERENCE CHECKPOINT: built `scripts/green-sweep.mjs` (runs every verifier + journey + a11y both themes, one tally) +
+  ran it — **13/13 GREEN**: verify-prod 10/10 · pulse · cmdk · cost-strip · gadgets-table/pin/rename/delete · a11y
+  dark+light 0-serious · journey-os-nav 11/11 · journey-responsive 3/3 · journey-keyboard 7/7. **No silent cross-fire
+  regression across 100 fires.** committed b169759a.
+- STATE OF THE OS @ fire-100: the user-facing OS (force-login + BA auth-on-action + SSO, Pulse opportunity engine w/ 5
+  detectors, Gadgets full CRUD, Models catalog, Workspaces/Blueprints/Outputs/Explore, ⌘K universal, both themes
+  axe-AA, keyboard-operable, responsive) is SHIPPED + coherent. The `@megabyte/contracts` kernel (WS-M1) + GP registry
+  (WS-M-GP) are the factory's typed foundation.
+- Loop-improvement (§8): `green-sweep.mjs` is the standing periodic coherence checkpoint — run it every few fires + before
+  any milestone; it's the cross-fire-regression net no single-surface fire provides.
+- FRONTIER RESET (the honest next arc — incremental UI polish is saturating): the high-value work is now the backend-
+  blocked FACTORY pillars — WS-M2 Connections (needs an accounts/worker store), WS-M5 Inngest scheduler, WS-M9 Data
+  Studio, WS-M10 /crawl — + North-Star DEPTH: WS-N1 persist/snooze opportunities server-side, WS-N2 /agents (real store).
+  These need real backend builds (capnweb RPC + DO/D1), each a focused fire. Incremental surface polish (more Pulse
+  detectors, Gmail-undo on delete) remains available but is lower-leverage than starting a backend pillar.
+- NEXT: pick a backend pillar's FIRST buildable slice (e.g. WS-N1 opportunity persistence: a DO/D1-backed dismissed/
+  snoozed store + the capnweb methods, replacing Pulse's localStorage dismissal) · or WS-M2 Connections read-only over
+  real data (models + gatekeepers + Git) · run green-sweep every few fires.

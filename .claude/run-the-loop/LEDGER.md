@@ -1474,3 +1474,24 @@
 - NEXT: WS-N4 ext (account-level AI-spend view + per-action provenance) · WS-N2 /agents (scout the agent store first) ·
   WS-N3 ext (⌘K actions) · extract `CostSummaryStrip`→ a generic `SummaryStrip` when /models or /agents needs one
   (inverted-abstraction-pyramid: 2nd use triggers the extract) · run the product-propagation audit.
+
+## fire-85-golden-journey (2026-10-03) — ✅ Testing rebalance: LONG click-driven OS navigation golden-path (11/11)
+- Lease `fire-85-golden-journey-579d942f`. Testing had STARVED (fires 79-82/84 Product, 83 Docs) + a real gap: EVERY
+  verifier uses `page.goto(/route)` — NONE navigate via real UI clicks, so nav/shell/cross-surface defects go untested.
+- SHIPPED `scripts/journey-os-nav.mjs` (parent repo, c3c66366): an 11-step homepage-start journey moving ONLY via
+  sidebar clicks + ⌘K (never page.goto after load) — Home → Pulse → pulse-action(→Models) → ⌘K→Models → Explore →
+  Blueprints → Outputs → ⌘K→Pulse → Gadgets(asserts the fire-84 cost strip reached via nav) → open-workspace →
+  return-home. Net-new coverage: navigation + shell + cross-surface state, both nav mechanisms (sidebar + ⌘K).
+- GOLDEN-PATH DISCOVERY (§6, diagnosed + fixed, continued): run-1 FAILED steps 7-10 (Explore/Blueprints/Outputs/⌘K)
+  AFTER entering the workspace. Root cause CONFIRMED against code (not assumed, per monitor-orch #14): `__root.tsx:225`
+  `const fullscreen = isWorkspaceEditor` renders the editor FULLSCREEN — NO AppShell → no sidebar, no ⌘K (the handler is
+  mounted in AppShell). BY DESIGN (focus mode). Fix was to the JOURNEY FLOW (do cross-surface nav from the shell, enter
+  the editor LAST, return via the editor's own Home) — re-ran **11/11 green, 0 console errors**. No app defect.
+- VERIFY: 11/11 click-driven steps green, 0 console errors (BA-authed real Chromium, PROD). Screenshots → scripts/.journey/.
+- Loop-improvement (§8): codified the **editor-is-fullscreen fact + the goto-verifiers-miss-nav learning** in BACKLOG §
+  OS fork architecture facts, and registered `journey-os-nav.mjs` as the loop's click-driven golden-path asset (vary the
+  journey each cycle per §6). Future journeys won't re-trip on the fullscreen editor.
+- Surfaced (queued WS-N3 ext): ⌘K should be GLOBAL (mounted in `__root`, not only AppShell) so it's an escape-hatch from
+  the fullscreen editor — the Raycast universal-command principle applied to the one surface that currently lacks it.
+- NEXT: WS-N3 ext ⌘K-global (works in the fullscreen editor) + ⌘K actions · WS-N2 /agents (scout store first) · WS-N4
+  ext (account-level AI-spend) · run the product-propagation audit.

@@ -41,6 +41,7 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 ### WS-N3 — Command-K universal surface (Raycast) — a PROPAGATION HABIT
 - [x] FIRST SLICE (fire-82): CommandPalette now mirrors the Sidebar primary nav 1:1 — added Pulse/Models/Gadgets/Outputs/Explore, fixed Blueprints→`/blueprints`, flag-gated identically to the sidebar. Verified `verify-cmdk.mjs` 6/6 (opens · all 8 present · filters · Models+Gadgets navigate · 0 errors). fork 7643d702 / gitlink c7594fe6.
 - [ ] NEXT: ⌘K ACTIONS beyond navigation — "New gadget", "Dismiss all opportunities", quick-switch — and the secondary routes (/admin, /profile, /context, /providers, /gatekeepers). Then promote ⌘K to a global command bus other surfaces push actions into.
+- [ ] ⌘K GLOBAL (fire-85 finding): mount the ⌘K handler + palette in `__root.tsx` (not only `AppShell`) so it ALSO opens inside the FULLSCREEN workspace editor — the Raycast universal-command escape-hatch applied to the one surface that currently lacks it (today the editor's only exit is its own Home link). Shell-structure change — keep the palette's authed-API deps intact; verify with `journey-os-nav.mjs` extended to open ⌘K inside /workspace.
 
 ### WS-N4 — Governance / Control-Tower (ServiceNow/PostHog) — cost + observability everywhere
 - [x] FIRST SLICE (fire-84): `CostSummaryStrip` on /gadgets — Total spend (cyan + per-gadget avg) · Gadgets · Favorites · Last active, over the already-resolved rows (no new RPC), hidden when empty. Verified `verify-cost-strip.mjs` 5/5 — RECONCILES vs the table rows (count, favorites, Σ spend). fork 64fa1022 / gitlink 9ae3ce6b.
@@ -244,6 +245,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   parent-repo `git add cloudflare-os` (the gitlink bump) fails `fatal: pathspec 'cloudflare-os' did not match` (exit
   128). Recipe: `git -C cloudflare-os add <path> && git -C cloudflare-os commit -m … && git -C cloudflare-os push origin
   megabyte-os` → then from root `git add cloudflare-os scripts/… && git commit && git push origin main` → `pnpm deploy`.
+- **The workspace editor is FULLSCREEN — no AppShell (fire-85)**: `__root.tsx:225` `const fullscreen = isWorkspaceEditor`
+  renders `/workspace/$id` (GadgetEditor) fullscreen with NO AppShell → NO sidebar + NO ⌘K (the ⌘K keydown handler is
+  mounted in `AppShell.tsx`, not globally). By design (focus mode); return to the shell via the editor's OWN top-bar
+  Home. A click-driven journey must do all cross-surface nav from the shell, then enter the editor LAST.
+- **goto-verifiers miss NAVIGATION defects (fire-85)**: every `verify-*.mjs` `page.goto`s its route, so none test
+  sidebar/⌘K/shell navigation. `scripts/journey-os-nav.mjs` is the loop's click-driven golden-path complement (11
+  UI-only steps across the surfaces, both nav mechanisms). VARY the journey each cycle (§6); it's the primary finder for
+  nav/shell/cross-surface defects.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

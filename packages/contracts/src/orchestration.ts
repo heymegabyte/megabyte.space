@@ -104,6 +104,10 @@ export const GoldenAssertionSchema = z
   .strict()
 export type GoldenAssertion = z.infer<typeof GoldenAssertionSchema>
 
+/** Test-coverage state of a golden path in the registry (`pending` until an instance exists). */
+export const GoldenCoverageSchema = z.enum(['pending', 'partial', 'covered'])
+export type GoldenCoverage = z.infer<typeof GoldenCoverageSchema>
+
 export const GoldenPathSchema = z
   .object({
     id: z.string().regex(/^GP-\d{3}$/, 'id must look like GP-001'),
@@ -114,6 +118,10 @@ export const GoldenPathSchema = z
     assertions: z.array(GoldenAssertionSchema).default([]),
     evidence: z.array(z.string()).default([]),
     cleanup: z.array(z.string()).default([]),
+    /** Registry coverage ledger — how much of this contract has a running test instance. */
+    coverage: GoldenCoverageSchema.default('pending'),
+    /** The verifier/journey script that exercises this path, when one exists. */
+    instance: z.string().optional(),
   })
   .strict()
 export type GoldenPath = z.infer<typeof GoldenPathSchema>

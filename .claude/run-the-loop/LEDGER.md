@@ -1868,3 +1868,14 @@
 - loop-improvement (§8): captured [[vite-split-heavy-vendors-into-chunks]] (memory + index) — the reusable "split leaf vendors (monaco/three), verify the surface still loads" pattern for future fork/Vite perf work; gave the starved PERF category its first fire.
 - attrition: none.
 - NEXT: WS-N2 /agents store (needs a data-model design call — may be Brian's), OR WS-M2 MCP/Git inventory rows, OR measure the 1.4MB `index` chunk's composition (loads every route) for a safe split · run green-sweep every few fires.
+
+## fire-112-greensweep-coverage-audit (2026-10-04) — ✅ ARCHITECTURE/DOCS: green-sweep coverage drift — the coherence gate missed the force-login invariant + the Models surface
+- roster: solo-lead (ARCHITECTURE + DOCS — both starved 0-fire categories; a periodic drift/coherence sweep per the standing drift-detection + interconnectedness mandates) · rejected: 2nd consecutive perf fire (index-chunk); WS-N2 (design call) · budget: architecture + docs
+- [Architecture/Drift] green-sweep coverage audit + CLAUDE.md truthfulness — parent HEAD (parent-only, NO fork change / deploy) — prod: **green-sweep 19/19** (both added checks pass in-sweep). 
+  - FINDING: cross-checked all `verify-*/journey-*` scripts on disk (~29) vs green-sweep's CHECKS (16). green-sweep claimed "the whole OS is coherent" but MISSED two important current checks: `verify-anon-console` (the force-login / 0-anon-console-errors / no-pre-login-leak invariant — Brian-directed fire-90) and the entire **Models surface** (`verify-models-catalog`, 0 of the 4 models verifiers were in the gate). Confirmed both still pass standalone, then added them (19 checks). The rest-excluded (apex/os/cyan/seo/cwv/links/reduced-motion/ba-flip + deeper models) are historical/pre-WS-11 or specialized one-offs — deliberately out.
+  - PREVENTION: documented green-sweep's CURATION rationale in the script header (what's in, what's deliberately out, when to add) so the gate is self-describing + future fires add a check when a new user-facing surface/invariant ships. Fixed the CLAUDE.md § Commands doc drift — it only documented `verify-prod` (10 assertions); added `green-sweep.mjs` as THE coherence gate.
+- journey: the coverage cross-check itself (disk vs gate) — found+fixed: the 2 missing invariant/surface checks (the "drift" this fire targeted).
+- backlog: none ticked (coherence hardening).
+- loop-improvement (§8): the coherence gate now honestly covers the force-login invariant + Models + is SELF-DOCUMENTING (curation rationale in-header) — a future fire that ships a surface knows to wire its verifier in; periodic "disk-vs-gate" audit added to the loop's repertoire. Gave the starved ARCHITECTURE+DOCS categories their first fire.
+- attrition: none.
+- NEXT: WS-N2 /agents store (design call), OR WS-M2 MCP/Git rows, OR index-chunk perf measure · run green-sweep every few fires.

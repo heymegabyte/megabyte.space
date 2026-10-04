@@ -14,9 +14,18 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
   process.exit(2)
 }
 
-// [script, args, the substring that means PASS in its tail output]
+// [script, args, the substring that means PASS in its tail output].
+//
+// This is a CURATED core gate, not every verify-*.mjs on disk — it covers the force-login/auth
+// invariant, the live user-facing OS surfaces (Pulse, Connections, Gadgets, Models), a11y in both
+// themes, and the long + deep journeys. Deliberately OUT: historical/pre-WS-11 checks (verify-apex*,
+// verify-os*, *-cyan, icon-gradients), specialized one-offs run on demand (verify-seo, verify-cwv/
+// vitals/apex-cwv perf probes, verify-links, verify-reduced-motion, verify-ba-flip), and the deeper
+// per-surface Models checks (default/detail/filter — catalog represents the surface here). Add a check
+// here when a NEW user-facing surface/invariant ships; keep it fast + reliable. (fire-112 coverage audit.)
 const CHECKS = [
   ['verify-prod.mjs', [], 'assertions green'],
+  ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
   ['verify-pulse.mjs', [], '0 console errors'],
   ['verify-pulse-persist.mjs', [], '0 console errors'],
   ['verify-pulse-snooze.mjs', [], '0 console errors'],
@@ -27,6 +36,7 @@ const CHECKS = [
   ['verify-gadget-pin.mjs', [], '0 console errors'],
   ['verify-gadget-rename.mjs', [], '0 console errors'],
   ['verify-gadget-delete.mjs', [], '0 console errors'],
+  ['verify-models-catalog.mjs', [], 'console-error-free'], // the Models surface (fire-112 — was uncovered)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],

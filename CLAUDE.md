@@ -13,6 +13,7 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 - `pnpm deploy` — build + deploy the six OS Workers (root)
 - `pnpm --dir packages/home deploy` — (legacy) rebuild the RETIRED `megabyte-home` worker; it is UNROUTED since WS-11 (owns no hostname — kept only as the `LandingHomepage` component source; redeploy only if reviving a standalone homepage)
 - `node scripts/verify-prod.mjs` — 10 prod assertions (apex serves the OS, `/api/auth/ok`, `/signin` BA page, GitHub + Google SSO wired, allowlisted BA sign-in sets the apex session cookie, authed-nav gate passthrough, NO Cloudflare Access in the human path, www→apex 301, HSTS; apex CSP is a tracked WARN). The deploy gate is ALL-GREEN (script prints N/N).
+- `BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD) node scripts/green-sweep.mjs` — **THE coherence gate**: runs the curated core verifier + journey suite in sequence (verify-prod + anon-console force-login invariant + Pulse persist/snooze/honesty + Connections + Gadgets CRUD + Models + a11y both themes + the os-nav / deep / responsive / keyboard journeys) and prints one N/N tally. Run it every few fires + before any milestone — it's the cross-fire-regression net no single verifier gives. (Curated core, not every `verify-*.mjs`; the rationale + what's deliberately out is documented in the script header.)
 
 ## Auth
 

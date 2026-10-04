@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * fire-93 accessibility audit (expanded fire-106): axe-core (WCAG 2.2 AA) over the force-login gate
- * (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets, Outputs,
- * Blueprints, Explore, Models, Providers, Gatekeepers — PLUS the fullscreen workspace EDITOR
- * (dynamic /workspace/$id, reached by click-nav into an existing gadget). Reports violations per
- * surface; FAILS on any serious/critical violation (axe 0-violations is a required gate per
- * quality-metrics). BA-authed real Chromium, PROD. Needs BA creds. Both themes: dark + `--light`.
+ * fire-93 accessibility audit (expanded 106/108/117): axe-core (WCAG 2.2 AA) over the force-login
+ * gate (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets,
+ * Outputs, Blueprints, Explore, Models, Providers, Gatekeepers, Connections, Profile — PLUS the
+ * fullscreen workspace EDITOR (dynamic /workspace/$id, reached by click-nav). 14 surfaces total.
+ * Reports violations per surface; FAILS on any serious/critical violation (axe 0-violations is a
+ * required gate per quality-metrics). BA-authed real Chromium, PROD. Needs BA creds. Both themes.
  */
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
@@ -68,6 +68,9 @@ await page.click('[data-testid="auth-submit"]')
 await page.waitForSelector('[data-testid="auth-success"], [data-testid="auth-already"]', { timeout: 20000 }).catch(() => {})
 await page.waitForTimeout(800)
 
+// COVERAGE NOTE (fire-117): when adding a surface, cross-check `ls src/routes/*.tsx` — don't rely on
+// the sidebar/⌘K. Routes reached ONLY from menus (UserMenu/Header) evade nav-based memory: /providers
+// (fire-103) and /profile (fire-117) were both unaudited for many fires until a sweep caught them.
 for (const [path, signal] of [
   ['/', /build|create|describe|workspace|gadget|idea|start/i],
   ['/pulse', /opportunit|all clear/i],
@@ -80,6 +83,7 @@ for (const [path, signal] of [
   ['/providers', /provider/i],
   ['/gatekeepers', /gatekeeper|connect|integration/i],
   ['/connections', /connection|integration|provider/i],
+  ['/profile', /profile|account|display name/i],
 ]) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})

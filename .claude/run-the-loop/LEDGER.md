@@ -1923,3 +1923,14 @@
 - loop-improvement (§8): exercised the North-Star §82 product-propagation audit for the first time (a mandated-but-never-run cadence) + broke a 7-fire deferral pattern by RESOLVING (not re-deferring) WS-N2 to a crisp Brian decision. The frontier is now triaged: any future ship-fire grabs the top buildable-now item (N4 account-spend) instead of re-deriving the frontier.
 - attrition: none.
 - NEXT (buildable-now, no design call): **N4 account-level AI-spend view** (the Costs primitive — Σ across gadgets, data on listGadgets), OR ⌘K actions, OR cost-spike detector · the create E2E stays dedicated-session · WS-N2 awaits Brian's agents-vs-gadgets call.
+
+## fire-117-profile-a11y (2026-10-04) — ✅ A11Y/ARCHITECTURE: audited the MISSED /profile surface → fixed its avatar button + the last 5 white-on-cyan contrast violations
+- roster: solo-lead (the fire-116 N4 "buildable-now" pick proved REDUNDANT on inspection [/gadgets already has Σ-spend + sortable cost; cost-by-model is data-blocked; a /costs route would duplicate] → pivoted to the genuine finding the investigation surfaced: /profile is an UNAUDITED surface with real bugs) · rejected: a thin /costs route (scope-discipline §80 — duplicates /gadgets); a 4th detector · budget: a11y + architecture
+- [Bugfix/Testing] /profile a11y + fix the white-on-cyan class — fork 71b4e304 / parent HEAD — prod: **verify-a11y 0 serious/critical × 14 surfaces × both themes** + green-sweep 20/20. Router 48387f6a.
+  - FINDING: `/profile` (SettingsPage, reached via UserMenu) was NEVER in verify-a11y (12→now 13 static + editor = 14) — menu-reached routes evade nav-based coverage (same miss as /providers, fire-103). Auditing it caught: (a) button-name [critical] — the avatar upload button was icon-only, no name → `aria-label`; (b) color-contrast — SettingsPage PRIMARY_BTN `text-white` on `bg-kumo-brand` (3.41:1).
+  - Fixed the WHOLE remaining contrast class (the fire-106 pattern, grep-found 5 instances): SettingsPage + CountBadge + ResolveButton + BlueprintLandingPage + ChatInterface Set-up → `text-kumo-inverse` (AA both themes). fire-106 did /providers+/workspaces; this closes the class.
+- journey: the /profile audit (dark+light) — found+fixed: avatar button-name + the contrast class.
+- backlog: none ticked (a11y hardening); N4 reassessed as redundant/data-blocked (noted in NEXT — prefer ⌘K-actions or a detector over a thin /costs).
+- loop-improvement (§8): added a COVERAGE NOTE to `verify-a11y.mjs` — "when adding a surface, cross-check `ls src/routes/*.tsx`; menu-reached routes (UserMenu/Header) evade nav-based memory" (both /providers + /profile were missed that way). Prevents the next unaudited-surface gap. a11y coverage 12→14 surfaces.
+- attrition: none.
+- NEXT: ⌘K actions (command-actions primitive — genuinely-new, not a detector/costs re-skin), OR the dedicated-session create E2E, OR WS-N2 (Brian) · run green-sweep every few fires.

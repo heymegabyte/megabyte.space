@@ -2039,3 +2039,14 @@
 - loop-improvement (§8): extended verify-pulse-snooze to gate the duration PICKER (caret menu opens + the chosen duration flows to the banner), not just the default snooze — the Pulse snooze gate now proves the picker works, reversibly.
 - attrition: none.
 - NEXT: schedule/require-approval opportunity actions (WS-N1, bigger), OR the dedicated-session create E2E, OR WS-N2 (Brian) · run green-sweep every few fires.
+
+## fire-127-wire-interconnectedness-gates (2026-10-04) — ✅ LOOP-INFRA: the fire-122/125 orphan gates were themselves ORPHANED (nothing ran them) → wired into `pnpm check`
+- roster: solo-lead (closed the fire-125 NEXT; high-value product frontier still gated — WS-N2 needs Brian, create E2E is dedicated-session [rushing it risks polluting the shared ba-e2e account 21 verifiers depend on]) · rejected: unilaterally rushing the create E2E (pollution risk); forcing a subjective gorgeous pass (soft verification) · budget: loop-improvement/infra
+- [Loop-infra] wire check-route-reachability + check-dead-components into `pnpm check` — parent HEAD — verified `pnpm check` exit 0 (chain: submodule-resolvable → check:interconnect [both gates green] → deploy.ts --check dry-run). No deploy (workflow/tooling change, no app code).
+  - THE META-POINT (interconnectedness applied to my OWN tooling): fire-122 shipped `check-route-reachability.mjs` + fire-125 shipped `check-dead-components.mjs` — both STANDALONE, invoked only manually. They were themselves "built but unwired" — the exact orphan class they detect. A gate nothing runs is dead weight.
+  - FIX: added `"check:interconnect": "…reachability && …dead-components"` (standalone, AUTH-FREE — runnable locally without CF creds) + chained it into `"check"` BEFORE the auth-requiring `deploy.ts --check`, so a new orphan FAST-FAILS the pre-deploy gate (no CF auth needed to catch it). Now every `pnpm check` (the documented pre-deploy validation) runs the interconnectedness gates automatically.
+- journey: ran `pnpm check:interconnect` (both gates green: 13 static routes 0 orphans, 0 fork-added dead components) + full `pnpm check` (exit 0, chain integrates cleanly).
+- backlog: none ticked (loop-infra).
+- loop-improvement (§8): the gates now RUN automatically on every pre-deploy validation instead of being manual/dead — a detector that isn't wired into an automated path (check/CI/hook) is itself an orphan. The two fire-122/125 gates are now live infrastructure, catching the next orphan without anyone remembering to run them.
+- attrition: none.
+- NEXT: the dedicated-session create E2E (the core value path — highest untested surface, needs careful cleanup), OR WS-N2 (Brian's agents-vs-gadgets call — the product unlock), OR a gorgeous pass on a flagship surface (visual category under-served since <fire-121) · run green-sweep every few fires.

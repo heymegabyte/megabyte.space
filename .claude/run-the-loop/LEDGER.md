@@ -1281,3 +1281,25 @@
   re-boots on reload + extra RPCs resolve AFTER the table renders (a fixed 1600ms gave a false-RED here; waiting for
   "enabled in this workspace" fixed it). Captured in the verifier.
 - NEXT: WS-12 dedicated session (enabling providers is the real os.models →10) · reuse the full DataTable for a Workspaces/Gadgets table · WS-13 Slice B.
+
+## fire-76-explore+brand-residue (2026-10-03) — ✅ Deep-UI-Explorer walk (broke the /models tunnel) + fixed residual orange icon gradients
+
+- Lease `fire-76-explore-132f80b4`. Broke 5 fires of /models tunnel-vision with a broad Deep-UI-Explorer walk of
+  the authed OS (`scripts/walk-os.mjs`): home · workspaces · blueprints · explore · outputs — all 0 console errors.
+- FINDINGS: the OS surfaces are generally clean + on-brand cyan with good empty states (Blueprints/Outputs = tasteful
+  launchpad empty states; Explore + Workspaces have real curated featured blueprints). TWO issues surfaced:
+  (1) ⚠️ the blueprint/gadget ICON SQUARES rendered ORANGE in the now-cyan shell; (2) blueprint card PREVIEW IMAGES
+  render as gray skeletons (unfinished look) on Explore + Workspaces.
+- SHIPPED (fork 0a26a705 / outer <this> ; deployed 753aa294) — fixed #1: the fire-72 rebrand changed CSS tokens but
+  MISSED hardcoded Tailwind gradient classes (`from-orange-600 to-red-600` + a pink→amber `#E01E5A→#ECB22E`) in the
+  icon-gradient PALETTE (`BlueprintCard.tsx` + `RecentApps.tsx`; the exported `getGradient` drives BlueprintCard +
+  BlueprintPreviewImage + GadgetList + RecentApps). Recolored all 8 to a cohesive brand-cool set (cyan/sky/violet/
+  indigo/teal/graphite — dark enough for the white glyph, zero warm).
+- VERIFIED (BA-authed real browser, `scripts/verify-icon-gradients.mjs`): on /workspaces, 0 warm gradient classes,
+  6 brand-cool present, 0 console errors; screenshot confirms the blueprint icons are now cyan/sky. The shell is now
+  FULLY cyan — no residual orange.
+- Loop-improvement (§8): TWO lessons — (1) a TOKEN rebrand (CSS custom properties) does NOT catch HARDCODED color
+  UTILITIES (Tailwind `from-orange-600`, inline hex) — a brand rebrand MUST also grep component source for hardcoded
+  color classes/hexes, not just remap tokens (added to the WS-13 recipe); (2) periodic BROAD Deep-UI-Explorer walks
+  prevent surface tunnel-vision (5 fires on /models missed OS-wide orange) — `walk-os.mjs` is the reusable tool.
+- NEXT: blueprint preview-image skeletons (generate real previews or a branded placeholder) · WS-12 dedicated session · reuse the DataTable for a Workspaces/Gadgets table.

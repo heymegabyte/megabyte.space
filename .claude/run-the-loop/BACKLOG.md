@@ -230,6 +230,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   RISK is any `kumo-inverse` on a NON-brand fill (hashed avatar, custom bg) — give those explicit text; (3) cyan
   is LIGHT → fills need dark inverse + light-mode TEXT needs a deeper cyan; (4) VERIFY WITH SCREENSHOTS, not an
   exact-rgb computed-style probe (brand renders via box-shadow / currentColor icons / color-mix — exact match misses it).
+  (5) ⚠️ fire-76: a TOKEN rebrand (CSS custom properties) does NOT catch HARDCODED color UTILITIES — grep component
+  source for `from-orange-600`/`to-red-600`/warm Tailwind classes AND inline hex (`#ff…`), not just `--color-*` tokens.
+  Orange icon-gradient palettes (`BlueprintCard`/`RecentApps`) survived fire-72's token remap → fire-76 fixed them.
+  A periodic broad Deep-UI-Explorer walk (`scripts/walk-os.mjs`) catches this surface-wide residue (5 /models fires missed it).
+- [ ] blueprint card PREVIEW IMAGES render as gray skeletons on Explore + Workspaces (never resolve to real previews)
+  — generate real previews OR a branded cyan placeholder (surfaced by the fire-76 walk; os.workspaces 9->9.5 knock).
 - [ ] Slice B — shift the dark base off violet hue 285 toward black #060610 (surfaces/lines/rings), re-check
   contrast on every Kumo surface token; screenshot + vision ≥9/10 on 3+ authed surfaces.
 

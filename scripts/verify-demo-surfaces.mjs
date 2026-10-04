@@ -18,6 +18,7 @@ const SURFACES = [
   { label: "Goals", path: "/goals", needles: [/coming soon/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i] },
   { label: "Automations", path: "/automations", needles: [/coming soon/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i] },
   { label: "Agents", path: "/agents", needles: [/coming soon/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i] },
+  { label: "Database", path: "/database", needles: [/database studio/i, /sample data/i, /schema/i, /select \* from/i] },
 ];
 
 const browser = await chromium.launch();

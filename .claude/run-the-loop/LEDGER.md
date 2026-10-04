@@ -2125,3 +2125,14 @@
 - loop-improvement (§8): captured a RECURRING limitation — admin-gated demo surfaces (Platform, Metrics, future Permissions/Provenance) can't be ba-e2e-browser-verified (ba-e2e isn't an admin), so they ship build+green-sweep-only; a true render-proof needs an admin session. Mitigation stands (build + no-regression + pure-static render); surfaced so it's not mistaken for full browser coverage.
 - attrition: none.
 - NEXT (WS-DEMO via cron): /admin Permissions tab (roles×scopes demo table) + Provenance tab (audit-trail demo) — completes the per-primitive /admin tabs · then real data for the mock panels · NOT /agents (WS-N2-blocked) · cron a6d5c7ab drains it.
+
+## fire-135-admin-perms-provenance (2026-10-04) — ✅ PRODUCT (WS-DEMO DEMO-4 COMPLETE): /admin Permissions + Provenance tabs
+- roster: solo-lead (shipped BOTH remaining per-primitive /admin tabs in one fire — same pattern, mechanical, completes DEMO-4) · budget: product/demo
+- [Feature] /admin **Permissions** + **Provenance** tabs — fork 26830edf / parent HEAD — prod: build clean + green-sweep 22/22. Router c15742c7.
+  - Permissions: a roles × capabilities matrix (Owner/Admin/Member/Viewer × Build-gadgets/Manage-models/Connect-integrations/Invite-members/Billing+admin, ✓/— cells). Provenance: an audit-trail list (who · action · when — 5 sample events). Both honest "Preview · sample data" labels, mirroring the Metrics tab.
+  - /admin now demos the FULL primitive set: **Platform** (clickable overview) + **Metrics** + **Permissions** + **Provenance** tabs. "What /admin will look like with all the features" is substantially realized.
+- journey: admin-gated → build + green-sweep 22/22 (same gate as Platform/Metrics; ba-e2e not admin).
+- backlog: WS-DEMO **DEMO-4 COMPLETE** (Metrics + Permissions + Provenance). Remaining WS-DEMO: DEMO-5 Agents (WS-N2-blocked), real data for the mock panels.
+- loop-improvement (§8): the demo-drive is now substantially COMPLETE — /admin shows all features (overview + 3 ops tabs), + reachable Goals/Automations/Context + 11 editor Resource panels. Flagged for the loop: the remaining WS-DEMO work is either WS-N2-blocked (Agents) or "make mocks real" (needs real data pipelines) — the easy mock-breadth is done, so future fires should pivot to REAL data or await the WS-N2 call rather than minting more mock surfaces.
+- attrition: none.
+- NEXT (WS-DEMO via cron): pivot from mock-breadth to REAL data — e.g. make the Metrics tab / editor Resources Models panel show live data where it exists; OR await WS-N2 for Agents · cron a6d5c7ab drains it.

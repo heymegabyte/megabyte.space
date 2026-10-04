@@ -116,9 +116,10 @@ await step("editor: Resources tab shows the resource panels", async () => {
   assert(await inEditor(), "editor lost its content after Resources tab");
   if (clicked) {
     const body = await page.evaluate(() => document.body.innerText);
-    const cards = ["Models", "Connections", "Knowledge", "Storage", "Secrets", "Compute"].filter((c) => body.includes(c));
-    assert(cards.length >= 4, `Resources panel showed too few cards (${cards.length}/6): ${cards.join(",")}`);
-    return `Resources panel: ${cards.length}/6 cards`;
+    const all = ["Models", "Connections", "Knowledge", "Storage", "Secrets", "Compute", "Logs", "Deployments", "Schedule", "Metrics", "Domains"];
+    const cards = all.filter((c) => body.includes(c));
+    assert(cards.length >= 8, `Resources panel showed too few cards (${cards.length}/${all.length}): ${cards.join(",")}`);
+    return `Resources panel: ${cards.length}/${all.length} cards`;
   }
   return "Resources tab not shown (chat-mode pane) — editor stayed clean";
 });

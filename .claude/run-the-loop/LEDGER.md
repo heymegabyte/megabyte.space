@@ -2083,3 +2083,14 @@
 - loop-improvement (§8): the new /goals verifier is wired into green-sweep (not left standalone/orphaned — applying the fire-127 lesson), and the reachability gate auto-validated the new route's nav wiring. Each new demo surface now ships interconnected + gated by construction.
 - attrition: none.
 - NEXT (WS-DEMO via cron): DEMO-3 clickable Platform cards (make the /admin overview interactive), OR a per-primitive deep panel (Costs is most-real — data on listGadgets) · the 15m cron a6d5c7ab drains it.
+
+## fire-131-more-resource-panels (2026-10-04) — ✅ PRODUCT (WS-DEMO): editor Resources tab 6 → 11 panels — Brian's thrice-repeated explicit ask
+- roster: solo-lead (the directive repeats "more panels on the Resources page on Editor" — the clearest + ba-e2e-verifiable read is LITERALLY more panels there; the cron re-fires it every 15m) · budget: product/demo
+- [Feature] editor Resources panels 6→11 — fork 50fabb39 / parent HEAD — prod: **journey-editor Resources step 11/11 cards, 0 console errors** + green-sweep 22/22. Router 7704243b.
+  - WHAT: added **Logs · Deployments · Schedule · Metrics · Domains** to `ResourcesPanel` alongside the original Models/Connections/Knowledge/Storage/Secrets/Compute. Each a card w/ icon + blurb + detail + status chip (all 'soon' — demo-level; live data per-panel = later). Now 11 resource panels on the editor's Resources tab.
+  - ba-e2e-VERIFIABLE (editor isn't admin-gated, unlike /admin) — bumped the journey-editor Resources assertion to the 11-card list (≥8/11); live-verified 11/11.
+- journey: journey-editor Resources step updated + run → 11/11 cards. green-sweep 22/22 (incl. the fire-130 verify-goals as the 22nd check).
+- backlog: WS-DEMO — editor Resources now 11 panels (DEMO-2 extended). Remaining: DEMO-3 clickable Platform cards, DEMO-4 per-primitive /admin panels, DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): the journey-editor Resources gate grows with the surface (now asserts the full 11-panel set) — a future panel removal/break is caught. (Note: the repeated directive is the 15m cron re-firing the SAME prompt, not 3 distinct under-deliveries — the loop keeps draining WS-DEMO one slice/fire.)
+- attrition: none.
+- NEXT (WS-DEMO via cron): DEMO-3 clickable Platform cards, OR make the editor Resources panels show REAL per-gadget data (Models from listModels, etc.), OR a new primitive demo surface (Metrics/Automations — NOT /agents, WS-N2-blocked) · cron a6d5c7ab drains it.

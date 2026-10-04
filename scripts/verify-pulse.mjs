@@ -92,8 +92,11 @@ if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 let ok = true;
 if (cards1 < 2) { console.log(`❌ FAIL: expected ≥2 opportunity cards, got ${cards1}`); ok = false; }
 else console.log(`✅ PASS: ${cards1} opportunity cards surfaced`);
-if (!hasModelsOpp) { console.log("❌ FAIL: the models-unlock opportunity (real, computed) is missing"); ok = false; }
-else console.log("✅ PASS: real computed opportunity present (unlock N of 9 AI models)");
+// Soft: unlock-models depends on ba-e2e's (MUTABLE) usable-model count — present when fewer than
+// the catalog are usable, absent once all providers are enabled. Both are honest. (fire-104: ba-e2e
+// now has ≥9 usable models, so this went absent — a fire-97-class fragility; no longer a hard fail.)
+if (hasModelsOpp) console.log("✅ PASS: unlock-models opportunity present (not all catalog models usable)");
+else console.log("ℹ️  unlock-models opportunity absent (ba-e2e has all catalog models usable now) — expected-conditional");
 // Soft: pin-favorite depends on ba-e2e's (mutable) pin state — present when ≥1 gadget + none pinned.
 if (hasPinOpp) console.log("✅ PASS: pin-favorite opportunity present (gadget exists, none pinned) — fire-92");
 else console.log("ℹ️  pin-favorite opportunity absent (ba-e2e gadget is currently pinned, or 0 gadgets) — expected-conditional");

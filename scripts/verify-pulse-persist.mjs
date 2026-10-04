@@ -75,9 +75,16 @@ const cardsA1 = await cardCount(A.page);
 const undoVisible = await A.page.locator(UNDO).isVisible().catch(() => false);
 
 // 2. Context B — FRESH, independent (empty localStorage + own cookies), re-authed as the same user.
-//    If X is gone here, the dismissal came from the SERVER, not client storage.
+//    If X is gone here, the dismissal came from the SERVER, not client storage. A's dismissal is an
+//    optimistic fire-and-forget RPC; under load its write can land just after B's first read, so
+//    POLL (reload) until B reflects it — a propagation lag is not a false RED.
 const B = await freshPulse("B");
-const cardsB = await cardCount(B.page);
+let cardsB = await cardCount(B.page);
+for (let i = 0; i < 4 && cardsB !== cardsA0 - 1; i++) {
+  await B.page.waitForTimeout(1200);
+  await gotoPulse(B.page);
+  cardsB = await cardCount(B.page);
+}
 await B.context.close();
 
 // 3. Restore in A via the inline Undo (server-side) → leaves ba-e2e clean; confirm via reload.

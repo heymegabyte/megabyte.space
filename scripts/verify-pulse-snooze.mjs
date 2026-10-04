@@ -74,8 +74,16 @@ const undoVisible = await A.page.locator(UNDO).isVisible().catch(() => false);
 const undoSaysSnoozed = /snoozed/i.test(undoText);
 
 // 2. Context B — FRESH, independent. If the opportunity is gone here, the snooze is SERVER-SIDE.
+//    A's snooze is an optimistic fire-and-forget RPC; under load its server write can land just
+//    after B's first read, so POLL (reload) until B reflects it — a propagation lag is not a false
+//    RED. B is a fresh context, so if it EVER shows the reduced count that IS server-side proof.
 const B = await freshPulse("B");
-const cardsB = await cardCount(B.page);
+let cardsB = await cardCount(B.page);
+for (let i = 0; i < 4 && cardsB !== cardsA0 - 1; i++) {
+  await B.page.waitForTimeout(1200);
+  await gotoPulse(B.page);
+  cardsB = await cardCount(B.page);
+}
 await B.context.close();
 
 // 3. Restore in A via the inline Undo (server-side un-snooze) → leaves ba-e2e clean; confirm via reload.

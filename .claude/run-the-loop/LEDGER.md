@@ -1379,3 +1379,28 @@
   causal shape for a mutation is mutate → assert PERSISTENCE across reload → assert the INTERCONNECTED effect →
   restore. Captured as the pattern for future mutating verifiers.
 - NEXT: gadgets kebab (delete-with-confirm / share / rename) · a Coinbase-Pro cost/activity summary strip · more absorption on the recipe · WS-12.
+
+## fire-81-NORTH-STAR-intake+Pulse (2026-10-03) — ★★ Brian directive: Autonomous Business OS — captured, decomposed, wired + the Opportunity Engine shipped
+
+- Lease `fire-81-explore-0587a216`. Started as a re-grounding walk (OS confirmed polished — /outputs clean-empty,
+  /gatekeepers clean); MID-FIRE Brian sent a TRANSFORMATIVE directive: Megabyte OS = an Autonomous Business OS that
+  operates around GOALS/OPPORTUNITIES/OUTCOMES (not commands) + propagates best-in-class product characteristics
+  (Sidekick/Glean/Onyx/Linear/Manus/Figma/Replit/Rovo/Raycast/Sentry/PostHog/ServiceNow/MCP/Cloudflare) into every
+  surface + composes shared PRIMITIVES. Per split-work-into-ledger, a directive this big = LEDGER INTAKE first.
+- INTAKE (durable + wired): wrote `.claude/run-the-loop/NORTH-STAR.md` (the full distilled directive + the 15-question
+  product-propagation audit); DECOMPOSED it into `BACKLOG.md § ★★ NORTH STAR` (WS-N1 Opportunity Engine/Pulse · N2
+  Agents-as-coworkers · N3 Command-K · N4 Governance/cost · N5-N9 audit-driven); wired it into CLAUDE.md § Mission +
+  the loop command §0 (read NORTH-STAR.md + run the product-propagation audit ~every few fires).
+- SHIPPED the FIRST vertical slice — WS-N1 the OPPORTUNITY ENGINE (fork a9236337 / outer <this> ; deployed 7211706d):
+  `/pulse` (flag-gated, nav FIRST above Home) computes REAL opportunities from live state — "Unlock 7 more AI models
+  (only 2 of 9 usable)" → Enable providers · "You've built 1 gadget for $0.0075" → View gadgets · "Connect an
+  integration" → Browse integrations — each a cyan card with an expandable Why + a SPECIFIC action (navigates) +
+  Dismiss (persisted/restorable). Calm, beautiful, on-brand.
+- VERIFIED (BA-authed real browser, `verify-pulse.mjs`): 3 opportunity cards, the models-unlock is real+computed,
+  Pulse is the first nav, an action navigates (→ /models), Dismiss persists across reload + restores, 0 console
+  errors. Vision 9.5; +os.pulse 9.5. The North Star's defining principle made real: Megabyte proactively finds work.
+- Loop-improvement (§8): the North Star is now the loop's governing direction — durable (NORTH-STAR.md), decomposed
+  (BACKLOG § NORTH STAR), and WIRED into the loop (CLAUDE.md + command: the periodic 15-question product-propagation
+  audit). Future fires drain the WS-N primitives + run the audit. (Verifier fix: initial run used `networkidle`
+  (flaked) + wrong button labels; switched to `domcontentloaded` + the real action labels — re-ran 6/6.)
+- NEXT (North Star drain): WS-N1 persist/snooze/auto-execute opportunities · WS-N2 /agents surface · WS-N3 ⌘K adds new routes · run the product-propagation audit to replenish · WS-12 (ties to the models-unlock opportunity).

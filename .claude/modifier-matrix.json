@@ -185,6 +185,17 @@
         "a small cost/activity summary strip above the table (Coinbase-Pro density)"
       ],
       "notes": "fire-79 CREATED — the Workspaces/Gadgets DataTable at /gadgets: the FIRST absorption table over REAL DYNAMIC user data (not a static catalog). Reuses the DataTable primitive (fires 71-74): swatch+Title / Last active / Created / Cost columns, sortable + searchable + row-click → opens /workspace/$id. Flag-gated (gadgets-table, enabled). BA-authed verified (verify-gadgets-table.mjs): 1 row = the fire-78-created gadget (display-vs-store RECONCILED), row-click opens the exact workspace, 0 console errors; vision 9.5. The primitive investment now pays off — a new data-backed table built fast by mirroring /models. fire-80: made it ACTIONABLE + INTERCONNECTED — a per-row favorite STAR toggles the gadget's pinned state (optimistic + openGadget().setPinned(), mirroring GadgetList; stopPropagation so it never opens the row). BA-authed causal-verified (verify-gadget-pin.mjs): pin → star fills → PERSISTS across reload (display-vs-store) → the gadget appears in the sidebar FAVORITES (interconnected) → unpin restores ba-e2e state; 0 console errors."
+    },
+    "os.pulse": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.5,
+      "density": 4,
+      "lastVisit": "2026-10-03",
+      "next": [
+        "persist opportunities + dismiss server-side; add snooze / schedule / require-approval + auto-execute high-confidence low-risk per policy",
+        "more detectors as data sources arrive (SEO / errors / agent-perf / competitor / stale-knowledge)"
+      ],
+      "notes": "fire-81 CREATED — Pulse, the OPPORTUNITY ENGINE (North Star WS-N1, the defining principle). /pulse surfaces REAL computed opportunities from live state: 'Unlock 7 more AI models (only 2 of 9 usable)' → Enable providers, 'You've built 1 gadget for $0.0075' → View gadgets, 'Connect an integration' → Browse integrations. Each: cyan icon chip + title + expandable Why + a SPECIFIC action button (navigates) + Dismiss (persisted/restorable). Pulse is the FIRST nav entry (proactive entry point). BA-authed verified (verify-pulse.mjs): 3 cards, action→/models, dismiss persists+restores, 0 console errors; vision 9.5. The North Star made real: Megabyte proactively finds opportunities."
     }
   }
 }

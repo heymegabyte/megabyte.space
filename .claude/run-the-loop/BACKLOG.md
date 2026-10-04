@@ -17,6 +17,40 @@
 
 ## Workstreams
 
+## ★★ NORTH STAR — Autonomous Business OS (Brian directive 2026-10-03) — GOVERNS EVERY FIRE
+See `./NORTH-STAR.md` (full distilled directive + the periodic 15-question product-propagation audit).
+Megabyte operates around GOALS / OPPORTUNITIES / OUTCOMES, not commands; propagate best-in-class product
+characteristics into every surface + compose shared PRIMITIVES (Goals/Opportunities/Agents/Tasks/Loops/
+Knowledge/Artifacts/Automations/Costs/Permissions/Provenance/Metrics/…). Drain these over many fires; run
+the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — machinery hides behind outcomes.
+
+### WS-N1 — Opportunity Engine / Pulse (THE defining principle — Sidekick/PostHog/Manus)
+- Mission: continuously find valuable work from real OS state (models/gadgets/cost/integrations/activity) +
+  surface it via Pulse/Inbox with explain · evidence · implement · delegate · schedule · automate · dismiss ·
+  snooze · require-approval. High-confidence low-risk → auto-execute per policy.
+- [ ] FIRST SLICE (fire-81): a `/pulse` surface computing 2-4 REAL opportunities (e.g. "only N of M models
+  usable → enable providers" from listModels; "build your first gadget" / cost insight from listGadgets) as
+  cards with Explain + Implement(navigate) + Dismiss(local). Flag-gated + nav. The Opportunity primitive.
+- [ ] (next) persist + dismiss server-side; snooze/schedule/approval; more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
+
+### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
+- Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·
+  credentials·permissions·autonomy·budgets·model-routing·activity·metrics·cost·memory. Real principals.
+- [ ] FIRST SLICE: an `/agents` surface (reuse DataTable) listing the OS agent(s) with identity/status/model/cost/last-activity — the Agent primitive, read-only first.
+
+### WS-N3 — Command-K universal surface (Raycast) — a PROPAGATION HABIT
+- [ ] FIRST SLICE: ensure the existing CommandPalette includes the new routes (/models,/gadgets,/pulse) + a "New gadget" action; every future surface registers its ⌘K actions.
+
+### WS-N4 — Governance / Control-Tower (ServiceNow/PostHog) — cost + observability everywhere
+- [ ] FIRST SLICE: a cost/activity summary strip on /gadgets (Σ spend · count · favorites · last-active); extend to an account-level AI-spend view + per-action provenance.
+
+### WS-N5…N9 (audit-driven, decomposed when prerequisites/data exist)
+- N5 Data-as-intelligence (Coda/Airtable: AI/computed fields, NL-query on the tables) · N6 Knowledge/Onyx
+  (sources, freshness, provenance, stale-reconciliation) · N7 Self-healing (Sentry-Seer: detect→diagnose→
+  fix→verify→auto-remediate — wire the loop's own golden-path failures) · N8 Cross-surface/MCP exposure
+  (an MCP server exposing listGadgets/listModels; CLI; webhooks) · N9 Creation canvas/variants (Replit/Figma:
+  variants + point-and-edit in the editor). Each gets a first slice when the audit surfaces it as highest-value.
+
 ## ★ TOP PRIORITY — Brian direction 2026-10-03 (EXECUTE; all secrets present, zero external blockers)
 Headline reset: **megabyte.space LOADS the OS**, anonymous preview works, a SEAMLESS Better Auth
 (GitHub+Google SSO) prompt fires on any protected action, DeepSeek-default backend. Drive these before

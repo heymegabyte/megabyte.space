@@ -57,7 +57,18 @@ const pvHasHeading = /ai providers/i.test(pvText);
 const pvErrored = /something went wrong loading your providers/i.test(pvText);
 const pvHonest = pvHasHeading && !pvErrored; // heading + not-errored ⇒ shows real providers or honest empty
 
-// 3. ⌘K reaches BOTH connection surfaces (the fire-103 fix). Search → click → assert navigation.
+// 3. /connections — the UNIFIED read-only inventory (fire-108, WS-M2). Reconcile display-vs-store: it
+//    renders ONE table unifying integrations (listConnectedAccounts) + AI providers (listModels).
+//    ba-e2e has AI providers, so the table must have ≥1 row + "AI Provider" type + a Manage link out.
+await land("/connections");
+const cnText = await bodyText();
+const cnHasHeading = /connections/i.test(cnText);
+const cnManageCount = await page.getByRole("link", { name: /^Manage in / }).count().catch(() => 0);
+const cnHasProviderRow = /ai provider/i.test(cnText);
+const cnHasRows = cnManageCount > 0;
+await page.screenshot({ path: "scripts/.connections-inventory.png" });
+
+// 4. ⌘K reaches the connection surfaces (the fire-103/108 fix). Search → click → assert navigation.
 async function openPalette() {
   if (await page.locator(DIALOG).isVisible().catch(() => false)) return true;
   await page.keyboard.press("Meta+k").catch(() => {});
@@ -80,9 +91,10 @@ async function cmdkReaches(query, expectPath) {
 }
 const cmdkGatekeepers = await cmdkReaches("gatekeeper", "/gatekeepers");
 const cmdkProviders = await cmdkReaches("providers", "/providers");
+const cmdkConnections = await cmdkReaches("connections", "/connections");
 
 await browser.close();
-console.log(JSON.stringify({ gkHasHeading, gkHasInventory, pvHasHeading, pvErrored, pvHonest, cmdkGatekeepers, cmdkProviders, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ gkHasHeading, gkHasInventory, pvHasHeading, pvErrored, pvHonest, cnHasHeading, cnManageCount, cnHasProviderRow, cnHasRows, cmdkGatekeepers, cmdkProviders, cmdkConnections, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -92,7 +104,11 @@ check(gkHasInventory, "/gatekeepers shows its real connect/vendor inventory (not
 check(pvHasHeading, "/providers renders the AI providers heading", "/providers missing its heading");
 check(!pvErrored, "/providers is not in the error state (honest: real providers or empty)", "/providers shows the 'Something went wrong' error state");
 check(pvHonest, "/providers reconciles display-vs-store honestly", "/providers did not render honest content");
+check(cnHasHeading, "/connections renders the unified inventory heading", "/connections missing its heading");
+check(cnHasRows, `/connections unified table has rows (${cnManageCount} Manage links out)`, "/connections table is empty — unification not rendering");
+check(cnHasProviderRow, "/connections unifies AI providers (reconciles with /providers)", "/connections missing the AI Provider rows");
 check(cmdkGatekeepers, "⌘K reaches Gatekeepers (search → navigate)", "⌘K did NOT reach Gatekeepers");
 check(cmdkProviders, "⌘K reaches Providers (search → navigate)", "⌘K did NOT reach Providers");
-check(errors.length === 0, "0 console errors across both connection surfaces + ⌘K", `${errors.length} console errors`);
+check(cmdkConnections, "⌘K reaches Connections (search → navigate)", "⌘K did NOT reach Connections");
+check(errors.length === 0, "0 console errors across the connection surfaces + ⌘K", `${errors.length} console errors`);
 process.exit(ok ? 0 : 1);

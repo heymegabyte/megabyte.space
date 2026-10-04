@@ -79,6 +79,7 @@ for (const [path, signal] of [
   ['/models', /model|available|provider/i],
   ['/providers', /provider/i],
   ['/gatekeepers', /gatekeeper|connect|integration/i],
+  ['/connections', /connection|integration|provider/i],
 ]) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})

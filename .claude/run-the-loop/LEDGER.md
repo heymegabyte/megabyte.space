@@ -1256,3 +1256,28 @@
   command — delicate PROD-MUTATING work (auth/inference/billing) gets grounded + spec'd for a dedicated session,
   never rushed at a loop tail.
 - NEXT: WS-12 (dedicated session — approach B passthrough, lead-direct, home-composer verify) · reuse the full DataTable for a Workspaces/Gadgets table · 'set-default-model' action (os.models →10).
+
+## fire-75-models-honest-actionable (2026-10-03) — ✅ /models made HONEST (availability) + ACTIONABLE (set-default) — fixed a lying-populated catalog
+
+- Lease `fire-75-ac2a2844`. Reframe: the OS is ALREADY cheap (Workers AI / Kimi is near-free) → WS-12 DeepSeek is
+  incremental model-CHOICE, not a fix for an expensive backend, so it stays spec'd for a calm dedicated session.
+- DEFECT FOUND + FIXED (verify-against-source-of-truth): the fire-71 /models catalog OVER-SHOWED all 9
+  SUGGESTED_MODELS, but only ENABLED-provider models are usable — the OS enables only `cloudflare`, so 7 of 9
+  shown models (Anthropic/OpenAI/Google) are NOT usable = a lying-populated surface (shows items that don't work).
+- SHIPPED (fork f186f7d2 / outer <this> ; deployed e388ec2d) — delegated the frontend slice:
+  - `/models` now fetches `listModels()` (actually-available) + `getPreferredModel()` (current default), fail-soft.
+  - HONEST: a cyan "✓ Available" badge only on the usable models (2 Cloudflare); a cyan "Default" badge on the
+    preferred (Kimi); headline "2 enabled in this workspace".
+  - ACTIONABLE: the row-detail dialog offers "Set as default model" (→ `setPreferredModel`) for AVAILABLE models,
+    a disabled "Current default" pill for the default, and a muted "not enabled" line otherwise — NO doomed controls
+    (per embarrassingly-easy-to-use § never-present-a-doomed-control).
+- VERIFIED (BA-authed real browser, `scripts/verify-models-default.mjs`): 2 Available badges, DEFAULT on Kimi,
+  unavailable models have NO set control (+ "not enabled"), the Default badge PERSISTS across reload
+  (display-vs-store reconciled), 0 console errors; vision 9.5. (The set-WRITE wasn't directly clicked — the test
+  user's clicked model was already default — but gating + wiring + persistence are verified; ba-e2e default unchanged.)
+- Loop-improvement (§8): TWO durable lessons — (1) an OS list/catalog surface must reconcile display vs ACTUALLY-
+  available (`listModels`), never just show all KNOWN items (else lying-populated) — added to the BACKLOG OS-fork
+  facts; (2) authed-OS verifiers must WAIT FOR A DATA-LOADED SIGNAL (a text/element), not a fixed timeout — the shell
+  re-boots on reload + extra RPCs resolve AFTER the table renders (a fixed 1600ms gave a false-RED here; waiting for
+  "enabled in this workspace" fixed it). Captured in the verifier.
+- NEXT: WS-12 dedicated session (enabling providers is the real os.models →10) · reuse the full DataTable for a Workspaces/Gadgets table · WS-13 Slice B.

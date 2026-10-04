@@ -183,6 +183,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - **Reusable primitive EXISTS**: `workshop-frontend/src/components/DataTable.tsx` — REUSE it, don't reimplement.
 - **Verifying an authed OS surface**: BA sign-in + complete onboarding once (ba-e2e is now onboarded) + set
   `localStorage megabyteOS_entered=1` to skip the splash. Pattern: `scripts/verify-models-catalog.mjs`.
+  ⚠️ WAIT FOR A DATA-LOADED SIGNAL (a text/element that appears once the RPC resolves), NOT a fixed timeout — the
+  authed shell re-boots on every reload (capnweb handshake + auth + onboarding) and per-surface RPCs resolve AFTER
+  the table renders, so a fixed `waitForTimeout` gives a FALSE-RED (fire-75: a 1600ms wait read 0 Available badges on
+  a working surface; `waitForFunction(() => /enabled in this workspace/.test(body))` fixed it). Pattern: `verify-models-default.mjs`.
+- **List/catalog surfaces must RECONCILE display vs ACTUALLY-available, not just show all KNOWN items** — else
+  lying-populated (shows items that don't work). The /models catalog over-showed 7 unusable models (providers not
+  enabled) until fire-75 cross-referenced `listModels()`. For any absorbed table, mark/filter by what the store
+  actually serves (per `verify-against-source-of-truth`).
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

@@ -1587,3 +1587,18 @@
   per §6/§81) + the overflow-measurement pattern (scrollWidth−innerWidth ≤2) in BACKLOG facts.
 - NEXT: WS-M2 Connections (store first) · deepen the responsive journey into the fullscreen workspace editor + ProjectSites
   (true GP-035) · GP-036 keyboard/odd-interactions · wire the GP registry into the loop's rotation.
+
+## fire-92-pulse-detectors (2026-10-04) — ✅ WS-N1: Pulse opportunity engine richer — pin-favorite detector (interconnected)
+- Product rotation on the North-Star defining surface. Added a 4th TRUE opportunity to `computeOpportunities` (pulse.tsx):
+  when gadgets exist but NONE are pinned → **"Pin a gadget to Favorites"** (→ /gadgets), interconnecting with the fire-80
+  star→sidebar-Favorites feature for one-tap return access. Pure-data (no new RPC); only shown when genuinely true
+  (honest-coverage — never padded).
+- SHIPPED (fork 7b2e94a6 → gitlink 6d2aca62; deployed megabyte-os ve6ef1626): the detector + `verify-pulse.mjs` extended
+  to assert it.
+- VERIFIED (BA-authed real browser): **4 opportunity cards** (was 3), **pin-favorite present** (reconciles with ba-e2e's
+  1 unpinned gadget — display-vs-store), models-unlock present, Pulse first-nav, dismiss persists+restores, action
+  navigates (→/models), **0 console errors**. +os.pulse beautify pass 2. Authed-only additive change (no anon regression).
+- Loop-improvement (§8): the detector pattern (a TRUE opportunity gated on real state + interconnecting an existing
+  feature) is the template for WS-N1 growth — each new detector must be genuinely-true-from-live-data + action-linked.
+- NEXT: more real-state detectors (set-default-model once getPreferredModel's unset semantics confirmed; stale-gadget
+  revisit) · WS-N1 persist/snooze server-side · WS-M2 Connections.

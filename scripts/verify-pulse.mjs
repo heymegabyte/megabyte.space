@@ -42,6 +42,8 @@ await goPulse();
 const cards1 = await cardCount();
 const body = await page.locator("body").innerText().catch(() => "");
 const hasModelsOpp = /unlock .* models|of 9 models/i.test(body);
+// fire-92: the pin-favorite opportunity (TRUE when gadgets exist + none pinned — ba-e2e has 1 unpinned).
+const hasPinOpp = /pin a gadget to favorites/i.test(body);
 const pulseNavFirst = await page.evaluate(() => {
   const t = document.querySelector("aside")?.innerText || "";
   const p = t.indexOf("Pulse"), h = t.indexOf("Home");
@@ -71,7 +73,7 @@ if (await action.count()) {
 }
 
 await browser.close();
-console.log(JSON.stringify({ cards1, hasModelsOpp, pulseNavFirst, dismissPersists, cardsRestored, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dismissPersists, cardsRestored, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -79,6 +81,9 @@ if (cards1 < 2) { console.log(`❌ FAIL: expected ≥2 opportunity cards, got ${
 else console.log(`✅ PASS: ${cards1} opportunity cards surfaced`);
 if (!hasModelsOpp) { console.log("❌ FAIL: the models-unlock opportunity (real, computed) is missing"); ok = false; }
 else console.log("✅ PASS: real computed opportunity present (unlock N of 9 AI models)");
+// Soft: pin-favorite depends on ba-e2e's (mutable) pin state — present when ≥1 gadget + none pinned.
+if (hasPinOpp) console.log("✅ PASS: pin-favorite opportunity present (gadget exists, none pinned) — fire-92");
+else console.log("ℹ️  pin-favorite opportunity absent (ba-e2e gadget is currently pinned, or 0 gadgets) — expected-conditional");
 if (!pulseNavFirst) { console.log("❌ FAIL: Pulse is not the first nav entry"); ok = false; }
 else console.log("✅ PASS: Pulse is the first nav entry (proactive entry point)");
 if (!dismissPersists) { console.log("⚠️  dismiss-persist not confirmed"); }

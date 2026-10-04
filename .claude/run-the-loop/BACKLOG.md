@@ -74,7 +74,7 @@ slice per fire (split-work-into-ledger); reconcile vs reality, never re-propose 
 - [ ] **WS-M11 Adaptive interface (Phase 11)**: A2UI/AG-UI mapped to native Kumo components (controlled catalog; ordered events/reconnect/replay/snapshots/deltas/cancel); selective PartyServer/Yjs collaboration.
 - [ ] **WS-M12 ProjectSites lifecycle (Phase 12)**: GitHub SSO · per-site private repo · Preview/Promote (hide Git) · Data/resources · generated-site quality eval. (Sibling repo — coordinate via shared contracts.)
 - [ ] **WS-M13 Autonomous convergence (Phase 13)**: global `/run-the-loop` → durable per-project child loops (leases, depth/iteration caps, ~30-cycle bound, crash recovery).
-- [ ] **WS-M-GP Golden-Path registry**: encode GP-001…050 (`MASTER-DIRECTIVE.md` index) as typed `GoldenPath` records with steps/assertions/evidence/cleanup; wire into the loop's golden-path rotation (§6). The existing `journey-os-nav.mjs` is the first click-driven instance (≈ GP-046 command-palette + cross-surface nav).
+- [x] **WS-M-GP Golden-Path registry** (fire-89): GP-001…050 encoded as typed `GoldenPath` records in `@megabyte/contracts/golden-paths.ts` (parsed at module load, honest coverage ledger — GP-046 'partial'→journey-os-nav.mjs, 49 'pending'). 25/25 vitest. efac0288. NEXT: fill steps/assertions as each GP is built + wire the registry into the loop's GP rotation (§6).
 
 ## ★ TOP PRIORITY — Brian direction 2026-10-03 (EXECUTE; all secrets present, zero external blockers)
 Headline reset: **megabyte.space LOADS the OS**, anonymous preview works, a SEAMLESS Better Auth
@@ -284,6 +284,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   a new package's `tsconfig.json`/`vite.config.ts` via the Write tool is rejected by `config-protection.py`. Write those
   via Bash with `export CLAUDE_CONFIG_CHANGE_AUTHORIZED=1 && cat > path <<'EOF' … EOF` (a Bash heredoc isn't the Write
   matcher). Code files (`.ts` schemas/tests) use the Write tool normally.
+- **Context hooks must FAIL-SOFT, never throw on missing-provider (fire-90)**: `useAuthenticatedApi` + `useUiFeatureFlags`
+  THREW "must be used within …Provider" → console.error spam, because a protected route (gadgets/models/pulse) renders a
+  FRAME OUTSIDE its providers during the anonymous→/signin transition (`__root` returns null + redirects while the router
+  still has the old match in `<Outlet>`). Fix = return a safe default: FeatureFlags → `{flags:DEFAULT,loading:true}`;
+  Auth → a fallback whose method access yields a never-settling promise (effects stay 'loading' then unmount). Anonymous
+  never reaches the OS shell (force-login holds). Proof: `scripts/verify-anon-console.mjs` (per-path console + no-OS-leak).
+  Anti-pattern: a dev-time throw-guard in a context hook is user-hostile in prod transitions — degrade, don't crash.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

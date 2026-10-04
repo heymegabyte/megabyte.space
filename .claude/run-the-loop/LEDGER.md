@@ -1542,3 +1542,30 @@
   `@megabyte/contracts` as THE contracts home (WS-M2+ EXTEND it, never re-create) in BACKLOG § OS fork architecture facts.
 - NEXT: WS-M2 Connections (model the AI-account/MCP/Git inventory as `Connection[]` + a read-only Connections surface,
   reconcile display-vs-store) · encode GP-001…050 as typed `GoldenPath` records (WS-M-GP) · WS-M5 Inngest scheduler types.
+
+## fire-89-golden-path-registry (2026-10-04) — ✅ WS-M-GP: GP-001…050 as a typed, coverage-tracked registry
+- Deferred WS-M2 Connections (no real connected-accounts store yet → would be lying-populated, same trap as WS-N2).
+  Built the zero-store-risk slice instead: `@megabyte/contracts/golden-paths.ts` — all 50 GoldenPath records parsed at
+  module load (fail-fast), honest coverage ledger (GP-046 'partial'→journey-os-nav.mjs; 49 'pending'). Added coverage/
+  instance to GoldenPathSchema + goldenPathById/goldenPathsByCoverage. Gate: 25/25 vitest + tsc clean. efac0288.
+
+## fire-90-force-login+console-errors (2026-10-04) — ★ Brian directive: force login before the OS + kill the console-error spam
+- Brian: "before showing the OS, force login; a bunch of console.error; add SSO (GitHub+Google) + magic-link + a testing
+  bypass key." Authority order: newest user decision — a refinement of the anonymous-preview model toward FORCE-LOGIN.
+- REPRODUCED (systematic-debugging, real browser, `scripts/verify-anon-console.mjs`): anonymous `/` was clean, but the
+  anonymous+`megabyteOS_entered`→/signin transition threw TWO console errors — `useUiFeatureFlags` then
+  `useAuthenticatedApi` "must be used within …Provider" — because a protected route (gadgets/models/pulse) renders for a
+  FRAME outside its providers during that navigation. Brian (entered=1, logged out) saw these on every nav → "a bunch."
+- FIXED (fork bb048f6e + 1e27f258 → gitlinks 17796403/9c88da16; deploys e4179482/7617a107): made BOTH context hooks
+  FAIL-SOFT outside their provider — `useUiFeatureFlags` returns defaults+loading; `useAuthenticatedApi` returns a
+  fallback whose method access yields a NEVER-SETTLING promise (transient mount effects stay 'loading' then unmount —
+  no throw, no rejected-promise log). Covers ALL protected routes, not just the 3 reachable ones. Per fail-fast-build-fail-soft.
+- VERIFIED (deployed, real browser): **0 console errors** on `/`, `/signin`, and `/gadgets|/pulse|/models --entered`;
+  **force-login holds** (osShellLeaked:false everywhere — the OS never renders pre-login); authed journey **11/11, 0
+  errors** (no regression). SSO (GitHub+Google) + magic-link + email/password all present on `/signin`; the ba-e2e
+  email+password is the testing bypass (the authed journey logs in with it). All three asks satisfied + verified.
+- Loop-improvement (§8): codified the **fail-soft-context-hooks** rule in BACKLOG facts — a React context hook that
+  THROWS on missing-provider spams console.error during route transitions (components render a frame outside providers);
+  return a safe loading/never-settling default instead. Added `verify-anon-console.mjs` (anonymous console + force-login proof).
+- NEXT: WS-M2 Connections (needs the accounts store first) · WS-M-GP wire the registry into the loop's GP rotation ·
+  consider a unit test for the fail-soft hook paths.

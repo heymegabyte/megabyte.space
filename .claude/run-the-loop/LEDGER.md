@@ -2061,3 +2061,14 @@
 - loop-improvement (§8): captured the demoable-first behavioral correction to memory (the recurring "prereq-blocked → hygiene" miss) + decomposed the big directive into the durable WS-DEMO queue so each cron fire grabs one demoable slice instead of re-deriving scope.
 - attrition: none (the Explore agent returned cleanly; the gadgets-table flake was transient).
 - NEXT (WS-DEMO drains via the 15m cron): DEMO-2 Editor "Resources" tab, then DEMO-4 per-primitive panels · admin-gated render stays build+sweep-verified until an admin session.
+
+## fire-129-editor-resources-tab (2026-10-04) — ✅ PRODUCT (WS-DEMO DEMO-2): Editor "Resources" tab w/ 6 panels — Brian's explicit example, browser-verified
+- roster: solo-lead (drained WS-DEMO DEMO-2, Brian's twice-repeated concrete example "more panels on the Resources page on Editor") · budget: product/demo
+- [Feature] Editor **Resources right-pane tab** — fork 25e5f506 / parent HEAD — prod: **journey-editor 8/8 incl. Resources 6/6 cards, 0 console errors** + green-sweep 21/21. Router ebffa258.
+  - WHAT: a NEW `ResourcesPanel` component (card grid matching the fire-128 /admin Platform style) wired as the editor's 4th right-pane tab (`app`/`code`/`connections`/**`resources`**). Six panels: Models · Connections · Knowledge · Storage · Secrets · Compute — each with a Live/Preview/Soon chip + a one-line + a detail line. Demo-level (representative content); live per-panel data = DEMO-4.
+  - WIRING: `'resources'` added to the RightTab union + `rightTabs()` + a render block (`activeTab === 'resources' ? ... : 'hidden'`) after the Connections block; `ResourcesPanel` is its own file (kept the 1792-line GadgetEditor from bloating).
+- journey: UNLIKE the admin tab (admin-gated, not ba-e2e-browsable), the editor is reachable by ba-e2e → extended `journey-editor.mjs` to click Resources + assert ≥4/6 cards render + editor stays clean. Live-verified 6/6, 0 console errors.
+- backlog: WS-DEMO DEMO-2 ✅ ticked. Remaining: DEMO-3 (clickable Platform cards), DEMO-4 (per-primitive deep panels), DEMO-5 (Agents — WS-N2-blocked).
+- loop-improvement (§8): extended the standing journey-editor (in green-sweep) to gate the new Resources tab — the editor journey now proves all 4 right-pane tabs render + the Resources panels are present, so a future editor change can't silently break the Resources surface.
+- attrition: none.
+- NEXT (WS-DEMO via cron): DEMO-4 per-primitive deep demo panels (Costs account-spend Σ, Metrics cards, Automations list, Permissions table, Provenance trail, Knowledge sources, Goals composer), one/fire · OR DEMO-3 clickable Platform cards.

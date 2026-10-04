@@ -109,6 +109,20 @@ await step("editor: switch to Connections tab", async () => {
   return clicked ? "clicked Connections" : "Connections tab not shown — editor stayed clean";
 });
 
+// 2c. The NEW Resources tab (DEMO-2) — a grid of resource panels (Models/Connections/Knowledge/
+//     Storage/Secrets/Compute). Click it; assert the panel's cards render + the editor stays clean.
+await step("editor: Resources tab shows the resource panels", async () => {
+  const clicked = await clickTabIfPresent("Resources");
+  assert(await inEditor(), "editor lost its content after Resources tab");
+  if (clicked) {
+    const body = await page.evaluate(() => document.body.innerText);
+    const cards = ["Models", "Connections", "Knowledge", "Storage", "Secrets", "Compute"].filter((c) => body.includes(c));
+    assert(cards.length >= 4, `Resources panel showed too few cards (${cards.length}/6): ${cards.join(",")}`);
+    return `Resources panel: ${cards.length}/6 cards`;
+  }
+  return "Resources tab not shown (chat-mode pane) — editor stayed clean";
+});
+
 // 3. Navigate OUT via the Home control, then back to /gadgets — the editor must tear down cleanly.
 await step("editor: Home navigates out of the workspace", async () => {
   const home = page.getByRole("button", { name: "Home", exact: true }).first();

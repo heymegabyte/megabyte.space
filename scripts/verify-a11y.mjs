@@ -2,8 +2,9 @@
 /**
  * fire-93 accessibility audit (expanded 106/108/117): axe-core (WCAG 2.2 AA) over the force-login
  * gate (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets,
- * Outputs, Blueprints, Explore, Models, Providers, Gatekeepers, Connections, Profile — PLUS the
- * fullscreen workspace EDITOR (dynamic /workspace/$id, reached by click-nav). 14 surfaces total.
+ * Outputs, Context & Skills, Blueprints, Explore, Models, Providers, Gatekeepers, Connections,
+ * Profile — PLUS the fullscreen workspace EDITOR (dynamic /workspace/$id, reached by click-nav).
+ * 15 surfaces total.
  * Reports violations per surface; FAILS on any serious/critical violation (axe 0-violations is a
  * required gate per quality-metrics). BA-authed real Chromium, PROD. Needs BA creds. Both themes.
  */
@@ -77,6 +78,7 @@ for (const [path, signal] of [
   ['/workspaces', /workspace/i],
   ['/gadgets', /total spend|gadget/i],
   ['/outputs', /output/i],
+  ['/context', /context|skill|coming soon/i], // wired into the rail fire-122 (was orphaned) → now audited
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],
   ['/models', /model|available|provider/i],

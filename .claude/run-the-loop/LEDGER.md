@@ -2157,3 +2157,14 @@
 - loop-improvement (§8): the mock→real recipe is now applied to 2 panels + gated by the journey (both live markers) — the Resources tab honestly separates REAL (Models, Connections) from genuinely-future (the 9 demo panels), and a regression of either to mock is caught.
 - attrition: none.
 - NEXT (WS-DEMO via cron): the Platform Costs card Σ-spend from listGadgets (admin-gated), OR await WS-N2 for Agents — the ba-e2e-reachable real-data sources are now exhausted (Models + Connections); further real data needs either admin surfaces or new backends · cron a6d5c7ab drains it.
+
+## fire-138-goals-tasks-breakdown (2026-10-04) — ✅ PRODUCT (WS-DEMO): the Tasks primitive, shown cohesively inside /goals (goal→task breakdown)
+- roster: solo-lead (Tasks was the one documented North-Star primitive with NO surface; surfaced it WITHOUT a new rail route — avoids bloat — by enriching the flagship /goals) · budget: product/demo
+- [Feature] /goals goal→task breakdown — fork 4fd84b7e / parent HEAD — prod: **DEMO-SURFACES GREEN** (Goals task-state markers asserted) + green-sweep 22/22. Router 3a8119d4.
+  - WHAT: each example goal now shows its decomposed TASKS with a state dot + label + state chip (Done/Running/Queued; running pulses) under a hairline divider. Demonstrates the goals→opportunities→tasks model (the North Star's operating loop) vividly, backing the /goals subtitle "turning one sentence into opportunities, tasks, and results". No new rail item (cohesive within /goals).
+- journey: added a task-state needle to verify-demo-surfaces' Goals check (`/\b(running|queued)\b/i`).
+- BUGFIX (verifier, self-caught): the first needle `/\b(Running|Queued)\b/` (case-sensitive) FAILED because the state chips use `uppercase` CSS and **`innerText` reflects CSS text-transform** (Chrome) → the DOM text is "RUNNING"/"QUEUED". The FEATURE rendered fine; the needle was wrong. Fixed to `/i`. Lesson: a verifier matching UI text must be case-insensitive when the UI uppercases via CSS (innerText ≠ textContent — it applies text-transform).
+- backlog: WS-DEMO — Tasks primitive now visible (within Goals). The North-Star primitive set is now all surfaced EXCEPT Agents (WS-N2-blocked).
+- loop-improvement (§8): captured the innerText-applies-text-transform gotcha (above) so future verifiers matching uppercased UI text use `/i`; + kept Tasks cohesive (no rail bloat) rather than minting another route.
+- attrition: none (one self-caught verifier-needle miss, fixed same fire).
+- NEXT (WS-DEMO via cron): the demo set is now comprehensive (all primitives surfaced bar Agents); remaining = Platform Costs Σ-spend (admin-gated) OR real backends OR **WS-N2 (Brian) for Agents — the one true unlock** · cron a6d5c7ab drains it.

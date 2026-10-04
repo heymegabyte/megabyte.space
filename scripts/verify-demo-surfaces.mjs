@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 // Each demo surface: the rail LABEL to click, the URL it should reach, and ≥2 content needles that
 // prove the demo mock rendered (not a blank/partial page).
 const SURFACES = [
-  { label: "Goals", path: "/goals", needles: [/coming soon/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i] },
+  { label: "Goals", path: "/goals", needles: [/coming soon/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i] },
   { label: "Automations", path: "/automations", needles: [/coming soon/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i] },
 ];
 

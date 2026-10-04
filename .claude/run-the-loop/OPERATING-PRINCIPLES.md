@@ -273,6 +273,16 @@
 - Docs are CURRENT-STATE only — strip history, delete drift; every doc claim matches the code.
 - Keep `CLAUDE.md` + the canonical home HIGH-SIGNAL + ACCURATE; a doc naming a fixed issue as
   open is stale — update it. Don't let any always-loaded file become a novel.
+- **Doc-freshness reconcile is SAME-FIRE, not queued (fire-83).** When a verifier PROVES a
+  topology/state change (e.g. `verify-prod` shows the apex now serves the OS + Access gone, or a
+  CF-API/curl check shows a hostname detached), reconcile the authoritative doc (`CLAUDE.md`) to
+  that reality THE SAME fire — do NOT leave a known-false "TODAY / until X lands / DARK / TARGET"
+  clause for a future fire to misread. Verify each corrected claim against live source-of-truth
+  (CF custom-domains API + curl), never from memory, per `verify-against-source-of-truth`. A
+  half-reconcile that fixes one bullet but leaves siblings stale is the drift this retires:
+  fire-82 fixed the apex bullet but left line 8 / Commands / the whole Auth section stale →
+  fire-83 had to finish it. Grep the doc for the stale phrase-class (`transitional|until .*lands|
+  DARK|public homepage|Access-gated`) before declaring the reconcile done.
 
 ## AI-agent principles
 

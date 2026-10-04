@@ -1429,3 +1429,28 @@
 - NEXT: WS-N3 ext — ⌘K ACTIONS beyond nav (New gadget / Dismiss-all opportunities) + secondary routes (/admin,
   /profile, /context, /providers, /gatekeepers) · WS-N2 /agents surface · WS-N1 persist/snooze opportunities ·
   Documentation reconcile of CLAUDE.md topology (apex=OS, BA live) · run the product-propagation audit.
+
+## fire-83-docs-reconcile (2026-10-03) — ✅ CLAUDE.md topology reconciled to verified-live reality (Docs; verify-against-source-of-truth)
+- Lease `fire-83-docs-reconcile-428e6957`. Docs category had STARVED (fires 75-82 all Product/Feature) + fire-82 left
+  the CLAUDE.md topology HALF-reconciled (fixed the apex bullet, flagged line 8 / Commands / the Auth section stale +
+  queued it) — a prediction miss. This fire finishes it, verified against live source-of-truth, not memory.
+- VERIFIED LIVE FIRST (CF custom-domains API + curl, global-key auth): `megabyte.space` → `megabyte-os` (apex serves
+  the OS); **`os.megabyte.space` DETACHED** (absent from every worker custom domain; does not resolve); `megabyte-home`
+  still deployed but owns NO hostname (retired/unrouted). All six OS workers + `megabyte-auth` present.
+- RECONCILED `CLAUDE.md` (9 edits, all verified-true): line 3 DIRECTION ("until WS-11 lands/transitional" → "WS-11 has
+  LANDED"); line 5 REFINED ((1)+(2) ✅ LANDED, (3) DeepSeek ⏳ WS-12 pending); line 8 (os.-URL bullet → "OS fork +
+  workers" + `os.megabyte.space` RETIRED); line 14 Commands (`packages/home` deploy marked legacy/unrouted); line 19
+  Auth ("until BA-5 lands" → "✅ BA-5 LANDED, Access automation-only"); line 20 BA-1 ("megabyte-home FORWARDS /api/auth"
+  → "megabyte-os router FORWARDS"; "DARK" → "✅ LIVE"); line 22 (Access app → AUTOMATION-ONLY); line 29 + line 38
+  gotcha/upgrades (apex moved to megabyte-os; `packages/home` RETIRED). Grep of the stale phrase-class → clean; all
+  load-bearing ops IDs (D1 ids, Access app/AUD, service-token, SES) PRESERVED.
+- RECONCILED `BACKLOG.md` WS-11 Steps 5-6 → [x] (apex move LANDED; the Brian-gated Access-host-add was OBVIATED by
+  BA-5); `verify-prod` already asserts apex=OS (10/10).
+- VERIFY (docs-only, no deploy): internal consistency (stale-phrase grep clean) + every claim cross-checked vs the live
+  CF API/curl before writing (per `verify-against-source-of-truth`).
+- Loop-improvement (§8): added the **Doc-freshness reconcile is SAME-FIRE, not queued** principle to
+  `OPERATING-PRINCIPLES.md § Documentation` — a verifier that PROVES a topology/state change triggers the authoritative-
+  doc reconcile the same fire (verify each claim vs source-of-truth; grep the stale phrase-class before declaring done).
+  Retires the half-reconcile-drift class fire-82→83 exhibited.
+- NEXT: WS-N2 /agents surface · WS-N3 ext (⌘K actions) · WS-N1 persist/snooze opportunities · run the product-
+  propagation audit · (cosmetic) delete the unrouted `megabyte-home` script.

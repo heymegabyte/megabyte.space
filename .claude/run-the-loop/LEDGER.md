@@ -2136,3 +2136,14 @@
 - loop-improvement (§8): the demo-drive is now substantially COMPLETE — /admin shows all features (overview + 3 ops tabs), + reachable Goals/Automations/Context + 11 editor Resource panels. Flagged for the loop: the remaining WS-DEMO work is either WS-N2-blocked (Agents) or "make mocks real" (needs real data pipelines) — the easy mock-breadth is done, so future fires should pivot to REAL data or await the WS-N2 call rather than minting more mock surfaces.
 - attrition: none.
 - NEXT (WS-DEMO via cron): pivot from mock-breadth to REAL data — e.g. make the Metrics tab / editor Resources Models panel show live data where it exists; OR await WS-N2 for Agents · cron a6d5c7ab drains it.
+
+## fire-136-resources-models-real (2026-10-04) — ✅ PRODUCT (WS-DEMO): editor Resources Models panel MOCK → REAL (live model count)
+- roster: solo-lead (executed the fire-135 pivot: mock-breadth → REAL data, starting with the most-available + ba-e2e-verifiable source) · budget: product/real-data
+- [Feature] Resources Models panel live data — fork 065a0f2b / parent HEAD — prod: **journey-editor "11/11 cards, Models live", 8/8 steps, 0 console errors** + green-sweep 22/22. Router 0bc9dd5f.
+  - WHAT: `ResourcesPanel` now calls `useAuthenticatedApi().listModels()` (fail-soft useEffect) and the Models card detail shows the LIVE usable-model count — "N usable · Anthropic · OpenAI · Google · DeepSeek" — instead of the static mock string. The other 10 panels stay demo-level (their data pipelines land later). First mock→real upgrade in the demo set.
+  - FAIL-SOFT: on a listModels error the card keeps its representative detail (no crash, no blank). The fetch is account-scoped + cheap.
+- journey: extended journey-editor's Resources step to ASSERT the live marker — `waitForFunction(/\d+ usable/)` (6s) → the Models card must show a real count, not just be present. Proves REAL data, not mock. Count itself not hard-asserted (mutable account — fire-97), only that a count rendered.
+- backlog: WS-DEMO — first real-data panel shipped. Remaining: more panels real (Connections via listConnectedAccounts, etc.), DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): demonstrated + gated the mock→real pattern — a demo panel fetches live data (fail-soft) + the journey asserts the real-data MARKER (not just card presence), so a regression to mock is caught. The recipe for turning the other demo panels real is now proven + test-backed.
+- attrition: none.
+- NEXT (WS-DEMO via cron): make another panel real (Resources Connections via listConnectedAccounts count; or the Platform Costs card Σ-spend), OR await WS-N2 for Agents · cron a6d5c7ab drains it.

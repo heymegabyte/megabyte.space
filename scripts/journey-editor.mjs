@@ -119,7 +119,13 @@ await step("editor: Resources tab shows the resource panels", async () => {
     const all = ["Models", "Connections", "Knowledge", "Storage", "Secrets", "Compute", "Logs", "Deployments", "Schedule", "Metrics", "Domains"];
     const cards = all.filter((c) => body.includes(c));
     assert(cards.length >= 8, `Resources panel showed too few cards (${cards.length}/${all.length}): ${cards.join(",")}`);
-    return `Resources panel: ${cards.length}/${all.length} cards`;
+    // fire-136: the Models card shows the LIVE usable-model count ("N usable") once listModels resolves.
+    const modelsLive = await page
+      .waitForFunction(() => /\d+ usable/.test(document.body.innerText), { timeout: 6000 })
+      .then(() => true)
+      .catch(() => false);
+    assert(modelsLive, 'Models card did not show the live usable-model count ("N usable")');
+    return `Resources panel: ${cards.length}/${all.length} cards, Models live`;
   }
   return "Resources tab not shown (chat-mode pane) — editor stayed clean";
 });

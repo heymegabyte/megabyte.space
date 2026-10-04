@@ -84,6 +84,8 @@ for (const [path, signal] of [
   ['/agents', /agent|coworker|coming soon/i], // WS-DEMO: Agents demo surface (fire-140)
   ['/activity', /activity|approval|waiting|recent/i], // WS-DEMO: Activity & Approvals demo surface (fire-147)
   ['/analytics', /analytics|visitors|sample data/i], // WS-DEMO: Analytics dashboard (fire-146 — was unaudited)
+  ['/customers', /customer|people|funnel|sample data/i], // WS-DEMO: Customers/People CRM (fire-148/149 — was unaudited)
+  ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],
   ['/models', /model|available|provider/i],

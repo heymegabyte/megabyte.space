@@ -41,6 +41,8 @@ const CHECKS = [
   ['verify-demo-surfaces.mjs', [], 'DEMO-SURFACES GREEN'], // WS-DEMO coming-soon surfaces (Goals, Automations, …) reachable via rail + render (fire-130/133)
   ['verify-analytics.mjs', [], 'ANALYTICS GREEN'], // WS-DEMO Analytics dashboard: reachable via rail + full dashboard renders (fire-146)
   ['verify-activity.mjs', [], 'ACTIVITY GREEN'], // WS-DEMO Activity & Approvals: reachable + renders + HITL Approve is interactive (fire-147)
+  ['verify-customers.mjs', [], 'CUSTOMERS GREEN'], // WS-DEMO Customers/People CRM: reachable + renders + row→timeline drill-in (fire-148/149, wired fire-150)
+  ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],

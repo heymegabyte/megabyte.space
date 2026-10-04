@@ -30,6 +30,7 @@ const CHECKS = [
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],
+  ['journey-deep.mjs', [], 'DEEP-JOURNEY GREEN'],
   ['journey-responsive.mjs', [], 'RESPONSIVE GREEN'],
   ['journey-keyboard.mjs', [], '0 console errors'],
 ]

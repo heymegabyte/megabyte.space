@@ -1845,3 +1845,14 @@
 - loop-improvement (§8): captured [[bound-client-supplied-keys-in-per-user-stores]] (memory + index) — EVERY future per-user store accepting client keys (WS-N2 agents, automations, saved views) must cap length + count; a reusable security boundary that retires this gap class. Also gave the starved SECURITY category its first fire.
 - attrition: none.
 - NEXT: WS-N2 /agents store (apply the bounded-key pattern from day one), OR WS-M2 MCP/Git inventory rows, OR a perf pass on the 2.9MB workspace-editor chunk (build warns >500KB) · run green-sweep every few fires.
+
+## fire-110-deep-journey (2026-10-04) — ✅ §6 LONG golden-path journey (first dedicated one) — deep stateful interactions, found+fixed a verifier false-negative
+- roster: solo-lead (the loop's §6 PRIMARY defect-finder, never run as a dedicated long journey — golden-path/testing; rotated off product/security) · rejected: PERF editor-chunk split (delicate, backlogged); WS-N2 agents (needs design) · budget: testing / golden-path
+- [Golden-Path E2E] `journey-deep.mjs` — a 9-step STATEFUL BA-authed session over the DEEP interactions the atomic verifiers never touch — parent HEAD (verifier-only, NO deploy — tests current prod) — prod: **9/9 deep steps + 0 console errors** + green-sweep 17/17.
+  - Covers: Pulse "Why" disclosure expand/collapse · dismiss→Undo + snooze→Undo (reversible, ba-e2e left clean) · theme toggle 3-cycle (flips data-mode, returns to start) · /connections DataTable SEARCH (filter→0→restore) + column SORT (exercises the fire-108 `sort` comparators — NEVER actually clicked before) + Manage-link→/providers · /gadgets search · ⌘K open→search→navigate.
+  - found+fixed (§6): a VERIFIER false-negative, not a product defect — counting `tbody tr` misread the DataTable's no-match `td[colspan]` message row as "not filtered" (/gadgets 1-row table read 1→1); the gadgets search actually WORKS. Fixed to count DATA rows (`tr:not(:has(td[colspan]))`) + assert `none===0`. The OS's deep interactions are all solid (no product bug).
+- journey: `journey-deep` itself — 9 deep interaction chains, green after the verifier fix.
+- backlog: none ticked (new coverage asset; PERF + WS-N2 remain the frontier).
+- loop-improvement (§8): `journey-deep.mjs` is now the standing §6 long-journey check in green-sweep (17 checks) — covers deep STATEFUL sequences + DataTable sort/search + theme toggle that NO atomic verifier exercised; the loop finally has its primary defect-finder as a durable gate. Gotcha logged: a row-count verifier must EXCLUDE the DataTable no-match `td[colspan]` row (else a 1-row filter reads as "didn't filter").
+- attrition: none.
+- NEXT: PERF editor-chunk pass, OR WS-N2 /agents store, OR vary journey-deep's path each fire (extend coverage) · run green-sweep every few fires.

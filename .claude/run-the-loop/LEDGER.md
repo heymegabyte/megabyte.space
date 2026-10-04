@@ -2094,3 +2094,14 @@
 - loop-improvement (§8): the journey-editor Resources gate grows with the surface (now asserts the full 11-panel set) — a future panel removal/break is caught. (Note: the repeated directive is the 15m cron re-firing the SAME prompt, not 3 distinct under-deliveries — the loop keeps draining WS-DEMO one slice/fire.)
 - attrition: none.
 - NEXT (WS-DEMO via cron): DEMO-3 clickable Platform cards, OR make the editor Resources panels show REAL per-gadget data (Models from listModels, etc.), OR a new primitive demo surface (Metrics/Automations — NOT /agents, WS-N2-blocked) · cron a6d5c7ab drains it.
+
+## fire-132-clickable-platform-cards (2026-10-04) — ✅ PRODUCT (WS-DEMO DEMO-3): /admin Platform overview → navigable feature-hub
+- roster: solo-lead (completed the PRIMARY demo artifact — "/admin with all the features" — by making the overview interactive) · budget: product/demo
+- [Feature] clickable Platform cards — fork eb3b4119 / parent HEAD — prod: build clean + green-sweep 22/22. Router b64edb16.
+  - WHAT: the /admin Platform cards now NAVIGATE — Live/Preview cards open their surface (Opportunities→/pulse, Gadgets+Costs→/gadgets, Models→/models, Connections→/connections, Outputs→/outputs, Knowledge→/context, Goals→/goals); Soon cards stay static (honest — no doomed control). Added `to?` to PLATFORM_FEATURES + `useNavigate` (guarded + typed-route cast `as '/pulse'` so the dynamic `to` compiles under TanStack's strict route types). The all-features overview is now a launcher, interlinking the demo surfaces.
+  - DRIFT FIX (spotted while here): Goals was still `status:'soon'` on the Platform tab, but /goals shipped in fire-130 → updated to `preview` + `to:'/goals'`.
+- journey: admin-gated (ba-e2e is not an admin) → build + green-sweep 22/22 (no regression to the non-admin OS) is the gate, same as fire-128; the navigate targets are all real routes verified elsewhere. Pure-additive onClick.
+- backlog: WS-DEMO DEMO-3 ✅. Remaining: DEMO-4 per-primitive /admin panels, real per-gadget Resources data, DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): the /admin overview now INTERLINKS every live surface (interconnectedness — the hub links to the spokes), so the demo is navigable end-to-end; captured the TanStack dynamic-`to` cast idiom (`f.to as '/pulse'` under strict typed routes) for future dynamic-nav.
+- attrition: none.
+- NEXT (WS-DEMO via cron): make the editor Resources panels show REAL per-gadget data, OR a Metrics/Automations demo surface (NOT /agents — WS-N2-blocked), OR per-primitive /admin deep panels · cron a6d5c7ab drains it.

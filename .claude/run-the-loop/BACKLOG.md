@@ -39,7 +39,7 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   - [x] **stale-gadget** (fire-115, fork a5a58cbf) — fires when a gadget is untouched ≥14 days (names the stalest) → revisit/archive. Zero new plumbing (reads `gadgets[].lastActive`); `now` injected for a deterministic unit test.
   - ~~**quick-model-unset**~~ — ❌ RETIRED / WON'T-BUILD (fire-120): resolved the fire-119 semantic. `quickModel` (set on /providers, drives title-gen) is HARDCODED + inert in AI Gateway mode (`gwConfig.getQuickModelConfig()`, user.ts 779-780) — how megabyte.space runs — so a "set your quick model" nudge would push a no-op. `preferredModel` (the default chat/gadget model, set on /models) is the real default, already covered by `set-default-model`. fire-120 also fixed that card's LYING COPY (it described quickModel while setting preferredModel). The WS-N1 detector set is now COMPLETE (8 shipped). See memory `preferred-vs-quick-model-semantics`.
   - later (as data sources arrive): SEO/errors/stale-knowledge/agent-perf.
-- [ ] (next) schedule/require-approval actions on an opportunity; a snooze-duration picker (1d/3d/1w popover); auto-execute high-confidence low-risk per policy.
+- [ ] (next) schedule/require-approval actions on an opportunity; ~~a snooze-duration picker (1d/3d/1w popover)~~ ✅ fire-126 (caret menu beside the one-click 3d Snooze; backend durationMs already supported); auto-execute high-confidence low-risk per policy.
 
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·

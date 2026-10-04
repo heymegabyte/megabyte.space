@@ -96,12 +96,31 @@ if (undoVisible) {
   cardsA3 = await cardCount(A.page);
 }
 
+// 3b. fire-126 — the DURATION PICKER (caret → menu). Only runs if the restore above left A clean
+//     (else the real failure is already flagged). Pick "1 day" via the caret, assert the undo banner
+//     reflects the CHOSEN duration (not the 3-day default), then undo → leaves ba-e2e clean.
+let pickerWorks = true, pickerLabel = "(skipped — preconditions not met)";
+if (cardsA3 === cardsA0 && cardsA0 > 0) {
+  pickerWorks = false; // now it must be proven
+  await A.page.locator('button[aria-label^="Choose snooze duration"]').first().click().catch(() => {});
+  await A.page.waitForTimeout(450);
+  await A.page.getByText("Snooze 1 day", { exact: true }).first().click().catch(() => {});
+  await A.page.waitForTimeout(900);
+  pickerLabel = (await A.page.locator(UNDO).locator("xpath=..").innerText().catch(() => "")) || "";
+  pickerWorks = /snoozed for 1 day/i.test(pickerLabel);
+  if (await A.page.locator(UNDO).isVisible().catch(() => false)) {
+    await A.page.locator(UNDO).click().catch(() => {});
+    await A.page.waitForTimeout(800);
+    await gotoPulse(A.page); // confirm clean
+  }
+}
+
 await A.page.screenshot({ path: "scripts/.pulse-snooze-proof.png" });
 const errors = [...A.errors, ...B.errors];
 await A.context.close();
 await browser.close();
 
-console.log(JSON.stringify({ cardsA0, cardsA1, undoVisible, undoSaysSnoozed, cardsB, cardsA2, cardsA3, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ cardsA0, cardsA1, undoVisible, undoSaysSnoozed, cardsB, cardsA2, cardsA3, pickerWorks, pickerLabel: pickerLabel.slice(0, 40), consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 400));
 
 let ok = true;
@@ -117,5 +136,6 @@ check(
 );
 check(cardsA2 === cardsA0, `Undo un-snoozed the card in A (${cardsA2}/${cardsA0})`, `Undo didn't un-snooze in A (${cardsA2}/${cardsA0})`);
 check(cardsA3 === cardsA0, `un-snooze persisted across reload (${cardsA3}/${cardsA0}) — ba-e2e left clean`, `un-snooze didn't persist (${cardsA3}/${cardsA0}) — ba-e2e may be left dirty!`);
+check(pickerWorks, `the duration picker snoozed for the CHOSEN "1 day" (fire-126; banner: "${pickerLabel.slice(0, 40)}")`, `the duration picker didn't reflect "1 day" (banner: "${pickerLabel.slice(0, 60)}")`);
 check(errors.length === 0, "0 console errors across both contexts", `${errors.length} console errors`);
 process.exit(ok ? 0 : 1);

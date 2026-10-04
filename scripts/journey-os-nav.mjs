@@ -103,7 +103,10 @@ await step("open-workspace", async () => {
   const title = page.locator("table tbody tr").first();
   if (await title.count()) await title.click({ timeout: 8000 });
 }, /^\/workspace\//, /.+/);
-await step("editor→home", sidebarClick("Home"), /^\/$/, /.+/); // prove you can return to the shell from the focused editor
+// fire-86: ⌘K must now open INSIDE the fullscreen workspace editor (the universal escape hatch).
+// Before the CommandPaletteHost fix this failed (the handler lived only in AppShell, which the
+// editor bypasses) — so this step is RED on pre-fix prod, GREEN after.
+await step("cmdk-in-editor→pulse", cmdkGo("pulse", /pulse/i), /^\/pulse/, /opportunit|all clear/i);
 
 await browser.close();
 const passed = steps.filter((s) => s.ok).length;

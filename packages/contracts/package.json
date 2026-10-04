@@ -1,0 +1,19 @@
+{
+  "name": "@megabyte/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "description": "Shared platform contracts (Zod schemas + inferred types) for the Megabyte autonomous-factory kernel — WorkspaceRuntime, CodingEngine, Worker, Loop, Run, Task, Capability, Connection, Evidence, GoldenPath. Master directive WS-M1. Consumed by Megabyte + ProjectSites + factory workers.",
+  "scripts": {
+    "types:check": "tsc --noEmit",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

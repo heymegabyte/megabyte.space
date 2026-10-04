@@ -111,6 +111,19 @@ importers:
         specifier: ^4.40.0
         version: 4.124.0(@cloudflare/workers-types@5.20260929.1)
 
+  packages/contracts:
+    dependencies:
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(vite@7.3.6(@types/node@26.1.0)(jiti@2.7.0)(lightningcss@1.33.0))
+
   packages/custom-gatekeeper:
     dependencies:
       '@gadgets/workshop-shared':

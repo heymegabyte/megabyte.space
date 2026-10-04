@@ -1789,3 +1789,14 @@
 - loop-improvement (§8): the green-sweep itself CAUGHT a cross-fire flake (snooze) this fire — validating fire-100's coherence-checkpoint; hardened 3 verifiers against mutable-state + propagation-lag false-REDs so future sweeps are deterministic.
 - attrition: none (ba-e2e left clean — dismiss/snooze stores empty, verified).
 - NEXT: WS-M2 unified Connections inventory, OR WS-N2 /agents store, OR a one-shot `getConnectedAccountCount()` backend method to complete the connect-integration honesty · run green-sweep every few fires.
+
+## fire-105-connected-account-count (2026-10-04) — ✅ getConnectedAccountCount → connect-integration FULLY honest + reusable WS-M2 enabler
+- roster: solo-lead (the exact backend capnweb per-user pattern, 4th time — built inline; completes the fire-104 honesty fix + ships a reusable read) · rejected: WS-M2 full inventory page (still too big/duplicative for one fire); WS-N2 /agents (needs a new store + design) · budget: product + testing
+- [Feature Delivery] `getConnectedAccountCount()` (capnweb) + fully-honest connect-integration — fork bf0b2e99 / parent HEAD — prod: **green-sweep 16/16** (the new RPC loads clean in every Pulse verifier) + 8/8 vitest (incl. the already-connected branch). Backend 6d80308e · router b79852a6.
+  - 3 capnweb layers: `api.ts` getConnectedAccountCount on AuthenticatedApi · `{server,user}.ts` delegation + count via the resilient `#connectedAccountRecords()` iterator (same one subscribeConnectedAccounts uses) · `pulse.tsx` fetches it in the load + gates connect-integration on `gadgets>0 && connectedCount===0`.
+  - connect-integration is now FULLY honest (fire-104 gated gadgets>0; this adds "AND no integration connected yet" — it disappears once you connect one). Proven DETERMINISTICALLY by the pure-function unit test (connected=0 → present, connected=1 → absent), not by ba-e2e's live state.
+- journey: green-sweep — found+fixed: clean (the new RPC didn't break the Pulse load; all 3 Pulse verifiers + 13 others green). ba-e2e connect-integration still shows (it has gadgets + 0 connected accounts) — no prod regression.
+- backlog: WS-M2 getConnectedAccountCount ENABLER ticked [x]; it also unblocks the unified inventory (read the count instead of the heavy subscription).
+- loop-improvement (§8): captured the reusable pattern [[pure-logic-unit-test-beats-mutable-account-verify]] (memory + index) — extract derived logic to a pure function + unit-test branches, retiring the fire-97 mutable-account verifiability trap with a positive pattern.
+- attrition: none (ba-e2e left clean).
+- NEXT: WS-M2 unified Connections inventory (now unblocked — DataTable over accounts + AI providers + the count), OR WS-N2 /agents store · run green-sweep every few fires.

@@ -41,7 +41,7 @@ try {
   const m = await page.evaluate(
     () =>
       new Promise((resolve) => {
-        const out = { lcp: 0, cls: 0, fcp: 0, ttfb: 0 };
+        const out = { lcp: 0, cls: 0, fcp: 0, ttfb: 0, lcpEl: "" };
         const nav = performance.getEntriesByType("navigation")[0];
         if (nav) out.ttfb = Math.round(nav.responseStart);
         const fcp = performance.getEntriesByType("paint").find((e) => e.name === "first-contentful-paint");
@@ -49,7 +49,12 @@ try {
         try {
           new PerformanceObserver((list) => {
             const es = list.getEntries();
-            out.lcp = Math.round(es[es.length - 1].startTime);
+            const last = es[es.length - 1];
+            out.lcp = Math.round(last.startTime);
+            const el = last.element;
+            out.lcpEl = el
+              ? (el.tagName + (el.id ? "#" + el.id : "") + (typeof el.className === "string" && el.className ? "." + el.className.split(" ").slice(0, 2).join(".") : "")).slice(0, 90)
+              : "(none)";
           }).observe({ type: "largest-contentful-paint", buffered: true });
           new PerformanceObserver((list) => {
             for (const e of list.getEntries()) if (!e.hadRecentInput) out.cls += e.value;
@@ -82,6 +87,7 @@ try {
   console.log(`LCP=${m.lcp}ms (≤${LCP_MAX}) ${lcpOk ? "✅" : "❌"}`);
   console.log(`CLS=${m.cls} (≤${CLS_MAX}) ${clsOk ? "✅" : "❌"}`);
   console.log(`FCP=${m.fcp}ms · TTFB=${m.ttfb}ms · INP-proxy=${inp}ms (throttled: Fast-3G + 4× CPU)`);
+  console.log(`LCP element: ${m.lcpEl}`);
   code = lcpOk && clsOk ? 0 : 1;
   console.log(code === 0 ? "\nPASS — apex within cinematic CWV targets" : "\nFAIL — a CWV target missed");
 } catch (e) {

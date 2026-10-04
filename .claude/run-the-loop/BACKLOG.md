@@ -53,6 +53,11 @@ Directive: implement every documented-but-unbuilt feature "at least enough to DE
 - [x] DEMO-5 (fork 92142d6b): Agents DEMO surface shipped — /agents preview (hire-an-agent composer + example coworkers w/ Working/Idle). A model-NEUTRAL VIEW (reversible two-way-door preview) that does NOT commit the data model. The REAL build + data model still awaits WS-N2 (agent≡gadget vs separate store). Every North-Star primitive now has a surface.
 - VERIFICATION NOTE: /admin is admin-gated; ba-e2e is NOT an admin, so admin panels aren't ba-e2e-browsable. `scripts/verify-admin-platform.mjs` is ready for an admin session (exits 3 "no admin access" cleanly); until then the gate is build + green-sweep (no-regression) + the pure-static-render structure.
 
+### WS-PERF — apex LCP (DEDICATED perf arc — measured fire-142)
+- [ ] **Apex LCP ≈7.5s** (throttled Fast-3G + 4× CPU; house target ≤2000ms). CLS 0 ✅, FCP ~1.1s ✅. The LCP element is the hero **H1** — it waits for the full OS app bundle (`index.js` ~417KB gz) to download+parse+EXECUTE before rendering (the WebGL is already lazy, so NOT the blocker; `LandingHomepage` is eager in `__root.tsx` → the anon landing loads the entire authed SPA to paint a headline).
+- Fix options (big/architectural — dedicated session, measure after each): (a) SSR/pre-render the landing's above-fold hero (TTFR mandate); (b) split the anon landing/signin into a TINY separate entry (anon visitors don't download the authed OS); (c) trim the eager `index.js` shell (audit Kumo/capnweb/phosphor/TanStack eager usage). Routes are already code-split — the shell is the weight. (a)/(b) are the real wins.
+- Gate: `node scripts/verify-apex-cwv.mjs` (now reports the LCP element). Run-on-demand (not in green-sweep).
+
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·
   credentials·permissions·autonomy·budgets·model-routing·activity·metrics·cost·memory. Real principals.

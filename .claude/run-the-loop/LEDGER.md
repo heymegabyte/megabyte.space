@@ -2202,3 +2202,15 @@
 - loop-improvement (§8): closed a journey-coverage DRIFT — the primary nav tour now matches the current surface set (it had lagged ~10 fires of new surfaces); a future surface added to the rail should be added here too (same as the a11y/reachability coverage note).
 - attrition: none.
 - NEXT: rebalance continues — testing (a long-trail stateful case), architecture (drift sweep via the pnpm-check gates), perf (MEASURE CWV first, then decide), or docs; the product frontier stays WS-N2-blocked · cron a6d5c7ab drains any WS-DEMO remainder.
+
+## fire-142-measure-apex-cwv (2026-10-04) — ✅ PERF DISCOVERY: measured a REAL apex-LCP problem (7.5s) + root-caused it + hardened the CWV gate
+- roster: solo-lead (perf rebalance — MEASURED before changing, per the fire-141 plan) · budget: perf/discovery
+- [Perf/Tooling] CWV measurement + LCP-element diagnostic — parent HEAD — verified: `verify-apex-cwv` runs + now reports the LCP element. No deploy (verifier-only; not in green-sweep — run-on-demand).
+  - FINDING (data-driven, house standard LCP≤2000ms): the public apex LCP is **~7.3–7.5s** under throttle (Fast-3G + 4× CPU). CLS 0 ✅, FCP ~1.1s ✅. The 6s FCP→LCP gap = a large late paint.
+  - ROOT CAUSE (confirmed, not guessed): the LCP element is the hero **`H1`** (text), NOT the WebGL canvas. The WebGL is ALREADY lazy (`import("./landing-webgl")` in LandingHomepage) so it's not the blocker. `LandingHomepage` is EAGER-imported in `__root.tsx` → the hero H1 renders only after the full OS app bundle (`index.js` ~417KB gz) downloads + parses + EXECUTES (dominant under 4× CPU). The anonymous landing loads the entire authed SPA before painting its headline.
+  - FIX = BIG (decomposed, NOT this fire — a multi-fire perf arc, dedicated session): either (a) SSR/pre-render the landing's above-fold hero (TTFR mandate — paints at FCP, before hydration); (b) split the anon landing/signin into a TINY separate entry so anon visitors don't download the authed OS; or (c) aggressively trim the `index.js` shell (audit what's eager — Kumo/capnweb/phosphor/TanStack — move non-critical to lazy). Measure after each. (a)/(b) are the real wins; routes are ALREADY code-split, so the shell itself is the weight.
+- journey: improved `verify-apex-cwv.mjs` to capture + log the LCP ELEMENT (tag#id.class) — the perf gate now says WHAT the LCP is, not just the number (made root-causing this possible).
+- backlog: added a PERF-DEBT item (apex-LCP, below) with the root cause + fix options for a dedicated fire.
+- loop-improvement (§8): the CWV gate now reports the LCP element — future perf regressions are diagnosable at a glance, not just "LCP too high". MEASURED before touching anything (avoided the fire-141 blind vendor-split that would've been wrong — the WebGL/three was never the blocker; the eager app shell is).
+- attrition: none.
+- NEXT: the apex-LCP fix is a DEDICATED perf arc (SSR the landing OR split the anon entry) — big + architectural, do it in a focused session not a loop tail; meanwhile continue rebalancing (testing/arch/docs) · cron a6d5c7ab drains WS-DEMO remainder · product frontier still WS-N2.

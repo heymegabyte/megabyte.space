@@ -11,9 +11,10 @@ import { chromium } from 'playwright'
 const APEX = 'https://megabyte.space'
 const PATH = process.argv[2] || '/'
 const ENTERED = process.argv.includes('--entered')
+const MOBILE = process.argv.includes('--mobile')
 const browser = await chromium.launch()
 const page = await browser.newPage({
-  viewport: { width: 1440, height: 900 },
+  viewport: MOBILE ? { width: 390, height: 844 } : { width: 1440, height: 900 },
   userAgent:
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36',
 })
@@ -38,11 +39,12 @@ const signInVisible = await page
   .catch(() => false)
 // Did the raw OS shell leak in anonymously? (the sidebar nav should NOT render pre-login.)
 const osShellLeaked = await page.locator('aside nav').first().isVisible().catch(() => false)
+const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth).catch(() => 0)
 
-await page.screenshot({ path: 'scripts/.anon-console-proof.png' })
+await page.screenshot({ path: `scripts/.anon-console-proof${MOBILE ? '-mobile' : ''}.png` })
 await browser.close()
 
-console.log(JSON.stringify({ url, signInVisible, osShellLeaked, consoleErrors: errors.length, bodyPreview: bodyText }, null, 2))
+console.log(JSON.stringify({ url, viewport: MOBILE ? '390' : '1440', signInVisible, osShellLeaked, overflow, consoleErrors: errors.length, bodyPreview: bodyText }, null, 2))
 if (errors.length) console.log('\nERRORS:\n' + errors.map((e, i) => `  ${i + 1}. ${e}`).join('\n').slice(0, 1200))
 
 let ok = true
@@ -50,4 +52,6 @@ if (errors.length) { console.log(`\n❌ FAIL: ${errors.length} console error(s) 
 else console.log('\n✅ PASS: 0 console errors on the anonymous load')
 if (osShellLeaked) { console.log('❌ FAIL: the OS shell (sidebar nav) rendered WITHOUT login — force-login not enforced'); ok = false }
 else console.log('✅ PASS: the OS shell did not leak pre-login')
+if (overflow > 2) { console.log(`❌ FAIL: horizontal overflow ${overflow}px at ${MOBILE ? '390' : '1440'}px`); ok = false }
+else console.log(`✅ PASS: no horizontal overflow (${overflow}px)`)
 process.exit(ok ? 0 : 1)

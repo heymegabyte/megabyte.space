@@ -2115,3 +2115,13 @@
 - loop-improvement (§8): generalized the per-surface verifier into ONE demo-surface CLASS gate (`verify-demo-surfaces.mjs`) — scales without proliferating verify-*.mjs files; each new coming-soon surface is covered by adding a row. a11y now 17 surfaces; reachability 15 routes.
 - attrition: none.
 - NEXT (WS-DEMO via cron): Metrics demo surface (observability cards), OR make Resources/Platform panels show REAL data, OR DEMO-4 per-primitive /admin panels · NOT /agents (WS-N2-blocked) · cron a6d5c7ab drains it.
+
+## fire-134-admin-metrics-tab (2026-10-04) — ✅ PRODUCT (WS-DEMO DEMO-4a): /admin Metrics tab — observability dashboard demo
+- roster: solo-lead (DEMO-4 per-primitive /admin tabs — Brian's "/admin with all the features"; chose /admin over a rail route since Metrics is an admin/ops concern + avoids rail bloat) · budget: product/demo
+- [Feature] /admin **Metrics** tab — fork d9df7d99 / parent HEAD — prod: build clean + green-sweep 22/22. Router 1924b250.
+  - WHAT: a vivid observability dashboard demo — 4 stat cards (Requests today 12.4k · Success 99.2% · p95 142ms · Active gadgets 8, each w/ a delta) + a 7-day request-trend bar chart. Honestly labeled "Preview · sample data" (not deceptive). Added `{value:'metrics'}` to the AdminPage tabs + `METRIC_STATS`/`METRIC_TREND` module data + a render block after the Platform block. Richer than a frosted mock — shows what Metrics will look like.
+- journey: admin-gated (ba-e2e not admin) → build + green-sweep 22/22 (no regression). Same gate as the Platform tab (fire-128).
+- backlog: WS-DEMO DEMO-4a (Metrics) shipped. Remaining DEMO-4: Permissions table, Provenance trail (both /admin tabs). DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): captured a RECURRING limitation — admin-gated demo surfaces (Platform, Metrics, future Permissions/Provenance) can't be ba-e2e-browser-verified (ba-e2e isn't an admin), so they ship build+green-sweep-only; a true render-proof needs an admin session. Mitigation stands (build + no-regression + pure-static render); surfaced so it's not mistaken for full browser coverage.
+- attrition: none.
+- NEXT (WS-DEMO via cron): /admin Permissions tab (roles×scopes demo table) + Provenance tab (audit-trail demo) — completes the per-primitive /admin tabs · then real data for the mock panels · NOT /agents (WS-N2-blocked) · cron a6d5c7ab drains it.

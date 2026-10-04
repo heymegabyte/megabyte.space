@@ -100,8 +100,10 @@ await step("sidebar→outputs", sidebarClick("Outputs"), /^\/outputs/, /.+/);
 await step("cmdk→pulse", cmdkGo("pulse", /pulse/i), /^\/pulse/, /opportunit|all clear/i);
 await step("sidebar→gadgets", sidebarClick("Gadgets"), /^\/gadgets/, /total spend/i); // cost strip (fire-84) reached via nav
 await step("open-workspace", async () => {
-  const title = page.locator("table tbody tr").first();
-  if (await title.count()) await title.click({ timeout: 8000 });
+  // fire-94: the gadget title is a real <Link name="Open …"> (the row is no longer a role=button
+  // wrapper around the star — a11y nested-interactive fix).
+  const link = page.getByRole("link", { name: /^Open / }).first();
+  if (await link.count()) await link.click({ timeout: 8000 });
 }, /^\/workspace\//, /.+/);
 // fire-86: ⌘K must now open INSIDE the fullscreen workspace editor (the universal escape hatch).
 // Before the CommandPaletteHost fix this failed (the handler lived only in AppShell, which the

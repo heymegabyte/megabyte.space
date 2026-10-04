@@ -41,10 +41,11 @@ const bodyText = await page.locator("body").innerText().catch(() => "");
 const hasFire78Gadget = /counter|untitled|simple click/i.test(bodyText);
 await page.screenshot({ path: "scripts/.gadgets-table-proof.png" });
 
-// Row-click → opens the workspace.
+// Title-link → opens the workspace. (fire-94: the row is no longer an interactive wrapper — a11y
+// nested-interactive fix — so the title is a real <Link name="Open …">.)
 let openedWorkspace = false;
 if (rowCount > 0) {
-  await page.locator("tbody tr").first().click().catch(() => {});
+  await page.getByRole("link", { name: /^Open / }).first().click().catch(() => {});
   await page.waitForTimeout(2500);
   openedWorkspace = /\/workspace\//.test(page.url());
 }
@@ -58,8 +59,8 @@ if (rowCount < 1) { console.log("❌ FAIL: no gadget rows (the fire-78 gadget sh
 else console.log(`✅ PASS: ${rowCount} gadget row(s) — display reconciles with the live-created gadget`);
 if (!headers.some((h) => /last active|active/i.test(h))) { console.log(`❌ FAIL: expected columns missing (got: ${headers.join(", ")})`); ok = false; }
 else console.log(`✅ PASS: table columns present (${headers.join(" / ")})`);
-if (rowCount > 0 && !openedWorkspace) { console.log("❌ FAIL: row-click didn't open the workspace"); ok = false; }
-else if (rowCount > 0) console.log("✅ PASS: row-click opens the workspace (/workspace/…)");
+if (rowCount > 0 && !openedWorkspace) { console.log("❌ FAIL: title-link didn't open the workspace"); ok = false; }
+else if (rowCount > 0) console.log("✅ PASS: title-link opens the workspace (/workspace/…)");
 if (errors.length) { console.log("❌ FAIL: console errors"); ok = false; }
 else console.log("✅ PASS: 0 console errors");
 process.exit(ok ? 0 : 1);

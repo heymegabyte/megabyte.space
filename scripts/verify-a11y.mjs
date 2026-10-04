@@ -29,6 +29,7 @@ async function audit(label) {
     id: x.id, impact: x.impact, n: x.nodes.length, help: x.help,
     targets: x.nodes.slice(0, 3).map((nd) => nd.target.join(' ')),
     sample: x.nodes[0]?.failureSummary?.split('\n').filter((l) => /contrast|ratio|foreground|background/i.test(l)).slice(0, 2).join(' | '),
+    html: x.id === 'nested-interactive' ? x.nodes.slice(0, 2).map((nd) => nd.html?.slice(0, 160)) : undefined,
   }))
   const serious = v.filter((x) => x.impact === 'serious' || x.impact === 'critical')
   console.log(`\n── ${label} — ${v.length} violation type(s) (${serious.length} serious/critical)`)
@@ -36,6 +37,7 @@ async function audit(label) {
     console.log(`   ${x.impact === 'serious' || x.impact === 'critical' ? '❌' : '•'} [${x.impact}] ${x.id} ×${x.n} — ${x.help}`)
     for (const t of x.targets) console.log(`        ↳ ${t}`)
     if (x.sample) console.log(`        ⊙ ${x.sample}`)
+    for (const h of x.html ?? []) console.log(`        ⧉ ${h}`)
   }
   return { label, violations: v, serious: serious.length }
 }

@@ -32,8 +32,9 @@ await page.waitForSelector("aside", { timeout: 25000 }).catch(() => {}); // the 
 await page.waitForTimeout(2500);
 await page.screenshot({ path: "scripts/.os-home.png" });
 
-// Client-side nav via the sidebar (no full reboot) to each surface.
-const surfaces = ["Workspaces", "Blueprints", "Explore", "Outputs"];
+// Client-side nav via the sidebar (no full reboot) to each surface. Pass surface names as CLI args
+// to target a subset (e.g. `node walk-os.mjs Explore`) — fast re-verification of one changed surface.
+const surfaces = process.argv.slice(2).length ? process.argv.slice(2) : ["Workspaces", "Blueprints", "Explore", "Outputs"];
 for (const label of surfaces) {
   current = label.toLowerCase();
   const link = page.locator('aside a, aside [role="button"]', { hasText: new RegExp(`^${label}$`) }).first();

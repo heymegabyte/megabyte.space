@@ -234,8 +234,10 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   source for `from-orange-600`/`to-red-600`/warm Tailwind classes AND inline hex (`#ff…`), not just `--color-*` tokens.
   Orange icon-gradient palettes (`BlueprintCard`/`RecentApps`) survived fire-72's token remap → fire-76 fixed them.
   A periodic broad Deep-UI-Explorer walk (`scripts/walk-os.mjs`) catches this surface-wide residue (5 /models fires missed it).
-- [ ] blueprint card PREVIEW IMAGES render as gray skeletons on Explore + Workspaces (never resolve to real previews)
-  — generate real previews OR a branded cyan placeholder (surfaced by the fire-76 walk; os.workspaces 9->9.5 knock).
+- [x] blueprint card previews FIXED (fire-77, fork f5f50861+a2ae2b27) — the skeleton-looking placeholder is now a
+  gorgeous BRANDED cover (per-blueprint cyan/violet gradient + glow + dot-grid + a centered glass TYPE icon
+  Docs/Slides/Sheets). Parity on Explore + Workspaces; real-browser verified, 0 errors, vision 9.5. (Real
+  screenshots when a blueprint has one still override the cover — this only replaces the no-screenshot fallback.)
 - [ ] Slice B — shift the dark base off violet hue 285 toward black #060610 (surfaces/lines/rings), re-check
   contrast on every Kumo surface token; screenshot + vision ≥9/10 on 3+ authed surfaces.
 

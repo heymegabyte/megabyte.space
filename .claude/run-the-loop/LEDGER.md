@@ -1303,3 +1303,21 @@
   color classes/hexes, not just remap tokens (added to the WS-13 recipe); (2) periodic BROAD Deep-UI-Explorer walks
   prevent surface tunnel-vision (5 fires on /models missed OS-wide orange) — `walk-os.mjs` is the reusable tool.
 - NEXT: blueprint preview-image skeletons (generate real previews or a branded placeholder) · WS-12 dedicated session · reuse the DataTable for a Workspaces/Gadgets table.
+
+## fire-77-branded-previews (2026-10-03) — ✅ blueprint previews: skeleton-looking placeholder → gorgeous branded type-icon covers
+
+- Lease `fire-77-previews-636716c0`. Drained the top fire-76-walk finding: the blueprint preview "skeletons."
+- ROOT CAUSE: the no-screenshot `BlueprintPreviewPlaceholder` was a flat-gray fake-DOCUMENT SVG mockup on a
+  0.08-opacity gradient — a DELIBERATE placeholder that READ as a perpetual loading skeleton (fake content bars).
+- SHIPPED (fork f5f50861 + a2ae2b27 / outer <this> ; deployed 539d913d) — redesigned it into a gorgeous BRANDED
+  cover: a per-blueprint cyan/violet gradient wash (the fire-76 brand palette) + soft cyan glows + a fine dot-grid +
+  a centered glass chip holding the blueprint's TYPE icon (Docs→FileText / Slides→Presentation / Sheets→GridNine,
+  default Hexagon), inferred from the title. Fixed a parity gap: Explore (BlueprintsPage) wasn't passing `title` →
+  generic hexagons; now passes `blueprint.metadata.title` so Explore + Workspaces both show type icons.
+- VERIFIED (BA-authed real browser, `walk-os.mjs`): Workspaces + Explore both render gorgeous branded covers with
+  type-differentiated cyan icons (no skeletons), 0 console errors; vision 9.5. os.workspaces 9→9.5, +os.explore 9.5.
+- Loop-improvement (§8): (a) UX lesson — a no-data PLACEHOLDER must look INTENTIONAL (a branded cover), NEVER like a
+  loading SKELETON (fake content bars that never resolve = reads as broken/forever-loading); per gorgeous-by-default
+  + embarrassingly-easy. (b) Parameterized `walk-os.mjs` to accept surface args (`node walk-os.mjs Explore`) so
+  re-verification targets just the changed surface instead of re-walking all 5.
+- NEXT: WS-12 dedicated session · reuse the DataTable for a Workspaces/Gadgets table · (the OS surfaces are now clean + on-brand + gorgeous — consider the next absorption capability or WS-12).

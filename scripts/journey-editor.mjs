@@ -125,7 +125,12 @@ await step("editor: Resources tab shows the resource panels", async () => {
       .then(() => true)
       .catch(() => false);
     assert(modelsLive, 'Models card did not show the live usable-model count ("N usable")');
-    return `Resources panel: ${cards.length}/${all.length} cards, Models live`;
+    const connLive = await page
+      .waitForFunction(() => /\d+ connected/.test(document.body.innerText), { timeout: 6000 })
+      .then(() => true)
+      .catch(() => false);
+    assert(connLive, 'Connections card did not show the live connected count ("N connected")');
+    return `Resources panel: ${cards.length}/${all.length} cards, Models + Connections live`;
   }
   return "Resources tab not shown (chat-mode pane) — editor stayed clean";
 });

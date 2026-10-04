@@ -2147,3 +2147,13 @@
 - loop-improvement (§8): demonstrated + gated the mock→real pattern — a demo panel fetches live data (fail-soft) + the journey asserts the real-data MARKER (not just card presence), so a regression to mock is caught. The recipe for turning the other demo panels real is now proven + test-backed.
 - attrition: none.
 - NEXT (WS-DEMO via cron): make another panel real (Resources Connections via listConnectedAccounts count; or the Platform Costs card Σ-spend), OR await WS-N2 for Agents · cron a6d5c7ab drains it.
+
+## fire-137-resources-connections-real (2026-10-04) — ✅ PRODUCT (WS-DEMO): editor Resources Connections panel MOCK → REAL (live connected count)
+- roster: solo-lead (continued the mock→real pivot; 2nd Resources panel with a real data source) · budget: product/real-data
+- [Feature] Resources Connections panel live data — fork 3f4557b8 / parent HEAD — prod: **journey-editor "11/11 cards, Models + Connections live", 8/8 steps, 0 console errors** + green-sweep 22/22. Router 7e401575.
+  - WHAT: `ResourcesPanel` now also calls `listConnectedAccounts()` (fail-soft) → the Connections card shows "N connected · managed in the Connections tab" (real). Resources is now REAL wherever a data source exists — **Models + Connections live**; the other 9 panels stay demo-level (genuinely-future backends: Storage/Secrets/Compute/Logs/Deployments/Schedule/Metrics/Domains/Knowledge).
+- journey: extended journey-editor to assert BOTH live markers (`/\d+ usable/` + `/\d+ connected/`); counts not hard-asserted (mutable account), only that real counts rendered. Both green.
+- backlog: WS-DEMO — Resources real-data complete (the 2 panels with sources). Remaining: Platform Costs Σ-spend (admin-gated), DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): the mock→real recipe is now applied to 2 panels + gated by the journey (both live markers) — the Resources tab honestly separates REAL (Models, Connections) from genuinely-future (the 9 demo panels), and a regression of either to mock is caught.
+- attrition: none.
+- NEXT (WS-DEMO via cron): the Platform Costs card Σ-spend from listGadgets (admin-gated), OR await WS-N2 for Agents — the ba-e2e-reachable real-data sources are now exhausted (Models + Connections); further real data needs either admin surfaces or new backends · cron a6d5c7ab drains it.

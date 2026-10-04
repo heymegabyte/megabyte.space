@@ -32,7 +32,8 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   usable → enable providers" from listModels; "build your first gadget" / cost insight from listGadgets) as
   cards with Explain + Implement(navigate) + Dismiss(local). Flag-gated + nav. The Opportunity primitive.
 - [x] persist + dismiss SERVER-SIDE (fire-101, fork 5a0df9d1): per-user UserDO singleton `dismissedOpportunities` + capnweb get/dismiss/restoreOpportunity; pulse.tsx seeds from the server (not localStorage) so dismissals sync cross-device + survive storage-clear; calm inline Undo. Proven by `verify-pulse-persist.mjs` (fresh-context B saw the dismissal ⇒ server-side) + `verify-pulse.mjs`.
-- [ ] (next) SNOOZE/schedule/require-approval (a `snoozedUntil` map on the same UserDO singleton + a Snooze action beside Dismiss); more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
+- [x] SNOOZE SERVER-SIDE (fire-102, fork 90365e66): per-user UserDO `snoozedOpportunities` map (id→until-ms, lazy-pruned so a lapsed snooze re-surfaces) + capnweb get/snooze/unsnoozeOpportunity; Snooze action (3-day default) beside Dismiss, unified optimistic act()/undo(). Proven by `verify-pulse-snooze.mjs` (fresh-context B saw the snooze ⇒ server-side) + green-sweep 15/15.
+- [ ] (next) schedule/require-approval actions on an opportunity; a snooze-duration picker (1d/3d/1w popover); more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
 
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·

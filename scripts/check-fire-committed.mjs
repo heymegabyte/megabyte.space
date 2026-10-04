@@ -16,10 +16,18 @@
  *
  * Advisory by default (exit 0 + warn). `--ci` exits 1 on any dirty tracked file.
  *
+ * SECOND GUARD (fire-147): a PLACEHOLDER-SHA scan of BACKLOG.md. The fire-146 class — a lead
+ * dies mid-slice having TICKED a frontier item (`- [x] … fork <this>`) but never filled the
+ * real gitlink/commit SHA. A ticked item crediting a phantom `<this>` SHA lies to the next fire
+ * exactly like uncommitted work does. Scoped to `- [x]` lines in BACKLOG.md ONLY — the LEDGER's
+ * `outer <this>` is a DELIBERATE self-referential convention (the recording commit's own SHA is
+ * unknowable at write time), never a lie, so it is NOT scanned.
+ *
  * Usage: node scripts/check-fire-committed.mjs [--ci]
  *   Run it last in a fire, before `loop-fire-lock release`.
  */
-import { execFileSync } from "node:child_process";
+import { execFileSync, } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 const CI = process.argv.includes("--ci");
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
@@ -47,10 +55,25 @@ for (const line of porcelain.split("\n")) {
   if (WATCHED.some((re) => re.test(path))) dirty.push({ xy, path });
 }
 
+// GUARD 2 — placeholder-SHA scan of BACKLOG.md ticked items (fire-146 class). A `- [x]` line that
+// still carries `fork <…>` / `gitlink <…>` / a bare `<this>` is a ticked deliverable crediting a
+// phantom SHA. (LEDGER.md is intentionally NOT scanned — `outer <this>` is an accepted convention.)
+const PLACEHOLDER_RE = /(?:fork|gitlink)\s*<[^>]*>|<this>/i;
+const placeholders = [];
+try {
+  const backlog = readFileSync(`${ROOT}/.claude/run-the-loop/BACKLOG.md`, "utf8").split("\n");
+  backlog.forEach((line, i) => {
+    if (/^\s*-\s*\[x\]/i.test(line) && PLACEHOLDER_RE.test(line)) {
+      placeholders.push({ line: i + 1, text: line.trim().slice(0, 120) });
+    }
+  });
+} catch { /* BACKLOG absent — nothing to scan */ }
+
 const out = {
   meta: { repo: ROOT },
   dirty,
-  summary: { dirty: dirty.length, exit: dirty.length && CI ? 1 : 0 },
+  placeholders,
+  summary: { dirty: dirty.length, placeholders: placeholders.length, exit: (dirty.length || placeholders.length) && CI ? 1 : 0 },
 };
 process.stdout.write(JSON.stringify(out, null, 2) + "\n");
 
@@ -60,5 +83,11 @@ if (dirty.length) {
   process.stderr.write(`A fire that ticks the BACKLOG done but leaves work uncommitted lies to the next fire (fire-52 class).\n`);
 } else {
   process.stderr.write(`✅ working tree clean on watched surfaces — the fire committed everything it touched.\n`);
+}
+if (placeholders.length) {
+  process.stderr.write(`\n⚠️  ${placeholders.length} ticked BACKLOG item(s) with an UNFILLED placeholder SHA — fill the real fork/commit SHA (fire-146 class):\n`);
+  for (const p of placeholders) process.stderr.write(`   L${p.line}  ${p.text}\n`);
+} else {
+  process.stderr.write(`✅ no placeholder-SHA ticked items in BACKLOG — the fire credited real commits.\n`);
 }
 process.exit(out.summary.exit);

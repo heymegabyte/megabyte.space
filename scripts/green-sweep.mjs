@@ -24,6 +24,7 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 // per-surface Models checks (default/detail/filter — catalog represents the surface here). Add a check
 // here when a NEW user-facing surface/invariant ships; keep it fast + reliable. (fire-112 coverage audit.)
 const CHECKS = [
+  ['check-a11y-coverage.mjs', [], 'A11Y-COVERAGE GREEN'], // DRIFT GATE (fire-151): every fork static route is in verify-a11y's list — fast/static preamble so a new surface can't ship a11y-unaudited (fire-103/117/146/147 class)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
   ['verify-home-composer.mjs', [], '0 console errors'], // the value-path ENTRY — read-only (fire-114)

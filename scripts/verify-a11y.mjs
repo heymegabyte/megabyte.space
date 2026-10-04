@@ -3,8 +3,10 @@
  * fire-93 accessibility audit (expanded 106/108/117): axe-core (WCAG 2.2 AA) over the force-login
  * gate (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets,
  * Outputs, Context & Skills, Goals, Automations, Agents, Blueprints, Explore, Models, Providers,
- * Gatekeepers, Connections, Profile — PLUS the fullscreen workspace EDITOR (dynamic /workspace/$id,
- * click-nav). 18 surfaces total.
+ * Gatekeepers, Connections, Profile, Admin — PLUS /signup (anon) and the fullscreen workspace EDITOR
+ * (dynamic /workspace/$id, click-nav). The static-route set is ENFORCED by check-a11y-coverage.mjs,
+ * which fails if any fork route (cloudflare-os/.../src/routes/*.tsx) is missing from the list below —
+ * so a new surface can never ship a11y-unaudited (the fire-103/117/146/147 recurring class).
  * Reports violations per surface; FAILS on any serious/critical violation (axe 0-violations is a
  * required gate per quality-metrics). BA-authed real Chromium, PROD. Needs BA creds. Both themes.
  */
@@ -62,6 +64,11 @@ await page.waitForSelector('input[type="email"]', { timeout: 20000 }).catch(() =
 await page.waitForTimeout(800)
 out.push(await audit('/signin (anon)'))
 
+// 1b. /signup (anonymous — the Better-Auth create-account route; redirects to / in CF_ACCESS_MODE).
+await page.goto(`${APEX}/signup`, { waitUntil: 'domcontentloaded', timeout: 40000 })
+await page.waitForTimeout(800)
+out.push(await audit('/signup (anon)'))
+
 // Sign in, then audit the authed surfaces.
 await page.fill('input[type="email"]', EMAIL)
 await page.fill('input[type="password"]', PASSWORD)
@@ -93,6 +100,7 @@ for (const [path, signal] of [
   ['/gatekeepers', /gatekeeper|connect|integration/i],
   ['/connections', /connection|integration|provider/i],
   ['/profile', /profile|account|display name/i],
+  ['/admin', /admin|platform features|feature flag|site name/i], // fire-151: AdminPage catalog — was unaudited (os.admin score 0, never inspected; caught by check-a11y-coverage)
 ]) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})

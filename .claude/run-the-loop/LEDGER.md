@@ -1671,3 +1671,20 @@
   rebuild the parent's `useMemo` columns — keeping input focus) is the template for future inline-edit cells.
 - NEXT: gadget delete-with-undo (destructive — needs a confirm + careful verify that doesn't lose ba-e2e's gadget) ·
   set-default-model Pulse detector (getPreferredModel===null, now confirmed) · WS-M2 Connections.
+
+## fire-97-pulse-default-model (2026-10-04) — ✅ WS-N1: 5th Pulse detector (set-default-model) + delete RPC confirmed/queued
+- Checked the delete path first: the gadget stub has `deleteSelf()` (api.ts) — delete IS buildable, but it's destructive
+  + permanent (no soft-delete RPC), so proper undo + a safe verify (a throwaway gadget, never ba-e2e's only one) is a
+  DEDICATED fire, not a long-session tail. Queued with the confirmed RPC + the pre-commit-undo design.
+- SHIPPED instead (non-destructive) the now-unblocked set-default-model detector (fork 9c011109 → gitlink d6ab1a75;
+  deployed v393047a8): when models ARE usable but `getPreferredModel()===null`, Pulse surfaces "Choose your default
+  model" → /models. Fetches getPreferredModel() in the load Promise.all; honest (only when genuinely unset).
+- VERIFIED (BA-authed real browser): 4 cards + the detector **correctly ABSENT** — ba-e2e HAS a default set, so the
+  opportunity honestly doesn't fire (verifies the not-true path); 0 console errors; existing assertions green. The
+  POSITIVE path (fires when preferred===null) is logic/typecheck-verified, NOT browser-positively — ba-e2e can't trigger
+  it (it has a default), and forcing it needs a reversible setPreferredModel(null) causal test (no UI null-set affordance).
+- Loop-improvement (§8): **detector-verifiability** lesson — when adding a state-gated detector, prefer one whose trigger
+  the TEST ACCOUNT meets (fire-92 pin-favorite fired + was fully verifiable) OR wire a reversible causal test; a detector
+  the test account can't trigger ships only logic-verified. Captured in BACKLOG facts.
+- NEXT: gadget delete-with-undo (dedicated fire) · a reversible setPreferredModel(null) causal test to positively assert
+  the fire-97 detector · WS-M2 Connections.

@@ -309,7 +309,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   `<button>` → restructure so row-click isn't an interactive wrapper around a button (e.g. a full-cell link + sibling
   actions, keeping keyboard access); (b) a shared base-ui trigger (`#base-ui-_r_3_`) nested in interactive on all authed
   surfaces — inspect the AppShell/sidebar chrome. Then light-mode contrast + the 8 manual WCAG-2.2 criteria axe can't test.
-
+- **Detector/feature verifiability (fire-97)**: when a slice is gated on account STATE (a Pulse detector that fires only
+  when `getPreferredModel()===null`, a flag, an empty list), prefer one whose trigger the TEST ACCOUNT (ba-e2e) MEETS so
+  it's POSITIVELY browser-verifiable (fire-92 pin-favorite fired for ba-e2e → fully proven; fire-97 set-default-model did
+  NOT, because ba-e2e has a default → only logic-verified + absent-path proven). If the test account can't trigger it,
+  wire a REVERSIBLE causal test (set the state → assert → restore, like verify-gadget-pin/rename) rather than ship
+  logic-only. Gadget `deleteSelf()` exists (api.ts) — delete-with-undo is a dedicated fire (destructive; verify via a
+  throwaway `newWorkspace()`, never ba-e2e's real gadget).
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +
   vision score tracked in `.claude/modifier-matrix.json`.

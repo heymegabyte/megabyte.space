@@ -41,6 +41,15 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   - later (as data sources arrive): SEO/errors/stale-knowledge/agent-perf.
 - [ ] (next) schedule/require-approval actions on an opportunity; ~~a snooze-duration picker (1d/3d/1w popover)~~ ✅ fire-126 (caret menu beside the one-click 3d Snooze; backend durationMs already supported); auto-execute high-confidence low-risk per policy.
 
+### WS-DEMO — "/admin + Editor demoable with ALL features" (Brian /loop 2026-10-04, 15m cron a6d5c7ab)
+Directive: implement every documented-but-unbuilt feature "at least enough to DEMO" — VISIBLE surfaces (mock/preview OK), so /admin shows all features + the Editor gets more panels (e.g. a Resources page). Look through the docs; continually implement what's not there. The 15m loop drains this — ship ONE demoable slice per fire. (Lesson: demoable-first — don't defer a documented feature as "prereq-blocked" when a demo-level panel is buildable; see memory [[demoable-first-visible-surfaces-for-documented-features]].)
+- [x] DEMO-1 (fire /loop, fork 51989dbc): /admin **"Platform" tab** — glanceable grid of all 13 primitives w/ Live/Preview/Soon chips (Opportunities/Gadgets/Models/Connections/Outputs/Costs = Live; Knowledge = Preview; Goals/Agents/Automations/Metrics/Permissions/Provenance = Soon). The at-a-glance "all features" demo.
+- [ ] DEMO-2: Editor **"Resources" right-pane tab** (Brian's explicit example) — add `'resources'` to the RightTab union (`GadgetEditor.tsx` ~L149) + `rightTabs()` (~L165) + a render block (~after the Connections block, L1703); panel lists the workspace's models + connections + knowledge sources (reuse `ComingSoonPreview` for the mock).
+- [ ] DEMO-3: make the Platform cards CLICKABLE — live cards `navigate()` to their surface; soon/preview stay static.
+- [ ] DEMO-4: expand each "Soon" primitive into its OWN demo panel (one per fire): Costs (account-spend Σ + trend from listGadgets) · Metrics (activity/success/latency cards) · Automations (scheduled-task list + next-run) · Permissions (roles×scopes table) · Provenance (audit-trail list) · Knowledge (sources registry + freshness) · Goals (state-an-outcome composer mock).
+- [ ] DEMO-5: Agents surface — demo 'Soon' panel OK now; the REAL build is BLOCKED on WS-N2 (agent≡gadget vs separate store, below).
+- VERIFICATION NOTE: /admin is admin-gated; ba-e2e is NOT an admin, so admin panels aren't ba-e2e-browsable. `scripts/verify-admin-platform.mjs` is ready for an admin session (exits 3 "no admin access" cleanly); until then the gate is build + green-sweep (no-regression) + the pure-static-render structure.
+
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·
   credentials·permissions·autonomy·budgets·model-routing·activity·metrics·cost·memory. Real principals.

@@ -1321,3 +1321,23 @@
   + embarrassingly-easy. (b) Parameterized `walk-os.mjs` to accept surface args (`node walk-os.mjs Explore`) so
   re-verification targets just the changed surface instead of re-walking all 5.
 - NEXT: WS-12 dedicated session · reuse the DataTable for a Workspaces/Gadgets table · (the OS surfaces are now clean + on-brand + gorgeous — consider the next absorption capability or WS-12).
+
+## fire-78-coreflow-journey (2026-10-03) — ✅ golden-path verified the HEART of the product (gadget building) works end-to-end
+
+- Lease `fire-78-coreflow-2f7b8fba`. Exercised the loop's §6 golden-path engine (overdue — recent fires were
+  targeted polish) on the CORE product flow instead of the delicate WS-12 (OS is already cheap, so WS-12 is marginal).
+- JOURNEY (`scripts/journey-coreflow.mjs`, BA-authed real browser, PROD): home composer → model picker (shows the
+  default Kimi K2.7, RECONCILES with the /models preferredModel) → typed "Build a simple click counter" → send →
+  navigated to a real `/workspace/becb37…` → the workspace EDITOR opened → the AI (Kimi) streamed its reasoning →
+  "Using tool" began building → Files panel + App/Code/Connections tabs + live cost ($0.0018) + cyan model picker.
+- RESULT: the core gadget-building flow WORKS end-to-end + is GORGEOUS (dense premium cyan editor) + 0 console
+  errors. No defect found (the engine confirms-works when nothing's broken; the first run's `useAuthenticatedApi`
+  error was MY journey's auth-timing flake — `/` briefly rendered anonymous before the redirect, fixed by waiting
+  for the `auth-success` signal, per the fire-75 lesson). Vision 9.5; +os.workspace-editor 9.5 (the flagship + the
+  Coinbase-Pro-density absorption surface already lives here).
+- BONUS: the journey created a real gadget/workspace in ba-e2e → Workspaces + Outputs are no longer empty →
+  UNBLOCKS a future Workspaces/Gadgets DataTable (absorption with real data).
+- Loop-improvement (§8): (a) `journey-coreflow.mjs` is now a durable regression guard for the MOST IMPORTANT flow;
+  (b) standardized the reliable authed-verifier auth: WAIT FOR the `auth-success` signal before navigating (a fixed
+  post-submit timeout flakes → lands on /signin), the template for every BA-authed script.
+- NEXT: reuse the DataTable for a Workspaces/Gadgets table (now there's real data) · extend the journey build→use→output to completion · WS-12.

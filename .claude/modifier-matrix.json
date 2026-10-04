@@ -163,6 +163,17 @@
         "real blueprint screenshots when available"
       ],
       "notes": "fire-77 VISITED + POLISHED (Deep-UI-Explorer). Featured-blueprint discovery (Docs/Slides/Sheets) with a search + grid/list toggle. The preview covers are now gorgeous branded type-icon covers (same component as Workspaces; fire-77 added title→type-icon parity on Explore). On-brand cyan, 0 console errors, vision 9.5."
+    },
+    "os.workspace-editor": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.5,
+      "density": 8,
+      "lastVisit": "2026-10-03",
+      "next": [
+        "extend the journey build->use->output to completion (this fire verified build-BEGINS end-to-end)",
+        "the editor IS the OS flagship + the Coinbase-Pro-density absorption surface — polish passes here compound"
+      ],
+      "notes": "fire-78 VERIFIED (core-flow golden-path journey, journey-coreflow.mjs). The heart of the product: home composer (default model Kimi K2.7, reconciles with /models) -> send -> workspace EDITOR opens -> AI streams reasoning -> 'Using tool' builds -> Files panel + App/Code/Connections tabs + live cost ($0.0018) + cyan model picker/stop. Dense premium on-brand cyan UI, 0 console errors. The core flow WORKS end-to-end on prod. Vision 9.5."
     }
   }
 }

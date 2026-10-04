@@ -59,8 +59,8 @@ Directive: implement every documented-but-unbuilt feature "at least enough to DE
   - [ ] **Inbox** (`/inbox`) — unified incoming conversations (email/chat/SMS) + thread + agent handoff. ULTIMATE-REQ §42.
   - [ ] **Booking** (`/booking`) — appointment calendar + AI qualify/route. ULTIMATE-REQ §42.
   - [ ] **Browser Runs / QA** (`/browser-runs`) — Playwright sessions list + live-view + HITL + recordings. ULTIMATE-REQ §35.
-  - [ ] **Activity / Runs** (`/activity`) — durable run state + checkpoints + logs (the Tasks/Runs primitive made observable — most ON-north-star). NORTH-STAR §39-44.
-  - [ ] **Approvals** (`/approvals`) — pending human gates (publish/connect/delete/financial) w/ approve-reject. NORTH-STAR §51.
+  - [x] **Activity / Runs** (`/activity`) — fire-147 (fork 1879d778 / salvage-ship; verify-activity GREEN + green-sweep 24th check). Global **Activity & Approvals**: a 'Needs your approval' HITL gate (Approve/Reject resolve locally — verified 3→2 on prod) + grouped recent-activity feed, mirrors the real `ActionLogEntry` model/vocabulary, honest 'Preview · sample data'. Rail (ListChecks) + ⌘K + AdminPage catalog; a11y-swept; vision 9/10. The REAL cross-gadget aggregation (`listRecentActions` fan-out) is a later slice.
+  - [ ] **Approvals** (`/approvals`) — ⚠️ LARGELY COVERED by /activity: the HITL approval gate (publish/deploy/financial, Approve/Reject) now lives in /activity's 'Needs your approval' section (fire-147). Per North-Star §80 scope-discipline (prefer ONE reusable primitive over overlapping surfaces), a separate route would duplicate it — deferred as likely-redundant unless a focused standalone approvals queue is wanted (Product Discovery: decide fold-vs-split).
   - [ ] **Releases** (`/releases`) — immutable builds + promote/rollback + manifest. ULTIMATE-REQ §41.
   - [ ] **History / Audit** (`/history`) — per-gadget revision/deploy/action timeline. ULTIMATE-REQ §48.
   - [ ] **Billing / Usage** (`/billing`) — account spend + per-gadget cost + usage curves. PROJECTSITES-ABSORPTION §6.

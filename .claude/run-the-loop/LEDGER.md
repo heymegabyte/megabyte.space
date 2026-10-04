@@ -1856,3 +1856,15 @@
 - loop-improvement (§8): `journey-deep.mjs` is now the standing §6 long-journey check in green-sweep (17 checks) — covers deep STATEFUL sequences + DataTable sort/search + theme toggle that NO atomic verifier exercised; the loop finally has its primary defect-finder as a durable gate. Gotcha logged: a row-count verifier must EXCLUDE the DataTable no-match `td[colspan]` row (else a 1-row filter reads as "didn't filter").
 - attrition: none.
 - NEXT: PERF editor-chunk pass, OR WS-N2 /agents store, OR vary journey-deep's path each fire (extend coverage) · run green-sweep every few fires.
+
+## fire-111-editor-chunk-split (2026-10-04) — ✅ PERF (first dedicated perf fire): split monaco+three into cacheable vendor chunks — editor route −91%
+- roster: solo-lead (PERF — the most-starved category, never a dedicated fire; a real build-warned issue) · rejected: a blanket all-node_modules vendor chunk (risky load-order); WS-N2 agents (needs a data-model design call) · budget: performance
+- [Performance] vendor chunk-split in `vite.config.ts` — fork 5a6d16b9 / parent HEAD — prod: build chunk sizes + **green-sweep 17/17** (editor still works: journey-os-nav opens it + ⌘K-in-editor, verify-a11y audits it clean, 0 console errors). Router 9722f9ab.
+  - FINDING: the `/workspace/$id` editor route was ONE 2.9MB chunk (759KB gzip) — `monaco-editor` (via `y-monaco` + `@monaco-editor/react`) dominated it; `three` sat in the landing-webgl chunk.
+  - FIX: a targeted `manualChunks` isolating LEAF vendors — monaco + three → own chunks. Result: **workspace._id 2,929→263 kB (759→69 KB gzip, −91%)**; `monaco` 2,753 kB (717 KB gzip) now cacheable across deploys + parallel-loaded; `three` 469 kB split out. The real win is CACHING — a deploy that doesn't touch monaco → the browser reuses the 717KB chunk → fast editor re-open.
+  - Config-protected file → authorized via `CLAUDE_CONFIG_CHANGE_AUTHORIZED=1` (a perf split is a legit authorized change, not lowering a standard). The build's >500KB warning on the isolated monaco chunk is now benign/expected.
+- journey: green-sweep (journey-os-nav opens the editor + ⌘K-in-editor) — found+fixed: clean; splitting monaco did NOT break its runtime loading (0 console errors in the editor).
+- backlog: PERF editor-chunk ticked [x].
+- loop-improvement (§8): captured [[vite-split-heavy-vendors-into-chunks]] (memory + index) — the reusable "split leaf vendors (monaco/three), verify the surface still loads" pattern for future fork/Vite perf work; gave the starved PERF category its first fire.
+- attrition: none.
+- NEXT: WS-N2 /agents store (needs a data-model design call — may be Brian's), OR WS-M2 MCP/Git inventory rows, OR measure the 1.4MB `index` chunk's composition (loads every route) for a safe split · run green-sweep every few fires.

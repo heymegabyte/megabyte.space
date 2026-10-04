@@ -300,7 +300,11 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - **A11y gate `scripts/verify-a11y.mjs` (fire-93)**: axe-core WCAG 2.2 AA over /signin + Pulse/Gadgets/Models; prints
   per-surface violation TYPES + node targets + contrast ratios; fails on serious/critical. Run in rotation (required gate
   per quality-metrics). fire-93 cleared **color-contrast** (token `--text-color-kumo-inactive` 4.25:1→5.9:1) + the
-  cost-strip **definition-list**. REMAINING a11y work (NEXT fire — drive to 0 serious): **nested-interactive** ×4 — (a)
+  cost-strip **definition-list**; **fire-94 CLEARED nested-interactive → axe 0 serious/critical across all 4 surfaces.**
+  Two a11y ANTI-PATTERNS codified (fix on sight): (1) a Kumo `<Tooltip>` must use `render={<El/>}`, NEVER children —
+  children make base-ui wrap your element in its own trigger `<button>` (nests an `<a>`/`<button>`). (2) a clickable
+  table row must not be an interactive wrapper (DataTable `onRowClick` → `<tr role=button>`) when a cell has its own
+  action button — make a cell the activator (title `<Link>`) + actions as siblings. Historical detail: (a)
   the gadgets star-in-row (fire-80): DataTable renders an interactive row (`role=button`/onClick) CONTAINING the star
   `<button>` → restructure so row-click isn't an interactive wrapper around a button (e.g. a full-cell link + sibling
   actions, keeping keyboard access); (b) a shared base-ui trigger (`#base-ui-_r_3_`) nested in interactive on all authed

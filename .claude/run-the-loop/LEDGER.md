@@ -1620,3 +1620,22 @@
   prints per-surface violation TYPES + node targets + contrast ratios. Registered in BACKLOG facts.
 - NEXT: nested-interactive fix (DataTable: row-click without an interactive row wrapper so the star isn't nested; the
   shared base-ui trigger) → drive a11y to 0 serious · then light-mode contrast · GP-036 keyboard journey.
+
+## fire-94-a11y-nested (2026-10-04) — ✅ axe 0 serious/critical — nested-interactive eliminated (a11y arc closed)
+- Finished fire-93's a11y work: drove the OS to **0 serious/critical axe violations** (WCAG 2.2 AA) across /signin +
+  Pulse/Gadgets/Models. Two nested-interactive sources, both root-caused against the live DOM (not guessed):
+  - **Shared** (3 nodes, every authed surface): `SidebarUtilityStrip` `StripLink` wrapped a `<Link>` in a Kumo `<Tooltip>`
+    WITHOUT `render` → base-ui minted its own trigger `<button>` around the `<a>`. Fixed with `Tooltip render={<Link/>}`
+    (mirrors the sibling `ThemeModeButton` already-correct pattern) — Tooltip renders AS the Link, no wrapper.
+  - **Gadgets** (1 node): the DataTable `onRowClick` made each `<tr role="button">` wrap the star `<button>`. Removed
+    `onRowClick`; the title is now a real `<Link aria-label="Open …">` + the star a sibling — row non-interactive,
+    keyboard-accessible, no nesting. DataTable's role=button row stays fine for button-free tables (models/workspaces).
+- SHIPPED (fork 377603a1 → gitlink f0fabce8; deployed megabyte-os v6443043d). Updated the 2 verifiers that clicked the
+  row (verify-gadgets-table + journey-os-nav step 10) to click the title `<Link>`.
+- VERIFIED (real browser): **axe 0/0/0/0** (was 7 types fire-93 start → 3 after contrast/dl → **0** now); gadgets
+  title-link opens the workspace; nav journey **11/11, 0 console errors** (no regression).
+- Loop-improvement (§8): the a11y gate is now GREEN + part of rotation; captured the two a11y anti-patterns (Kumo
+  Tooltip needs `render`, never children, to avoid a wrapper button; a clickable table row must not be an interactive
+  wrapper around in-row action buttons — make a cell the activator) in BACKLOG facts.
+- NEXT: light-mode contrast (dark is default + axe-clean; light secondary) · the 8 manual WCAG-2.2 criteria axe can't
+  test · GP-036 keyboard journey · WS-M2 Connections.

@@ -44,6 +44,7 @@ const CHECKS = [
   ['journey-deep.mjs', [], 'DEEP-JOURNEY GREEN'],
   ['journey-responsive.mjs', [], 'RESPONSIVE GREEN'],
   ['journey-keyboard.mjs', [], '0 console errors'],
+  ['journey-editor.mjs', [], 'EDITOR-JOURNEY GREEN'], // the fullscreen editor: tab-switch + nav-away + hard-refresh persistence (fire-121)
 ]
 
 const results = []

@@ -1969,3 +1969,15 @@
 - loop-improvement (§8): locked the fix with a copy-accuracy unit test (card copy must match the setting its CTA changes — a `verify-against-source-of-truth` guard for nudge cards) + captured the non-obvious preferred-vs-quick semantic to project memory. A future "add a model nudge" fire now can't re-confuse the two settings.
 - attrition: none.
 - NEXT: the dedicated-session create→generate→editor E2E (the big remaining buildable-now, delicate mutation), OR WS-N2 (Brian's agents-vs-gadgets design call), OR a fresh golden-path/long-trail journey (testing category, under-weighted lately) · run green-sweep every few fires.
+
+## fire-121-editor-journey (2026-10-04) — ✅ TESTING: §6 golden-path for the WORKSPACE EDITOR (tab-switch + nav-away + hard-refresh persistence) — new regression net, 0 defects found
+- roster: solo-lead (took the under-weighted testing/golden-path category — create E2E stays dedicated-session [costs AI $ + pollutes], WS-N2 is Brian-blocked) · rejected: the create E2E (dedicated-session); a redundant nav/Pulse journey (journey-deep/os-nav already cover those) · budget: testing/golden-path
+- [Testing] `scripts/journey-editor.mjs` (NEW) — parent HEAD — prod: **journey 7/7, 0 console errors** + wired into green-sweep → **21/21**. No deploy (test-infra only; the journey IS the PROD verification).
+  - GAP CLOSED: the atomic verifiers + a11y LOAD the editor (GadgetEditor, 1792 lines — the OS's most complex surface) but NO journey DRIVED it. New read-only journey: open an existing gadget → switch right-pane tabs (app/Code/Connections) → Home navigates out → re-open (round-trip) → **HARD-REFRESH restores the same workspace** (deep-link `?chat&w` state) → exit. Asserts 0 console errors at EVERY editor interaction (per-step error-delta backbone).
+  - NON-POLLUTING: opens an EXISTING gadget, never sends a chat (would cost AI $ + dirty ba-e2e), renames, or deletes. ba-e2e state left exactly as found. Degrades gracefully (SKIP-clean if the account has no gadget).
+  - OUTCOME: editor is genuinely ROBUST — 7/7, 0 console errors across tab-switch + navigate-away-and-back + hard-refresh. Per §6 "retain the passing baseline + explore further, never manufacture an error" → this fire adds durable coverage (not a bugfix); the editor now has a standing regression net.
+- journey: the editor journey itself (this fire's golden-path) — opened gadget `becb3710…`, drove all 7 steps.
+- backlog: none ticked (new coverage); testing category rebalanced (was under-weighted).
+- loop-improvement (§8): added `journey-editor.mjs` to the standing green-sweep (20→21) — the OS's most complex + previously journey-untested surface now regression-nets every sweep (editor render + tab-switch + hard-refresh persistence + 0 console errors). Future editor changes can't silently break these without the sweep catching it.
+- attrition: none.
+- NEXT: the dedicated-session create→generate→editor E2E, OR WS-N2 (Brian's agents-vs-gadgets call), OR an architecture/orphan drift sweep (not done recently) · run green-sweep every few fires.

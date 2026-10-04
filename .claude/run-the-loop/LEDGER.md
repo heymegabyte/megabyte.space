@@ -1602,3 +1602,21 @@
   feature) is the template for WS-N1 growth — each new detector must be genuinely-true-from-live-data + action-linked.
 - NEXT: more real-state detectors (set-default-model once getPreferredModel's unset semantics confirmed; stale-gadget
   revisit) · WS-N1 persist/snooze server-side · WS-M2 Connections.
+
+## fire-93-a11y-audit (2026-10-04) — ✅ Accessibility (starved category): axe gate + WCAG-AA contrast + definition-list fixed
+- Shipped the a11y gate `scripts/verify-a11y.mjs` (axe-core WCAG 2.2 AA over /signin + Pulse/Gadgets/Models) — the loop
+  can now catch a11y regressions (required gate per quality-metrics; §77). First run found 7 serious violation TYPES.
+- FIXED (fork 85b03858 → gitlink 2e9d6532; deployed megabyte-os v3f2eabad), verified by axe re-run:
+  - **color-contrast** (25 nodes across 3 surfaces → 0): root cause `--text-color-kumo-inactive #6b7489` = 4.25:1 on
+    #060610 (below AA 4.5) for the small uppercase labels + DataTable sort-indicators app-wide → bumped to #828ca2
+    (5.9:1, still muted). One token, cleared all 25.
+  - **definition-list** (gadgets cost strip, mine fire-84 → 0): the `<dl>` div-groups had a sibling `<p>` sublabel
+    (invalid) → moved the sublabel inside the `<dd>`.
+  - `/signin` (the force-login gate) was already 0 — clean.
+- REMAINING (queued, diagnosed): **nested-interactive** ×4 — a shared base-ui component (`#base-ui-_r_3_`, all 3 authed
+  surfaces) + the gadgets star-in-row (`.border-kumo-line/60`, fire-80). Both are shared-structural (base-ui chrome +
+  DataTable row = interactive containing a button) → focused next fire, not a high-context rush.
+- Loop-improvement (§8): the **axe a11y gate** (verify-a11y.mjs) is a durable required-gate asset — run in rotation;
+  prints per-surface violation TYPES + node targets + contrast ratios. Registered in BACKLOG facts.
+- NEXT: nested-interactive fix (DataTable: row-click without an interactive row wrapper so the star isn't nested; the
+  shared base-ui trigger) → drive a11y to 0 serious · then light-mode contrast · GP-036 keyboard journey.

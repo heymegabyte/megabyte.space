@@ -297,6 +297,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   --mobile` covers the anonymous mobile first-touch (landing + /signin). Run in the loop's golden-path rotation (§6/§81).
   The OS core verified responsive-clean fire-91 (3/3 + mobile anon). Deepen into the fullscreen editor + ProjectSites for
   true GP-035, and add keyboard/odd-interaction coverage for GP-036.
+- **A11y gate `scripts/verify-a11y.mjs` (fire-93)**: axe-core WCAG 2.2 AA over /signin + Pulse/Gadgets/Models; prints
+  per-surface violation TYPES + node targets + contrast ratios; fails on serious/critical. Run in rotation (required gate
+  per quality-metrics). fire-93 cleared **color-contrast** (token `--text-color-kumo-inactive` 4.25:1→5.9:1) + the
+  cost-strip **definition-list**. REMAINING a11y work (NEXT fire — drive to 0 serious): **nested-interactive** ×4 — (a)
+  the gadgets star-in-row (fire-80): DataTable renders an interactive row (`role=button`/onClick) CONTAINING the star
+  `<button>` → restructure so row-click isn't an interactive wrapper around a button (e.g. a full-cell link + sibling
+  actions, keeping keyboard access); (b) a shared base-ui trigger (`#base-ui-_r_3_`) nested in interactive on all authed
+  surfaces — inspect the AppShell/sidebar chrome. Then light-mode contrast + the 8 manual WCAG-2.2 criteria axe can't test.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

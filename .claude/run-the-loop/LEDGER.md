@@ -2105,3 +2105,13 @@
 - loop-improvement (§8): the /admin overview now INTERLINKS every live surface (interconnectedness — the hub links to the spokes), so the demo is navigable end-to-end; captured the TanStack dynamic-`to` cast idiom (`f.to as '/pulse'` under strict typed routes) for future dynamic-nav.
 - attrition: none.
 - NEXT (WS-DEMO via cron): make the editor Resources panels show REAL per-gadget data, OR a Metrics/Automations demo surface (NOT /agents — WS-N2-blocked), OR per-primitive /admin deep panels · cron a6d5c7ab drains it.
+
+## fire-133-automations-surface (2026-10-04) — ✅ PRODUCT (WS-DEMO): /automations demo surface + generalized the demo-surfaces verifier
+- roster: solo-lead (added the Automations primitive — user-facing, on-brand for an autonomous OS, ba-e2e-verifiable, not WS-N2-blocked) · budget: product/demo
+- [Feature] **/automations demo surface** — fork e7408232 / parent HEAD — prod: **DEMO-SURFACES GREEN** (Goals + Automations reachable via rail + render, 0 console errors) + green-sweep 22/22 + /automations a11y both themes. Router e5b19765.
+  - WHAT: new `routes/automations.tsx` — honest preview (ComingSoonPreview over a "new automation" composer w/ schedule chips [Every day/hour/webhook/when-a-goal-needs-it] + example scheduled automations w/ trigger + next-run + Active/Paused). The autonomous-OS backbone made visible. Wired into Sidebar (ArrowsClockwise, after Context & Skills) + ⌘K (hint "Scheduled work").
+- journey: generalized fire-130's `verify-goals.mjs` → **`verify-demo-surfaces.mjs`** — loops over an array of demo surfaces (Goals, Automations, …), each: rail-click → assert URL + ≥2 content needles + 0 console errors. git-rm'd verify-goals; green-sweep entry swapped (same check count 22). Adding the NEXT demo surface = one array entry, not a new verifier.
+- backlog: WS-DEMO — Automations shipped. Remaining: real per-gadget Resources data, DEMO-4 per-primitive /admin panels (Metrics/Permissions/Provenance), DEMO-5 Agents (WS-N2-blocked).
+- loop-improvement (§8): generalized the per-surface verifier into ONE demo-surface CLASS gate (`verify-demo-surfaces.mjs`) — scales without proliferating verify-*.mjs files; each new coming-soon surface is covered by adding a row. a11y now 17 surfaces; reachability 15 routes.
+- attrition: none.
+- NEXT (WS-DEMO via cron): Metrics demo surface (observability cards), OR make Resources/Platform panels show REAL data, OR DEMO-4 per-primitive /admin panels · NOT /agents (WS-N2-blocked) · cron a6d5c7ab drains it.

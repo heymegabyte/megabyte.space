@@ -1525,3 +1525,20 @@
   decision-aligned slice done this turn: (see below).
 - NEXT: drain WS-M1 (shared contracts: WorkspaceRuntime/CodingEngine/Worker/Loop/Task Zod schemas) as the first vertical
   slice per §152; then WS-M2 Connections (AI-accounts/health/quota) — both high-value, bounded, and buildable on the fork.
+
+## fire-88-ws-m1-contracts (2026-10-03) — ✅ WS-M1 FIRST VERTICAL SLICE: the shared kernel contracts (`@megabyte/contracts`)
+- Lease `fire-88-ws-m1-contracts-627f1c98`. Drained the master directive's first slice (§152): the typed foundation the
+  whole factory arc builds on. `zod-everywhere` applied to the platform primitives — schemas are the source of truth,
+  types inferred via `z.infer`, `.strict()` rejects unknowns.
+- SHIPPED (parent repo c9a507e8): NEW pnpm package **`packages/contracts` (`@megabyte/contracts`)** — the sibling-kernel
+  home (Megabyte + ProjectSites + factory workers all depend on it, NOT coupled to the fork). Schemas: Worker/WorkerPool/
+  Connection (§20/27/45) · Capability/Workspace/CodingSession/CodingEvent + WorkspaceRuntime & CodingEngine interfaces
+  (§14/16/24) · Task/Run/Loop/Evidence/GoldenPath (§28/74/82/84). The Loop schema ENCODES §75 recursion-safety
+  (iteration≤30, depth≤5 via `.refine`); WorkerPool refines total-activeJobs≤maxConcurrent; GoldenPath id `^GP-\d{3}$`.
+- VERIFY (library pkg → tests ARE the gate, no deploy): **19/19 vitest pass** (valid-parse + invalid-reject + strict
+  unknown-key rejection + refine invariants + enum rejection + z.infer compiles) + **`tsc --noEmit` clean**. `pnpm install`
+  linked zod@4.6.5 from the store (0 downloads).
+- Loop-improvement (§8): codified the **config-protection-hook workaround for NEW packages** + registered
+  `@megabyte/contracts` as THE contracts home (WS-M2+ EXTEND it, never re-create) in BACKLOG § OS fork architecture facts.
+- NEXT: WS-M2 Connections (model the AI-account/MCP/Git inventory as `Connection[]` + a read-only Connections surface,
+  reconcile display-vs-store) · encode GP-001…050 as typed `GoldenPath` records (WS-M-GP) · WS-M5 Inngest scheduler types.

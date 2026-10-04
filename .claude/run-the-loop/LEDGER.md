@@ -1705,3 +1705,21 @@
   tokens at once** for a theme-contrast pass (inactive + subtle + brand-on-tint) rather than one-at-a-time (5 iterations
   this fire). (3) a JSX comment before a `return (`'s root element + a `className` on a size-only glyph are build-fails.
 - NEXT: gadget delete-with-undo (dedicated) · the fire-97 reversible causal test · WS-M2 Connections.
+
+## fire-99-gadget-delete (2026-10-04) — ✅ Product: /gadgets row DELETE (confirm dialog) — gadget CRUD complete
+- The top-queued missing CRUD op. REUSED (not reimplemented): found `DeleteConfirmationDialog.tsx` + GadgetList's proven
+  delete handler already exist → mirrored them in the /gadgets table. A trash affordance on each row opens the dialog;
+  confirm runs the SAME flow (owner/shared → `dismissSharedGadget`; else `openGadget().deleteSelf()`) + toast + optimistic
+  row removal + revert on error. Chose a confirm DIALOG over deferred-undo (simpler + safe; no unmount-flush).
+- SHIPPED (fork 9d896e55 → gitlink 673ce476; deployed megabyte-os v040915dd). Gadget CRUD now complete: open (title-link)
+  · pin (star) · rename (pencil→inline) · delete (trash→confirm).
+- VERIFIED SAFELY (BA-authed real browser, `verify-gadget-delete.mjs` 7/7): trash opens the dialog ("Delete workspace?"
+  + the gadget name + a danger "Delete workspace" confirm) → **Cancel closes it + the gadget SURVIVES (1/1 rows, reload-
+  confirmed)** — ba-e2e's only gadget never at risk. Regressions GREEN: a11y **0 serious** (sibling trash, no nesting),
+  rename 6/6, pin 5/5, 0 console errors throughout.
+- Honest verification note: the COMMIT path (confirm → deleteSelf) is verified-BY-REUSE (identical to GadgetList's proven
+  handler) + the safe Cancel-path; NOT positively browser-tested (that would delete a real gadget). A composer-created-
+  throwaway positive test is a future option (per the detector-verifiability lesson — but here the risk is permanent data loss).
+- Loop-improvement (§8): reinforced REUSE-over-reimplement — grepped for an existing delete pattern FIRST + found
+  DeleteConfirmationDialog + GadgetList; built on them (interconnectedness). +os.gadgets beautify pass 5.
+- NEXT: (optional) upgrade the confirm to a Gmail-style undo toast · account-level AI-spend view · WS-M2 Connections.

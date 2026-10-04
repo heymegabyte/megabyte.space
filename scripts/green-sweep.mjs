@@ -38,6 +38,7 @@ const CHECKS = [
   ['verify-gadget-rename.mjs', [], '0 console errors'],
   ['verify-gadget-delete.mjs', [], '0 console errors'],
   ['verify-models-catalog.mjs', [], 'console-error-free'], // the Models surface (fire-112 — was uncovered)
+  ['verify-goals.mjs', [], 'GOALS GREEN'], // WS-DEMO Goals surface — reachable via rail + renders (fire-130)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],

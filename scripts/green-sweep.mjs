@@ -26,6 +26,7 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 const CHECKS = [
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
+  ['verify-home-composer.mjs', [], '0 console errors'], // the value-path ENTRY — read-only (fire-114)
   ['verify-pulse.mjs', [], '0 console errors'],
   ['verify-pulse-persist.mjs', [], '0 console errors'],
   ['verify-pulse-snooze.mjs', [], '0 console errors'],

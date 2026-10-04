@@ -176,15 +176,15 @@
       "notes": "fire-78 VERIFIED (core-flow golden-path journey, journey-coreflow.mjs). The heart of the product: home composer (default model Kimi K2.7, reconciles with /models) -> send -> workspace EDITOR opens -> AI streams reasoning -> 'Using tool' builds -> Files panel + App/Code/Connections tabs + live cost ($0.0018) + cyan model picker/stop. Dense premium on-brand cyan UI, 0 console errors. The core flow WORKS end-to-end on prod. Vision 9.5."
     },
     "os.gadgets": {
-      "beautifyPasses": 1,
+      "beautifyPasses": 2,
       "aiVisionScore": 9.5,
       "density": 7,
       "lastVisit": "2026-10-03",
       "next": [
-        "row actions (delete / share / pin) — GadgetList already has these handlers; add a row kebab menu",
+        "more row actions (delete-with-confirm / share / rename) — a row kebab menu (GadgetList has the handlers)",
         "a small cost/activity summary strip above the table (Coinbase-Pro density)"
       ],
-      "notes": "fire-79 CREATED — the Workspaces/Gadgets DataTable at /gadgets: the FIRST absorption table over REAL DYNAMIC user data (not a static catalog). Reuses the DataTable primitive (fires 71-74): swatch+Title / Last active / Created / Cost columns, sortable + searchable + row-click → opens /workspace/$id. Flag-gated (gadgets-table, enabled). BA-authed verified (verify-gadgets-table.mjs): 1 row = the fire-78-created gadget (display-vs-store RECONCILED), row-click opens the exact workspace, 0 console errors; vision 9.5. The primitive investment now pays off — a new data-backed table built fast by mirroring /models."
+      "notes": "fire-79 CREATED — the Workspaces/Gadgets DataTable at /gadgets: the FIRST absorption table over REAL DYNAMIC user data (not a static catalog). Reuses the DataTable primitive (fires 71-74): swatch+Title / Last active / Created / Cost columns, sortable + searchable + row-click → opens /workspace/$id. Flag-gated (gadgets-table, enabled). BA-authed verified (verify-gadgets-table.mjs): 1 row = the fire-78-created gadget (display-vs-store RECONCILED), row-click opens the exact workspace, 0 console errors; vision 9.5. The primitive investment now pays off — a new data-backed table built fast by mirroring /models. fire-80: made it ACTIONABLE + INTERCONNECTED — a per-row favorite STAR toggles the gadget's pinned state (optimistic + openGadget().setPinned(), mirroring GadgetList; stopPropagation so it never opens the row). BA-authed causal-verified (verify-gadget-pin.mjs): pin → star fills → PERSISTS across reload (display-vs-store) → the gadget appears in the sidebar FAVORITES (interconnected) → unpin restores ba-e2e state; 0 console errors."
     }
   }
 }

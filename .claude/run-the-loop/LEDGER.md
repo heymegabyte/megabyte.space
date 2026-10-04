@@ -1361,3 +1361,21 @@
   with swatch/sort/search → onRowClick-navigate → flag + nav entry) so future absorption surfaces are consistent +
   fast. Minor cleanup noted: gadgets.tsx redefined `formatRelativeTime` (RecentApps has one) — extract a shared util.
 - NEXT: gadgets row actions (delete/share/pin — GadgetList has the handlers) · more absorption surfaces on the recipe · WS-12.
+
+## fire-80-gadget-pin (2026-10-03) — ✅ /gadgets actionable: per-row favorite/pin → sidebar FAVORITES (interconnected)
+
+- Lease `fire-80-gadget-pin-c7f38bac`. Made the fire-79 read-only Gadgets table ACTIONABLE with the cleanest, safest,
+  most-connected action: favorite/pin (non-destructive, causal-verifiable, interconnects with the sidebar FAVORITES).
+- SHIPPED (fork 9ec68f3a / outer <this> ; deployed 0a9d33c2) — lead-direct (5 precise edits to `routes/gadgets.tsx`):
+  a per-row STAR button toggles the gadget's pinned state — optimistic flip + `authenticatedApi.openGadget(id)` →
+  `.setPinned(newPinned)` → dispose (capnweb promise-pipelining, mirroring `GadgetList.handleTogglePin`), reverting
+  on failure. `e.stopPropagation()` so the star never triggers the row's open-workspace navigation; aria-pressed +
+  focus ring + cyan brand (filled when pinned).
+- VERIFIED (BA-authed real browser, `verify-gadget-pin.mjs`): star toggles pinned → PERSISTS across reload
+  (display-vs-store reconciled — setPinned hit the store) → the pinned gadget APPEARS in the sidebar FAVORITES
+  (interconnected, as designed) → unpin persists (ba-e2e state RESTORED); 0 console errors. Vision 9.5; os.gadgets pass 2.
+- Loop-improvement (§8): verification-discipline — a verifier that MUTATES prod state must RESTORE it at the end
+  (here: unpin after the pin test) so the test account stays clean + the verifier is re-runnable; and the strongest
+  causal shape for a mutation is mutate → assert PERSISTENCE across reload → assert the INTERCONNECTED effect →
+  restore. Captured as the pattern for future mutating verifiers.
+- NEXT: gadgets kebab (delete-with-confirm / share / rename) · a Coinbase-Pro cost/activity summary strip · more absorption on the recipe · WS-12.

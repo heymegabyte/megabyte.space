@@ -1800,3 +1800,15 @@
 - loop-improvement (§8): captured the reusable pattern [[pure-logic-unit-test-beats-mutable-account-verify]] (memory + index) — extract derived logic to a pure function + unit-test branches, retiring the fire-97 mutable-account verifiability trap with a positive pattern.
 - attrition: none (ba-e2e left clean).
 - NEXT: WS-M2 unified Connections inventory (now unblocked — DataTable over accounts + AI providers + the count), OR WS-N2 /agents store · run green-sweep every few fires.
+
+## fire-106-a11y-coverage-expansion (2026-10-04) — ✅ a11y gate 4→11 surfaces → caught + fixed 4 real WCAG AA violations (both themes)
+- roster: solo-lead (ROTATED off the Pulse corner after 5 straight fires there — real surface over-indexing; testing/a11y category, starved) · rejected: WS-M2 inventory page / WS-N2 agents (bigger, deferred); auditing the fullscreen editor a11y (dynamic id, higher-risk — backlogged) · budget: testing + ux/a11y
+- [Testing/Bugfix] `verify-a11y.mjs` expanded 4→11 primary surfaces (+Home/Workspaces/Outputs/Blueprints/Explore/Providers/Gatekeepers) + fixed the 4 real WCAG 2.2 AA violations it immediately caught — fork da9d5fa8 / parent HEAD — prod: **verify-a11y 0 serious/critical × 11 surfaces × BOTH themes** + green-sweep 16/16. Router a7701356.
+  - color-contrast (shared — /providers "Add provider" + /workspaces "Create workspace"): `text-white` on `bg-kumo-brand` = 3.41:1 → `text-kumo-inverse` (the token the passing Pulse Implement button uses) → AA in dark AND light.
+  - nested-interactive (/providers quick-model row): a `div[role="button"]` WRAPPED the actions-menu `<button>` → restructured to a plain row div + an inner set-quick `<button>` (keyboard-native) + the menu as a SIBLING (no nesting). Also kills the god-tier masked-icon-square class.
+  - button-name (/workspaces GadgetList card): the icon-only overflow `<button>` had no accessible name → descriptive `aria-label={Actions for <title>}`.
+- journey: the expanded a11y audit itself (11 surfaces × 2 themes) — found+fixed: 4 real WCAG AA violations the narrow 4-surface audit never saw (/workspaces + /providers were entirely unaudited before).
+- backlog: a11y coverage 4→11; the fullscreen workspace EDITOR a11y (dynamic /workspace/$id, needs click-nav + axe) is the one remaining uncovered surface — backlogged.
+- loop-improvement (§8): the a11y gate now covers EVERY primary static surface (was 4/11) and fired on first run — catching 4 real violations the narrow gate structurally couldn't see; any future regression on any primary surface now fails the sweep.
+- attrition: none.
+- NEXT: audit the fullscreen editor a11y (click-nav into an existing gadget + axe), OR WS-M2 unified Connections inventory, OR WS-N2 /agents store · run green-sweep every few fires.

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /**
- * fire-93 accessibility audit: axe-core (WCAG 2.2 AA) over the force-login gate (/signin, anon) +
- * the core authed OS surfaces (Pulse, Gadgets, Models). Reports violations per surface; FAILS on any
- * serious/critical violation (axe 0-violations is a required gate per quality-metrics). BA-authed
- * real Chromium, PROD. Needs BA creds.
+ * fire-93 accessibility audit (expanded fire-106): axe-core (WCAG 2.2 AA) over the force-login gate
+ * (/signin, anon) + EVERY primary authed OS surface — Home, Pulse, Workspaces, Gadgets, Outputs,
+ * Blueprints, Explore, Models, Providers, Gatekeepers. Reports violations per surface; FAILS on any
+ * serious/critical violation (axe 0-violations is a required gate per quality-metrics). The fullscreen
+ * workspace EDITOR (dynamic /workspace/$id) is audited separately — backlog. BA-authed real Chromium,
+ * PROD. Needs BA creds. Runs in both themes: default (dark) and `--light`.
  */
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
@@ -67,9 +69,16 @@ await page.waitForSelector('[data-testid="auth-success"], [data-testid="auth-alr
 await page.waitForTimeout(800)
 
 for (const [path, signal] of [
+  ['/', /build|create|describe|workspace|gadget|idea|start/i],
   ['/pulse', /opportunit|all clear/i],
+  ['/workspaces', /workspace/i],
   ['/gadgets', /total spend|gadget/i],
+  ['/outputs', /output/i],
+  ['/blueprints', /blueprint/i],
+  ['/explore', /blueprint|explore|template|featured/i],
   ['/models', /model|available|provider/i],
+  ['/providers', /provider/i],
+  ['/gatekeepers', /gatekeeper|connect|integration/i],
 ]) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})

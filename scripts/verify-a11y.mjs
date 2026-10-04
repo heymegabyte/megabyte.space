@@ -100,7 +100,7 @@ for (const [path, signal] of [
   ['/gatekeepers', /gatekeeper|connect|integration/i],
   ['/connections', /connection|integration|provider/i],
   ['/profile', /profile|account|display name/i],
-  ['/admin', /admin|platform features|feature flag|site name/i], // fire-151: AdminPage catalog — was unaudited (os.admin score 0, never inspected; caught by check-a11y-coverage)
+  ['/admin', /access to this page|admin/i], // fire-151: ba-e2e (non-admin) sees the 'You don't have access' DENIED state — a real non-admin surface worth auditing; the admin CATALOG needs an admin session (verify-admin-platform). Signal matches the denied state so the audit settles honestly, not by timeout. Caught + gate-enforced by check-a11y-coverage.
 ]) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})

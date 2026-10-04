@@ -44,7 +44,10 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·
   credentials·permissions·autonomy·budgets·model-routing·activity·metrics·cost·memory. Real principals.
-- [ ] FIRST SLICE: an `/agents` surface (reuse DataTable) listing the OS agent(s) with identity/status/model/cost/last-activity — the Agent primitive, read-only first.
+- 🔑 **DESIGN DECISION (Brian's call — fire-116 discovery): is an "agent" a DISTINCT primitive from a "gadget", or IS a gadget already the agent?** The read-only first-slice fields (identity/status/model/cost/last-activity) map 1:1 onto a GADGET, and the North-Star scope-discipline (§80: "prefer ONE reusable primitive over overlapping features") forbids a thin re-lens of /gadgets. So the first slice can't be built honestly without resolving:
+  - **Path A — agent ≡ gadget** (a gadget is an AI worker): `/agents` is just a renamed/re-lensed /gadgets → scope-discipline says DON'T build it (duplication). Instead, propagate "agent" ATTRIBUTES (identity/model/cost/last-activity — already on gadgets) + add owner/permissions/budget onto the EXISTING gadget surfaces. No new primitive.
+  - **Path B — agent ≠ gadget** (a persistent autonomous worker with goals/budgets/permissions that operates ACROSS gadgets, à la Glean/Copilot-Studio principals): needs a NEW Agent store + concept (a real DO/D1 build + the richest governance primitive). THEN `/agents` lists real agents.
+  - The North Star lists BOTH "Agents" and (implicitly) gadgets but doesn't pin the distinction → a product-vision one-way-door. Loop should NOT invent it (confidence <0.7; wrong model = costly). Surfaced to Brian (fire-116 Recs). Until decided, WS-N2 is DESIGN-BLOCKED — do not build /agents.
 
 ### WS-N3 — Command-K universal surface (Raycast) — a PROPAGATION HABIT
 - [x] FIRST SLICE (fire-82): CommandPalette now mirrors the Sidebar primary nav 1:1 — added Pulse/Models/Gadgets/Outputs/Explore, fixed Blueprints→`/blueprints`, flag-gated identically to the sidebar. Verified `verify-cmdk.mjs` 6/6 (opens · all 8 present · filters · Models+Gadgets navigate · 0 errors). fork 7643d702 / gitlink c7594fe6.
@@ -61,6 +64,7 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   fix→verify→auto-remediate — wire the loop's own golden-path failures) · N8 Cross-surface/MCP exposure
   (an MCP server exposing listGadgets/listModels; CLI; webhooks) · N9 Creation canvas/variants (Replit/Figma:
   variants + point-and-edit in the editor). Each gets a first slice when the audit surfaces it as highest-value.
+- **PRODUCT-PROPAGATION AUDIT (fire-116) — frontier triage** (the North-Star §82 audit, run for the first time). Buildable NOW (design-resolved, data exists, non-huge — grab these for ship-fires): (a) **N4 account-level AI-spend view** — Σ spend across gadgets + a trend, data already on `listGadgets` totalCost; the Costs primitive, highest-value non-detector; (b) **⌘K ACTIONS** — extend the palette from nav-only → command-actions (toggle theme, new-output, snooze-all) per the §44 command-actions primitive; (c) more Pulse detectors (cost-spike, quick-model-unset — cheap, but detector-fatigue; space them out). DEDICATED-SESSION: the full create→generate→editor E2E (delicate mutation). DESIGN-BLOCKED on Brian: WS-N2 (agents-vs-gadgets, above). PREREQ/DATA-BLOCKED big builds (defer): N5 data-query, N6 knowledge, N7 self-heal, N8 MCP-exposure, N9 canvas/variants. Governance (§71) rides along each build, never a separate fire.
 
 ## ★★★ MASTER DIRECTIVE — ULTIMATE Megabyte OS + ProjectSites (Brian 2026-10-03) — platform/factory architecture
 Full decision record + authority order + 50 Golden Paths: `MASTER-DIRECTIVE.md`. Sibling-kernel model (Megabyte frontier ·

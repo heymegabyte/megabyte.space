@@ -33,7 +33,13 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
   cards with Explain + Implement(navigate) + Dismiss(local). Flag-gated + nav. The Opportunity primitive.
 - [x] persist + dismiss SERVER-SIDE (fire-101, fork 5a0df9d1): per-user UserDO singleton `dismissedOpportunities` + capnweb get/dismiss/restoreOpportunity; pulse.tsx seeds from the server (not localStorage) so dismissals sync cross-device + survive storage-clear; calm inline Undo. Proven by `verify-pulse-persist.mjs` (fresh-context B saw the dismissal ⇒ server-side) + `verify-pulse.mjs`.
 - [x] SNOOZE SERVER-SIDE (fire-102, fork 90365e66): per-user UserDO `snoozedOpportunities` map (id→until-ms, lazy-pruned so a lapsed snooze re-surfaces) + capnweb get/snooze/unsnoozeOpportunity; Snooze action (3-day default) beside Dismiss, unified optimistic act()/undo(). Proven by `verify-pulse-snooze.mjs` (fresh-context B saw the snooze ⇒ server-side) + green-sweep 15/15.
-- [ ] (next) schedule/require-approval actions on an opportunity; a snooze-duration picker (1d/3d/1w popover); more detectors (SEO/errors/stale-knowledge/agent-perf) as data sources arrive; auto-execute high-confidence low-risk per policy.
+- [x] DETECTOR: reconnect-expired-integration (fire-113, fork 48cca893): fires when ≥1 connected integration's credentials expired (→ /gatekeepers); Pulse consolidated onto `listConnectedAccounts` (count + validity from one read, `getConnectedAccountCount` removed).
+- [ ] (next) MORE DETECTORS — the cheapest high-value "ready work" class (recipe: add a branch to `computeOpportunities` fed by a signal ALREADY on the Pulse load + a deterministic case in `pulseOpportunities.test.ts`; keep it genuinely-true, never padded). Candidates by available signal:
+  - **cost-spike** — a gadget whose `totalCost` jumped vs its peers/history (signal: `listGadgets` totalCost; needs a baseline — simplest: "your priciest gadget is $X" when one dominates).
+  - **stale-gadget** — a gadget not opened in N days (signal: `lastActive` on `listGadgets`) → "revisit or archive".
+  - **quick-model-unset** — models usable but `getQuickModel()===null` (sibling of set-default; a distinct quick-task default).
+  - later (as data sources arrive): SEO/errors/stale-knowledge/agent-perf.
+- [ ] (next) schedule/require-approval actions on an opportunity; a snooze-duration picker (1d/3d/1w popover); auto-execute high-confidence low-risk per policy.
 
 ### WS-N2 — Agents as coworkers (Glean/Copilot-Studio/ServiceNow)
 - Mission: each meaningful agent has identity·role·objective·owner·status·task·knowledge·skills·tools·

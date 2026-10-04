@@ -1879,3 +1879,15 @@
 - loop-improvement (§8): the coherence gate now honestly covers the force-login invariant + Models + is SELF-DOCUMENTING (curation rationale in-header) — a future fire that ships a surface knows to wire its verifier in; periodic "disk-vs-gate" audit added to the loop's repertoire. Gave the starved ARCHITECTURE+DOCS categories their first fire.
 - attrition: none.
 - NEXT: WS-N2 /agents store (design call), OR WS-M2 MCP/Git rows, OR index-chunk perf measure · run green-sweep every few fires.
+
+## fire-113-reconnect-detector (2026-10-04) — ✅ PRODUCT (North-Star Opportunity engine): "reconnect expired integration" detector + consolidated the connection read
+- roster: solo-lead (product — extends the North-Star Opportunity engine with a new PROACTIVE signal; leverages fire-108's listConnectedAccounts) · rejected: WS-N2 agents (data-model design call — don't invent); index-perf (murky/2nd perf fire) · budget: product
+- [Feature Delivery] new Pulse detector + connection-read consolidation — fork 48cca893 / parent HEAD — prod: **green-sweep 19/19** (Pulse unregressed after the read switch) + **9/9 vitest** (the detector logic, deterministic). Backend 21c7c1b0 · router 8e1aeea8.
+  - NEW detector `reconnect-integration`: "Reconnect N expired integration(s)" — fires when ≥1 connected integration's credentials expired (gadgets bound to it FAIL until reconnected; ranks above the first-connect nudge → /gatekeepers). The engine now surfaces BROKEN connections, not just missing ones (Sidekick-grade proactivity).
+  - CONSOLIDATION: Pulse now reads `listConnectedAccounts` (gives count AND per-account `credentialsValid`) and derives both the connected-count + expired-count from ONE call → `getConnectedAccountCount` (fire-105, Pulse-only) REMOVED from all 3 capnweb layers (richer list supersedes it; no orphan method, per interconnectedness). `computeOpportunities` +1 param (expiredConnectionCount), unit test +1 case.
+  - verifiability: ba-e2e has 0 connections → the detector is correctly ABSENT (fire-97 trap avoided — the POSITIVE proof is the deterministic unit test, not ba-e2e state). verify-pulse unaffected (doesn't hard-assert reconnect).
+- journey: green-sweep — found+fixed: clean (the read-switch preserved connect-integration + the count-dependent detectors; all Pulse verifiers green).
+- backlog: WS-N1 detector-candidates replenished (see BACKLOG) — the loop-improvement.
+- loop-improvement (§8): REPLENISHED the WS-N1 backlog with a ready "next detectors" list + the repeatable recipe (add a branch to `computeOpportunities` + a deterministic unit-test case; feed it a real signal already on the load) — Pulse detectors are now a documented go-to "ready work" class any future fire can grab (§5 backlog replenish + §2 discovery).
+- attrition: none.
+- NEXT: another Pulse detector (cost-spike / stale-gadget — see BACKLOG), OR WS-N2 /agents (design call), OR WS-M2 MCP/Git rows · run green-sweep every few fires.

@@ -1569,3 +1569,21 @@
   return a safe loading/never-settling default instead. Added `verify-anon-console.mjs` (anonymous console + force-login proof).
 - NEXT: WS-M2 Connections (needs the accounts store first) · WS-M-GP wire the registry into the loop's GP rotation ·
   consider a unit test for the fail-soft hook paths.
+
+## fire-91-responsive-journey (2026-10-04) — ✅ GP-035-class: the OS is responsive-clean on mobile/tablet/desktop + force-login mobile first-touch
+- Testing-category rotation. Force-login (fire-90) means every MOBILE user now signs in + drives the OS on a phone, so
+  responsive correctness is a real contract — and the OS was built desktop-first (sidebar → hamburger drawer <md).
+- SHIPPED (parent repo 83f43e3a): `scripts/journey-responsive.mjs` — BA-authed, drives the authed OS (Pulse → Gadgets)
+  at 390/768/1280, asserting no horizontal overflow + working mobile hamburger-drawer nav + 0 console errors per
+  viewport. Extended `verify-anon-console.mjs` with `--mobile` (390) + an overflow measurement for the anonymous
+  first-touch (landing + /signin).
+- VERIFIED (real browser, PROD): authed **3/3 viewports green** (overflow 0/0/0, drawer+nav ok, 0 errors) + anonymous
+  mobile **/ landing + /signin** 0-overflow / 0-error / signin visible / no OS leak. **No defect found — the responsive
+  baseline is genuinely solid** (per §6, retained + explored further rather than manufacturing a defect). Screenshots →
+  scripts/.responsive/ + scripts/.anon-console-proof-mobile.png.
+- Honest coverage: did NOT mark a GP 'covered' — GP-035 is ProjectSites-specific; this is Megabyte-OS responsive (a
+  §135 visual-review-standards asset), so the registry stays truthful rather than mislabel.
+- Loop-improvement (§8): registered `journey-responsive.mjs` as the loop's **responsive golden-path** (run in rotation
+  per §6/§81) + the overflow-measurement pattern (scrollWidth−innerWidth ≤2) in BACKLOG facts.
+- NEXT: WS-M2 Connections (store first) · deepen the responsive journey into the fullscreen workspace editor + ProjectSites
+  (true GP-035) · GP-036 keyboard/odd-interactions · wire the GP registry into the loop's rotation.

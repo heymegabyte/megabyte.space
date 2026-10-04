@@ -291,6 +291,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   Auth → a fallback whose method access yields a never-settling promise (effects stay 'loading' then unmount). Anonymous
   never reaches the OS shell (force-login holds). Proof: `scripts/verify-anon-console.mjs` (per-path console + no-OS-leak).
   Anti-pattern: a dev-time throw-guard in a context hook is user-hostile in prod transitions — degrade, don't crash.
+- **Responsive golden-path asset (fire-91)**: `scripts/journey-responsive.mjs` drives the authed OS across
+  390/768/1280 (mobile hamburger-drawer nav <md; sidebar ≥md) asserting **no horizontal overflow**
+  (`document.documentElement.scrollWidth − window.innerWidth ≤ 2`) + 0 console errors per viewport; `verify-anon-console.mjs
+  --mobile` covers the anonymous mobile first-touch (landing + /signin). Run in the loop's golden-path rotation (§6/§81).
+  The OS core verified responsive-clean fire-91 (3/3 + mobile anon). Deepen into the fullscreen editor + ProjectSites for
+  true GP-035, and add keyboard/odd-interaction coverage for GP-036.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

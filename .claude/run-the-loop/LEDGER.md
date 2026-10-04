@@ -1404,3 +1404,28 @@
   audit). Future fires drain the WS-N primitives + run the audit. (Verifier fix: initial run used `networkidle`
   (flaked) + wrong button labels; switched to `domcontentloaded` + the real action labels — re-ran 6/6.)
 - NEXT (North Star drain): WS-N1 persist/snooze/auto-execute opportunities · WS-N2 /agents surface · WS-N3 ⌘K adds new routes · run the product-propagation audit to replenish · WS-12 (ties to the models-unlock opportunity).
+
+## fire-82-cmdk (2026-10-03) — ✅ WS-N3 FIRST SLICE: ⌘K reaches EVERY primary surface (Raycast universal-command propagated)
+- Lease `fire-82-cmdk-52fd094a`. Slice: the recently-shipped Pulse/Models/Gadgets routes were reachable from the
+  Sidebar but NOT from ⌘K — the exact propagation gap WS-N3 names. Found the palette was BROADLY stale: missing
+  Pulse/Models/Gadgets/Outputs/Explore AND its "Blueprints" pointed at the dead `/explore` mapping (drift from when
+  `/blueprints` didn't exist). Root cause: prior route-adding fires wired only the Sidebar, never the palette.
+- SHIPPED (fork 7643d702 → gitlink c7594fe6; deployed megabyte-os v74ccd049): `CommandPalette.tsx` now mirrors the
+  Sidebar primary nav 1:1 — New workspace + formats, then Pulse (flag `pulse`), Workspaces, Blueprints (→`/blueprints`,
+  FIXED), Outputs (NEW), Explore (NEW), Models (flag `model-catalog`), Gadgets (flag `gadgets-table`). Flag-gated
+  entries read the SAME `useUiFeatureFlag(...)` the Sidebar does, so ⌘K never offers a hidden route.
+- VERIFIED (BA-authed real browser, `verify-cmdk.mjs`, 6/6): ⌘K opens, all 8 primary destinations present (incl.
+  Pulse/Models/Gadgets/Outputs/Explore), typing filters (12→1), Models navigates →/models, Gadgets navigates
+  →/gadgets, 0 console errors. Verifier false-RED (anchored `/^gadgets$/i` broke on the `hint:"All"` text) fixed →
+  `/gadgets/i`, re-ran 6/6 (db1046fb). +os.cmdk 9.5.
+- Adversarial/regression: `verify-pulse.mjs` 6/6 (sibling intact post-redeploy) + `verify-prod.mjs` 10/10 (apex gate —
+  apex serves OS, BA SSO, no CF Access in human path, www→apex 301, HSTS; CSP-absent is the pre-existing tracked WARN).
+- Loop-improvement (§8): codified the **⌘K propagation habit** in BACKLOG § OS fork architecture facts — a NEW route
+  wires BOTH the Sidebar AND the CommandPalette (flag-gated identically) the same fire, or it's drift. This retires the
+  recurring class that left the palette stale (5 missing destinations + 1 dead mapping).
+- Surfaced (doc-drift, replenished): verify-prod PROVES the apex now serves the OS with BA auth-on-action + SSO and NO
+  CF Access in the human path — so CLAUDE.md's "TODAY: public homepage / TARGET WS-11" framing is STALE (WS-11 + WS-8
+  have landed). A Documentation reconcile of the topology narrative is queued.
+- NEXT: WS-N3 ext — ⌘K ACTIONS beyond nav (New gadget / Dismiss-all opportunities) + secondary routes (/admin,
+  /profile, /context, /providers, /gatekeepers) · WS-N2 /agents surface · WS-N1 persist/snooze opportunities ·
+  Documentation reconcile of CLAUDE.md topology (apex=OS, BA live) · run the product-propagation audit.

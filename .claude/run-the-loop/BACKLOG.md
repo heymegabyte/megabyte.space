@@ -39,7 +39,8 @@ the audit ~every few fires + APPEND findings here. UX stays calm/beautiful — m
 - [ ] FIRST SLICE: an `/agents` surface (reuse DataTable) listing the OS agent(s) with identity/status/model/cost/last-activity — the Agent primitive, read-only first.
 
 ### WS-N3 — Command-K universal surface (Raycast) — a PROPAGATION HABIT
-- [ ] FIRST SLICE: ensure the existing CommandPalette includes the new routes (/models,/gadgets,/pulse) + a "New gadget" action; every future surface registers its ⌘K actions.
+- [x] FIRST SLICE (fire-82): CommandPalette now mirrors the Sidebar primary nav 1:1 — added Pulse/Models/Gadgets/Outputs/Explore, fixed Blueprints→`/blueprints`, flag-gated identically to the sidebar. Verified `verify-cmdk.mjs` 6/6 (opens · all 8 present · filters · Models+Gadgets navigate · 0 errors). fork 7643d702 / gitlink c7594fe6.
+- [ ] NEXT: ⌘K ACTIONS beyond navigation — "New gadget", "Dismiss all opportunities", quick-switch — and the secondary routes (/admin, /profile, /context, /providers, /gatekeepers). Then promote ⌘K to a global command bus other surfaces push actions into.
 
 ### WS-N4 — Governance / Control-Tower (ServiceNow/PostHog) — cost + observability everywhere
 - [ ] FIRST SLICE: a cost/activity summary strip on /gadgets (Σ spend · count · favorites · last-active); extend to an account-level AI-spend view + per-action provenance.
@@ -230,6 +231,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   lying-populated (shows items that don't work). The /models catalog over-showed 7 unusable models (providers not
   enabled) until fire-75 cross-referenced `listModels()`. For any absorbed table, mark/filter by what the store
   actually serves (per `verify-against-source-of-truth`).
+- **⌘K PROPAGATION HABIT (fire-82)**: a NEW route/surface wires BOTH the Sidebar (`AppShell/Sidebar.tsx`) AND the
+  CommandPalette (`AppShell/CommandPalette.tsx` `nav` array) the SAME fire — flag-gated IDENTICALLY (the palette reads
+  the exact same `useUiFeatureFlag('key')` the sidebar does, so ⌘K never offers a hidden route). Wiring only one is
+  drift: fire-82 found the palette missing 5 destinations (Pulse/Models/Gadgets/Outputs/Explore) + a dead
+  Blueprints→`/explore` mapping because prior fires wired only the sidebar. The palette = `role="dialog"
+  [aria-label="Command palette"]`, rows = `button[data-index]`; open via `Meta/Ctrl+k` or the
+  `gadgets:open-command-palette` CustomEvent. Proof pattern: `scripts/verify-cmdk.mjs`.
 
 ### WS-3 — Beautify-10x
 - Mission: every created/visited surface iteratively more gorgeous; per-surface pass-count +

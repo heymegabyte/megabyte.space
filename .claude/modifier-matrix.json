@@ -196,6 +196,17 @@
         "more detectors as data sources arrive (SEO / errors / agent-perf / competitor / stale-knowledge)"
       ],
       "notes": "fire-81 CREATED — Pulse, the OPPORTUNITY ENGINE (North Star WS-N1, the defining principle). /pulse surfaces REAL computed opportunities from live state: 'Unlock 7 more AI models (only 2 of 9 usable)' → Enable providers, 'You've built 1 gadget for $0.0075' → View gadgets, 'Connect an integration' → Browse integrations. Each: cyan icon chip + title + expandable Why + a SPECIFIC action button (navigates) + Dismiss (persisted/restorable). Pulse is the FIRST nav entry (proactive entry point). BA-authed verified (verify-pulse.mjs): 3 cards, action→/models, dismiss persists+restores, 0 console errors; vision 9.5. The North Star made real: Megabyte proactively finds opportunities."
+    },
+    "os.cmdk": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.5,
+      "density": 8,
+      "lastVisit": "2026-10-03",
+      "next": [
+        "⌘K ACTIONS beyond navigation — New gadget / Dismiss-all-opportunities / quick-switch",
+        "secondary routes (/admin, /profile, /context, /providers, /gatekeepers); then a global command bus other surfaces push into"
+      ],
+      "notes": "fire-82 WS-N3 (North Star / Raycast universal-command). CommandPalette.tsx now mirrors the Sidebar primary nav 1:1 — New workspace + formats, then Pulse (flag pulse), Workspaces, Blueprints (fixed →/blueprints from the dead /explore mapping), Outputs (new), Explore (new), Models (flag model-catalog), Gadgets (flag gadgets-table). Flag-gated entries read the SAME useUiFeatureFlag the Sidebar does, so ⌘K never offers a hidden route. Was BROADLY stale (5 missing destinations + 1 dead mapping) because prior route fires wired only the sidebar — codified the ⌘K propagation habit in BACKLOG facts. BA-authed verified (verify-cmdk.mjs 6/6): opens, all 8 primary destinations present, typing filters 12→1, Models+Gadgets navigate, 0 console errors; vision 9.5."
     }
   }
 }

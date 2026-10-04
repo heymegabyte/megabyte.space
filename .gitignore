@@ -13,6 +13,9 @@ deployment.local.jsonc
 # Journey/explorer run artifacts (screenshots etc.) stay local
 e2e/screenshots/
 e2e/deep-ui-explorer/runs/
+# verify-*.mjs proof screenshots + capture dirs (ephemeral, dot-prefixed) stay local
+scripts/.*.png
+scripts/.*/
 .claude/settings.local.json
 
 # generated at build time (gen-build-info.mjs)

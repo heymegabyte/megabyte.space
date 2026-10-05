@@ -45,8 +45,9 @@ async function freshPulse(label) {
   const errors = [];
   const page = await context.newPage();
   await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
-  page.on("console", (m) => { if (m.type() === "error") errors.push(`[${label}] ${m.text()}`); });
-  page.on("pageerror", (e) => errors.push(`[${label}] ${String(e)}`));
+  const IGNORE = /WebSocket is already in CLOSING or CLOSED state/i; // benign reconnect artifact (fire-161)
+  page.on("console", (m) => { if (m.type() === "error" && !IGNORE.test(m.text())) errors.push(`[${label}] ${m.text()}`); });
+  page.on("pageerror", (e) => { if (!IGNORE.test(String(e))) errors.push(`[${label}] ${String(e)}`); });
   await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 40000 });
   await page.fill('input[type="email"]', EMAIL);
   await page.fill('input[type="password"]', PASSWORD);
@@ -125,7 +126,10 @@ if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 400));
 
 let ok = true;
 const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { console.log(`❌ FAIL: ${f}`); ok = false; } };
-check(cardsA0 >= 2, `context A has ${cardsA0} opportunities to work with`, `context A had <2 opportunities (${cardsA0}) — can't prove snooze`);
+// ≥1 (not ≥2, fire-161): snooze persistence is provable with a single opportunity — snooze it in A,
+// confirm it's gone in a FRESH context B, unsnooze. The ba-e2e opportunity COUNT is mutable + dropped
+// to 1 over fires ([[pure-logic-unit-test-beats-mutable-account-verify]]); ≥2 went stale.
+check(cardsA0 >= 1, `context A has ${cardsA0} opportunit${cardsA0 === 1 ? 'y' : 'ies'} to work with`, `context A had 0 opportunities — can't prove snooze (all-clear state)`);
 check(cardsA1 === cardsA0 - 1, `Snooze removed the card in A (${cardsA0}→${cardsA1})`, `Snooze didn't remove the card in A (${cardsA0}→${cardsA1})`);
 check(undoVisible, "the inline Undo affordance appeared after Snooze", "no inline Undo affordance after Snooze");
 check(undoSaysSnoozed, 'the Undo line reads "Snoozed …" (not "Dismissed")', `the Undo line didn't say "Snoozed" (got: ${undoText.slice(0, 60)})`);

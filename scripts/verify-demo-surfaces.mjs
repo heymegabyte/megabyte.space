@@ -23,6 +23,8 @@ const SURFACES = [
     interact: { fillLabel: "Name the automation", text: "Zz demo automation probe", submitName: "Create automation", expect: /Zz demo automation probe/ } },
   { label: "Agents", path: "/agents", needles: [/sample data/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i],
     interact: { fillLabel: "Describe a role", text: "Zz demo agent probe", submitName: "Hire agent", expect: /Zz demo agent probe/ } },
+  { label: "Context & Skills", path: "/context", needles: [/sample data/i, /collections.*skills|search collections/i, /collection/i],
+    interact: { fillLabel: "Name a collection", text: "Zz demo collection probe", submitName: "Add collection", expect: /Zz demo collection probe/ } },
   { label: "Database", path: "/database", needles: [/database studio/i, /sample data/i, /schema/i, /select \* from/i] },
   { label: "Customers", path: "/customers", needles: [/sample data/i, /conversion funnel/i, /timeline/i, /visitors/i, /in pipeline|active mrr/i] },
 ];
@@ -34,8 +36,12 @@ const page = await browser.newPage({
 });
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-page.on("pageerror", (e) => errors.push(String(e)));
+// Filter the benign capnweb WebSocket reconnect artifact ("...already in CLOSING or CLOSED state") —
+// this verifier navigates 6 surfaces + submits composers, racing the reconnect; the actions succeed,
+// it's not an app error (fire-161 de-flake; same filter as the nav journeys + gadget-pin).
+const IGNORE_CONSOLE = /WebSocket is already in CLOSING or CLOSED state/i;
+page.on("console", (m) => { if (m.type() === "error" && !IGNORE_CONSOLE.test(m.text())) errors.push(m.text()); });
+page.on("pageerror", (e) => { if (!IGNORE_CONSOLE.test(String(e))) errors.push(String(e)); });
 
 await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 40000 });
 await page.fill('input[type="email"]', EMAIL);

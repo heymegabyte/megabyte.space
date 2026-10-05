@@ -19,8 +19,10 @@ const page = await browser.newPage({
 });
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-page.on("pageerror", (e) => errors.push(String(e)));
+// Filter the benign capnweb WebSocket reconnect artifact (fire-161 de-flake; same as the journeys).
+const IGNORE_CONSOLE = /WebSocket is already in CLOSING or CLOSED state/i;
+page.on("console", (m) => { if (m.type() === "error" && !IGNORE_CONSOLE.test(m.text())) errors.push(m.text()); });
+page.on("pageerror", (e) => { if (!IGNORE_CONSOLE.test(String(e))) errors.push(String(e)); });
 
 await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 40000 });
 await page.fill('input[type="email"]', EMAIL);
@@ -76,10 +78,11 @@ if (cards1 > 0) {
   cardsRestored = await cardCount();
 }
 
-// An action navigates.
+// An action navigates (only testable when an ACTION-type opportunity is present — mutable).
 let actionNavigates = false;
 const action = page.locator("button", { hasText: ACTION }).first();
-if (await action.count()) {
+const actionAvailable = (await action.count()) > 0;
+if (actionAvailable) {
   await action.click().catch(() => {});
   await page.waitForTimeout(2000);
   actionNavigates = !/\/pulse/.test(page.url());
@@ -90,8 +93,14 @@ console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dis
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
-if (cards1 < 2) { console.log(`❌ FAIL: expected ≥2 opportunity cards, got ${cards1}`); ok = false; }
-else console.log(`✅ PASS: ${cards1} opportunity cards surfaced`);
+// ROBUST count (fire-161, per [[pure-logic-unit-test-beats-mutable-account-verify]]): the ba-e2e
+// account's opportunity COUNT is mutable — it drops as opportunities are satisfied/dismissed over
+// fires (and a hard "≥2" went stale: the account legitimately has 1 now). A valid Pulse is EITHER ≥1
+// opportunity OR a genuine all-clear state; both are correct. Only a blank/broken surface fails. The
+// dismiss/undo/action behaviors below are already guarded on cards1>0, so they self-skip at 0-1.
+const allClear = /all clear|all caught up|nothing .* right now|no opportunities/i.test(body);
+if (cards1 < 1 && !allClear) { console.log(`❌ FAIL: Pulse shows neither opportunities nor an all-clear state (got ${cards1})`); ok = false; }
+else console.log(`✅ PASS: Pulse surfaces a valid state (${cards1} opportunit${cards1 === 1 ? 'y' : 'ies'}${cards1 < 1 ? ' · all-clear' : ''})`);
 // Soft: unlock-models depends on ba-e2e's (MUTABLE) usable-model count — present when fewer than
 // the catalog are usable, absent once all providers are enabled. Both are honest. (fire-104: ba-e2e
 // now has ≥9 usable models, so this went absent — a fire-97-class fragility; no longer a hard fail.)
@@ -111,8 +120,9 @@ if (cards1 > 0 && !undoVisible) { console.log("❌ FAIL: the inline Undo afforda
 else if (cards1 > 0) console.log("✅ PASS: inline Undo affordance appears after Dismiss");
 if (cards1 > 0 && cardsRestored !== cards1) { console.log(`❌ FAIL: Undo didn't restore (${cardsRestored}/${cards1}) — ba-e2e may be left dirty!`); ok = false; }
 else if (cards1 > 0) console.log(`✅ PASS: Undo restores server-side (${cardsRestored}/${cards1}) — ba-e2e left clean`);
-if (!actionNavigates) { console.log("❌ FAIL: the opportunity action didn't navigate"); ok = false; }
-else console.log(`✅ PASS: opportunity action navigates (→ ${page.url().replace(APEX, "")})`);
+if (actionAvailable && !actionNavigates) { console.log("❌ FAIL: the opportunity action didn't navigate"); ok = false; }
+else if (actionAvailable) console.log(`✅ PASS: opportunity action navigates (→ ${page.url().replace(APEX, "")})`);
+else console.log("ℹ️  no ACTION-type opportunity present to test navigation (mutable account) — skipped");
 if (errors.length) { console.log("❌ FAIL: console errors"); ok = false; }
 else console.log("✅ PASS: 0 console errors");
 process.exit(ok ? 0 : 1);

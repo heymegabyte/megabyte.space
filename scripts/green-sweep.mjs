@@ -7,7 +7,7 @@
  *
  * Usage: BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD) node scripts/green-sweep.mjs
  */
-import { spawnSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 
 if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
   console.log('missing BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD)')
@@ -60,36 +60,78 @@ const CHECKS = [
   ['journey-editor.mjs', [], 'EDITOR-JOURNEY GREEN'], // the fullscreen editor: tab-switch + nav-away + hard-refresh persistence (fire-121)
 ]
 
-// Run one check once; pass = exit 0 AND the needle is in its output.
-function runCheck(script, args, needle) {
-  const r = spawnSync('node', [`scripts/${script}`, ...args], { encoding: 'utf8', timeout: 180000 })
-  const out = `${r.stdout || ''}${r.stderr || ''}`
-  return { pass: r.status === 0 && out.includes(needle), code: r.status }
+// PARALLELIZED (fire-161): the sweep grew to 34 checks and, run sequentially, exceeded ~10 min — too
+// slow to be a usable gate + flake-fragile when run unattended. Now: the SERIAL group (the fast static
+// preamble + the 5 MUTATION verifiers that write shared ba-e2e state — pulse dismissals/snoozes +
+// gadget pin/name/existence) runs FIRST, one at a time (racing them would corrupt the state they
+// assert on + the reads below). Then the read-only group runs in a BOUNDED CONCURRENCY POOL. Serial-
+// then-parallel also means mutations finish + RESTORE state before any parallel read sees it. ~3-4 min.
+const SERIAL = new Set([
+  'check-a11y-coverage.mjs',
+  'verify-pulse-persist.mjs',
+  'verify-pulse-snooze.mjs',
+  'verify-gadget-pin.mjs',
+  'verify-gadget-rename.mjs',
+  'verify-gadget-delete.mjs',
+])
+const CONCURRENCY = 4 // 6 overloaded the machine (87% CPU → journey flakes); 4 is the stable sweet spot
+
+// Run one check once (async spawn); pass = exit 0 AND the needle is in its output.
+function runOnce(script, args, needle) {
+  return new Promise((resolve) => {
+    const child = spawn('node', [`scripts/${script}`, ...args])
+    let out = ''
+    const onData = (d) => { out += d.toString() }
+    child.stdout.on('data', onData)
+    child.stderr.on('data', onData)
+    const timer = setTimeout(() => { try { child.kill('SIGKILL') } catch {} }, 180000)
+    child.on('close', (code) => { clearTimeout(timer); resolve({ pass: code === 0 && out.includes(needle), code }) })
+    child.on('error', () => { clearTimeout(timer); resolve({ pass: false, code: -1 }) })
+  })
 }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// One check with a single DELAYED retry on failure: the immediate post-deploy sweep routinely trips a
+// FRESH-DEPLOY first-load flake (unrelated surfaces red once, green moments later — fire-115/140/153+).
+// The flake window outlasts a back-to-back retry (fire-156), so wait ~4s first. Absorbs the transient
+// without hiding a real regression (a genuinely-broken surface fails both times). ⟳ = flaked-then-passed.
+async function runWithRetry([script, args, needle]) {
+  let res = await runOnce(script, args, needle)
+  let retried = false
+  if (!res.pass) { retried = true; await sleep(4000); res = await runOnce(script, args, needle) }
+  return { pass: res.pass, code: res.code, retried: retried && res.pass }
+}
+
+const labelOf = ([script, args]) => `${script}${args.length ? ' ' + args.join(' ') : ''}`
+const logResult = (lbl, r) => console.log(`${r.pass ? (r.retried ? '✅⟳' : '✅') : '❌'} ${lbl}${r.pass ? '' : `  (exit ${r.code}, failed twice)`}`)
 
 const results = []
-for (const [script, args, needle] of CHECKS) {
-  const label = `${script}${args.length ? ' ' + args.join(' ') : ''}`
-  let res = runCheck(script, args, needle)
-  // A single automatic RETRY on failure, AFTER a short delay: the immediate post-deploy sweep
-  // routinely trips a FRESH-DEPLOY first-load flake (a batch of unrelated surfaces red once, all
-  // green moments later — fire-115/140/153/155/156 class). The flake window can outlast a back-to-
-  // back retry (fire-156: 3 checks failed twice immediately, all passed standalone seconds later), so
-  // we WAIT ~4s before retrying to let the transient clear. One delayed retry absorbs the noise
-  // without hiding a real regression (a genuinely-broken surface fails both times). ⟳ = flaked-then-passed.
-  let retried = false
-  if (!res.pass) {
-    retried = true
-    spawnSync('sleep', ['4'])
-    res = runCheck(script, args, needle)
-  }
-  results.push({ label, pass: res.pass, code: res.code, retried: retried && res.pass })
-  console.log(`${res.pass ? (retried ? '✅⟳' : '✅') : '❌'} ${label}${res.pass ? '' : `  (exit ${res.code}, failed twice)`}`)
+const serialChecks = CHECKS.filter((c) => SERIAL.has(c[0]))
+const parallelChecks = CHECKS.filter((c) => !SERIAL.has(c[0]))
+
+// 1) Serial group (static preamble + mutations) — in order, no racing. Restores shared state.
+for (const c of serialChecks) {
+  const r = await runWithRetry(c)
+  results.push({ label: labelOf(c), ...r })
+  logResult(labelOf(c), r)
 }
 
+// 2) Read-only group — bounded concurrency pool.
+let next = 0
+async function worker() {
+  while (next < parallelChecks.length) {
+    const c = parallelChecks[next++]
+    const r = await runWithRetry(c)
+    results.push({ label: labelOf(c), ...r })
+    logResult(labelOf(c), r)
+  }
+}
+await Promise.all(Array.from({ length: Math.min(CONCURRENCY, parallelChecks.length) }, worker))
+
 const passed = results.filter((r) => r.pass).length
-console.log(`\n${passed}/${results.length} checks green`)
-if (passed !== results.length) {
+console.log(`\n${passed}/${CHECKS.length} checks green`)
+if (passed !== CHECKS.length) {
   console.log('FAILED: ' + results.filter((r) => !r.pass).map((r) => r.label).join(', '))
   process.exit(1)
 }

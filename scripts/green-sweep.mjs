@@ -47,6 +47,7 @@ const CHECKS = [
   ['verify-booking.mjs', [], 'BOOKING GREEN'], // WS-DEMO Booking: reachable + renders + appt→detail drill-in (fire-154)
   ['verify-releases.mjs', [], 'RELEASES GREEN'], // WS-DEMO Releases: reachable + renders + release→detail drill-in + rollback (fire-155)
   ['verify-browser-runs.mjs', [], 'BROWSER-RUNS GREEN'], // WS-DEMO Browser Runs: reachable + renders + run→trace drill-in + HITL (fire-156)
+  ['verify-billing.mjs', [], 'BILLING GREEN'], // WS-DEMO Billing: reachable + live usage card + sample cost breakdown (fire-157)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

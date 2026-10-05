@@ -23,8 +23,13 @@ const page = await browser.newPage({
 });
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 let errors = [];
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-page.on("pageerror", (e) => errors.push(String(e)));
+// BENIGN, FILTERED: the capnweb RPC WebSocket closes + reopens during fast navigation, and a send
+// that races the close logs "WebSocket is already in CLOSING or CLOSED state". The nav succeeds every
+// time (marker=true) — it's a reconnect artifact, not an app error. It was flaking this journey at a
+// RANDOM step each run (fire-157); filter that exact message so it stops masquerading as a regression.
+const IGNORE_CONSOLE = /WebSocket is already in CLOSING or CLOSED state/i;
+page.on("console", (m) => { if (m.type() === "error" && !IGNORE_CONSOLE.test(m.text())) errors.push(m.text()); });
+page.on("pageerror", (e) => { if (!IGNORE_CONSOLE.test(String(e))) errors.push(String(e)); });
 
 const steps = [];
 let n = 0;

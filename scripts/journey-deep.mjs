@@ -22,8 +22,11 @@ const page = await browser.newPage({
 });
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-page.on("pageerror", (e) => errors.push(String(e)));
+// Filter the benign capnweb WebSocket reconnect artifact ("...already in CLOSING or CLOSED state") —
+// it races fast navigation but the nav succeeds; it's not an app error (fire-157 de-flake).
+const IGNORE_CONSOLE = /WebSocket is already in CLOSING or CLOSED state/i;
+page.on("console", (m) => { if (m.type() === "error" && !IGNORE_CONSOLE.test(m.text())) errors.push(m.text()); });
+page.on("pageerror", (e) => { if (!IGNORE_CONSOLE.test(String(e))) errors.push(String(e)); });
 
 const steps = [];
 async function step(name, fn) {

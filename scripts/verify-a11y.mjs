@@ -96,6 +96,7 @@ for (const [path, signal] of [
   ['/booking', /booking|appointment|upcoming|sample data/i], // WS-DEMO: Booking week view (fire-154)
   ['/releases', /releases|deploy|rollback|version|sample data/i], // WS-DEMO: Releases deploy/rollback (fire-155)
   ['/browser-runs', /browser|run|needs input|steps|sample data/i], // WS-DEMO: Browser Runs agentic sessions (fire-156)
+  ['/billing', /billing|usage|spend|cost|sample/i], // WS-DEMO: Billing (live usage + sample costs) (fire-157)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

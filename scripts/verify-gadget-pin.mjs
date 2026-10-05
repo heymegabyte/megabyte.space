@@ -17,8 +17,12 @@ const page = await browser.newPage({
 });
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
-page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-page.on("pageerror", (e) => errors.push(String(e)));
+// Filter the benign capnweb WebSocket reconnect artifact ("...already in CLOSING or CLOSED state") —
+// it races navigation (this verifier reloads /gadgets several times) but the action succeeds; it's not
+// an app error (fire-157/159 de-flake; same filter as the nav journeys).
+const IGNORE_CONSOLE = /WebSocket is already in CLOSING or CLOSED state/i;
+page.on("console", (m) => { if (m.type() === "error" && !IGNORE_CONSOLE.test(m.text())) errors.push(m.text()); });
+page.on("pageerror", (e) => { if (!IGNORE_CONSOLE.test(String(e))) errors.push(String(e)); });
 
 await page.goto(`${APEX}/signin`, { waitUntil: "networkidle", timeout: 30000 });
 await page.fill('input[type="email"]', EMAIL);
@@ -44,7 +48,17 @@ const favHasGadget = () =>
   });
 
 await goGadgets();
-const before = await pressed();
+let before = await pressed();
+// SELF-HEAL: the pin→persist→unpin assertions assume an UNPINNED start (ba-e2e's natural state). If a
+// prior run left the gadget stuck PINNED — e.g. a flaked run, or the green-sweep AUTO-RETRY re-running
+// this MUTATION verifier on dirty state (fire-159) — normalize to unpinned first so the test is valid
+// AND the dirty state gets cleaned. One unpin + reload, then re-read the baseline.
+if (before) {
+  await star().click().catch(() => {});
+  await page.waitForTimeout(1500);
+  await goGadgets();
+  before = await pressed();
+}
 // Pin.
 await star().click().catch(() => {});
 await page.waitForTimeout(1500);

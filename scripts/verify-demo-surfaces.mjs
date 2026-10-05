@@ -13,11 +13,16 @@ const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
 if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // Each demo surface: the rail LABEL to click, the URL it should reach, and ≥2 content needles that
-// prove the demo mock rendered (not a blank/partial page).
+// prove the demo rendered (not a blank/partial page). Goals/Agents/Automations became INTERACTIVE
+// previews (fire-160) — their `interact` config fills the composer + submits + asserts the new item
+// appears (the signature new behavior). Needs BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD).
 const SURFACES = [
-  { label: "Goals", path: "/goals", needles: [/coming soon/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i] },
-  { label: "Automations", path: "/automations", needles: [/coming soon/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i] },
-  { label: "Agents", path: "/agents", needles: [/coming soon/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i] },
+  { label: "Goals", path: "/goals", needles: [/sample data/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i],
+    interact: { fillLabel: "Describe an outcome", text: "Zz demo goal probe", submitName: "Set goal", expect: /Zz demo goal probe/ } },
+  { label: "Automations", path: "/automations", needles: [/sample data/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i],
+    interact: { fillLabel: "Name the automation", text: "Zz demo automation probe", submitName: "Create automation", expect: /Zz demo automation probe/ } },
+  { label: "Agents", path: "/agents", needles: [/sample data/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i],
+    interact: { fillLabel: "Describe a role", text: "Zz demo agent probe", submitName: "Hire agent", expect: /Zz demo agent probe/ } },
   { label: "Database", path: "/database", needles: [/database studio/i, /sample data/i, /schema/i, /select \* from/i] },
   { label: "Customers", path: "/customers", needles: [/sample data/i, /conversion funnel/i, /timeline/i, /visitors/i, /in pipeline|active mrr/i] },
 ];
@@ -50,7 +55,17 @@ for (const s of SURFACES) {
   const onPath = new RegExp(s.path.replace("/", "\\/")).test(page.url());
   const body = await page.evaluate(() => document.body.innerText);
   const renders = s.needles.every((re) => re.test(body));
-  results.push({ label: s.label, reachable, onPath, renders });
+  // Interactive composer: fill the field + submit → the new item must appear (the signature behavior
+  // of the enriched preview surfaces). null for render-only surfaces (Database/Customers).
+  let interactive = null;
+  if (reachable && onPath && s.interact) {
+    await page.getByLabel(s.interact.fillLabel).fill(s.interact.text).catch(() => {});
+    await page.getByRole("button", { name: s.interact.submitName, exact: true }).first().click().catch(() => {});
+    await page.waitForTimeout(500);
+    const body2 = await page.evaluate(() => document.body.innerText);
+    interactive = s.interact.expect.test(body2);
+  }
+  results.push({ label: s.label, reachable, onPath, renders, interactive });
 }
 
 await page.screenshot({ path: "scripts/.demo-surfaces-proof.png" });
@@ -65,6 +80,7 @@ for (const r of results) {
   check(r.reachable, `${r.label} reachable from the sidebar rail`, `${r.label}: no rail link (nav wiring missing)`);
   check(r.onPath, `${r.label} → its route`, `${r.label}: rail click did not reach the route`);
   check(r.renders, `${r.label} demo content renders`, `${r.label}: demo content missing (blank/partial render)`);
+  if (r.interactive !== null) check(r.interactive, `${r.label} composer adds an item (interactive)`, `${r.label}: composer did not add the submitted item`);
 }
 check(errors.length === 0, "0 console errors across the demo surfaces", `${errors.length} console errors`);
 console.log(ok ? "✅ DEMO-SURFACES GREEN" : "❌ demo-surfaces check failed");

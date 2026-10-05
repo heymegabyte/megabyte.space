@@ -94,6 +94,7 @@ for (const [path, signal] of [
   ['/customers', /customer|people|funnel|sample data/i], // WS-DEMO: Customers/People CRM (fire-148/149 — was unaudited)
   ['/inbox', /inbox|conversation|unread|sample data/i], // WS-DEMO: Inbox unified conversations (fire-153)
   ['/booking', /booking|appointment|upcoming|sample data/i], // WS-DEMO: Booking week view (fire-154)
+  ['/releases', /releases|deploy|rollback|version|sample data/i], // WS-DEMO: Releases deploy/rollback (fire-155)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

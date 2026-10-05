@@ -45,6 +45,7 @@ const CHECKS = [
   ['verify-customers.mjs', [], 'CUSTOMERS GREEN'], // WS-DEMO Customers/People CRM: reachable + renders + row→timeline drill-in (fire-148/149, wired fire-150)
   ['verify-inbox.mjs', [], 'INBOX GREEN'], // WS-DEMO Inbox: reachable + renders + row→thread drill-in (fire-153)
   ['verify-booking.mjs', [], 'BOOKING GREEN'], // WS-DEMO Booking: reachable + renders + appt→detail drill-in (fire-154)
+  ['verify-releases.mjs', [], 'RELEASES GREEN'], // WS-DEMO Releases: reachable + renders + release→detail drill-in + rollback (fire-155)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

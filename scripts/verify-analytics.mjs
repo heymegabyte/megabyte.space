@@ -20,6 +20,8 @@ const NEEDLES = [
   /top pages/i,
   /traffic sources/i,
   /core web vitals/i,
+  /active now/i,             // the live-now strip (fire-162)
+  /activation funnel/i,      // the activation funnel section (fire-162)
 ];
 
 const browser = await chromium.launch();

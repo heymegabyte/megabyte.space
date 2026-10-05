@@ -57,7 +57,8 @@
     // Your account's AI Gateway. "default" is the one Cloudflare creates for the account.
     // Migrating from the hosted deploy? Use the gateway that flow created: "<instance>-ai"
     // (e.g. "cloudflareos-ai"), named after your instance. See docs/migrate-from-hosted.md.
-    "name": "megabyte-os",
+    // Domain-derived name: megabyte.space → megabyte-space.
+    "name": "megabyte-space",
 
     // null reuses the top-level accountId. Set only if the gateway lives in another account --
     // that requires CF_AI_GATEWAY_API_TOKEN, since the binding cannot reach across accounts.

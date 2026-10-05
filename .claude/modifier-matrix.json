@@ -6,12 +6,13 @@
       "beautifyPasses": 2,
       "aiVisionScore": 9,
       "density": 2,
-      "lastVisit": "2026-10-02",
+      "lastVisit": "2026-10-05",
       "next": [
+        "★ PERF (fire-165): the hero H1 IS the LCP element (7.5s) — the static-overlay-H1 anon-split (BACKLOG §WS-PERF slice 3) makes it paint at ~1.3s; biggest single UX win pending",
         "WebGPU particle upgrade (WebGPU→WebGL2→Canvas→reduced-motion ladder; fresh-session big slice) (9->9.5)",
         "scroll-scrub camera path locked to the field"
       ],
-      "notes": "fire-4: CSP-break found+fixed live (CF Fonts/beacon blocked → 31→0 OUR console errors); gradient headline + WebGL wave field (304KB clip); 8.5. fire-40 KINETIC headline 8.5->9: the plain words ('The operating system for') cascade up on load (.kinetic-word per-word --w stagger) + the gradient punchline ('one human and a fleet of agents.') fades in last (.kinetic-fade), smooth cyan→violet gradient + natural wrapping preserved; reduced-motion gated (words snap visible). verify-apex 3/3 (verify-prod 9/9, journey 27/27 h1 text intact, reduced-motion 8/8 incl. kinetic words), direct-Read vision 9/10. Apex f901b51c/239764d8. Knock vs 9.5: WebGPU-ladder + scroll-scrub levers queued (big slices)."
+      "notes": "fire-165 PERF VISIT (no beautify pass — perf-focused): re-measured the apex — LCP=7536-7836ms, FCP~1.3-1.5s, CLS=0, LCP element `H1.mt-5.max-w-4xl` (this hero). The H1 waits ~6.2s for the SPA shell; grounded + spec'd the static-overlay-H1 fix (dedicated session). Score/passes unchanged (aesthetics untouched this fire). fire-4: CSP-break found+fixed live (CF Fonts/beacon blocked → 31→0 OUR console errors); gradient headline + WebGL wave field (304KB clip); 8.5. fire-40 KINETIC headline 8.5->9: the plain words ('The operating system for') cascade up on load (.kinetic-word per-word --w stagger) + the gradient punchline ('one human and a fleet of agents.') fades in last (.kinetic-fade), smooth cyan→violet gradient + natural wrapping preserved; reduced-motion gated (words snap visible). verify-apex 3/3 (verify-prod 9/9, journey 27/27 h1 text intact, reduced-motion 8/8 incl. kinetic words), direct-Read vision 9/10. Apex f901b51c/239764d8. Knock vs 9.5: WebGPU-ladder + scroll-scrub levers queued (big slices)."
     },
     "home.features": {
       "beautifyPasses": 2,

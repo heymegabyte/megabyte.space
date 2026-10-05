@@ -46,6 +46,7 @@ const CHECKS = [
   ['verify-inbox.mjs', [], 'INBOX GREEN'], // WS-DEMO Inbox: reachable + renders + row→thread drill-in (fire-153)
   ['verify-booking.mjs', [], 'BOOKING GREEN'], // WS-DEMO Booking: reachable + renders + appt→detail drill-in (fire-154)
   ['verify-releases.mjs', [], 'RELEASES GREEN'], // WS-DEMO Releases: reachable + renders + release→detail drill-in + rollback (fire-155)
+  ['verify-browser-runs.mjs', [], 'BROWSER-RUNS GREEN'], // WS-DEMO Browser Runs: reachable + renders + run→trace drill-in + HITL (fire-156)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
@@ -56,14 +57,31 @@ const CHECKS = [
   ['journey-editor.mjs', [], 'EDITOR-JOURNEY GREEN'], // the fullscreen editor: tab-switch + nav-away + hard-refresh persistence (fire-121)
 ]
 
+// Run one check once; pass = exit 0 AND the needle is in its output.
+function runCheck(script, args, needle) {
+  const r = spawnSync('node', [`scripts/${script}`, ...args], { encoding: 'utf8', timeout: 180000 })
+  const out = `${r.stdout || ''}${r.stderr || ''}`
+  return { pass: r.status === 0 && out.includes(needle), code: r.status }
+}
+
 const results = []
 for (const [script, args, needle] of CHECKS) {
   const label = `${script}${args.length ? ' ' + args.join(' ') : ''}`
-  const r = spawnSync('node', [`scripts/${script}`, ...args], { encoding: 'utf8', timeout: 180000 })
-  const out = `${r.stdout || ''}${r.stderr || ''}`
-  const pass = r.status === 0 && out.includes(needle)
-  results.push({ label, pass, code: r.status })
-  console.log(`${pass ? '✅' : '❌'} ${label}${pass ? '' : `  (exit ${r.status})`}`)
+  let res = runCheck(script, args, needle)
+  // A single automatic RETRY on failure, AFTER a short delay: the immediate post-deploy sweep
+  // routinely trips a FRESH-DEPLOY first-load flake (a batch of unrelated surfaces red once, all
+  // green moments later — fire-115/140/153/155/156 class). The flake window can outlast a back-to-
+  // back retry (fire-156: 3 checks failed twice immediately, all passed standalone seconds later), so
+  // we WAIT ~4s before retrying to let the transient clear. One delayed retry absorbs the noise
+  // without hiding a real regression (a genuinely-broken surface fails both times). ⟳ = flaked-then-passed.
+  let retried = false
+  if (!res.pass) {
+    retried = true
+    spawnSync('sleep', ['4'])
+    res = runCheck(script, args, needle)
+  }
+  results.push({ label, pass: res.pass, code: res.code, retried: retried && res.pass })
+  console.log(`${res.pass ? (retried ? '✅⟳' : '✅') : '❌'} ${label}${res.pass ? '' : `  (exit ${res.code}, failed twice)`}`)
 }
 
 const passed = results.filter((r) => r.pass).length

@@ -31,6 +31,17 @@
  * had to salvage it). This guard closes the gap: the fork pointer must be committed AND the
  * submodule HEAD must be reachable from the pushed fork branch (origin/megabyte-os).
  *
+ * FOURTH GUARD (fire-164): FORK WORKING-TREE DIRT. This repo sets `diff.ignoreSubmodules=dirty`, so the
+ * parent `git status` (GUARD 1 + GUARD 3's gitlink check) is BLIND to UNCOMMITTED changes INSIDE the
+ * cloudflare-os fork working tree — it surfaces the fork only on a committed-HEAD/gitlink mismatch, never
+ * on a dirty working file. That blindness is EXACTLY how fire-164's Audit-panel feature
+ * (`ResourcesPanel.tsx`, edited + DEPLOYED but never committed to the fork) slipped past fire-165's
+ * partial salvage: GUARD 3 caught the unpushed COMMITS but nothing saw the uncommitted WORKING-TREE file,
+ * leaving prod ahead of git on the fork + the committed journey-editor (expects the Audit panel)
+ * incoherent with the committed fork source (no Audit panel). This guard queries the fork DIRECTLY (its
+ * own porcelain, unaffected by the parent's ignore setting) + flags dirty TRACKED files (untracked ?? =
+ * allowed, same policy as GUARD 1 — generated wrangler.prod.jsonc etc.).
+ *
  * Usage: node scripts/check-fire-committed.mjs [--ci]
  *   Run it last in a fire, before `loop-fire-lock release`.
  */
@@ -97,12 +108,27 @@ try {
   }
 } catch { /* submodule absent or git error — not a stranding signal, skip quietly */ }
 
+// GUARD 4 — FORK WORKING-TREE DIRT (fire-164). Query the fork's OWN porcelain directly; the parent's
+// `diff.ignoreSubmodules=dirty` can't suppress it. Dirty TRACKED fork files = a feature edited/deployed
+// but never committed to the fork (prod-ahead-of-git). Untracked (??) inside the fork is allowed.
+const forkDirty = [];
+try {
+  const forkPorcelain = execFileSync("git", ["-C", SUBMODULE, "status", "--porcelain"], { cwd: ROOT, encoding: "utf8" });
+  for (const line of forkPorcelain.split("\n")) {
+    if (!line.trim()) continue;
+    const xy = line.slice(0, 2);
+    if (xy === "??") continue; // untracked inside the fork — allowed (generated/scratch)
+    forkDirty.push({ xy, path: line.slice(3).replace(/^"|"$/g, "") });
+  }
+} catch { /* submodule absent or git error — skip quietly */ }
+
 const out = {
   meta: { repo: ROOT },
   dirty,
   placeholders,
   submoduleIssues,
-  summary: { dirty: dirty.length, placeholders: placeholders.length, submoduleIssues: submoduleIssues.length, exit: (dirty.length || placeholders.length || submoduleIssues.length) && CI ? 1 : 0 },
+  forkDirty,
+  summary: { dirty: dirty.length, placeholders: placeholders.length, submoduleIssues: submoduleIssues.length, forkDirty: forkDirty.length, exit: (dirty.length || placeholders.length || submoduleIssues.length || forkDirty.length) && CI ? 1 : 0 },
 };
 process.stdout.write(JSON.stringify(out, null, 2) + "\n");
 
@@ -124,5 +150,12 @@ if (submoduleIssues.length) {
   for (const s of submoduleIssues) process.stderr.write(`   ${s}\n`);
 } else {
   process.stderr.write(`✅ ${SUBMODULE} fork synced — gitlink committed + submodule HEAD pushed to origin.\n`);
+}
+if (forkDirty.length) {
+  process.stderr.write(`\n⚠️  ${forkDirty.length} dirty TRACKED file(s) INSIDE the ${SUBMODULE} fork — commit them to the fork + bump the gitlink before releasing the lease (fire-164 class — invisible to the parent's diff.ignoreSubmodules=dirty):\n`);
+  for (const f of forkDirty) process.stderr.write(`   ${f.xy}  ${SUBMODULE}/${f.path}\n`);
+  process.stderr.write(`A deployed-but-uncommitted fork file leaves prod ahead of git (the gitlink points at source without the change).\n`);
+} else {
+  process.stderr.write(`✅ ${SUBMODULE} fork working tree clean — no deployed-but-uncommitted fork changes.\n`);
 }
 process.exit(out.summary.exit);

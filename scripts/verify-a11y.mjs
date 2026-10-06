@@ -108,6 +108,7 @@ for (const [path, signal] of [
   ['/compute', /compute|workers|invocation|cpu|p95|sample data/i], // WS-DEMO: Compute edge runtime (fire-172)
   ['/metrics', /metrics|requests|error rate|latency|sample data/i], // WS-DEMO: Metrics per-gadget (fire-173)
   ['/permissions', /permissions|role|capabilit|member|sample data/i], // WS-DEMO: Permissions RBAC (fire-174)
+  ['/provenance', /provenance|audit|changed|before|sample data/i], // WS-DEMO: Provenance audit trail (fire-175)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

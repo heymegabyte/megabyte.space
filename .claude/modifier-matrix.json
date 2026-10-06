@@ -311,6 +311,17 @@
       ],
       "notes": "fire-180 CREATED/SHIPPED (WS-DEMO doc-diff #5 — transactional-email DELIVERABILITY via Amazon SES, CLAUDE.md 'Amazon SES (sole transactional rail)'; distinct from /inbox [incoming conversations] = OUTBOUND sending health). Dark/cyan: stat strip (Sent-24h · Delivery-rate 60% · Bounce-rate 20% · Complaint-rate 10%, w/ status-colored dots) + a status filter (All/Delivered/Pending/Complained/Bounced w/ dots) + search + a sends LOG (status dot + subject + MASKED recipient + gadget + status badge + ts) + Inbox/Logs cross-links. 10 sample sends; recipients masked (p••••@acme.com); footer names the verified SES identity hey@megabyte.space. Pure helpers (statusCounts/rateFor/deliveryRate/filterSends/maskEmail-never-leaks) unit-tested (email.test.ts 13/13). AA-safe both themes (status dots graphical; neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, EnvelopeSimple) + ⌘K + an /admin Platform card + a NEW ResourcesPanel 'Email' card (the 22ND Resources panel). BA-authed real-browser verified (verify-email.mjs, green-sweep 49th): reachable via rail, status filter (All 10->Bounced 2), search (->billing 2), recipients masked (no full address leaks), Inbox+Logs cross-links present, 0 console errors. ★ FIRST fire to run the new tsc --noEmit pre-deploy gate (per fire-179 memory) → clean deploy first try, no wasted cycle. Direct-Read vision 9/10 — the deliverability rates + masked recipients + status-dotted log are the standout. Fork 4111599e. Knock vs 9.5: reputation gauge; vs 10: live SES bridge."
     },
+    "os.notifications": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8.5,
+      "density": 7,
+      "lastVisit": "2026-10-06",
+      "next": [
+        "per-channel delivery toggles + a quiet-hours schedule — 8.5->9",
+        "wire LIVE notification events off the Activity/deploy/billing streams — the real ->10"
+      ],
+      "notes": "fire-181 CREATED/SHIPPED (WS-DEMO doc-diff #6 — the ALERTING CENTER, a NORTH-STAR primitive: 'Notifications' delivered in-app/email/push/Slack; the surface the OS + every gadget raise alerts into). Dark/cyan: stat strip (Notifications · Unread · Security · Types, w/ type-colored dots) + a type filter (All/Deploy/Billing/Lead/Security/System w/ dots + per-type counts) + search + a feed (unread rows get bg-kumo-fill/40 + a 'New' chip + bolder title; each row = type dot + title + body + type badge + channel + ts). 8 sample notifications (3 unread). The SIGNATURE interaction: 'Send test' prepends a fresh unread 'Test notification' (makeTest). Pure helpers (typeCounts/unreadCount/filterNotifications/makeTest) unit-tested (notifications.test.ts 10/10). AA-safe both themes (type dots graphical; neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, Bell) + ⌘K + an /admin Platform card + a NEW ResourcesPanel 'Notifications' card (the 23RD Resources panel). BA-authed real-browser verified (verify-notifications.mjs, green-sweep 50th check — a milestone): reachable via rail, type filter (All 8->Security 2), search (All 8->deploy 1), send-test raises +1 'Test notification', Activity cross-link present, 0 console errors. The fire-179 tsc --noEmit pre-deploy gate held (2nd fire) → clean deploy first try. Direct-Read vision 8.5/10 — the unread-flagged feed + type-dotted filter + live stat strip are the standout. Fork 30b5400c. Knock vs 9: per-channel toggles + quiet-hours; vs 10: live event streams."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

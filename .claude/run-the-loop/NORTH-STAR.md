@@ -31,7 +31,7 @@ human- & AI-readable. Advanced machinery hides behind intuitive outcomes
   explanations/opportunities/experiments/actions · **Claude Code/OpenCode/ACP** interchangeable coding
   agents behind one task/diff/terminal/preview/review · **Cloudflare Think/Code-Mode** durable stateful
   agents + programmatic tool composition · **A2UI/AG-UI** generate interactive UI around agent work (not
-  prose-only) · **Alchemy** infra as versioned/testable/agent-understandable capability · **PartyServer/Yjs**
+  prose-only) · **Alchemy** infra as versioned/testable/agent-understandable capability · **Coder** workspaces as templated/reproducible/ephemeral environments — environment-as-code, explicit lifecycle (provision→run→autostop-when-idle→delete), per-workspace resource quotas + cost governance, access-agnostic (browser/SSH/any-IDE), self-hostable/sovereign · **PartyServer/Yjs**
   realtime collab where it genuinely helps · **MCP/MCP-Apps/Agent-Skills** capabilities portable into other
   AI envs · **deskl.ink** persistent/disposable computers for humans+agents (lifecycle/live-view/takeover/
   budgets/metered cost).
@@ -84,7 +84,8 @@ primitive over multiple overlapping features.** Don't blindly reproduce every re
 For every major area ask: 1 Sidekick-surface? 2 Glean-agentify? 3 Onyx-keep-current? 4 Linear-faster/recurring?
 5 Manus-parallelize? 6 Figma-directly-editable? 7 Replit-variants/canvas? 8 Rovo-unify? 9 Raycast-command?
 10 Sentry-auto-diagnose/repair? 11 PostHog-measure/experiment? 12 MCP-capability? 13 works-outside-the-app?
-14 safely-proactive/autonomous? 15 complexity-to-remove? → populate findings into BACKLOG § NORTH STAR,
+14 safely-proactive/autonomous? 15 complexity-to-remove? 16 Coder-templated/reproducible/lifecycle-governed-workspace
+(environment-as-code · autostop-idle · resource-quota + cost-governed)? → populate findings into BACKLOG § NORTH STAR,
 implement the highest-value.
 
 ## Implementation behavior

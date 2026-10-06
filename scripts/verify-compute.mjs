@@ -4,8 +4,9 @@
  * Workers). Reachable via the SIDEBAR rail (real-user path, proves nav wiring); renders the stat strip
  * + status filter + search + a worker list + the selected worker's detail (invocations/CPU/errors +
  * a request sparkline + a "View logs" link). The SIGNATURE interactions: a status pill + search narrow
- * the list, clicking a worker opens its detail which links to /logs. "Preview · sample data".
- * BA-authed real Chromium, PROD. Needs BA creds.
+ * the list, clicking a worker opens its detail which links to /logs. DEPTH (fire-210): a LIVE "your
+ * workers" band off listGadgets leads; chip "Live workers · sample runtime". BA-authed real Chromium,
+ * PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
 
@@ -15,7 +16,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + status filter + a worker + CPU/invocations + honesty.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample runtime/i,           // honest hybrid chip "Live workers · sample runtime" — never lies-empty
   /\bcompute\b/i,              // the page
   /\b(healthy|throttled|erroring)\b/i, // the status filter / statuses
   /lead-scorer|click-counter/i, // real sample worker names
@@ -50,6 +51,11 @@ const onPath = /\/compute/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-210): the live "your workers" band renders one of its fail-soft states — running for the
+// ba-e2e account (≥1 gadget), or an honest loading/unavailable/empty — never a misleading "0". Proves
+// the real listGadgets wiring, not just the sample runtime list.
+const liveBand = /Checking your workers|Workers unavailable|No workers deployed|\d+\s+workers?\s+running/i.test(body);
 
 const countRows = () => page.locator('section[aria-label="Workers"] li').count();
 const countAll = await countRows().catch(() => 0);
@@ -92,8 +98,11 @@ const searchWorks = countSearch > 0 && countSearch < countAll;
 await page.screenshot({ path: "scripts/.compute-proof.png", fullPage: true });
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countHealthy, countSearch, drillInWorks, logsLinkPresent, statusFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+// The DEPTH listGadgets RPC opens a capnweb WebSocket; closing it on nav logs the benign "WebSocket is
+// already in CLOSING or CLOSED state" race — filtered estate-wide (fire-161), canonical pattern matched
+// to the actual phrasing (the old `… state` anchor missed "CLOSING or CLOSED state").
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countHealthy, countSearch, drillInWorks, logsLinkPresent, statusFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -101,6 +110,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Compute reachable from the sidebar rail", "no Compute rail link (nav wiring missing)");
 check(onPath, "Compute rail click → /compute", "rail click did not reach /compute");
 check(renders, "Compute content renders (stats + status filter + workers + CPU/invocations + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'your workers' band renders (listGadgets DEPTH, fail-soft)", "live workers band missing — listGadgets DEPTH not wired");
 check(drillInWorks, "Worker click opens its detail (click-counter → lead-scorer)", "detail did not switch");
 check(logsLinkPresent, "Worker detail links to its runtime Logs (View logs)", "no View-logs link on the worker detail");
 check(statusFilterWorks, `Status filter narrows the list (All ${countAll} → Healthy ${countHealthy})`, "status pill did not narrow the list");

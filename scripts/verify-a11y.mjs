@@ -104,6 +104,7 @@ for (const [path, signal] of [
   ['/domains', /domains|custom route|DNS|SSL|sample data/i], // WS-DEMO: Domains custom routes (fire-168)
   ['/queues', /queues|async|depth|dead-letter|sample data/i], // WS-DEMO: Queues async work (fire-169)
   ['/secrets', /secrets|rotation|never shown|sample data/i], // WS-DEMO: Secrets env-vars (fire-170)
+  ['/storage', /storage|d1|kv|r2|usage|sample data/i], // WS-DEMO: Storage D1/KV/R2 (fire-171)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

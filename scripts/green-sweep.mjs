@@ -28,6 +28,7 @@ const CHECKS = [
   ['check-a11y-coverage.mjs', [], 'A11Y-COVERAGE GREEN'], // DRIFT GATE (fire-151): every fork static route is in verify-a11y's list — fast/static preamble so a new surface can't ship a11y-unaudited (fire-103/117/146/147 class)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
+  ['verify-login-gate.mjs', [], 'LOGIN-GATE GREEN'], // anon first-load HTML IS the full-screen login (Google+GitHub+magic-link+email/pw); authed gets the SPA (Brian 2026-10-06)
   ['verify-os-screens.mjs', [], 'ALL OS SCREENS LOAD'], // every static OS route loads authed, 0 console errors (Brian 2026-10-06 "make sure all screens can load") — net-new comprehensive load gate
   ['verify-home-composer.mjs', [], '0 console errors'], // the value-path ENTRY — read-only (fire-114)
   ['verify-pulse.mjs', [], '0 console errors'],

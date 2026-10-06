@@ -118,6 +118,7 @@ for (const [path, signal] of [
   ['/environments', /environments|lifecycle|quota|budget|autostop|sample data/i], // WS-DEMO: Environments governance — Coder (fire-182)
   ['/approvals', /approvals|pending|approve|risk|deploy|sample data/i], // WS-DEMO: Approvals HITL governance queue (fire-183)
   ['/tasks', /tasks|running|failed|succeeded|retry|sample data/i], // WS-DEMO: Tasks work-tracker primitive (fire-184)
+  ['/tools', /tools|built-in|connection|mcp|enable|sample catalog/i], // WS-DEMO: Tools capability registry — §30 chain (fire-185)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

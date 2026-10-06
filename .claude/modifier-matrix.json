@@ -149,6 +149,18 @@
       ],
       "notes": "fire-147 CREATED/SHIPPED (salvage-committed fire-147-salvage; BACKLOG Activity/Runs, North-Star HITL-governance surface). /activity = global Activity & Approvals: a 'Needs your approval' HITL gate (3 sample pending — Resend broadcast / deploy / Square charge — Approve/Reject resolve LOCALLY, verified 3->2 on prod) + a grouped 'Recent activity' feed (Today/Yesterday; action/observation/bindHook icons, Approved/Denied/Observed/Enabled status dots, Auto chips) mirroring the real ActionLogEntry model + Activity.tsx vocabulary. Honestly labeled 'Preview · sample data'. Wired Operate rail (ListChecks) + ⌘K + AdminPage catalog (0 orphan). BA-authed real-browser verified (verify-activity.mjs, green-sweep's 24th check): reachable via rail, 6 content needles, HITL Approve decrements, 0 console errors. Direct-Read vision 9/10 — clean, dense, on-brand, interactive, honest. Knock vs 9.5: pending-row action-column alignment; the two section cards read same-weight. Fork 1879d778 / outer: salvage commit (see LEDGER fire-147-salvage)."
     },
+    "os.logs": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 8,
+      "lastVisit": "2026-10-05",
+      "next": [
+        "subtle per-severity row tint (error/warn left-border accent) — 9->9.3",
+        "wire a LIVE tail (Workers Logs over a WebSocket per run) replacing the sample stream — the real ->10",
+        "group-by-requestId collapse to trace a single run"
+      ],
+      "notes": "fire-166 CREATED/SHIPPED (WS-DEMO doc-diff: the /logs runtime-tail — the 'what an admin can see live' gap + the dead ResourcesPanel 'Logs' card). Dark/cyan monospace stream: stat strip (Lines/Errors/Warnings/Sources) + level filter pills (All/Debug/Info/Warn/Error w/ counts + colored dots) + search + a Live/Paused toggle + 18 sample lines across 7 sources (router/lead-scorer/inbox-agent/scheduler/booking-agent/click-counter/browser-agent) w/ timestamp + level badge + source chip + message + requestId. Pure helpers (levelCounts/filterLogs/uniqueSources) unit-tested (logs.test.ts 11/11). AA-safe both themes (level accent on DOTS, neutral message text). Honest 'Preview · sample stream'. Wired Sidebar (Operate, Terminal) + ⌘K + an /admin Platform card + lit up the dead ResourcesPanel 'Logs' card (soon->preview->/logs, 10 panels linked now). BA-authed real-browser verified (verify-logs.mjs, green-sweep 36th check): reachable via rail, level filter narrows (All 18->Error 3), search narrows (->scheduler 2), live toggle flips, 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand, highly readable. Fork 5685dd63. Knock vs 9.5: uniform row weight (per-severity tint); vs 10: live tail bridge."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

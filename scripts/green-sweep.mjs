@@ -51,6 +51,7 @@ const CHECKS = [
   ['verify-experiments.mjs', [], 'EXPERIMENTS GREEN'], // WS-DEMO Experiments: reachable + variant breakdown + ship-winner (fire-158)
   ['verify-forms.mjs', [], 'FORMS GREEN'], // WS-DEMO Forms: reachable + submissions + lead tiers + form→submissions drill-in (fire-159)
   ['verify-audit.mjs', [], 'AUDIT GREEN'], // WS-DEMO Audit: reachable + category scores + findings + target→breakdown drill-in + re-run (fire-163)
+  ['verify-logs.mjs', [], 'LOGS GREEN'], // WS-DEMO Logs: reachable + stat strip + level-filter/search narrow + live toggle (fire-166)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

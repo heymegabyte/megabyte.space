@@ -100,6 +100,7 @@ for (const [path, signal] of [
   ['/experiments', /experiments|variant|conversion|winner|sample/i], // WS-DEMO: Experiments A/B (fire-158)
   ['/forms', /forms|submission|lead|spam|sample/i], // WS-DEMO: Forms lead capture (fire-159)
   ['/audit', /audit|accessibility|findings|sample/i], // WS-DEMO: Site/Gadget Audit (fire-163)
+  ['/logs', /logs|runtime|stream|sample stream/i], // WS-DEMO: Logs live runtime tail (fire-166)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

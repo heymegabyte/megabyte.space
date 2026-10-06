@@ -126,7 +126,7 @@ for (const [path, signal] of [
   ['/sandboxes', /sandboxes|python|node|cpu|exit|sample data/i], // WS-DEMO: Sandboxes — isolated code execution T3 (fire-195)
   ['/mcp', /mcp|server|transport|tools exposed|stdio|sample data/i], // WS-DEMO: MCP Servers — protocol capability layer #30/#67 (fire-196)
   ['/research', /research|parallel|sources|findings|synthesiz|sample data/i], // WS-DEMO: Research — Manus parallel research→synthesize (fire-197)
-  ['/knowledge', /knowledge|provenance|confidence|stale|via |sample data/i], // WS-DEMO: Knowledge — Onyx live/synced layer, #33 view 2 (fire-198)
+  ['/knowledge', /knowledge|provenance|confidence|stale|via |sample entries/i], // WS-DEMO: Knowledge — Onyx live/synced layer, #33 view 2 (fire-198; DEPTH live-sources band fire-208)
   ['/skills', /agent skills|invocation|success|reusable|per category|sample data/i], // WS-DEMO: Agent Skills — the skill registry #29 (fire-199)
   ['/artifacts', /artifacts|variant|explorable|document|design|sample data/i], // WS-DEMO: Artifacts — explorable artifact canvas w/ variants (fire-200)
   ['/sources', /sources|ingest|records|synced|frequency|connected|sample sync/i], // WS-DEMO: Sources — sync-connector manifest + live connected-accounts band (fire-201, DEPTH fire-202)

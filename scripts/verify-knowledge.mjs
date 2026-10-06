@@ -18,7 +18,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + scope filter + an entry + provenance/confidence + freshness.
 const NEEDLES = [
-  /sample data/i,                                    // honest "Preview · sample data"
+  /sample entries/i,                                 // honest hybrid "Live sources · sample entries" (DEPTH fire-208)
   /knowledge/i,                                      // the page
   /\b(org|project|agent|customer|site)\b/i,          // the scope filter / scopes
   /brand voice|pricing|changelog|competitor/i,       // real sample entry titles
@@ -53,6 +53,10 @@ const onPath = /\/knowledge/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+// DEPTH (fire-208): the LIVE "sources feeding your knowledge" band renders (real listConnectedAccounts, fail-
+// soft). State-independent — keys on the band's stable chip anchor; the fail-soft state logic (loading/
+// unavailable/empty/connected) is unit-proven in knowledge.test.ts (summarizeKnowledgeSources).
+const liveBand = /sources feeding your knowledge/i.test(body);
 
 // Proof in the ALL state — every entry card (scope/source + confidence + freshness + Resync) visible for the vision read.
 await page.screenshot({ path: "scripts/.knowledge-proof.png", fullPage: true });
@@ -102,8 +106,8 @@ if (resyncBefore > 0 && (await firstResync.count().then((c) => c > 0).catch(() =
 
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countOrg, countSearch, resyncBefore, scopeFilterWorks, searchWorks, resyncWorks, connectionsLink, consoleErrors: realErrors.length }, null, 2));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countOrg, countSearch, resyncBefore, scopeFilterWorks, searchWorks, resyncWorks, connectionsLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -111,6 +115,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Knowledge reachable from the sidebar rail", "no Knowledge rail link (nav wiring missing)");
 check(onPath, "Knowledge rail click → /knowledge", "rail click did not reach /knowledge");
 check(renders, "Knowledge content renders (stats + scope filter + entries + provenance/confidence + freshness + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'sources feeding your knowledge' band renders (real listConnectedAccounts, DEPTH)", "no live knowledge-sources band");
 check(scopeFilterWorks, `Scope filter narrows the entries (All ${countAll} → Org ${countOrg})`, "scope pill did not narrow the entries");
 check(searchWorks, `Search narrows the entries (All ${countAll} → "pricing" ${countSearch})`, "search did not narrow the entries");
 check(resyncWorks, `Resync refreshes a stale entry (Resync buttons ${resyncBefore} → ${resyncBefore - 1})`, "resync did not refresh a stale entry");

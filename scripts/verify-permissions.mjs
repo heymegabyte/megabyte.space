@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + role filter + members + capability matrix + honesty.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample members/i,           // honest hybrid "Live you · sample members" (DEPTH live band)
   /\bpermissions\b/i,          // the page
   /\b(owner|admin|member|viewer)\b/i, // the role filter / roles
   /megabyte\.space|acme\.com/i, // real sample member emails
@@ -50,6 +50,11 @@ const onPath = /\/permissions/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-212): the LIVE "your access" band renders — the REAL signed-in operator from whoami
+// (always non-empty, there's always a logged-in user), shown as the workspace Owner. The section is
+// present regardless of the loading/active state.
+const liveBand = await page.locator('section[aria-label="Live your access"]').count().then((c) => c > 0).catch(() => false);
 
 // Capability matrix + Activity cross-link present.
 const matrixPresent = /capabilities by role/i.test(body) && /manage billing/i.test(body);
@@ -104,7 +109,7 @@ await page.screenshot({ path: "scripts/.permissions-proof.png", fullPage: true }
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAdmin, countSearch, matrixPresent, activityLink, roleFilterWorks, searchWorks, inviteWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countAdmin, countSearch, matrixPresent, activityLink, roleFilterWorks, searchWorks, inviteWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -112,6 +117,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Permissions reachable from the sidebar rail", "no Permissions rail link (nav wiring missing)");
 check(onPath, "Permissions rail click → /permissions", "rail click did not reach /permissions");
 check(renders, "Permissions content renders (stats + role filter + members + matrix + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'your access' band renders (real whoami, DEPTH)", "no live your-access band");
 check(roleFilterWorks, `Role filter narrows the members list (All ${countAll} → Admin ${countAdmin})`, "role pill did not narrow the list");
 check(searchWorks, `Search narrows the members list (All ${countAll} → "acme" ${countSearch})`, "search did not narrow the list");
 check(inviteWorks, "Invite composer adds a pending invite (count +1, Invited)", "invite did not add a pending member");

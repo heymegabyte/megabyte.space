@@ -119,7 +119,7 @@ for (const [path, signal] of [
   ['/approvals', /approvals|pending|approve|risk|deploy|sample data/i], // WS-DEMO: Approvals HITL governance queue (fire-183)
   ['/tasks', /tasks|running|failed|succeeded|retry|sample data/i], // WS-DEMO: Tasks work-tracker primitive (fire-184)
   ['/tools', /tools|built-in|connection|mcp|enable|sample catalog/i], // WS-DEMO: Tools capability registry — §30 chain (fire-185)
-  ['/presence', /presence|active now|agent|session|device|sample data/i], // WS-DEMO: Presence live activity manifest — §47 (fire-186)
+  ['/presence', /presence|active now|agent|session|device|sample presence/i], // WS-DEMO: Presence manifest + live whoami active-now band — §47 (fire-186, DEPTH fire-203)
   ['/analytics-engine', /analytics engine|dataset|sampl|http_requests|SELECT|sample data/i], // WS-DEMO: Analytics Engine — raw CF telemetry (fire-192)
   ['/hyperdrive', /hyperdrive|postgres|mysql|pool|cache|sample data/i], // WS-DEMO: Hyperdrive — external DB pooling/caching (fire-193)
   ['/realtime', /realtime|room|participant|audio|video|sample data/i], // WS-DEMO: Realtime — WebRTC SFU calls §56-58 (fire-194)

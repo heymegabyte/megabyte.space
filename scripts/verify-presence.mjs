@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + kind filter + a sample entry + status + self + honesty.
 const NEEDLES = [
-  /sample data/i,                               // honest "Preview · sample data"
+  /sample presence/i,                           // honest hybrid "Live you · sample presence" (DEPTH fire-203)
   /presence|active now/i,                        // the page / headline
   /\b(person|agent|session|device)\b/i,          // the kind filter / kinds
   /lead scorer|ava chen|browser run/i,           // real sample presence names
@@ -50,6 +50,10 @@ const onPath = /\/presence/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-203): the LIVE "active now" band renders (real whoami — always non-empty, there's always a
+// logged-in user). The band section is present regardless of the loading/active state.
+const liveBand = await page.locator('section[aria-label="Live active now"]').count().then((c) => c > 0).catch(() => false);
 
 // Proof in the ALL state — the full manifest (people/agents/sessions/devices) visible for the vision read.
 await page.screenshot({ path: "scripts/.presence-proof.png", fullPage: true });
@@ -99,7 +103,7 @@ if (await awayBtn.count().then((c) => c > 0).catch(() => false)) {
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAgent, countSearch, kindFilterWorks, searchWorks, selfToggleWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, countAll, countAgent, countSearch, kindFilterWorks, searchWorks, selfToggleWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -107,6 +111,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Presence reachable from the sidebar rail", "no Presence rail link (nav wiring missing)");
 check(onPath, "Presence rail click → /presence", "rail click did not reach /presence");
 check(renders, "Presence content renders (stats + kind filter + manifest + status + self action + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'active now' band renders (real whoami, DEPTH)", "no live active-now band");
 check(kindFilterWorks, `Kind filter narrows the manifest (All ${countAll} → Agent ${countAgent})`, "kind pill did not narrow the manifest");
 check(searchWorks, `Search narrows the manifest (All ${countAll} → "scraping" ${countSearch})`, "search did not narrow the manifest");
 check(selfToggleWorks, "Self-status toggle flips you active ⇄ away", "the self-status toggle did not flip");

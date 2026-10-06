@@ -89,11 +89,36 @@ for (const name of names) {
     const where = branch ? ` (branch ${branch})` : "";
     console.log(`PASS  ${name}: gitlink ${gitlink.slice(0, 8)} is a ref tip on ${url}${where}`);
   } else {
-    console.error(
-      `FAIL  ${name}: gitlink ${gitlink.slice(0, 8)} is NOT a ref tip on ${url}. ` +
-        `A fresh clone cannot resolve it. Push the commit to that remote, or repoint ` +
-        `the .gitmodules url (git submodule set-url ${path} <url-that-has-it>).`,
-    );
+    // Distinguish the common prod-ahead-of-git salvage case (fire-147/164/166: the fork was
+    // committed + FF-pushed, but the parent repo never bumped the gitlink, so HEAD's gitlink is
+    // a now-superseded ancestor) from a genuinely-unreachable gitlink. If the WORKING-TREE
+    // checkout is itself a ref tip AND a descendant of the stale gitlink, the fix is a one-liner
+    // (`git add <path>`), not a push/repoint — so say THAT instead of the misleading remedy.
+    let wt = null;
+    try {
+      wt = sh(`git -C "${path}" rev-parse HEAD`);
+    } catch {}
+    let wtAhead = false;
+    if (wt && tips.has(wt) && wt !== gitlink) {
+      try {
+        execSync(`git -C "${path}" merge-base --is-ancestor ${gitlink} ${wt}`, { cwd: ROOT });
+        wtAhead = true;
+      } catch {}
+    }
+    if (wtAhead) {
+      console.error(
+        `FAIL  ${name}: STALE GITLINK — committed gitlink ${gitlink.slice(0, 8)} is BEHIND the ` +
+          `working-tree checkout ${wt.slice(0, 8)} (a ref tip on ${url}). The fork is already ` +
+          `pushed; the parent repo just didn't record it (prod-ahead-of-git). ` +
+          `Bump it: git add ${path} && commit.`,
+      );
+    } else {
+      console.error(
+        `FAIL  ${name}: gitlink ${gitlink.slice(0, 8)} is NOT a ref tip on ${url}. ` +
+          `A fresh clone cannot resolve it. Push the commit to that remote, or repoint ` +
+          `the .gitmodules url (git submodule set-url ${path} <url-that-has-it>).`,
+      );
+    }
     failed++;
   }
 }

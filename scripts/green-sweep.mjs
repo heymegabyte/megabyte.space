@@ -62,6 +62,7 @@ const CHECKS = [
   ['verify-provenance.mjs', [], 'PROVENANCE GREEN'], // WS-DEMO Provenance: reachable + action-filter/search narrow + before→after diffs + activity/releases links (fire-175)
   ['verify-workflows.mjs', [], 'WORKFLOWS GREEN'], // WS-DEMO Workflows: reachable + status-filter/search narrow + workflow→detail step-pipeline drill-in + triggers link (fire-176)
   ['verify-ai-gateway.mjs', [], 'AI-GATEWAY GREEN'], // WS-DEMO AI Gateway: reachable + provider-filter/search narrow + cached chips + Models/Costs links (fire-177)
+  ['verify-vectorize.mjs', [], 'VECTORIZE GREEN'], // WS-DEMO Vectorize: reachable + metric-filter/search narrow + index→detail sample-query matches drill-in + knowledge link (fire-178)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

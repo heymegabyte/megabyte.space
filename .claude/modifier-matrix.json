@@ -161,6 +161,18 @@
       ],
       "notes": "fire-166 CREATED/SHIPPED (WS-DEMO doc-diff: the /logs runtime-tail — the 'what an admin can see live' gap + the dead ResourcesPanel 'Logs' card). Dark/cyan monospace stream: stat strip (Lines/Errors/Warnings/Sources) + level filter pills (All/Debug/Info/Warn/Error w/ counts + colored dots) + search + a Live/Paused toggle + 18 sample lines across 7 sources (router/lead-scorer/inbox-agent/scheduler/booking-agent/click-counter/browser-agent) w/ timestamp + level badge + source chip + message + requestId. Pure helpers (levelCounts/filterLogs/uniqueSources) unit-tested (logs.test.ts 11/11). AA-safe both themes (level accent on DOTS, neutral message text). Honest 'Preview · sample stream'. Wired Sidebar (Operate, Terminal) + ⌘K + an /admin Platform card + lit up the dead ResourcesPanel 'Logs' card (soon->preview->/logs, 10 panels linked now). BA-authed real-browser verified (verify-logs.mjs, green-sweep 36th check): reachable via rail, level filter narrows (All 18->Error 3), search narrows (->scheduler 2), live toggle flips, 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand, highly readable. Fork 5685dd63. Knock vs 9.5: uniform row weight (per-severity tint); vs 10: live tail bridge."
     },
+    "os.domains": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-06",
+      "next": [
+        "subtle per-status left-border accent on rows (active/pending/error) — 9->9.3",
+        "wire LIVE Cloudflare-for-SaaS custom hostnames + DNS/SSL provisioning — the real ->10",
+        "per-domain detail drawer (exact DNS records to set + verify-now)"
+      ],
+      "notes": "fire-168 CREATED/SHIPPED (WS-DEMO doc-diff ready slice — the ResourcesPanel 'Domains' card had no route). Dark/cyan custom-routes surface: stat strip (Domains/Active/Pending/Requests-24h) + status filter pills (All/Active/Pending-DNS/Error w/ counts + dots) + search + an 'Add domain' composer (type host -> provisions a Pending-DNS row, pure makePendingDomain) + a domain list (globe chip + mono host + -> target + SSL state + DNS record on pending/error + status badge + 24h traffic). 7 sample domains across active/pending/error. Pure helpers (statusCounts/filterDomains/totalRequests/makePendingDomain) unit-tested (domains.test.ts 12/12). AA-safe both themes (status accent on DOTS, neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, Globe) + ⌘K + /admin Platform card + lit the dead ResourcesPanel 'Domains' card (soon->preview->/domains, 11 panels linked). BA-authed real-browser verified (verify-domains.mjs, green-sweep 37th): reachable via rail, status filter narrows (All 7->Active 5), search narrows (->acme 1), add-domain composer +1 pending row, 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand; the error/pending rows w/ DNS hints are the standout (actionable). Fork faf4519e. Knock vs 9.5: uniform row weight (per-status tint); vs 10: live Cloudflare-for-SaaS bridge."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

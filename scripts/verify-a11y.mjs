@@ -101,6 +101,7 @@ for (const [path, signal] of [
   ['/forms', /forms|submission|lead|spam|sample/i], // WS-DEMO: Forms lead capture (fire-159)
   ['/audit', /audit|accessibility|findings|sample/i], // WS-DEMO: Site/Gadget Audit (fire-163)
   ['/logs', /logs|runtime|stream|sample stream/i], // WS-DEMO: Logs live runtime tail (fire-166)
+  ['/domains', /domains|custom route|DNS|SSL|sample data/i], // WS-DEMO: Domains custom routes (fire-168)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

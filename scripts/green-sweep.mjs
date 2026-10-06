@@ -57,6 +57,7 @@ const CHECKS = [
   ['verify-secrets.mjs', [], 'SECRETS GREEN'], // WS-DEMO Secrets: reachable + scope-filter/search narrow + rotate + add-secret composer (fire-170)
   ['verify-storage.mjs', [], 'STORAGE GREEN'], // WS-DEMO Storage: reachable + type-filter/search narrow + store→detail drill-in + D1→database link (fire-171)
   ['verify-compute.mjs', [], 'COMPUTE GREEN'], // WS-DEMO Compute: reachable + status-filter/search narrow + worker→detail drill-in + logs link (fire-172)
+  ['verify-metrics.mjs', [], 'METRICS GREEN'], // WS-DEMO Metrics: reachable + metric-toggle + gadget-select re-draw the chart + cross-links (fire-173)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

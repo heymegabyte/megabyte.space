@@ -77,6 +77,7 @@ const CHECKS = [
   ['verify-sandboxes.mjs', [], 'SANDBOXES GREEN'], // WS-DEMO Sandboxes (isolated code execution T3, §7/§12): reachable + language-filter/search narrow + kill action + compute link (fire-195)
   ['verify-mcp.mjs', [], 'MCP GREEN'], // WS-DEMO MCP Servers (capability portability layer, #30/#67): reachable + transport-filter/search narrow + enable/disable toggle + tools link (fire-196)
   ['verify-research.mjs', [], 'RESEARCH GREEN'], // WS-DEMO Research (Manus parallel research→synthesize): reachable + status-filter/search narrow + cancel action + agents link (fire-197)
+  ['verify-knowledge.mjs', [], 'KNOWLEDGE GREEN'], // WS-DEMO Knowledge (Onyx live/synced layer, #33 view 2): reachable + scope-filter/search narrow + resync action + context/connections links (fire-198)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

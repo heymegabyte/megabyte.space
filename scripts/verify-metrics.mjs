@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + metric toggle + a gadget + chart + honesty label.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample series/i,            // honest hybrid "Live AI usage · sample series" (DEPTH fire-205)
   /\bmetrics\b/i,              // the page
   /(requests|error rate|latency)/i, // the metric toggle
   /lead-scorer|click-counter/i, // real sample gadget names
@@ -51,6 +51,10 @@ const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
 
+// DEPTH (fire-205): the LIVE "AI requests today" band renders — real getCloudflareUsage, which always
+// resolves a real account state (unlimited or metered), never empty (unlike fire-202 connected-accounts).
+const liveBand = await page.locator('section[aria-label="Live AI usage"]').count().then((c) => c > 0).catch(() => false);
+
 const chartHeading = () => page.locator('section[aria-label="Metric chart"] h2').first().innerText().catch(() => '');
 
 // INTERACTIVE 1 — the gadget selector re-draws the chart. Default "All gadgets · …" → pick lead-scorer.
@@ -83,7 +87,7 @@ await page.screenshot({ path: "scripts/.metrics-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, gadgetSelectWorks, metricToggleWorks, crossLinksPresent, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, gadgetSelectWorks, metricToggleWorks, crossLinksPresent, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -91,6 +95,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Metrics reachable from the sidebar rail", "no Metrics rail link (nav wiring missing)");
 check(onPath, "Metrics rail click → /metrics", "rail click did not reach /metrics");
 check(renders, "Metrics content renders (stats + metric toggle + gadgets + chart + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'AI requests today' band renders (real getCloudflareUsage, DEPTH)", "no live AI-usage band");
 check(gadgetSelectWorks, "Gadget selector re-draws the chart (All gadgets → lead-scorer)", "chart heading did not update on gadget select");
 check(metricToggleWorks, "Metric toggle re-draws the chart (Requests → Error rate)", "chart heading did not update on metric toggle");
 check(crossLinksPresent, "Cross-links to Analytics + Compute present (interconnect)", "missing Full-analytics / Runtime cross-links");

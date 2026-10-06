@@ -117,6 +117,7 @@ for (const [path, signal] of [
   ['/notifications', /notifications|alert|unread|deploy|security|sample data/i], // WS-DEMO: Notifications center (fire-181)
   ['/environments', /environments|lifecycle|quota|budget|autostop|sample data/i], // WS-DEMO: Environments governance — Coder (fire-182)
   ['/approvals', /approvals|pending|approve|risk|deploy|sample data/i], // WS-DEMO: Approvals HITL governance queue (fire-183)
+  ['/tasks', /tasks|running|failed|succeeded|retry|sample data/i], // WS-DEMO: Tasks work-tracker primitive (fire-184)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

@@ -5,7 +5,8 @@
  * nav wiring); renders the stat strip + a status filter + search + the task cards. The SIGNATURE
  * interactions: a status pill + search narrow the list, a per-row "Retry" re-queues a failed task (one
  * fewer Retry button), and "Retry failed" clears the failed backlog in bulk. It cross-links to Activity.
- * "Preview · sample data". BA-authed real Chromium, PROD. Needs BA creds.
+ * It LEADS with a LIVE "results" band (real listOutputs — the outputs your work has produced). "Live
+ * results · sample runs". BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
 
@@ -15,7 +16,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + status filter + a sample task + cost + success + honesty.
 const NEEDLES = [
-  /sample data/i,                                       // honest "Preview · sample data"
+  /sample runs/i,                                       // honest hybrid "Live results · sample runs" (DEPTH live band)
   /tasks/i,                                             // the page
   /\b(running|queued|succeeded|failed|blocked)\b/i,     // the status filter / statuses
   /lead|invoice|competitor|board summary/i,             // real sample task titles
@@ -50,6 +51,10 @@ const onPath = /\/tasks/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH: the live "results" band (real listOutputs) — assert the section renders (populated OR honest-empty;
+// both are valid live states). A regression here means the band broke, not that the account has no outputs.
+const liveBand = await page.locator('section[aria-label="Live results"]').count().then((c) => c > 0).catch(() => false);
 
 // Proof in the ALL state — every task card (status/type chips + Retry on failed) visible for the vision read.
 await page.screenshot({ path: "scripts/.tasks-proof.png", fullPage: true });
@@ -111,7 +116,7 @@ if (beforeAll > 0 && (await retryAllBtn.count().then((c) => c > 0).catch(() => f
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countSucceeded, countSearch, retryBefore, statusFilterWorks, searchWorks, retryWorks, retryAllWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countSucceeded, countSearch, retryBefore, statusFilterWorks, searchWorks, retryWorks, retryAllWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -119,6 +124,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Tasks reachable from the sidebar rail", "no Tasks rail link (nav wiring missing)");
 check(onPath, "Tasks rail click → /tasks", "rail click did not reach /tasks");
 check(renders, "Tasks content renders (stats + status filter + list + cost rollup + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'results' band renders (real listOutputs, DEPTH)", "live results band missing");
 check(statusFilterWorks, `Status filter narrows the list (All ${countAll} → Succeeded ${countSucceeded})`, "status pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAll} → "invoice" ${countSearch})`, "search did not narrow the list");
 check(retryWorks, `Retry re-queues one failed task (Retry buttons ${retryBefore} → ${retryBefore - 1})`, "per-row retry did not re-queue a task");

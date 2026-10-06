@@ -80,6 +80,7 @@ const CHECKS = [
   ['verify-knowledge.mjs', [], 'KNOWLEDGE GREEN'], // WS-DEMO Knowledge (Onyx live/synced layer, #33 view 2): reachable + scope-filter/search narrow + resync action + context/connections links (fire-198)
   ['verify-skills.mjs', [], 'SKILLS GREEN'], // WS-DEMO Agent Skills (reusable-skill registry, #29): reachable + category-filter/search narrow + enable/disable toggle + tools/agents links (fire-199)
   ['verify-artifacts.mjs', [], 'ARTIFACTS GREEN'], // WS-DEMO Artifacts (explorable canvas w/ variants): reachable + type-filter/search narrow + next-variant stepper + outputs/gadgets links (fire-200)
+  ['verify-sources.mjs', [], 'SOURCES GREEN'], // WS-DEMO Sources (sync-connector manifest behind Knowledge): reachable + kind-filter/search narrow + sync-now action + knowledge/connections links (fire-201)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

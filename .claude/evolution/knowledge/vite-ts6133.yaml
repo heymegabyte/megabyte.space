@@ -1,0 +1,20 @@
+# A seed KNOWLEDGE claim — generalized from repeated EXPERIENCE, carrying the evidence
+# schema (kernel/evidence-schema.md § Knowledge claim). Deterministic-tier evidence,
+# reproduced twice → high confidence. This is what a promoted lesson looks like vs a raw
+# memory note.
+claim: "vite/esbuild silently tree-shakes unused imports, but the deploy's tsc --noEmit fails TS6133 — so run tsc --noEmit in workshop-frontend BEFORE deploy to catch it locally."
+scope: "any TypeScript build in the megabyte.space estate (workshop-frontend + Workers)"
+evidence:
+  - { tier: deterministic, ref: "fire-154 red tsc output", note: "vite build green, tsc red" }
+  - { tier: deterministic, ref: "fire-179 recurrence", note: "same class, reproduced" }
+source: experience
+confidence: 0.95
+created: 2026-10-06
+last_verified: 2026-10-06
+freshness: valid
+ttl_days: 180
+contradicting_evidence: []
+invalidated_by:
+  - "vite or typescript major-version upgrade"
+  - "switch of build pipeline off esbuild"
+mirror: "~/.claude/projects/-Users-Apple-emdash-repositories-megabyte-space/memory/vite-build-misses-ts6133-run-tsc-noemit.md"

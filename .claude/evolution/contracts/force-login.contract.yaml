@@ -1,0 +1,160 @@
+# Correctness Contract — FORCE-LOGIN before the OS
+#
+# Compiled per `.claude/commands/compile-correctness-contract.md`. This is the task-scoped
+# definition of success for the estate's FORCE-LOGIN invariant (Brian, 2026-10-04): the Cloudflare
+# OS shell NEVER renders for an anonymous visitor; the apex shows the WebGL landing → Better Auth
+# /signin, and ONLY an authenticated session reaches the OS. Every success_condition below names the
+# real verifier that proves it. The Evolution Kernel's proof-carrying execution references this file:
+# the builder may NOT silently redefine success; requirements change ONLY via a `changelog:` entry
+# recording new evidence.
+
+task: force-login-before-os
+authored: 2026-10-06T00:00:00Z
+status: active
+sources:
+  - CLAUDE.md § Auth ("FORCE LOGIN before the OS"; WS-8/BA-5; force-login refined 2026-10-04)
+  - scripts/verify-anon-console.mjs    # fire-90 anonymous-path repro + force-login invariant
+  - scripts/verify-prod.mjs            # 10-assertion post-deploy prod verifier (apex serves the OS)
+
+goal: >
+  An anonymous visitor to https://megabyte.space is FORCE-gated to sign in before the Cloudflare OS —
+  the OS shell never renders pre-auth; the apex serves the WebGL landing splash → Better Auth /signin
+  (GitHub + Google SSO + magic-link + email/password), with NO Cloudflare Access in the human path,
+  and only an authenticated session reaches the OS.
+
+requirements:
+  - The apex (`/`) SERVES the Cloudflare OS router, not the retired `megabyte-home` homepage worker.
+  - An anonymous HTML navigation to `/` is 302'd to OUR same-origin `/signin` (never to cloudflareaccess.com).
+  - `/signin` is a 200 Better Auth sign-in surface (HTML; body identifies the Cloudflare OS).
+  - GitHub SSO is wired: POST `/api/auth/sign-in/social` {provider:"github"} → 200 with a github.com authorize URL.
+  - Google SSO is wired: POST `/api/auth/sign-in/social` {provider:"google"} → 200 with an accounts.google.com authorize URL.
+  - The Better Auth rail is baked into the apex: GET `/api/auth/ok` → 200 {ok:true}.
+  - An allowlisted BA email sign-in sets an apex-scoped session cookie, and an authed HTML nav to `/`
+    carrying it PASSES THE GATE to the OS shell (200, not a /signin redirect).
+  - `www.megabyte.space` → 301/302/308 to the apex.
+  - HSTS is served on the apex OS surface (CSP is a tracked follow-up WARN, not a requirement — see unknowns).
+
+invariants:
+  - OS_SHELL_NEVER_RENDERS_PRE_AUTH — the OS shell (sidebar `aside nav`) does NOT render for an anonymous
+    visitor on any anonymous path; the force-login gate holds before the OS appears.
+  - ZERO_CONSOLE_ERRORS_ANONYMOUS — an anonymous first load (cleared storage) produces 0 console.error /
+    pageerror (fire-90: the authed-RPC hooks must fail-soft outside their providers during the anon→/signin transition).
+  - NO_CLOUDFLARE_ACCESS_IN_HUMAN_PATH — no human navigation 3xx's to cloudflareaccess.com or /cdn-cgi/access;
+    the gate is Better Auth only (Access remains for AUTOMATION/service-token/WARP only).
+  - AUTHED_SESSION_REACHES_OS — a valid apex session cookie passes the gate to the OS shell (the gate forces
+    login, it does not lock out authenticated users).
+
+forbidden_outcomes:
+  - The OS shell (sidebar nav / Workshop) rendering for an anonymous visitor (force-login bypassed).
+  - A human navigation redirecting to cloudflareaccess.com (Access reintroduced into the human path).
+  - Any console error on the anonymous `/` or `/signin` load (the fire-90 regression class).
+  - An anonymous `/` returning the retired `megabyte-home` homepage instead of the OS router's gate.
+  - The gate blocking an authenticated session from reaching the OS (over-gating).
+
+user_journeys:
+  - anonymous_forced_to_signin: visit `/` anonymously (cleared storage) → see the WebGL landing splash,
+    NOT the OS shell → a sign-in affordance ("Enter the OS" / continue-with / magic-link) is visible →
+    activating it routes to `/signin`.
+  - authed_reaches_os: allowlisted BA sign-in → apex session cookie → nav `/` → OS shell renders (200).
+
+ui_states:
+  - anonymous_landing: WebGL landing splash shown first; OS shell absent; sign-in affordance visible.
+  - signin: `/signin` Better Auth surface (GitHub + Google SSO + magic-link + email/password).
+  - authed_os_shell: OS shell renders directly once the `megabyteOS_entered` flag + a valid session exist.
+
+functional_behaviors:
+  - "Enter the OS" on the landing sets the `megabyteOS_entered` localStorage flag and routes to `/signin`.
+  - `/api/auth/*` on the apex forwards to the isolated `megabyte-auth` worker (service binding, BETTER_AUTH="1").
+  - The router keys its anonymous redirect on an HTML navigation (Sec-Fetch-Dest: document / Accept: text/html).
+
+data_behaviors:
+  - The session cookie `__Secure-better-auth.session_token` is scoped to the apex domain (D1-backed Better Auth).
+  - The `megabyteOS_entered` flag persists the dismissal so the splash is not re-shown to an authed user.
+
+security_requirements:
+  - Cloudflare Access is REMOVED from the human path (retained for the E2E service token + WARP automation only).
+  - The auth gate is server-enforced (the asset layer must not serve `/` without the worker running —
+    `assets.run_worker_first` keeps the worker in front of real navigations).
+  - No auth wall on anonymous discovery beyond the forced sign-in gate itself (the landing splash is public).
+
+performance_requirements: []   # N/A to the force-login invariant itself — CWV is owned by verify-apex-cwv.mjs, a separate contract.
+
+visual_requirements:
+  - The anonymous load has no horizontal overflow at 1440px and at 390px (mobile) — asserted by verify-anon-console.mjs.
+  - (Brand/motion polish of the landing + /signin is tracked by the Beautify-10x matrix, not gated here.)
+
+accessibility_requirements: []  # Axe/WCAG for the landing + /signin is owned by verify-a11y.mjs, a separate contract; not duplicated here.
+
+compatibility_requirements:
+  - The invariant holds at desktop (1440px) and mobile (390px) viewports (verify-anon-console.mjs runs both; `--mobile`).
+  - Topology constraint: the apex is served by the `megabyte-os` router; `os.megabyte.space` is detached/GONE —
+    no assertion may depend on it resolving.
+
+tests_required:
+  - scripts/verify-anon-console.mjs        # anonymous-path console + force-login invariant (exit 0 = green)
+  - scripts/verify-prod.mjs                # 10 prod assertions incl. the apex-serves-OS gate + SSO + no-Access
+
+runtime_evidence_required:
+  - "node scripts/verify-anon-console.mjs            # desktop 1440: 0 console errors + OS shell did NOT leak pre-login + no overflow"
+  - "node scripts/verify-anon-console.mjs --mobile   # 390px: same invariants hold"
+  - "BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD) node scripts/verify-prod.mjs   # N/N green"
+
+visual_evidence_required:
+  - scripts/.anon-console-proof.png         # desktop anonymous load (landing, no OS shell) — written by verify-anon-console.mjs
+  - scripts/.anon-console-proof-mobile.png  # 390px anonymous load — written by verify-anon-console.mjs --mobile
+
+unknowns:
+  # Everything below is NOT grounded as a hard requirement by the three source files — left explicit.
+  - APEX_CSP — verify-prod.mjs assertion #8 treats apex CSP as a TRACKED WARN (the forked OS router emits no
+    CSP yet), NOT a pass/fail requirement. Whether/when the OS gets its own CSP is an open follow-up
+    (BACKLOG WS-8/security), so it is NOT a success_condition of THIS contract.
+  - MAGIC_LINK_LIVE_PROOF — CLAUDE.md states magic-link (SES) is wired on /signin, but neither
+    verify-anon-console.mjs nor verify-prod.mjs exercises an end-to-end magic-link send/consume; the
+    runtime proof here covers SSO-wired + email-password sign-in, not a live magic-link round-trip.
+  - EMAIL_PASSWORD_UI_PRESENCE — verify-prod.mjs exercises the email+password rail via API (sign-in POST),
+    not the visible presence of an email/password FORM on /signin; UI presence is unverified by these sources.
+
+assumptions:
+  - BA_E2E creds (get-secret BA_E2E_EMAIL / BA_E2E_PASSWORD) are the allowlisted testing bypass the verifiers
+    log in with. Invalidated if the E2E account is removed from the allowlist (verify-prod exits 2 — creds missing).
+  - The `megabyte-os` router owns the apex custom domain. Invalidated by an apex-ownership move (a WS-11-class flip),
+    which would require re-pointing this contract's runtime_evidence the same fire.
+
+success_conditions:
+  - condition: OS shell never renders for an anonymous visitor (desktop + mobile).
+    proof: scripts/verify-anon-console.mjs (osShellLeaked=false; run with and without --mobile) — exit 0.
+  - condition: Zero console errors on the anonymous first load.
+    proof: scripts/verify-anon-console.mjs (consoleErrors=0 on `/`) — exit 0.
+  - condition: No horizontal overflow on the anonymous load at 1440px and 390px.
+    proof: scripts/verify-anon-console.mjs (overflow ≤ 2px) and `--mobile` run.
+  - condition: Apex serves the Cloudflare OS and an anonymous `/` redirects same-origin to /signin (never to Access).
+    proof: scripts/verify-prod.mjs assertion #1 "apex serves the Cloudflare OS" (rootSameOrigin && rootNotAccess && isOS).
+  - condition: /signin is a 200 Better Auth sign-in surface.
+    proof: scripts/verify-prod.mjs assertion #3 "/signin → 200 (BA sign-in page)".
+  - condition: GitHub + Google SSO are wired.
+    proof: scripts/verify-prod.mjs assertions #4 "SSO wired (github → github.com)" + "(google → accounts.google.com)".
+  - condition: The Better Auth rail is live on the apex.
+    proof: scripts/verify-prod.mjs assertion #2 "/api/auth/ok → {ok:true}".
+  - condition: An allowlisted authed session passes the gate to the OS shell (not over-gated).
+    proof: scripts/verify-prod.mjs assertions #5 "allowlisted BA sign-in → session cookie" + "authed nav → OS shell (gate passthrough)".
+  - condition: No Cloudflare Access in the human path.
+    proof: scripts/verify-prod.mjs assertion #6 "no Cloudflare Access in human path" (no 3xx to cloudflareaccess.com / cdn-cgi/access).
+  - condition: www → apex redirect holds.
+    proof: scripts/verify-prod.mjs assertion #7 "www redirects to apex".
+  - condition: HSTS served on the apex OS surface.
+    proof: scripts/verify-prod.mjs assertion #8 "apex serves HSTS (CSP tracked as follow-up)".
+
+stop_conditions:
+  - verify-prod.mjs exits 2 (BA_E2E creds missing) — HALT: provision creds from get-secret; this is a harness
+    gap, not a prod bug, and must not be reported as a force-login failure.
+  - Any change that would WEAKEN or DELETE the Cloudflare Access app/policy, rotate a secret, or mutate
+    zone/DNS beyond the documented rulesets — HALT and escalate (destructive/irreversible; not autonomous).
+  - A regression that reintroduces Access into the human path OR leaks the OS shell pre-auth — HALT shipping;
+    fix-forward with a failing test FIRST (the force-login invariant is load-bearing; a false-green must not ship).
+  - A topology flip that moves apex ownership away from `megabyte-os` — HALT: re-point every verifier +
+    update this contract the SAME fire before claiming green (the estate's topology-flip discipline).
+
+changelog:
+  - 2026-10-06: Contract compiled (first per-task Correctness Contract for the estate). Grounded in
+    CLAUDE.md § Auth + verify-anon-console.mjs + verify-prod.mjs. CSP, live magic-link round-trip, and
+    email/password UI-presence left in `unknowns` (not asserted by the source verifiers).

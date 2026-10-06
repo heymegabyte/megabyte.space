@@ -1,0 +1,16 @@
+# A KNOWLEDGE claim the dogfood run itself produced (the flywheel working on its own tools).
+claim: "Keyword/deterministic graders do NOT discriminate on open-ended 'what do you do before X?' discipline tasks — a capable worker (DeepSeek) surfaces the target keywords regardless of the skill variant, so even a deliberately-wrong anti-pattern variant scores 1.000. Trust a promote/retire verdict only after the grader separates a known-bad variant (pairwise LLM-judge, or tasks that force a must_not violation)."
+scope: "evolution-kernel skill-eval harness + rubric/grader design"
+evidence:
+  - { tier: deterministic, ref: "evals/results/verification-discipline-2026-10-06T05-21-26.json", note: "4 variants incl. a known-bad anti-pattern ALL scored 1.000" }
+  - { tier: deterministic, ref: "evals/results/verification-discipline-2026-10-06T05-23-27.json", note: "after adding the guard, returned inconclusive-nondiscriminating (correct)" }
+source: experience
+confidence: 0.85
+created: 2026-10-06
+last_verified: 2026-10-06
+freshness: valid
+ttl_days: 180
+contradicting_evidence: []
+invalidated_by:
+  - "a grader that trips must_not on the bad variant would restore discrimination"
+action_taken: "bin/skill-eval.mjs decide() now guards: all-variants-tie within EPS ⇒ inconclusive-nondiscriminating, not a skill verdict."

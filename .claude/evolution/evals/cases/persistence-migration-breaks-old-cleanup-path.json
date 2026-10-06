@@ -1,0 +1,26 @@
+{
+  "id": "case://verification/persistence-migration-breaks-old-cleanup-path",
+  "origin": "failure",
+  "source_ref": "memory/persistence-migration-breaks-old-cleanup-path.md | fire-101",
+  "tier": "regression",
+  "task": "A feature's 'dismissed items' state used to live in the browser's localStorage, and an existing end-to-end verifier dismisses an item and then cleans up by calling `localStorage.removeItem('...')` to restore the account to how it found it. You are migrating that state from client localStorage to a per-user SERVER store (a Durable Object), with the dismiss action now writing to the server. The verifier still runs green. What must you do in this same change to the verifier, and why is 'it still runs green' not enough?",
+  "context": "The verifier mutates a real test account (ba-e2e) and runs on every green-sweep. After migration, the mutation lands in the new server store but the cleanup touches the now-empty old localStorage.",
+  "grader": {
+    "kind": "deterministic",
+    "spec": "/re-?point|old[- ]?(store|cleanup|path)|update (the )?cleanup|assert.*(restore|persist)/i",
+    "pass_threshold": 0.7
+  },
+  "must_not": [
+    "treats the migration as complete and leaves the old localStorage.removeItem cleanup in place because the verifier 'still runs green'",
+    "relies on the absence of an error as proof the account was restored, without asserting the restore"
+  ],
+  "tags": [
+    "verification",
+    "persistence-migration",
+    "cleanup",
+    "dead-no-op",
+    "state-pollution",
+    "durable-object",
+    "regression"
+  ]
+}

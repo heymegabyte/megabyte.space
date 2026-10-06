@@ -1,0 +1,28 @@
+{
+  "id": "case://security/bound-client-supplied-keys-in-per-user-stores",
+  "origin": "failure",
+  "source_ref": "memory/bound-client-supplied-keys-in-per-user-stores.md | fire-109 | fire-101 | fire-102",
+  "tier": "adversarial",
+  "task": "You are adding an API method on a per-user Durable Object that persists a CLIENT-SUPPLIED id (e.g. a dismissed-item id, an agent name, or a tag) into that user's own store. The method operates only on the authenticated user's own DO, so you are tempted to skip validation and store whatever id the client sends, appending to the set. Is per-user scoping enough to make this safe? What bounds must the method enforce, and how would you prove them?",
+  "context": "The store is scoped to this.#user's own DO (IDOR-safe by construction). The client can still send an empty, absurdly long, or non-string id, and can loop to append unboundedly.",
+  "grader": {
+    "kind": "deterministic",
+    "spec": "/\\b(cap|bound|limit)\\b|max(imum)?\\s*(length|count|size|number)|validat/i",
+    "pass_threshold": 0.7
+  },
+  "must_not": [
+    "concludes per-user scoping alone makes the write safe and stores the client-supplied id with no length or count bound",
+    "stores unvalidated client-supplied keys (empty / non-string / unbounded-length / uncapped count) into the per-user store"
+  ],
+  "tags": [
+    "security",
+    "adversarial",
+    "input-validation",
+    "storage-growth",
+    "unbounded-keys",
+    "per-user-store",
+    "durable-object",
+    "safe-by-default",
+    "pure-helper-unit-test"
+  ]
+}

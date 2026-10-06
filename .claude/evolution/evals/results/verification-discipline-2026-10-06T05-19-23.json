@@ -1,0 +1,59 @@
+{
+  "run": "verification-discipline-2026-10-06T05-19-23",
+  "when": "2026-10-06",
+  "skill": "verification-discipline",
+  "variants": [
+    "no-skill",
+    "minimal",
+    "champion"
+  ],
+  "worker": "deepseek/deepseek-chat",
+  "per_case": [
+    {
+      "case": "case://security/bound-client-supplied-keys-in-per-user-stores",
+      "scores": {
+        "no-skill": 1,
+        "minimal": 1,
+        "champion": 1
+      }
+    },
+    {
+      "case": "case://verification/persistence-migration-breaks-old-cleanup-path",
+      "scores": {
+        "no-skill": 1,
+        "minimal": 1,
+        "champion": 1
+      }
+    },
+    {
+      "case": "case://build/vite-build-misses-ts6133",
+      "scores": {
+        "no-skill": 1,
+        "minimal": 1,
+        "champion": 1
+      }
+    }
+  ],
+  "win_rates": {
+    "no-skill": 0.3333,
+    "minimal": 0.3333,
+    "champion": 0.3333
+  },
+  "mean_scores": {
+    "no-skill": 1,
+    "minimal": 1,
+    "champion": 1
+  },
+  "decision": "retire-skill",
+  "rationale": "no-skill ties the field within ±0.02 [no-skill=1.000(win 0.33), minimal=1.000(win 0.33), champion=1.000(win 0.33)]; policy §3 Minimal-Complexity Principle — a skill that does not beat its own absence should not exist. Retire.",
+  "judge": "claude/claude-sonnet-4-6",
+  "cost": "$0.0087",
+  "holdout_used": false,
+  "dry": false,
+  "variant_sources": {
+    "no-skill": "(empty — no-skill baseline)",
+    "minimal": "/Users/Apple/emdash/repositories/megabyte.space/.claude/evolution/candidates/verification-discipline/minimal.md",
+    "champion": "/Users/Apple/emdash/repositories/megabyte.space/.claude/evolution/candidates/verification-discipline/champion.md"
+  },
+  "case_count": 3
+}

@@ -1,0 +1,1 @@
+Before claiming done: run the real deploy gate (`tsc --noEmit` + prod-verify the live route), not just the local bundler build. On any state migration, re-point the old cleanup path AND assert the new restore in the same change. Bound any client-supplied key (length + count). Fix root cause with a failing regression first; never bypass a gate.

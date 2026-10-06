@@ -1,0 +1,69 @@
+# Champion registry — the live skills + their kernel lifecycle state.
+# Seeded from reality: most existing skills are LEGACY champions that predate the kernel
+# and carry NO counterfactual evidence yet. That honest gap is exactly what the kernel
+# closes — each gets an eval_suite + a champion/challenger run over time.
+#
+# Schema: kernel/evidence-schema.md § Skill manifest EXTENSION.
+
+champions:
+  - skill: run-the-loop
+    lifecycle: champion
+    confidence: 0.9        # heavy real-world use (fire-2..fire-180), but no counterfactual
+    eval_suite: []         # TODO: first evolution fire grades the orient/converge procedure
+    risk: medium
+    fallback: none
+    rollback_version: git-main
+    provenance: estate/.claude/commands/run-the-loop.md
+    last_evaluated: never
+
+  - skill: agentskills-retrospective
+    lifecycle: champion
+    confidence: 0.8
+    eval_suite: []
+    risk: low
+    fallback: none
+    provenance: ~/.claude/skills/agentskills-retrospective
+    last_evaluated: never
+
+  - skill: long-trail-tdd
+    lifecycle: champion
+    confidence: 0.8
+    eval_suite: []
+    risk: low
+    fallback: none
+    provenance: ~/.claude/skills/long-trail-tdd
+    last_evaluated: never
+
+  - skill: deep-research
+    lifecycle: champion
+    confidence: 0.75
+    eval_suite: []
+    risk: medium           # external content = untrusted (security-policy §6)
+    fallback: none
+    provenance: ~/.claude/skills/deep-research
+    last_evaluated: never
+
+  - skill: model-router
+    lifecycle: champion
+    confidence: 0.7
+    eval_suite: []         # router-scientist: grade routing accuracy vs outcomes
+    risk: low
+    fallback: inherit-session-model
+    provenance: plugins/heymegabyte-agent-skills/agents/model-router.md
+    last_evaluated: never
+
+  # First kernel-evaluated entry (dogfood, 2026-10-06). Decision was INCONCLUSIVE because
+  # the deterministic grader did not discriminate (even a known-bad variant tied) — so this
+  # correctly did NOT become a verdict. It stays a candidate until a discriminating grader runs.
+  - skill: verification-discipline
+    lifecycle: candidate
+    confidence: 0.0
+    eval_suite:
+      - case://build/vite-build-misses-ts6133
+      - case://verification/persistence-migration-breaks-old-cleanup-path
+      - case://security/bound-client-supplied-keys-in-per-user-stores
+    risk: low
+    fallback: none
+    rollback_version: n/a
+    provenance: dogfood 2026-10-06 — candidates/verification-discipline/
+    last_evaluated: 2026-10-06   # inconclusive-nondiscriminating (see evals/results/INDEX.md)

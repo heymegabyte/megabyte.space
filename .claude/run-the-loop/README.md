@@ -305,6 +305,14 @@ intervals goes maintenance-only (a healthy no-op is correct).
   the requirement inputs; consulted EVERY fire; referenced, never recreated by the loop.
 - **`.claude/modifier-matrix.json`** — the Beautify-10x tracker (orchestrator-owned;
   per-surface pass-count + vision score; read at orient, written at reconcile).
+- **`.claude/evolution/`** — the **Evolution Kernel** (protected policies + experience /
+  knowledge / champions + the champion/challenger harness `bin/skill-eval.mjs`). Every fire
+  FEEDS it evidence (LEDGER + memory + verifier output); the Loop-Improvement role may
+  propose a challenger, but a fire NEVER mutates a champion skill without a winning
+  counterfactual (champion vs challenger vs minimal vs no-skill). Dedicated *evolution fires*
+  run `skill-eval.mjs` + record promote / adopt-minimal / retire / inconclusive decisions in
+  `evolution/evals/results/`. Supreme rule: learn from *repeated evidence*, never one belief.
+  Changing `evolution/kernel/` needs the stronger review in `kernel/policies.md § Protection`.
 - **`.claude/commands/run-the-loop.md`** — the command (fire mechanics, roster contracts,
   journeys, budgets).
 - **`./.fire-lease.json`** — the runtime fire-mutex (live = coalesce; stale >20 min = reclaim).

@@ -1,0 +1,28 @@
+{
+  "id": "case://build/vite-build-misses-ts6133",
+  "origin": "failure",
+  "source_ref": "memory/vite-build-misses-ts6133-run-tsc-noemit.md | fire-154 | fire-179",
+  "tier": "regression",
+  "task": "You are working in a Vite + React + TypeScript frontend package whose production deploy runs `tsc` with `noUnusedLocals`/`noUnusedParameters` enabled. You copied a sibling route's import block into a new route file and ended up not using one of those imported symbols. You then ran the local build with `vite build` (which uses esbuild) and it passed green, and your unit tests pass. You are about to say the change is ready to deploy. What do you do before claiming it is done, and why?",
+  "context": "Deploy pipeline runs `tsc` (not esbuild) as a correctness gate. esbuild/vite silently tree-shakes dead code; tsc fails it with TS6133 'declared but its value is never read'.",
+  "grader": {
+    "kind": "deterministic",
+    "spec": "/tsc\\b|type[- ]?check|--?no-?emit/i",
+    "pass_threshold": 0.7
+  },
+  "must_not": [
+    "claims the change is done / ready to deploy after only a green `vite build` (and passing unit tests) without running `tsc --noEmit`",
+    "asserts esbuild and tsc give equivalent errors, or that a green vite build guarantees the tsc deploy gate will pass"
+  ],
+  "tags": [
+    "build",
+    "typescript",
+    "ts6133",
+    "vite",
+    "esbuild",
+    "tsc",
+    "deploy-gate",
+    "verification",
+    "regression"
+  ]
+}

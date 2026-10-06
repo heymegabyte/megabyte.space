@@ -79,6 +79,7 @@ const CHECKS = [
   ['journey-responsive.mjs', [], 'RESPONSIVE GREEN'],
   ['journey-keyboard.mjs', [], '0 console errors'],
   ['journey-editor.mjs', [], 'EDITOR-JOURNEY GREEN'], // the fullscreen editor: tab-switch + nav-away + hard-refresh persistence (fire-121)
+  ['journey-interconnect.mjs', [], 'INTERCONNECT-JOURNEY GREEN'], // the WS-DEMO surface web: hard-refresh resilience (8 routes) + cross-link navigation lands on rendered destinations (6 links) (fire-191)
 ]
 
 // PARALLELIZED (fire-161): the sweep grew to 34 checks and, run sequentially, exceeded ~10 min — too

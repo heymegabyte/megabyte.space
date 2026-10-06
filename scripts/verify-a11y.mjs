@@ -113,6 +113,7 @@ for (const [path, signal] of [
   ['/ai-gateway', /gateway|cache|provider|latency|sample data/i], // WS-DEMO: AI Gateway proxy (fire-177)
   ['/vectorize', /vectorize|vector|embedding|similarity|index|sample data/i], // WS-DEMO: Vectorize vector DB (fire-178)
   ['/durable-objects', /durable objects|stateful|instance|hibernat|sample data/i], // WS-DEMO: Durable Objects (fire-179)
+  ['/email', /email|deliver|bounce|ses|sample data/i], // WS-DEMO: Email SES deliverability (fire-180)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

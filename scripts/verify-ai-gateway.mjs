@@ -15,7 +15,8 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + provider filter + a model + caching + honesty label.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample (data|traffic)/i,    // honest label — the traffic log is sample (the usage band is LIVE)
+  /AI Gateway balance|Daily AI usage/i, // the LIVE status band (fire-187 DEPTH)
   /gateway/i,                  // the page
   /\b(anthropic|openai|deepseek)\b/i, // the provider filter / providers
   /claude|deepseek-chat|gpt-4o/i, // real sample model ids
@@ -50,6 +51,10 @@ const onPath = /\/ai-gateway/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-187): the LIVE Gateway-status band — real balance + daily usage from getCloudflareUsage.
+// Its labels are static regardless of the account's live state, so assert they rendered (not a value).
+const liveBand = /AI Gateway balance/i.test(body) && /Daily AI usage/i.test(body);
 
 // cached chips render (the gateway's whole point — served-from-cache requests are flagged).
 const cachedChips = /\bcached\b/i.test(body);
@@ -89,7 +94,7 @@ await page.screenshot({ path: "scripts/.ai-gateway-proof.png", fullPage: true })
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDeepseek, countSearch, cachedChips, crossLinksPresent, providerFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDeepseek, countSearch, liveBand, cachedChips, crossLinksPresent, providerFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -99,6 +104,7 @@ check(onPath, "AI Gateway rail click → /ai-gateway", "rail click did not reach
 check(renders, "AI Gateway content renders (stats + provider filter + models + caching + honesty label)", `content missing: ${missing.join(", ")}`);
 check(providerFilterWorks, `Provider filter narrows the log (All ${countAll} → DeepSeek ${countDeepseek})`, "provider pill did not narrow the log");
 check(searchWorks, `Search narrows the log (All ${countAll} → "claude" ${countSearch})`, "search did not narrow the log");
+check(liveBand, "LIVE Gateway-status band renders (real balance + daily usage from getCloudflareUsage)", "live Gateway-status band missing");
 check(cachedChips, "Cached requests are flagged (Cached chip)", "no Cached chip in the log");
 check(crossLinksPresent, "Cross-links to Models + Costs present (interconnect)", "missing Models / Costs cross-links");
 check(realErrors.length === 0, "0 console errors on /ai-gateway", `${realErrors.length} console errors`);

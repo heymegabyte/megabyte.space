@@ -75,6 +75,7 @@ const CHECKS = [
   ['verify-hyperdrive.mjs', [], 'HYPERDRIVE GREEN'], // WS-DEMO Hyperdrive (external DB pool/cache): reachable + engine-filter/search narrow + caching toggle + masked hosts + database link (fire-193)
   ['verify-realtime.mjs', [], 'REALTIME GREEN'], // WS-DEMO Realtime (WebRTC SFU calls, §56-58): reachable + status-filter/search narrow + end-call action + presence link (fire-194)
   ['verify-sandboxes.mjs', [], 'SANDBOXES GREEN'], // WS-DEMO Sandboxes (isolated code execution T3, §7/§12): reachable + language-filter/search narrow + kill action + compute link (fire-195)
+  ['verify-mcp.mjs', [], 'MCP GREEN'], // WS-DEMO MCP Servers (capability portability layer, #30/#67): reachable + transport-filter/search narrow + enable/disable toggle + tools link (fire-196)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

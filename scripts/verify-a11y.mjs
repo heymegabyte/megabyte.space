@@ -124,6 +124,7 @@ for (const [path, signal] of [
   ['/hyperdrive', /hyperdrive|postgres|mysql|pool|cache|sample data/i], // WS-DEMO: Hyperdrive — external DB pooling/caching (fire-193)
   ['/realtime', /realtime|room|participant|audio|video|sample data/i], // WS-DEMO: Realtime — WebRTC SFU calls §56-58 (fire-194)
   ['/sandboxes', /sandboxes|python|node|cpu|exit|sample data/i], // WS-DEMO: Sandboxes — isolated code execution T3 (fire-195)
+  ['/mcp', /mcp|server|transport|tools exposed|stdio|sample data/i], // WS-DEMO: MCP Servers — protocol capability layer #30/#67 (fire-196)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

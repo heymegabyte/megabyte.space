@@ -64,7 +64,12 @@ const probe = await page.evaluate(() => {
     const s = getComputedStyle(el);
     return s.color === "rgb(0, 229, 255)" || s.backgroundColor === "rgb(0, 229, 255)";
   });
-  return { hasTable: !!table, headers, bodyRows, notAvail, navModels, cyan };
+  // DEPTH (fire-207): the live "your model access" band must render above the sample catalog. State-
+  // independent — asserts the band EXISTS + its honest hybrid chip; the fail-soft state logic is unit-
+  // proven in models.test.ts (per the pure-logic-unit-test-beats-mutable-account-verify lesson).
+  const liveBand = !!document.querySelector('section[aria-label="Live model access"]') &&
+    /your model access/i.test(document.body.innerText);
+  return { hasTable: !!table, headers, bodyRows, notAvail, navModels, cyan, liveBand };
 });
 
 await page.screenshot({ path: "scripts/.models-catalog-proof.png", fullPage: true });
@@ -76,6 +81,8 @@ console.log(`consoleErrors=${consoleErrors.length}${consoleErrors.length ? " :: 
 let ok = true;
 if (!probe.hasTable || probe.bodyRows < 1) { console.log("❌ FAIL: no table rows rendered"); ok = false; }
 else console.log(`✅ PASS: catalog table rendered (${probe.bodyRows} rows, headers: ${probe.headers.join(" / ")})`);
+if (!probe.liveBand) { console.log("❌ FAIL: live 'your model access' DEPTH band missing"); ok = false; }
+else console.log("✅ PASS: live model-access DEPTH band present (listModels + getPreferredModel)");
 if (probe.notAvail) { console.log("❌ FAIL: 'not available' state shown (flag not resolving on)"); ok = false; }
 if (consoleErrors.length) { console.log("❌ FAIL: console errors on /models"); ok = false; }
 else console.log("✅ PASS: /models console-error-free");

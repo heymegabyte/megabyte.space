@@ -21,6 +21,7 @@ const NEEDLES = [
   /web search|send email|query database|create invoice/i, // real sample tool names
   /built-in|connection|mcp/i,                           // the kind chips (§30 chain)
   /calls today|enabled/i,                               // the usage / enabled rollup
+  /AI providers/i,                                      // the 2nd LIVE stat — getAiConfig (fire-190 DEPTH)
 ];
 
 const browser = await chromium.launch();

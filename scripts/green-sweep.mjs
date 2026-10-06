@@ -54,6 +54,7 @@ const CHECKS = [
   ['verify-logs.mjs', [], 'LOGS GREEN'], // WS-DEMO Logs: reachable + stat strip + level-filter/search narrow + live toggle (fire-166)
   ['verify-domains.mjs', [], 'DOMAINS GREEN'], // WS-DEMO Domains: reachable + status-filter/search narrow + add-domain composer (fire-168)
   ['verify-queues.mjs', [], 'QUEUES GREEN'], // WS-DEMO Queues: reachable + status-filter/search narrow + queue→detail drill-in + retry-failed (fire-169)
+  ['verify-secrets.mjs', [], 'SECRETS GREEN'], // WS-DEMO Secrets: reachable + scope-filter/search narrow + rotate + add-secret composer (fire-170)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

@@ -185,6 +185,18 @@
       ],
       "notes": "fire-169 CREATED/SHIPPED (WS-DEMO doc-diff ready slice — the LAST of the 3; ResourcesPanel 'Queues' card had no route). Dark/cyan two-pane async-work surface: stat strip (Queues/Backlogged/Messages/Dead-letter) + status filter pills (All/Healthy/Backlogged/Paused w/ dots) + search + a queue list (status dot + name + consumer + depth + DLQ badge) + a selected-queue DETAIL (depth/throughput/oldest/DLQ stats + recent messages w/ queued/processing/failed dots + a 'Retry N failed' action). 5 sample queues across healthy/backlogged/paused w/ DLQ. Pure helpers (statusCounts/totalDepth/totalDlq/filterQueues) unit-tested (queues.test.ts 11/11). AA-safe both themes (status accent on DOTS, neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, Queue) + ⌘K + /admin Platform card + lit the dead ResourcesPanel 'Queues' card (soon->preview->/queues, 12 panels linked). BA-authed real-browser verified (verify-queues.mjs, green-sweep 38th): reachable via rail, queue->detail drill-in (email-dispatch->lead-enrichment), retry-failed (Retrying…), status filter (All 5->Backlogged 2), search (->sms 1), 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand; the two-pane list+detail w/ message-level DLQ view is the standout. Fork 8b438e59. Knock vs 9.5: paused dot faint; vs 10: live Queues bridge."
     },
+    "os.secrets": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-06",
+      "next": [
+        "fix the stale-stat decrement: rotating a NON-stale secret shouldn't lower 'Needs rotation' (count stale && !rotated) — 9->9.3",
+        "wire LIVE Workers secret bindings + a rotation API (values stay server-side) — the real ->10",
+        "per-secret usage drill-in (which runs read it, last access)"
+      ],
+      "notes": "fire-170 CREATED/SHIPPED (WS-DEMO: the ResourcesPanel 'Secrets' card had no route; Brian re-prompted the directive right after fire-169's PREMATURE 'route frontier drained' call — the 'soon' cards ARE the demo work he wants). Dark/cyan secrets manager — values NEVER shown (masked ••••XXXX only, the real contract): stat strip (Secrets/Needs-rotation/Workspace/Account) + scope filter pills (All/Workspace/Account) + search + an 'Add secret' composer (name+value -> masks on save, full value never stored/shown) + a list (key chip + env-style name + masked value + scope badge + 'Needs rotation' chip on >90d + updated age + usedBy + a per-row 'Rotate' -> 'Rotated'). 7 sample secrets. Pure helpers (maskValue/isStale/staleCount/scopeCounts/filterSecrets/makeSecret) unit-tested (secrets.test.ts 14/14). AA-safe both themes (rotation accent on DOTS, neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, Key) + ⌘K + /admin Platform card + lit the dead ResourcesPanel 'Secrets' card (soon->preview->/secrets, 13 panels linked). BA-authed real-browser verified (verify-secrets.mjs, green-sweep 39th): reachable via rail, rotate (Rotated), scope filter (All 7->Account 4), search (->stripe 1), add-secret masks+adds (full value NEVER shown — asserted absent in DOM), 0 console errors. Direct-Read vision 9/10 — clean, dense, on-brand, a genuine recognizable secrets manager. Fork 5a61ffd0. Knock vs 9.5: stale-stat decrement edge case (rotating a non-stale secret undercounts 'Needs rotation'); vs 10: live secret-bindings bridge."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

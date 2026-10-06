@@ -115,6 +115,7 @@ for (const [path, signal] of [
   ['/durable-objects', /durable objects|stateful|instance|hibernat|sample data/i], // WS-DEMO: Durable Objects (fire-179)
   ['/email', /email|deliver|bounce|ses|sample data/i], // WS-DEMO: Email SES deliverability (fire-180)
   ['/notifications', /notifications|alert|unread|deploy|security|sample data/i], // WS-DEMO: Notifications center (fire-181)
+  ['/environments', /environments|lifecycle|quota|budget|autostop|sample data/i], // WS-DEMO: Environments governance — Coder (fire-182)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

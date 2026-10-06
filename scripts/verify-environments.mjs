@@ -15,7 +15,8 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + lifecycle filter + a sample env + quota/budget + honesty.
 const NEEDLES = [
-  /sample data/i,                                 // honest "Preview · sample data"
+  /sample (data|governance)/i,                    // honest label — governance is sample (workspaces are LIVE)
+  /your workspaces/i,                             // the LIVE workspaces band (fire-188 DEPTH)
   /environments/i,                                // the page
   /\b(running|idle|autostopped|provisioning)\b/i, // the lifecycle filter / states
   /lead-scorer|churn-winback|docs-rag/i,          // real sample environment names
@@ -57,7 +58,7 @@ const computeLink = await page.getByRole("button", { name: /^Compute/ }).count()
 const countRows = () => page.locator('section[aria-label="Environment list"] article').count();
 const countAll = await countRows().catch(() => 0);
 
-// Proof in the ALL state — every env card (quota + budget bars + autostop ETA) visible for the vision read.
+// Proof in the ALL state — full page (the LIVE workspaces band at top + stat strip + every env card).
 await page.screenshot({ path: "scripts/.environments-proof.png", fullPage: true });
 
 // INTERACTIVE 1 — a lifecycle pill narrows the list. All → Running (fewer, >0).

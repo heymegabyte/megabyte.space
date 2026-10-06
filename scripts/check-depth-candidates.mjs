@@ -34,7 +34,7 @@ try {
 // miss that first shipped would have mis-flagged /compute + /knowledge as candidates: self-defeating).
 const rpcRe = /authenticatedApi\s*\.\s*(\w+)\s*\(/g
 // Any of the honest sample-data markers the demo surfaces use (incl. every DEPTH hybrid chip variant).
-const sampleRe = /SAMPLE_|Preview · sample|sample data|sample runtime|sample entries|sample series|sample governance|sample sync|sample traffic|sample catalog|sample presence/i
+const sampleRe = /SAMPLE_|Preview · sample|sample data|sample runtime|sample entries|sample series|sample governance|sample sync|sample traffic|sample catalog|sample presence|sample runs/i
 
 const rows = []
 for (const f of files) {
@@ -45,6 +45,15 @@ for (const f of files) {
   rows.push({ route: '/' + f.replace(/\.tsx$/, '').replace(/\.index$/, ''), kind, rpcs })
 }
 
+// RPC usage frequency across every surface that already calls one (depth + live). The next DEPTH fire
+// should prefer wiring a LOW-count RPC — spreading live coverage across the RPC surface beats piling an
+// Nth band on an already-popular RPC. fire-214 picked listOutputs (then 1×, only /outputs) over
+// listGadgets (10×) for /tasks for exactly this reason; this table makes that call mechanical instead of
+// by-eye. A count is "how many surfaces already surface this RPC" — the redundancy cost of reusing it.
+const rpcUsage = {}
+for (const r of rows) for (const rpc of r.rpcs) rpcUsage[rpc] = (rpcUsage[rpc] || 0) + 1
+const rpcUsageSorted = Object.entries(rpcUsage).sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]))
+
 const by = (k) => rows.filter((r) => r.kind === k)
 console.log(
   JSON.stringify(
@@ -53,6 +62,7 @@ console.log(
       candidates: by('candidate').map((r) => r.route),
       depthDone: by('depth').map((r) => ({ route: r.route, rpcs: r.rpcs })),
       fullyLive: by('live').map((r) => ({ route: r.route, rpcs: r.rpcs })),
+      rpcUsage: Object.fromEntries(rpcUsageSorted),
     },
     null,
     2,
@@ -63,4 +73,6 @@ for (const r of by('candidate')) console.log('  •', r.route)
 if (by('candidate').length === 0) console.log('  (none — every sample surface now has a live band; re-run the doc-diff for a NEW surface)')
 console.log('\n⚠️  NOT DEPTH targets (already fully live — adding a band would be redundant, cf. the /outputs trap):')
 for (const r of by('live')) console.log('  •', r.route, '→', r.rpcs.join(', '))
+console.log('\nRPC usage across surfaces (prefer a LOW-count RPC for the next DEPTH band — spread live coverage, avoid redundancy):')
+for (const [rpc, n] of rpcUsageSorted) console.log(`  ${String(n).padStart(2)}×  ${rpc}`)
 process.exit(0)

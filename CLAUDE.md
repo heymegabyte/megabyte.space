@@ -7,6 +7,22 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 - **`https://megabyte.space`** — ✅ LIVE (verified fire-82, `verify-prod.mjs` 10/10): the apex **SERVES THE OS** — router `megabyte-os` owns the `megabyte.space` custom domain + serves `workshop-frontend` — with **Better Auth auth-on-action** (GitHub + Google SSO + magic-link) and **NO Cloudflare Access in the human path**. The WebGL homepage is the **`LandingHomepage` splash** (`components/LandingHomepage`): an ANONYMOUS visitor sees it FIRST (never the OS shell — force-login), and "Enter the OS" sets the `megabyteOS_entered` localStorage flag + routes to `/signin`; once authenticated, the same flag means the OS renders directly (the splash isn't re-shown). `routes/__root.tsx` renders it both as the anonymous preview and — first-run only — inside `AuthenticatedShell`. So **WS-11** (apex move) + **WS-8** (BA auth-on-action/SSO) + **BA-5** (Access removed from the human path) have LANDED; `packages/home` (the old `megabyte-home` homepage worker) is the retired component SOURCE. (Topology narrative reconciled fire-124, verified against prod + code: apex serves the OS, `os.megabyte.space` detached, www→apex 301, and FORCE-LOGIN is live — the OS shell never renders for an anonymous visitor.)
 - **The OS fork + workers** (served at the apex above) — our FORK [heymegabyte/cloudflare-os](https://github.com/heymegabyte/cloudflare-os) @ branch `megabyte-os` (the owned base UI; `upstream` = cloudflare/cloudflare-os) via the [cloudflare-os-starter](https://github.com/cloudflare/cloudflare-os-starter) wrapper. The `LandingHomepage` WebGL splash is the dismissible first-view. Six Workers: `megabyte-os` (router — owns the `megabyte.space` **apex** custom domain since WS-11) + `megabyte-os-backend` (Workshop) + `-context` + `-scheduler` + `-custom` + `-errors`, plus the isolated `megabyte-auth` worker. **`os.megabyte.space` is RETIRED** — the WS-11 apex move detached it from every worker custom domain (it no longer resolves); the OS lives only at the apex now.
 
+## Agent providers — internal orchestration (hard rules; SSOT `~/.agentskills/rules/agent-provider-policy.md` · onboarding `AGENTS.md`)
+
+- **Frontier = subscription CLIs ONLY.** Claude Code (`claude`, Claude subscription) =
+  architect / integrator / final judge. Codex (`codex`, ChatGPT subscription) = independent
+  researcher / adversarial reviewer when authed; its absence is NOT fatal — Claude runs an extra
+  independent architecture-expansion pass instead.
+- **Throughput = DeepSeek via OpenCode** (`~/.agentskills/bin/opencode-deepseek.sh`) — swarm the
+  routine / parallelizable implementation, tests, refactors, docs. DeepSeek is the one allowed
+  internal API (`get-secret DEEPSEEK_API_KEY`; never printed/committed).
+- **NEVER** `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` for internal agents; internal code never hits
+  `api.anthropic.com` / `api.openai.com`. Launch internal CLIs via
+  `~/.agentskills/bin/with-subscription-cli.sh claude|codex` (strips the keys → subscription, never
+  PAYG). Quota pressure never switches to PAYG. Guard: `node scripts/check-provider-policy.mjs` (in
+  green-sweep). Product-runtime OpenAI/Anthropic (Worker secrets, `/api/resolve`, model-registry,
+  editor chat, per-site AI) is PRESERVED — product, not internal agents.
+
 ## Commands
 
 - `pnpm check` — validate `deployment.jsonc` + dry-run every OS Worker

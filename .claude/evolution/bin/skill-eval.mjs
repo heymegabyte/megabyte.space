@@ -33,15 +33,15 @@
 //   --dry  : NO network. A deterministic stub scorer (keyword presence mined from
 //            grader.spec / must_not) exercises every mechanic in CI without burning tokens.
 //
-// SECRETS
-//   API keys come ONLY from `/Users/Apple/.local/bin/get-secret` (DEEPSEEK_API_KEY,
-//   ANTHROPIC_API_KEY, OPENAI_API_KEY). Keys are NEVER printed, logged, or written to disk.
-//
-// MODEL ENDPOINTS (OpenAI-compatible unless noted)
-//   deepseek → https://api.deepseek.com/chat/completions         model deepseek-chat
-//   openai   → https://api.openai.com/v1/chat/completions        model gpt-4o
-//   claude   → https://api.anthropic.com/v1/messages (x-api-key + anthropic-version)
-//                                                                 model claude-sonnet-4-6
+// PROVIDERS — per rules/agent-provider-policy.md (the SSOT). Internal orchestration bills
+//   SUBSCRIPTIONS, never PAYG API keys:
+//   · Judges (frontier) → subscription CLIs via with-subscription-cli.sh: `claude -p` (Claude
+//     subscription) or `codex exec` (ChatGPT subscription). The wrapper strips ANTHROPIC_API_KEY /
+//     OPENAI_API_KEY from the child, so NO internal call ever reaches api.anthropic.com /
+//     api.openai.com.
+//   · Worker (DeepSeek) → the ONE allowed internal API call: https://api.deepseek.com/chat/
+//     completions. Key via `get-secret DEEPSEEK_API_KEY` ONLY; never printed/logged/stored.
+//     High-volume swarms use ~/.agentskills/bin/opencode-deepseek.sh.
 //
 // EXIT CODES
 //   0 = ran + wrote a result (decision computed).  1 = usage / validation / IO error.
@@ -63,11 +63,15 @@ const GET_SECRET = "/Users/Apple/.local/bin/get-secret";
 // families that share a vendor+key so the judge≠worker check can't be fooled by an
 // alias (e.g. two OpenAI models are still the same provider — not independent).
 const MODELS = {
-  deepseek: { provider: "deepseek", secret: "DEEPSEEK_API_KEY", endpoint: "https://api.deepseek.com/chat/completions", model: "deepseek-chat", api: "openai" },
-  openai: { provider: "openai", secret: "OPENAI_API_KEY", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o", api: "openai" },
-  gpt: { provider: "openai", secret: "OPENAI_API_KEY", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o", api: "openai" },
-  claude: { provider: "anthropic", secret: "ANTHROPIC_API_KEY", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-sonnet-4-6", api: "anthropic" },
-  anthropic: { provider: "anthropic", secret: "ANTHROPIC_API_KEY", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-sonnet-4-6", api: "anthropic" },
+  // Throughput worker: the ONE allowed internal API call (DeepSeek — the sanctioned inexpensive
+  // provider; key via get-secret). High-volume swarms prefer opencode-deepseek.sh.
+  deepseek: { provider: "deepseek", transport: "api", secret: "DEEPSEEK_API_KEY", endpoint: "https://api.deepseek.com/chat/completions", model: "deepseek-chat" },
+  // Frontier judges run on SUBSCRIPTION CLIs — never the Anthropic/OpenAI API (agent-provider-policy.md).
+  claude: { provider: "anthropic", transport: "cli", cli: "claude" },
+  anthropic: { provider: "anthropic", transport: "cli", cli: "claude" },
+  codex: { provider: "openai", transport: "cli", cli: "codex" },
+  openai: { provider: "openai", transport: "cli", cli: "codex" },
+  gpt: { provider: "openai", transport: "cli", cli: "codex" },
 };
 
 // Variant complexity order (policy §3 "ties go to the simpler variant"). Lower = simpler.
@@ -192,26 +196,45 @@ function getSecret(key) {
   return val;
 }
 
-// ── Model calls (live) — OpenAI-compatible + Anthropic Messages ─────────────────
+// ── Model calls ─────────────────────────────────────────────────────────────────
+// Frontier judges → SUBSCRIPTION CLIs via with-subscription-cli.sh (strips the API keys from the
+// child → subscription billing, never PAYG). DeepSeek worker → the one allowed API call.
+let _wsc = undefined;
+function withSubscriptionCli() {
+  if (_wsc !== undefined) return _wsc;
+  const candidates = [
+    process.env.WITH_SUBSCRIPTION_CLI,
+    `${process.env.HOME}/.agentskills/bin/with-subscription-cli.sh`,
+    `${process.env.HOME}/.claude/plugins/heymegabyte-agent-skills/bin/with-subscription-cli.sh`,
+  ].filter(Boolean);
+  _wsc = candidates.find((p) => existsSync(p)) || null;
+  return _wsc;
+}
+// Run a subscription CLI (claude | codex) non-interactively. API keys are stripped by the wrapper
+// (or inline as a defensive fallback) so billing hits the subscription, never a PAYG API key.
+function callCli(cli, prompt) {
+  const wsc = withSubscriptionCli();
+  const args = cli === "codex" ? ["codex", "exec", prompt] : ["claude", "-p", prompt];
+  const opts = { encoding: "utf8", maxBuffer: 16 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] };
+  const text = wsc
+    ? execFileSync(wsc, args, opts)
+    : execFileSync("env", [
+        ...(cli === "codex" ? ["-u", "OPENAI_API_KEY"] : ["-u", "ANTHROPIC_API_KEY", "-u", "ANTHROPIC_AUTH_TOKEN"]),
+        ...args,
+      ], opts);
+  return { text: String(text), usage: { in: 0, out: 0 }, model: `${cli} (subscription CLI)` };
+}
+
 async function callModel(family, { system, user, temperature = 0, maxTokens = 1024 }) {
   const m = MODELS[family];
   if (!m) die(`unknown model family "${family}" — known: ${Object.keys(MODELS).join(", ")}`);
+  // Frontier judge/research family → subscription CLI (no API key, no PAYG, no api.{anthropic,openai}.com).
+  if (m.transport === "cli") {
+    return callCli(m.cli, (system ? `${system}\n\n` : "") + user);
+  }
+  // DeepSeek worker → the one allowed internal API call (OpenAI-compatible; key via get-secret).
   const key = getSecret(m.secret);
   if (!key) die(`missing secret ${m.secret} for model "${family}" (get-secret returned nothing)`, 2);
-
-  if (m.api === "anthropic") {
-    const res = await fetch(m.endpoint, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({ model: m.model, max_tokens: maxTokens, temperature, system: system || undefined, messages: [{ role: "user", content: user }] }),
-    });
-    if (!res.ok) throw new Error(`${family} HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-    const j = await res.json();
-    const text = (j.content || []).map((b) => b.text || "").join("");
-    const usage = j.usage ? { in: j.usage.input_tokens || 0, out: j.usage.output_tokens || 0 } : { in: 0, out: 0 };
-    return { text, usage, model: m.model };
-  }
-  // openai-compatible (deepseek + openai)
   const res = await fetch(m.endpoint, {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
@@ -331,9 +354,9 @@ async function judgeScore(judgeFamily, { task, context, rubric, output, passThre
 
 // Rough USD cost (indicative; per-1M-token public list prices, conservative). Live only.
 const PRICE = {
+  // Only API-billed provider. Subscription-CLI judges (claude/codex) have no per-token marginal
+  // cost here (billed to the subscription), so usd() returns 0 for them.
   "deepseek-chat": { in: 0.27, out: 1.1 },
-  "gpt-4o": { in: 2.5, out: 10 },
-  "claude-sonnet-4-6": { in: 3, out: 15 },
 };
 function usd(model, usage) {
   const p = PRICE[model];

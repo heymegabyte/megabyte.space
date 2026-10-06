@@ -1,0 +1,38 @@
+{
+  "run": "policy-smoke-2026-10-06T19-11-44-dry",
+  "when": "2026-10-06",
+  "skill": "policy-smoke",
+  "variants": [
+    "no-skill",
+    "champion"
+  ],
+  "worker": "deterministic-stub (dry)",
+  "per_case": [
+    {
+      "case": "case://x/y",
+      "scores": {
+        "no-skill": 0,
+        "champion": 1
+      }
+    }
+  ],
+  "win_rates": {
+    "no-skill": 0,
+    "champion": 1
+  },
+  "mean_scores": {
+    "no-skill": 0,
+    "champion": 1
+  },
+  "decision": "keep-champion",
+  "rationale": "champion is the (co-)winner and no simpler variant ties it beyond ±0.02 [no-skill=0.000(win 0.00), champion=1.000(win 1.00)]; policy §3 — no counterfactual beat the incumbent. Keep champion.",
+  "judge": "deterministic-stub (dry; no judge model)",
+  "cost": "$0.00 (dry)",
+  "holdout_used": false,
+  "dry": true,
+  "variant_sources": {
+    "no-skill": "(empty — no-skill baseline)",
+    "champion": "/tmp/pe-champ.txt"
+  },
+  "case_count": 1
+}

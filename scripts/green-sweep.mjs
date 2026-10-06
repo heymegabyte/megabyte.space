@@ -19,7 +19,8 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 // This is a CURATED core gate, not every verify-*.mjs on disk — it covers the force-login/auth
 // invariant, the live user-facing OS surfaces (Pulse, Connections, Gadgets, Models), a11y in both
 // themes, and the long + deep journeys. Deliberately OUT: historical/pre-WS-11 checks (verify-apex*,
-// verify-os*, *-cyan, icon-gradients), specialized one-offs run on demand (verify-seo, verify-cwv/
+// verify-os.mjs/-theme/-landing [stale; verify-os-screens is the NEW comprehensive load gate — kept IN],
+// *-cyan, icon-gradients), specialized one-offs run on demand (verify-seo, verify-cwv/
 // vitals/apex-cwv perf probes, verify-links, verify-reduced-motion, verify-ba-flip), and the deeper
 // per-surface Models checks (default/detail/filter — catalog represents the surface here). Add a check
 // here when a NEW user-facing surface/invariant ships; keep it fast + reliable. (fire-112 coverage audit.)
@@ -27,6 +28,7 @@ const CHECKS = [
   ['check-a11y-coverage.mjs', [], 'A11Y-COVERAGE GREEN'], // DRIFT GATE (fire-151): every fork static route is in verify-a11y's list — fast/static preamble so a new surface can't ship a11y-unaudited (fire-103/117/146/147 class)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
+  ['verify-os-screens.mjs', [], 'ALL OS SCREENS LOAD'], // every static OS route loads authed, 0 console errors (Brian 2026-10-06 "make sure all screens can load") — net-new comprehensive load gate
   ['verify-home-composer.mjs', [], '0 console errors'], // the value-path ENTRY — read-only (fire-114)
   ['verify-pulse.mjs', [], '0 console errors'],
   ['verify-pulse-persist.mjs', [], '0 console errors'],

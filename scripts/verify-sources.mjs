@@ -17,7 +17,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + kind filter + a source + the ingest metrics + honesty.
 const NEEDLES = [
-  /sample data/i,                                    // honest "Preview · sample data"
+  /sample sync/i,                                    // honest hybrid "Live accounts · sample sync" (DEPTH fire-202)
   /sources/i,                                        // the page
   /\b(docs|code|support|analytics|crawl)\b/i,        // the kind filter / kinds
   /notion|github|zendesk|posthog/i,                  // real sample source names
@@ -52,6 +52,10 @@ const onPath = /\/sources/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-202): the LIVE connected-accounts band renders (real listConnectedAccounts, fail-soft — the
+// band header is always present regardless of whether the account has 0 or N connected accounts).
+const liveBand = /your connected accounts/i.test(body);
 
 // Proof in the ALL state — every source card (kind/status + records/cadence + Sync now) visible for the vision read.
 await page.screenshot({ path: "scripts/.sources-proof.png", fullPage: true });
@@ -102,7 +106,7 @@ if (syncBefore > 0 && (await firstSync.count().then((c) => c > 0).catch(() => fa
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDocs, countSearch, syncBefore, kindFilterWorks, searchWorks, syncWorks, knowledgeLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, liveBand, countAll, countDocs, countSearch, syncBefore, kindFilterWorks, searchWorks, syncWorks, knowledgeLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -110,6 +114,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Sources reachable from the sidebar rail", "no Sources rail link (nav wiring missing)");
 check(onPath, "Sources rail click → /sources", "rail click did not reach /sources");
 check(renders, "Sources content renders (stats + kind filter + sources + records/cadence + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live connected-accounts band renders (real listConnectedAccounts, DEPTH)", "no live connected-accounts band");
 check(kindFilterWorks, `Kind filter narrows the sources (All ${countAll} → Docs ${countDocs})`, "kind pill did not narrow the sources");
 check(searchWorks, `Search narrows the sources (All ${countAll} → "posthog" ${countSearch})`, "search did not narrow the sources");
 check(syncWorks, `Sync now kicks a connector into syncing (Sync-now buttons ${syncBefore} → ${syncBefore - 1})`, "sync-now did not move a connector into syncing");

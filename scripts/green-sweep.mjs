@@ -71,6 +71,7 @@ const CHECKS = [
   ['verify-tasks.mjs', [], 'TASKS GREEN'], // WS-DEMO Tasks (work-tracker primitive): reachable + status-filter/search narrow + per-row retry + retry-failed bulk + activity link (fire-184)
   ['verify-tools.mjs', [], 'TOOLS GREEN'], // WS-DEMO Tools (capability registry, §30 chain): reachable + category-filter/search narrow + enable/disable toggle + live connection count + connections link (fire-185)
   ['verify-presence.mjs', [], 'PRESENCE GREEN'], // WS-DEMO Presence (live activity manifest, §47): reachable + kind-filter/search narrow + self-status toggle + activity link (fire-186)
+  ['verify-analytics-engine.mjs', [], 'ANALYTICS-ENGINE GREEN'], // WS-DEMO Analytics Engine (raw CF telemetry): reachable + category-filter/search narrow + SQL-over-events panel + analytics link (fire-192)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

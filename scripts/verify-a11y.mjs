@@ -127,6 +127,7 @@ for (const [path, signal] of [
   ['/mcp', /mcp|server|transport|tools exposed|stdio|sample data/i], // WS-DEMO: MCP Servers — protocol capability layer #30/#67 (fire-196)
   ['/research', /research|parallel|sources|findings|synthesiz|sample data/i], // WS-DEMO: Research — Manus parallel research→synthesize (fire-197)
   ['/knowledge', /knowledge|provenance|confidence|stale|via |sample data/i], // WS-DEMO: Knowledge — Onyx live/synced layer, #33 view 2 (fire-198)
+  ['/skills', /agent skills|invocation|success|reusable|per category|sample data/i], // WS-DEMO: Agent Skills — the skill registry #29 (fire-199)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

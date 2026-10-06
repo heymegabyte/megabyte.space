@@ -116,7 +116,7 @@ await step("editor: Resources tab shows the resource panels", async () => {
   assert(await inEditor(), "editor lost its content after Resources tab");
   if (clicked) {
     const body = await page.evaluate(() => document.body.innerText);
-    const all = ["Models", "Connections", "Database", "Activity", "Context & Skills", "Knowledge", "Analytics", "Costs", "Audit", "Storage", "Secrets", "Compute", "Environments", "Logs", "Deployments", "Schedule", "Metrics", "Queues", "Domains", "Workflows", "AI Gateway", "Vectorize", "Durable Objects", "Email", "Notifications", "Approvals", "Tasks", "Tools", "Presence", "Analytics Engine", "Hyperdrive", "Realtime", "Sandboxes", "MCP Servers", "Research"];
+    const all = ["Models", "Connections", "Database", "Activity", "Context & Skills", "Knowledge", "Analytics", "Costs", "Audit", "Storage", "Secrets", "Compute", "Environments", "Logs", "Deployments", "Schedule", "Metrics", "Queues", "Domains", "Workflows", "AI Gateway", "Vectorize", "Durable Objects", "Email", "Notifications", "Approvals", "Tasks", "Tools", "Presence", "Analytics Engine", "Hyperdrive", "Realtime", "Sandboxes", "MCP Servers", "Research", "Agent Skills"];
     const cards = all.filter((c) => body.includes(c));
     assert(cards.length >= 15, `Resources panel showed too few cards (${cards.length}/${all.length}): ${cards.join(",")}`);
     // fire-136: the Models card shows the LIVE usable-model count ("N usable") once listModels resolves.

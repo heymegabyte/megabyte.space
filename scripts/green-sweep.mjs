@@ -67,6 +67,7 @@ const CHECKS = [
   ['verify-email.mjs', [], 'EMAIL GREEN'], // WS-DEMO Email: reachable + status-filter/search narrow + masked recipients + inbox/logs links (fire-180)
   ['verify-notifications.mjs', [], 'NOTIFICATIONS GREEN'], // WS-DEMO Notifications: reachable + type-filter/search narrow + send-test + activity link (fire-181)
   ['verify-environments.mjs', [], 'ENVIRONMENTS GREEN'], // WS-DEMO Environments (Coder governance): reachable + lifecycle-filter/search narrow + stop-idle action + compute link (fire-182)
+  ['verify-approvals.mjs', [], 'APPROVALS GREEN'], // WS-DEMO Approvals (HITL governance queue): reachable + kind-filter/search narrow + per-item approve + auto-approve-low-risk + activity link (fire-183)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],

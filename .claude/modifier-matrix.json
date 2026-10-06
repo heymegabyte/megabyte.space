@@ -209,6 +209,18 @@
       ],
       "notes": "fire-171 CREATED/SHIPPED (WS-DEMO: the ResourcesPanel 'Storage' card had no route — continuing to drain the 'soon' cards per Brian's re-pasted directive). Dark/cyan two-pane durable-data surface: stat strip (Stores/Total-size/Databases/Near-limit) + type filter pills (All/D1/KV/R2 w/ type-colored dots) + search + a store list (type dot + name + type·size·gadget + a near-limit amber dot) + a selected-store DETAIL (Size/Items/Usage/Region stats + a usage bar [warning fill >=80%] + a D1-only 'Browse schema ->' link to Database Studio). 7 sample stores across D1/KV/R2. Pure helpers (formatBytes 1024-based/typeCounts/totalSize/nearLimitCount/filterStorage) unit-tested (storage.test.ts 12/12). AA-safe both themes (type accent on DOTS, neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, HardDrives) + ⌘K + /admin Platform card + lit the dead ResourcesPanel 'Storage' card (soon->preview->/storage, 14 panels linked). BA-authed real-browser verified (verify-storage.mjs, green-sweep 40th): reachable via rail, store->detail drill-in (click-counter-db->leads), D1->Database 'Browse schema' link present, type filter (All 7->D1 3), search (->media 1), 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand; the type-dots + usage bar + D1->database interconnection are the standout. Fork bfadb370. Knock vs 9.5: detail pane sparse below the usage bar; vs 10: live D1/KV/R2 bridge."
     },
+    "os.compute": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 8,
+      "lastVisit": "2026-10-06",
+      "next": [
+        "thinner sparkline w/ more intervals + hover tooltip — 9->9.3",
+        "wire LIVE Workers Analytics Engine (real invocations/CPU/errors) — the real ->10",
+        "a regions sparkline / mini-map (the worker's 210-region spread)"
+      ],
+      "notes": "fire-172 CREATED/SHIPPED (WS-DEMO: the ResourcesPanel 'Compute' card had no route — 'soon' card 2 of 3, per Brian's directive). Dark/cyan two-pane edge-runtime surface: stat strip (Workers/Invocations-24h/Avg-p95/Errors-24h) + status filter pills (All/Healthy/Throttled/Erroring w/ dots) + search + a worker list (status dot + name + invocations·p95·err%) + a selected-worker DETAIL (Invocations/CPU-p50/p95/Error-rate stats + a 7-bar request sparkline + a 'View logs ->' link to /logs — the interconnect pattern). 6 sample workers across statuses. Pure helpers (errorRate div-by-0-safe/statusCounts/totalInvocations/totalErrors/avgP95/filterCompute) unit-tested (compute.test.ts 13/13). AA-safe both themes (status accent on DOTS + sparkline bars; neutral text). Honest 'Preview · sample data'. Wired Sidebar (Operate, Cpu) + ⌘K + /admin Platform card + lit the dead ResourcesPanel 'Compute' card (soon->preview->/compute, icon HardDrives->Cpu, 15 panels linked). BA-authed real-browser verified (verify-compute.mjs, green-sweep 41st): reachable via rail, worker->detail drill-in (click-counter->lead-scorer), View-logs interconnect link present, status filter (All 6->Healthy 4), search (->lead 1), 0 console errors. Direct-Read vision 9/10 — clean, dense (Coinbase-Pro feel), on-brand; the sparkline + per-worker error rates + the View-logs interconnect are the standout. Fork 49676541. Knock vs 9.5: chunky sparkline bars; vs 10: live Analytics-Engine bridge."
+    },
     "os.landing": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.5,

@@ -105,6 +105,7 @@ for (const [path, signal] of [
   ['/queues', /queues|async|depth|dead-letter|sample data/i], // WS-DEMO: Queues async work (fire-169)
   ['/secrets', /secrets|rotation|never shown|sample data/i], // WS-DEMO: Secrets env-vars (fire-170)
   ['/storage', /storage|d1|kv|r2|usage|sample data/i], // WS-DEMO: Storage D1/KV/R2 (fire-171)
+  ['/compute', /compute|workers|invocation|cpu|p95|sample data/i], // WS-DEMO: Compute edge runtime (fire-172)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

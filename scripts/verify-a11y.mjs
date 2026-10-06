@@ -122,6 +122,7 @@ for (const [path, signal] of [
   ['/presence', /presence|active now|agent|session|device|sample data/i], // WS-DEMO: Presence live activity manifest — §47 (fire-186)
   ['/analytics-engine', /analytics engine|dataset|sampl|http_requests|SELECT|sample data/i], // WS-DEMO: Analytics Engine — raw CF telemetry (fire-192)
   ['/hyperdrive', /hyperdrive|postgres|mysql|pool|cache|sample data/i], // WS-DEMO: Hyperdrive — external DB pooling/caching (fire-193)
+  ['/realtime', /realtime|room|participant|audio|video|sample data/i], // WS-DEMO: Realtime — WebRTC SFU calls §56-58 (fire-194)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

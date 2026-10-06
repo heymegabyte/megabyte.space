@@ -128,6 +128,7 @@ for (const [path, signal] of [
   ['/research', /research|parallel|sources|findings|synthesiz|sample data/i], // WS-DEMO: Research — Manus parallel research→synthesize (fire-197)
   ['/knowledge', /knowledge|provenance|confidence|stale|via |sample data/i], // WS-DEMO: Knowledge — Onyx live/synced layer, #33 view 2 (fire-198)
   ['/skills', /agent skills|invocation|success|reusable|per category|sample data/i], // WS-DEMO: Agent Skills — the skill registry #29 (fire-199)
+  ['/artifacts', /artifacts|variant|explorable|document|design|sample data/i], // WS-DEMO: Artifacts — explorable artifact canvas w/ variants (fire-200)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

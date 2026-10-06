@@ -112,6 +112,7 @@ for (const [path, signal] of [
   ['/workflows', /workflows|durable|step|retr|trigger|sample data/i], // WS-DEMO: Workflows durable automation (fire-176)
   ['/ai-gateway', /gateway|cache|provider|latency|sample data/i], // WS-DEMO: AI Gateway proxy (fire-177)
   ['/vectorize', /vectorize|vector|embedding|similarity|index|sample data/i], // WS-DEMO: Vectorize vector DB (fire-178)
+  ['/durable-objects', /durable objects|stateful|instance|hibernat|sample data/i], // WS-DEMO: Durable Objects (fire-179)
   ['/database', /database|schema|tables|sample data/i], // WS-DEMO: Database Studio (fire-148/149 — was unaudited)
   ['/blueprints', /blueprint/i],
   ['/explore', /blueprint|explore|template|featured/i],

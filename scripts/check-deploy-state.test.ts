@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { compareDeployState } from "./check-deploy-state.mjs";
+import { compareDeployState, pushAdvisory } from "./check-deploy-state.mjs";
 
 // Fixed 40-char SHAs so the slice(0,8) in messages is stable.
 const FORK_A = "a".repeat(40);
@@ -78,4 +78,23 @@ test("verdict always carries both head and ledger SHAs for the json consumer", (
   assert.equal(v.ledger.forkSha, FORK_A);
   assert.equal(v.ledger.outerSha, OUTER_A);
   assert.equal(v.ledger.iso, "iso-x");
+});
+
+// pushAdvisory (fire-239) — the unpushed-DEPLOYED-outer-commit advisory (the fire-238 strand class
+// no gate caught: prod ran outer 9b01ae54 while it sat only in origin/main..HEAD).
+test("pushAdvisory: deployed commit reachable from origin ⇒ null (nothing to warn)", () => {
+  assert.equal(pushAdvisory(OUTER_A, true), null);
+});
+
+test("pushAdvisory: deployed commit NOT on origin/main ⇒ warning names the sha + origin/main", () => {
+  const msg = pushAdvisory(OUTER_A, false);
+  assert.ok(msg, "expected an advisory");
+  assert.match(msg!, new RegExp(OUTER_A.slice(0, 8)));
+  assert.match(msg!, /origin\/main/);
+  assert.match(msg!, /unpushed-deploy strand/);
+});
+
+test("pushAdvisory: no ledger outer sha ⇒ null (null or undefined)", () => {
+  assert.equal(pushAdvisory(null, false), null);
+  assert.equal(pushAdvisory(undefined, false), null);
 });

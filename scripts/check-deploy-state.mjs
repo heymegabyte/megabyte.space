@@ -22,6 +22,12 @@
  * reported but never the sole DRIFT trigger. No ledger at all ⇒ INFORMATIONAL: can't prove, tells
  * the lead to probe prod.
  *
+ * SECOND SIGNAL (fire-239) — UNPUSHED DEPLOY: `check-fire-committed` verifies the FORK submodule is
+ * pushed, but nothing verified the OUTER deployed commit reached origin/main. fire-238 deployed outer
+ * `9b01ae54` then DIED before `git push` — prod ran a commit sitting only in `origin/main..HEAD`,
+ * lost had the machine died. `pushAdvisory` (pure) + an impure origin/main ancestry check now WARN
+ * (advisory, exit 0 even under --ci) when the last-deployed outer commit is absent from the remote.
+ *
  * GREEN-BY-DEFAULT, never a permanently-red gate (project memory
  * `permanently-red-gate-causes-starvation`): on DRIFT it WARNs (exit 0) with a crisp
  * probe-prod-first message; a clean match prints an OK line. `--ci` is available for a caller that
@@ -97,6 +103,41 @@ export function compareDeployState(head, ledger) {
         `Prod reflects HEAD's deployable code.` };
 }
 
+/**
+ * PURE: given the last-deployed OUTER commit SHA + whether it is reachable from origin/main, produce
+ * the unpushed-deploy advisory (or null when there's nothing to warn about). THE STRAND IT CATCHES:
+ * a fire deploys an outer commit but DIES before `git push origin main` — fire-238 deployed HEAD
+ * `9b01ae54` yet it sat only in `origin/main..HEAD`, so prod ran code absent from the remote (lost if
+ * the machine died). `check-fire-committed` verifies the FORK submodule is pushed; NOTHING verified
+ * the OUTER deployed commit reached origin. Advisory only (never gates) — green-by-default.
+ *
+ * @param {string|null|undefined} ledgerOuterSha  the `.last-deploy.json` outerSha (what prod ran)
+ * @param {boolean} reachableFromOrigin           is that commit an ancestor of origin/main?
+ * @returns {string|null}  the advisory message, or null when nothing to warn
+ */
+export function pushAdvisory(ledgerOuterSha, reachableFromOrigin) {
+  if (!ledgerOuterSha || reachableFromOrigin) return null;
+  return `last-deployed OUTER commit ${ledgerOuterSha.slice(0, 8)} is NOT reachable from origin/main — ` +
+    `prod runs a commit absent from the remote (the fire-238 unpushed-deploy strand; the FORK-push ` +
+    `guard in check-fire-committed does NOT cover the outer repo). \`git push origin main\` before ` +
+    `releasing the lease, or salvage the strand per §0.`;
+}
+
+/**
+ * IMPURE: is `sha` an ancestor of origin/main? Resolves origin/main first; if the remote ref is
+ * absent (no fetch) we cannot assess → treat as reachable (no spurious warn). The loop fetches
+ * origin/main at orient, so this is live there.
+ * @param {string} sha
+ * @returns {boolean}
+ */
+function isAncestorOfOrigin(sha) {
+  let originMain;
+  try { originMain = execFileSync("git", ["rev-parse", "--verify", "origin/main"], { cwd: ROOT, encoding: "utf8" }).trim(); }
+  catch { return true; }
+  try { execFileSync("git", ["merge-base", "--is-ancestor", sha, originMain], { cwd: ROOT, stdio: "ignore" }); return true; }
+  catch { return false; }
+}
+
 function readHead() {
   const g = (args) => {
     try { return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim(); }
@@ -136,7 +177,13 @@ function selftest() {
   v = compareDeployState({ forkSha: null, outerSha: O }, { forkSha: F, outerSha: O, iso: "t" });
   assert(v.status === "unknown", "unresolved HEAD fork ⇒ unknown");
 
-  console.log("check-deploy-state selftest: 6/6 OK");
+  // pushAdvisory (fire-239) — the unpushed-deployed-commit advisory.
+  assert(pushAdvisory(O, true) === null, "pushed deployed commit ⇒ no advisory");
+  assert(pushAdvisory(O, false) !== null && pushAdvisory(O, false).includes(O.slice(0, 8)), "unpushed deployed commit ⇒ advisory names the sha");
+  assert(pushAdvisory(null, false) === null, "no ledger outer ⇒ no advisory");
+  assert(pushAdvisory(undefined, false) === null, "undefined outer ⇒ no advisory");
+
+  console.log("check-deploy-state selftest: 10/10 OK");
 }
 
 function main() {
@@ -147,13 +194,19 @@ function main() {
 
   const verdict = compareDeployState(readHead(), readLedger());
 
+  // Push-state of the DEPLOYED outer commit (impure git ancestry vs origin/main). Advisory only.
+  const ledgerOuter = verdict.ledger.outerSha;
+  const pushMsg = ledgerOuter ? pushAdvisory(ledgerOuter, isAncestorOfOrigin(ledgerOuter)) : null;
+
   if (asJson) {
-    console.log(JSON.stringify(verdict, null, 2));
+    console.log(JSON.stringify({ ...verdict, pushAdvisory: pushMsg }, null, 2));
   } else {
     const tag = verdict.status === "ok" ? "OK" : verdict.status === "drift" ? "WARN" : "WARN";
     console.log(`[check-deploy-state ${tag}] ${verdict.message}`);
+    if (pushMsg) console.log(`[check-deploy-state WARN] ${pushMsg}`);
   }
-  // GREEN-by-default: advisory exit 0 unless --ci asked for a hard fail on confirmed drift.
+  // GREEN-by-default: advisory exit 0 unless --ci asked for a hard fail on confirmed drift (the push
+  // advisory stays advisory even under --ci — green-by-default, never a permanently-red gate).
   process.exit(ci && verdict.status === "drift" ? 1 : 0);
 }
 

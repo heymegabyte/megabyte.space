@@ -34,6 +34,16 @@ test("ledgerHasEntry requires a heading line — a bare mention in prose does no
   assert.equal(ledgerHasEntry(prose, "fire-235"), false);
 });
 
+test("ledgerHasEntry: a heading for ANOTHER fire that mentions this fire mid-line does NOT match (fire-242 guard)", () => {
+  // Real fire-242 regression: fire-241's reconstruction heading referenced fire-242 in its own text
+  // ("reconstructed by fire-242 from the git log"). The old `.*\\bfire-242\\b` regex matched that
+  // heading, so commit-fire-bookkeeping thought fire-242 was "already present" and SILENTLY dropped
+  // the append. The fire number must come IMMEDIATELY after the heading marker to count.
+  const ledger = `## fire-241 — meta-gate [this entry reconstructed by fire-242 from the git log]\n- salvaged two fires\n`;
+  assert.equal(ledgerHasEntry(ledger, "fire-242"), false, "mid-line fire-242 in a fire-241 heading is NOT a fire-242 entry");
+  assert.equal(ledgerHasEntry(ledger, "fire-241"), true, "the fire-241 heading still matches fire-241");
+});
+
 test("parseArgs reads --fire, --note, and --ledger-file", () => {
   assert.deepEqual(parseArgs(["--fire", "fire-235", "--note", "shipped X"]), {
     fire: "fire-235",

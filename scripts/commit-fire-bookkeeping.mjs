@@ -55,11 +55,16 @@ export function fireNumber(slug) {
 
 /**
  * Does the LEDGER text carry an entry heading for this fire? Matches a markdown heading line that
- * names the fire (`## fire-235 — …`, case-insensitive, word-bounded so fire-23 never matches fire-235).
+ * OPENS with the fire (`## fire-235 — …`, case-insensitive, word-bounded so fire-23 never matches
+ * fire-235). The fire number must come IMMEDIATELY after the `#…` marker — NOT anywhere in the line —
+ * so a heading for ANOTHER fire that mentions this one in prose (e.g. `## fire-241 — … reconstructed by
+ * fire-242 …`) does NOT count as this fire's entry. That mid-line false-match silently dropped the
+ * fire-242 append (the entry was written to a scratch file but the guard skipped it); the anchoring
+ * closes it. Regression: commit-fire-bookkeeping.test.ts "fire-242 guard".
  */
 export function ledgerHasEntry(ledgerText, fireNum) {
   if (!fireNum) return false;
-  const re = new RegExp(`^#{1,4}\\s+.*\\b${fireNum.replace("-", "\\-")}\\b`, "im");
+  const re = new RegExp(`^#{1,4}\\s+${fireNum.replace("-", "\\-")}\\b`, "im");
   return re.test(String(ledgerText || ""));
 }
 

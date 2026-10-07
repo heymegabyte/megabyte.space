@@ -6,6 +6,11 @@
 > under-scan). Requirement inputs: `./ULTIMATE-REQUIREMENTS.md` (agent C) +
 > `./PROJECTSITES-ABSORPTION.md` (agent B) — consult BOTH before picking absorption slices;
 > reference, never recreate.
+>
+> **ORIENT CHEAPLY — do NOT Read this whole file (968 lines blows the main-thread token cap,
+> fire-234).** Run `node scripts/backlog-frontier.mjs` for the unticked frontier only (open +
+> partial items grouped by workstream, ~12KB vs 185KB; `--json` for machine reads). Read the raw
+> file only to edit a specific workstream block (jump via `grep -n '### WS-' BACKLOG.md`).
 
 ## Format
 

@@ -12,7 +12,8 @@ const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
 if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
-// ≥6 content needles proving the stat strip + type filter + a notification + channels + honesty label.
+// ≥6 content needles proving the stat strip + type filter + a notification + channels + honesty label
+// + the delivery-preferences control (per-channel toggles + quiet-hours schedule).
 const NEEDLES = [
   /sample data/i,              // honest "Preview · sample data" — never lies-empty
   /notifications/i,            // the page
@@ -20,6 +21,8 @@ const NEEDLES = [
   /budget alert|deploy succeeded|new sign-in/i, // real sample notification titles
   /\bunread\b/i,               // the stat strip
   /in-app|slack|email/i,       // the channels
+  /delivery preferences/i,     // the new delivery-preferences card
+  /quiet hours/i,              // the quiet-hours schedule control
 ];
 
 const browser = await chromium.launch();
@@ -92,11 +95,36 @@ if (await sendBtn.count().then((c) => c > 0).catch(() => false)) {
   sendTestWorks = countAfter === countBeforeTest + 1 && /test notification/i.test(bodyAfter);
 }
 
+// INTERACTIVE 4 — toggle a delivery channel OFF → its notifications show a "Muted" chip (deterministic;
+// default prefs = all channels on + quiet-hours off, so nothing is held until a channel is turned off).
+let channelToggleWorks = false;
+const emailSwitch = page.getByRole("switch", { name: /email notifications/i }).first();
+if (await emailSwitch.count().then((c) => c > 0).catch(() => false)) {
+  const mutedBefore = await page.getByText("Muted", { exact: true }).count().catch(() => 0);
+  await emailSwitch.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const mutedAfter = await page.getByText("Muted", { exact: true }).count().catch(() => 0);
+  channelToggleWorks = mutedBefore === 0 && mutedAfter > 0;
+  await emailSwitch.click().catch(() => {}); // restore (re-enable Email)
+  await page.waitForTimeout(200);
+}
+
+// INTERACTIVE 5 — enable Quiet hours → the From/to time-window inputs appear (≥2 input[type=time]).
+let quietHoursWorks = false;
+const quietSwitch = page.getByRole("switch", { name: "Quiet hours" }).first();
+if (await quietSwitch.count().then((c) => c > 0).catch(() => false)) {
+  const timesBefore = await page.locator('input[type="time"]').count().catch(() => 0);
+  await quietSwitch.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const timesAfter = await page.locator('input[type="time"]').count().catch(() => 0);
+  quietHoursWorks = timesBefore === 0 && timesAfter >= 2;
+}
+
 await page.screenshot({ path: "scripts/.notifications-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countSecurity, countSearch, typeFilterWorks, searchWorks, sendTestWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countSecurity, countSearch, typeFilterWorks, searchWorks, sendTestWorks, channelToggleWorks, quietHoursWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -107,6 +135,8 @@ check(renders, "Notifications content renders (stats + type filter + feed + chan
 check(typeFilterWorks, `Type filter narrows the feed (All ${countAll} → Security ${countSecurity})`, "type pill did not narrow the feed");
 check(searchWorks, `Search narrows the feed (All ${countAll} → "deploy" ${countSearch})`, "search did not narrow the feed");
 check(sendTestWorks, "Send test raises a fresh unread notification (count +1, Test notification)", "send-test did not raise a notification");
+check(channelToggleWorks, "Delivery channel toggle mutes its notifications (Email off → Muted chip appears)", "channel toggle did not mute notifications");
+check(quietHoursWorks, "Quiet hours toggle reveals the From/to time-window inputs", "quiet-hours toggle did not reveal the time inputs");
 check(activityLink, "Cross-link to Activity present (interconnect)", "no Activity cross-link");
 check(realErrors.length === 0, "0 console errors on /notifications", `${realErrors.length} console errors`);
 console.log(ok ? "✅ NOTIFICATIONS GREEN" : "❌ notifications check failed");

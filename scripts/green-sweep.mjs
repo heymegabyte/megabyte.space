@@ -76,6 +76,7 @@ const CHECKS = [
   ['verify-notifications.mjs', [], 'NOTIFICATIONS GREEN'], // WS-DEMO Notifications: reachable + type-filter/search narrow + send-test + activity link (fire-181)
   ['verify-environments.mjs', [], 'ENVIRONMENTS GREEN'], // WS-DEMO Environments (Coder governance): reachable + lifecycle-filter/search narrow + stop-idle action + compute link (fire-182)
   ['verify-approvals.mjs', [], 'APPROVALS GREEN'], // WS-DEMO Approvals (HITL governance queue): reachable + kind-filter/search narrow + per-item approve + auto-approve-low-risk + activity link (fire-183)
+  ['verify-approval-bus.mjs', [], 'APPROVAL-BUS GREEN'], // WS-N1 DURABLE APPROVAL BUS (fire-230/231): the LIVE round-trip — Pulse 'Require approval' → /approvals live band → approve → STAYS gone after hard-reload (durable UserDO removal). Non-polluting (drains ba-e2e in a finally). The DEPTH companion to verify-approvals (sample queue)
   ['verify-tasks.mjs', [], 'TASKS GREEN'], // WS-DEMO Tasks (work-tracker primitive): reachable + status-filter/search narrow + per-row retry + retry-failed bulk + activity link (fire-184)
   ['verify-tools.mjs', [], 'TOOLS GREEN'], // WS-DEMO Tools (capability registry, §30 chain): reachable + category-filter/search narrow + enable/disable toggle + live connection count + connections link (fire-185)
   ['verify-presence.mjs', [], 'PRESENCE GREEN'], // WS-DEMO Presence (live activity manifest, §47): reachable + kind-filter/search narrow + self-status toggle + activity link (fire-186)

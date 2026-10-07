@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + action filter + an actor + the trail + honesty label.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample trail/i,             // honest hybrid chip "Live subjects · sample trail" — never lies-empty
   /\bprovenance\b/i,           // the page
   /\b(created|updated|deployed|deleted)\b/i, // the action filter / actions
   /Brian Zalewski|Ava Chen/,   // real sample actors
@@ -50,6 +50,12 @@ const onPath = /\/provenance/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-242): the live "tracked subjects" band off listGadgets renders one of its fail-soft
+// states — tracked for the ba-e2e account (≥1 gadget), or an honest loading/empty/unavailable —
+// never a misleading "0". Proves the DEPTH wiring (gadgets are the provenance subjects), not a flaky
+// account count. AA-safe: brand DOT graphical, "Live" a neutral token.
+const liveBand = /Checking your workspaces|Tracked workspaces unavailable|Nothing tracked yet|\d+\s+workspaces?\s+tracked/i.test(body);
 
 // before→after diffs render (the lead-scorer deploy v22 → v23 is an unambiguous pair).
 const diffsPresent = /v22/.test(body) && /v23/.test(body);
@@ -89,7 +95,7 @@ await page.screenshot({ path: "scripts/.provenance-proof.png", fullPage: true })
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDeployed, countSearch, diffsPresent, crossLinksPresent, actionFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countDeployed, countSearch, diffsPresent, crossLinksPresent, actionFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -97,6 +103,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Provenance reachable from the sidebar rail", "no Provenance rail link (nav wiring missing)");
 check(onPath, "Provenance rail click → /provenance", "rail click did not reach /provenance");
 check(renders, "Provenance content renders (stats + action filter + actors + trail + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'tracked subjects' band renders (listGadgets DEPTH, fail-soft)", "live subjects band missing — listGadgets DEPTH not wired");
 check(actionFilterWorks, `Action filter narrows the trail (All ${countAll} → Deployed ${countDeployed})`, "action pill did not narrow the trail");
 check(searchWorks, `Search narrows the trail (All ${countAll} → "ava" ${countSearch})`, "search did not narrow the trail");
 check(diffsPresent, "before→after diffs render (v22 → v23)", "no before/after diff values found");

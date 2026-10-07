@@ -53,14 +53,21 @@ const renders = missing.length === 0;
 const countRows = () => page.locator('section[aria-label="Secrets"] li').count();
 const countAll = await countRows().catch(() => 0);
 
-// INTERACTIVE 1 — "Rotate" a secret → the row flips to "Rotated".
-let rotateWorks = false;
-const rotateBtn = page.getByRole("button", { name: /^Rotate / }).first();
+// INTERACTIVE 1 — "Rotate" a NON-STALE secret (ANTHROPIC_API_KEY, 12d) → the row flips to "Rotated"
+// AND the "Needs rotation" stat must NOT drop. fire-235 regression: the stat subtracted ALL rotations
+// (Object.keys(rotated).length), so rotating a FRESH secret wrongly lowered "N want rotating";
+// pendingRotationCount now counts only stale && !rotated, so a non-stale rotate leaves the count alone.
+let rotateWorks = false, staleStatStable = false;
+const staleBefore = (body.match(/(\d+)\s+want rotating/) || [])[1];
+let staleAfter;
+const rotateBtn = page.getByRole("button", { name: "Rotate ANTHROPIC_API_KEY", exact: true }).first();
 if (await rotateBtn.count().then((c) => c > 0).catch(() => false)) {
   await rotateBtn.click().catch(() => {});
   await page.waitForTimeout(400);
   const body2 = await page.evaluate(() => document.body.innerText);
   rotateWorks = /rotated/i.test(body2);
+  staleAfter = (body2.match(/(\d+)\s+want rotating/) || [])[1];
+  staleStatStable = staleBefore !== undefined && staleAfter === staleBefore && Number(staleBefore) > 0;
 }
 
 // INTERACTIVE 2 — a scope pill narrows the list. All → Account (fewer, >0).
@@ -112,7 +119,7 @@ await page.screenshot({ path: "scripts/.secrets-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAccount, countSearch, rotateWorks, scopeFilterWorks, searchWorks, addWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAccount, countSearch, rotateWorks, staleBefore, staleAfter, staleStatStable, scopeFilterWorks, searchWorks, addWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -121,6 +128,7 @@ check(reachable, "Secrets reachable from the sidebar rail", "no Secrets rail lin
 check(onPath, "Secrets rail click → /secrets", "rail click did not reach /secrets");
 check(renders, "Secrets content renders (stats + scope filter + masked names + rotation + honesty label)", `content missing: ${missing.join(", ")}`);
 check(rotateWorks, "Rotate replaces a secret (Rotated)", "rotate did not confirm");
+check(staleStatStable, `"Needs rotation" holds at ${staleBefore} after rotating a non-stale secret (fire-235 stat-lie fix)`, `stat dropped after a non-stale rotate (regression): ${staleBefore} → ${staleAfter}`);
 check(scopeFilterWorks, `Scope filter narrows the list (All ${countAll} → Account ${countAccount})`, "scope pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAll} → "stripe" ${countSearch})`, "search did not narrow the list");
 check(addWorks, "Add-secret composer masks + adds a row (value never shown in full)", "add-secret did not add a masked row");

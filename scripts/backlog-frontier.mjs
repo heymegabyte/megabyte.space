@@ -18,8 +18,19 @@ export const DEFAULT_BACKLOG_PATH = join(REPO_ROOT, ".claude", "run-the-loop", "
 const CHECKBOX = /^(\s*)- \[([ x~])\]\s+(.*)$/;
 const HEADING = /^(#{2,3})\s+(.*)$/;
 
+/**
+ * @typedef {{ status: "open" | "partial", text: string }} FrontierItem
+ * @typedef {{ heading: string, items: FrontierItem[] }} FrontierWorkstream
+ * @typedef {{ workstreams: FrontierWorkstream[], counts: { open: number, partial: number, done: number } }} Frontier
+ */
+
 // Parse the markdown into { workstreams:[{heading, items:[{status,text}]}], counts }.
 // The `## Done` section is a hard stop: its items are tallied but never collected.
+/**
+ * @param {string} markdown
+ * @param {{ maxLen?: number }} [opts]
+ * @returns {Frontier}
+ */
 export function parseFrontier(markdown, { maxLen = 140 } = {}) {
   const lines = String(markdown).split(/\r?\n/);
   const workstreams = [];
@@ -75,6 +86,11 @@ export function parseFrontier(markdown, { maxLen = 140 } = {}) {
 }
 
 // Render a compact human-readable frontier block.
+/**
+ * @param {Frontier} frontier
+ * @param {{ headingLen?: number }} [opts]
+ * @returns {string}
+ */
 export function renderFrontier({ workstreams, counts }, { headingLen = 90 } = {}) {
   const out = [];
   out.push(

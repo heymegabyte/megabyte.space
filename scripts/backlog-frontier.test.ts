@@ -37,7 +37,7 @@ test("parseFrontier extracts only open + partial items, grouped by workstream", 
 
 test("done items are excluded from collected items but counted", () => {
   const { workstreams, counts } = parseFrontier(FIXTURE);
-  const n1 = workstreams.find((w) => w.heading.startsWith("WS-N1"));
+  const n1 = workstreams.find((w) => w.heading.startsWith("WS-N1"))!;
   assert.equal(n1.items.length, 2); // one [ ] + one [~]
   assert.equal(n1.items.filter((i) => i.status === "open").length, 1);
   assert.equal(n1.items.filter((i) => i.status === "partial").length, 1);
@@ -54,17 +54,17 @@ test("the Done section is a hard stop — its items never group into a workstrea
     false,
   );
   // Nothing from the Done section leaked into the last real workstream.
-  const inbox = workstreams.find((w) => w.heading.startsWith("Next-wave"));
+  const inbox = workstreams.find((w) => w.heading.startsWith("Next-wave"))!;
   assert.equal(inbox.items.length, 2);
 });
 
 test("accept-criteria is trimmed and long slices are truncated for glanceability", () => {
   const { workstreams } = parseFrontier(FIXTURE, { maxLen: 60 });
   const n1open = workstreams
-    .find((w) => w.heading.startsWith("WS-N1"))
-    .items.find((i) => i.status === "open");
+    .find((w) => w.heading.startsWith("WS-N1"))!
+    .items.find((i) => i.status === "open")!;
   assert.equal(n1open.text.includes("accept:"), false); // accept criteria dropped
-  const demoOpen = workstreams.find((w) => w.heading.startsWith("WS-DEMO")).items[0];
+  const demoOpen = workstreams.find((w) => w.heading.startsWith("WS-DEMO"))!.items[0];
   assert.ok(demoOpen.text.length <= 60, `expected ≤60, got ${demoOpen.text.length}`);
   assert.ok(demoOpen.text.endsWith("…"));
 });

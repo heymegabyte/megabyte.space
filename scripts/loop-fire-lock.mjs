@@ -32,6 +32,16 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const DEFAULT_LEASE_PATH = join(REPO_ROOT, ".claude", "run-the-loop", ".fire-lease.json");
 export const DEFAULT_STALE_MS = 20 * 60 * 1000;
 
+/**
+ * The on-disk fire lease. `note` is only carried on a `released-handoff` (what the watchdog reads).
+ * @typedef {object} Lease
+ * @property {string} fire
+ * @property {string} runId
+ * @property {string} phase
+ * @property {string} heartbeat
+ * @property {string} [note]
+ */
+
 /** @returns {string} lease path honoring the env override. */
 export function leasePath() {
   return process.env.LOOP_FIRE_LEASE_PATH || DEFAULT_LEASE_PATH;
@@ -43,7 +53,7 @@ export function staleMs() {
   return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_STALE_MS;
 }
 
-/** @returns {{fire:string,runId:string,phase:string,heartbeat:string}|null} parsed lease or null (absent/corrupt). */
+/** @returns {Lease|null} parsed lease or null (absent/corrupt). */
 export function readLease(path = leasePath()) {
   if (!existsSync(path)) return null;
   try {
@@ -55,7 +65,10 @@ export function readLease(path = leasePath()) {
   }
 }
 
-/** @returns {boolean} true when the lease heartbeat is within the stale window. */
+/**
+ * @param {Lease|null} lease
+ * @returns {boolean} true when the lease heartbeat is within the stale window.
+ */
 export function isLive(lease, now = Date.now(), windowMs = staleMs()) {
   if (!lease) return false;
   const beat = Date.parse(lease.heartbeat);
@@ -72,7 +85,8 @@ function writeLease(path, lease) {
 
 /**
  * Claim the fire lease.
- * @returns {{ok:true,lease:object}|{ok:false,code:3,holder:object}}
+ * @param {{ fire: string, runId?: string, path?: string, now?: number }} opts
+ * @returns {{ok:true,lease:Lease,reclaimed:boolean}|{ok:false,code:3,holder:Lease}}
  */
 export function claimLease({ fire, runId = `${fire}-${randomUUID().slice(0, 8)}`, path = leasePath(), now = Date.now() }) {
   const current = readLease(path);
@@ -86,7 +100,8 @@ export function claimLease({ fire, runId = `${fire}-${randomUUID().slice(0, 8)}`
 
 /**
  * Refresh the heartbeat (and optionally the phase) of an owned lease.
- * @returns {{ok:true,lease:object}|{ok:false,code:4,holder:object|null}}
+ * @param {{ runId: string, phase?: string, path?: string, now?: number }} opts
+ * @returns {{ok:true,lease:Lease}|{ok:false,code:4,holder:Lease|null}}
  */
 export function heartbeatLease({ runId, phase, path = leasePath(), now = Date.now() }) {
   const current = readLease(path);
@@ -98,7 +113,8 @@ export function heartbeatLease({ runId, phase, path = leasePath(), now = Date.no
 
 /**
  * Release an owned lease. Absent lease is a no-op success (idempotent).
- * @returns {{ok:true,released:boolean}|{ok:false,code:4,holder:object}}
+ * @param {{ runId: string, path?: string }} opts
+ * @returns {{ok:true,released:boolean}|{ok:false,code:4,holder:Lease}}
  */
 export function releaseLease({ runId, path = leasePath() }) {
   const current = readLease(path);
@@ -115,7 +131,8 @@ export function releaseLease({ runId, path = leasePath() }) {
  * phase and relaunches a fresh session within ~10 min, so the loop runs forever hands-free. The stale
  * heartbeat also makes the lease immediately reclaimable (isLive === false) by whoever runs next.
  * Owner-only (like release), but writes the handoff even when the lease is absent (idempotent re-arm).
- * @returns {{ok:true,lease:object}|{ok:false,code:4,holder:object}}
+ * @param {{ runId: string, note?: string, fire?: string, path?: string, now?: number }} opts
+ * @returns {{ok:true,lease:Lease}|{ok:false,code:4,holder:Lease}}
  */
 export function handoffLease({ runId, note = "", fire, path = leasePath(), now = Date.now() }) {
   const current = readLease(path);

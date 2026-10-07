@@ -3057,3 +3057,11 @@
 - SALVAGE (fire-241): `check-deploy-state` OK (prod reflects HEAD). verify-approvals **12/12 GREEN** on prod (INT5: bulk multi-select → approve resolves >1 — Approve buttons 4→2, −2, action bar cleared; + all fire-233/238 assertions intact) + verify-prod **11/11** (2 tracked WARNs: Google-SSO redirect_uri_mismatch + apex CSP — neither a regression).
 - beautify: matrix os.approvals bulk-select dropped from next[] (shipped); score held 9.5 (functional-interaction add, no fresh vision pass). Knock vs 10: the live bus exercised with real items + auto-decide result-object/observability.
 - backlog: line 739 ticked [x].
+
+## fire-241 — 2026-10-07 — check-gate-coverage meta-gate + fire-239/240 §11 salvage (loop-improvement) [committed its code + salvaged two prior fires, but DIED before writing its OWN heading → this entry reconstructed by fire-242 from the git log, the same no-orphaned-fire integrity fire-241 itself shipped]
+
+- slice: a loop-health fire. SHIPPED the `check-gate-coverage` meta-gate + salvaged two prior fires' stranded §11 bookkeeping. Ironically left its OWN `## fire-241` heading unwritten — the `commit-fire-bookkeeping` guard only enforces the `--fire` arg's heading, so a fire salvaging OTHERS' entries can commit without its own (a gap fire-242's Loop-Improvement role notes).
+- loop-improvement (§8): **01198195** `feat(loop)` — `check-gate-coverage` meta-gate: asserts no `check-*.mjs` can be orphaned (unwired into `pnpm check` / green-sweep), and wired the fire-3 `check-stale-copy` which had been orphaned since creation.
+- fire-239/240 salvage: **a294a039** committed the fire-239 + fire-240 §11 bookkeeping (both fires shipped+committed their slices but died before their own LEDGER entries; bulk-select multi-approve re-verified 12/12 on prod).
+- fire-241 §11 bookkeeping commit: **3d1024b6**.
+- no deploy (meta-gate + loop-script + bookkeeping only; non-prod code). Reconstruction proof (fire-242): `git log --oneline` shows all three commits pushed on main; `check-fire-committed` CLEAN; `check-deploy-state` OK.

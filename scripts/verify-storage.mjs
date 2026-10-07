@@ -15,7 +15,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + type filter + a store + size/usage + honesty label.
 const NEEDLES = [
-  /sample data/i,              // honest "Preview · sample data" — never lies-empty
+  /sample stores/i,            // honest hybrid chip "Live workspaces · sample stores" — never lies-empty
   /\bstorage\b/i,              // the page
   /\b(d1|kv|r2)\b/i,           // the type filter / types
   /leads|media-uploads/i,      // real sample store names
@@ -50,6 +50,11 @@ const onPath = /\/storage/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// DEPTH (fire-224): the live "your workspaces provisioning storage" band renders one of its fail-soft
+// states — running for the ba-e2e account (≥1 gadget). Proves the real listGadgets wiring (the STORAGE-
+// OWNER lens on gadgets), not just the sample store list.
+const liveBand = /Checking your workspaces|Storage owners unavailable|No workspaces yet|\d+\s+workspaces?\s+provisioning storage/i.test(body);
 
 const countRows = () => page.locator('section[aria-label="Stores"] li').count();
 const countAll = await countRows().catch(() => 0);
@@ -93,7 +98,7 @@ await page.screenshot({ path: "scripts/.storage-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -101,6 +106,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Storage reachable from the sidebar rail", "no Storage rail link (nav wiring missing)");
 check(onPath, "Storage rail click → /storage", "rail click did not reach /storage");
 check(renders, "Storage content renders (stats + type filter + stores + size/usage + honesty label)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'your workspaces provisioning storage' band renders (listGadgets DEPTH, fail-soft)", "live storage-owners band missing — listGadgets DEPTH not wired");
 check(drillInWorks, "Store click opens its detail (click-counter-db → leads)", "detail did not switch");
 check(browseLinkPresent, "D1 store detail links to Database Studio (Browse schema)", "no Browse-schema link on the D1 store detail");
 check(typeFilterWorks, `Type filter narrows the list (All ${countAll} → D1 ${countD1})`, "type pill did not narrow the list");

@@ -68,9 +68,25 @@ console.log(
     2,
   ),
 )
+// Curated DEPTH-FIT NOTES (fire-224 loop-improvement). The `candidate` list says a surface is SAMPLE-only,
+// but NOT whether a real RPC EXISTS to anchor a band — picking a target still cost a scout fire (fire-224
+// spent an Explore agent proving /storage→listGadgets was the one genuine fit while /analytics·/logs·
+// /activity are BLOCKED: their live contract needs a backend RPC that doesn't exist yet). This map captures
+// that analysis so a future DEPTH fire READS it instead of re-discovering. The only DEPTH-suitable RPCs
+// that return real per-user data TODAY: listGadgets (your gadgets — runtime[/compute] · governance
+// [/environments] · storage-owner[/storage] lenses), whoami (your session — /presence · /permissions),
+// getCloudflareUsage (account AI usage — /metrics · /billing · /ai-gateway), listConnectedAccounts,
+// listModels, listOutputs. A candidate with no natural fit among those is BLOCKED until its backend RPC lands.
+const DEPTH_FIT = {
+  '/analytics': 'BLOCKED — needs a real visitor-aggregates RPC (D1 visitor_events → getAnalytics); none exists yet',
+  '/logs': 'BLOCKED — the live contract is a per-run Workers-Logs stream (WebSocket), not a stateless RPC',
+  '/activity': 'BLOCKED — needs a global listRecentActions (fan-out listActions across gadgets); only per-gadget listActions exists',
+}
+
 console.log('\nDEPTH candidates (sample surface, no live RPC yet) — the menu for the next DEPTH fire:')
-for (const r of by('candidate')) console.log('  •', r.route)
+for (const r of by('candidate')) console.log('  •', r.route, DEPTH_FIT[r.route] ? `— ${DEPTH_FIT[r.route]}` : '')
 if (by('candidate').length === 0) console.log('  (none — every sample surface now has a live band; re-run the doc-diff for a NEW surface)')
+console.log('  (annotated routes = analyzed; unannotated = FIT NOT YET SCOUTED — confirm a real RPC exists before spending a slice)')
 console.log('\n⚠️  NOT DEPTH targets (already fully live — adding a band would be redundant, cf. the /outputs trap):')
 for (const r of by('live')) console.log('  •', r.route, '→', r.rpcs.join(', '))
 console.log('\nRPC usage across surfaces (prefer a LOW-count RPC for the next DEPTH band — spread live coverage, avoid redundancy):')

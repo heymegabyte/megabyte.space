@@ -40,6 +40,7 @@ const CHECKS = [
   ['verify-connections.mjs', [], '0 console errors'],
   ['verify-cost-strip.mjs', [], '0 console errors'],
   ['verify-gadgets-table.mjs', [], '0 console errors'],
+  ['verify-resources-panel.mjs', [], 'RESOURCES-PANEL GREEN'], // BROWSER proof (fire-224): the in-editor Resources launchpad RENDERS — open a workspace, click the Resources tab, assert ≥50 cards VISIBLE + 0 console errors (the browser companion to the STATIC verify-resources-launchpad gate)
   ['verify-gadget-pin.mjs', [], '0 console errors'],
   ['verify-gadget-rename.mjs', [], '0 console errors'],
   ['verify-gadget-delete.mjs', [], '0 console errors'],

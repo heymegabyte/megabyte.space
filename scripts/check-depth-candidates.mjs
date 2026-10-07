@@ -112,8 +112,11 @@ try {
     console.log(`\nPulse Opportunity-Engine detectors shipped (${detectors.length}) — the other absorption frontier (WS-N1):`)
     console.log('  ' + detectors.join(' · '))
     console.log(`  computeOpportunities inputs (a new detector must derive from THESE): ${inputs.join(', ')}`)
-    console.log('  → to add a genuinely-new signal, thread a NEW real RPC through computeOpportunities (e.g. getCloudflareUsage')
-    console.log('    → a "usage approaching your limit" nudge); the current input space is covered by the detectors above.')
+    console.log('  → usage (getCloudflareUsage) was threaded fire-228 — the usage-approaching-limit detector (fires ≥80%')
+    console.log('    of a metered daily AI limit; absent on the unlimited prod account, proven by pulseOpportunities.test).')
+    console.log('    The remaining detector ideas (compute-error-rate · stale-knowledge · costly-model-in-use) each need a')
+    console.log('    NEW backend RPC that does NOT exist yet, so the Pulse frontier is now RPC-BOUND: prefer the DEPTH')
+    console.log('    frontier / other workstreams until a new per-user signal RPC lands, then thread it in the same way.')
   }
 } catch {
   // pulse.tsx unreadable (submodule absent) — skip the Pulse inventory; the DEPTH sections already printed.

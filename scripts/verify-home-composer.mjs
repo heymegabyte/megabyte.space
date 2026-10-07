@@ -73,10 +73,73 @@ if (suggestionCount > 0) {
   await composer.fill("").catch(() => {}); // leave the composer empty (no draft lingering)
 }
 
+// 5. Three stepped tabs — Ask · Create · Build — render as a proper tablist.
+const tabs = page.locator('[role="tablist"][aria-label="How to start"] [role="tab"]');
+const tabCount = await tabs.count();
+const tabLabels = (await tabs.allInnerTexts().catch(() => [])).map((t) => t.replace(/\s+/g, " ").trim());
+const tabsRender = tabCount === 3 &&
+  ["Ask", "Create", "Build"].every((name) => tabLabels.some((t) => t.includes(name)));
+
+// 6. Each tab keeps its OWN draft — switching tabs never loses what you typed in another (preserve
+//    state across tabs). Type a distinct draft per tab, round-trip, and assert each survives.
+const askTab = page.getByRole("tab", { name: "Ask" });
+const createTab = page.getByRole("tab", { name: "Create" });
+const buildTab = page.getByRole("tab", { name: "Build" });
+let drafTabsStatePreserved = false, createEmptyOnSwitch = false;
+if (tabsRender && composerPresent) {
+  await askTab.click().catch(() => {});
+  await page.waitForTimeout(250);
+  await composer.fill("ALPHA-ask-draft");
+  await page.waitForTimeout(250);
+  await createTab.click().catch(() => {});
+  await page.waitForTimeout(350);
+  // A freshly-visited tab starts from its own (empty) draft, not the previous tab's text.
+  createEmptyOnSwitch = ((await composer.inputValue().catch(() => "x")) || "").length === 0;
+  await composer.fill("BETA-create-draft");
+  await page.waitForTimeout(250);
+  await buildTab.click().catch(() => {});
+  await page.waitForTimeout(350);
+  await composer.fill("GAMMA-build-draft");
+  await page.waitForTimeout(250);
+  // Round-trip: each tab must still hold its own draft.
+  await askTab.click().catch(() => {});
+  await page.waitForTimeout(350);
+  const askBack = (await composer.inputValue().catch(() => "")) || "";
+  await createTab.click().catch(() => {});
+  await page.waitForTimeout(350);
+  const createBack = (await composer.inputValue().catch(() => "")) || "";
+  await buildTab.click().catch(() => {});
+  await page.waitForTimeout(350);
+  const buildBack = (await composer.inputValue().catch(() => "")) || "";
+  drafTabsStatePreserved = askBack === "ALPHA-ask-draft" &&
+    createBack === "BETA-create-draft" && buildBack === "GAMMA-build-draft";
+  // Clean up every tab's draft so ba-e2e's session leaves nothing lingering.
+  for (const tab of [buildTab, createTab, askTab]) {
+    await tab.click().catch(() => {});
+    await page.waitForTimeout(150);
+    await composer.fill("").catch(() => {});
+  }
+}
+
+// 7. The left-gutter nebula is mounted (decorative, aria-hidden, but present in the DOM).
+const nebulaPresent = (await page.locator('[data-testid="home-nebula"]').count()) > 0;
+
+// 8. The home page sits on the brand base surface (bg-kumo-base), not a bare white page.
+const bgIsBrandBase = await page.evaluate(() => {
+  const panel = document.getElementById("home-composer-panel");
+  let el = panel ? panel.parentElement : null;
+  while (el) {
+    const cls = typeof el.className === "string" ? el.className : "";
+    if (cls.includes("bg-kumo-base") && cls.includes("min-h-full")) return true;
+    el = el.parentElement;
+  }
+  return false;
+});
+
 await page.screenshot({ path: "scripts/.home-composer-proof.png" });
 await browser.close();
 
-console.log(JSON.stringify({ composerPresent, sendPresent, disabledWhenEmpty, enablesOnInput, reDisablesOnClear, suggestionCount, suggestionSeedsComposer, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ composerPresent, sendPresent, disabledWhenEmpty, enablesOnInput, reDisablesOnClear, suggestionCount, suggestionSeedsComposer, tabCount, tabsRender, createEmptyOnSwitch, drafTabsStatePreserved, nebulaPresent, bgIsBrandBase, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -88,5 +151,10 @@ check(enablesOnInput, "Send enables once you type a prompt", "Send did not enabl
 check(reDisablesOnClear, "Send re-disables when the composer is cleared (gate round-trips)", "Send stayed enabled after clearing");
 check(suggestionCount > 0, `task suggestions render (${suggestionCount})`, "no task suggestions on the home page");
 check(suggestionSeedsComposer, "clicking a suggestion seeds the composer (one-tap idea → prompt)", "clicking a suggestion did not seed the composer");
+check(tabsRender, `the three stepped tabs render (Ask · Create · Build) [${tabCount}]`, `expected 3 tabs Ask/Create/Build, saw ${tabCount}: ${tabLabels.join("|")}`);
+check(createEmptyOnSwitch, "switching to a fresh tab shows its own (empty) draft, not the prior tab's text", "a freshly-visited tab leaked the previous tab's text");
+check(drafTabsStatePreserved, "each tab preserves its own draft across tab switches (state preserved)", "a tab lost its draft when switching away and back");
+check(nebulaPresent, "the left-gutter nebula is mounted", "no nebula element (data-testid=home-nebula) on the home page");
+check(bgIsBrandBase, "the home page sits on the brand base surface (bg-kumo-base)", "the home container is not on bg-kumo-base");
 check(errors.length === 0, "0 console errors on the home composer", `${errors.length} console errors`);
 process.exit(ok ? 0 : 1);

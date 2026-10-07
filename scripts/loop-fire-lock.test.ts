@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { claimLease, heartbeatLease, isLive, readLease, releaseLease } from "./loop-fire-lock.mjs";
+import { claimLease, handoffLease, heartbeatLease, isLive, readLease, releaseLease } from "./loop-fire-lock.mjs";
 
 function tmpLease(): string {
   return join(mkdtempSync(join(tmpdir(), "fire-lease-")), "lease.json");
@@ -76,4 +76,32 @@ test("release is owner-only and idempotent when absent", () => {
   assert.equal(readLease(path), null);
   const again = releaseLease({ runId: "run-a", path });
   assert.equal(again.ok, true);
+});
+
+test("handoff writes a released-handoff lease with a stale heartbeat (the infinite-loop close)", () => {
+  const path = tmpLease();
+  claimLease({ fire: "fire-t8", runId: "run-a", path });
+  const res = handoffLease({ runId: "run-a", note: "shipped the slice", path });
+  assert.equal(res.ok, true);
+  const lease = readLease(path);
+  assert.equal(lease?.phase, "released-handoff"); // the exact phase the watchdog relaunches on
+  assert.equal(lease?.fire, "fire-t8"); // carries the fire forward
+  assert.equal(lease?.note, "shipped the slice");
+  assert.equal(isLive(lease), false); // deliberately stale → immediately reclaimable by the next fire
+});
+
+test("handoff by a non-owner is refused with code 4", () => {
+  const path = tmpLease();
+  claimLease({ fire: "fire-t9", runId: "run-a", path });
+  const res = handoffLease({ runId: "run-intruder", path });
+  assert.equal(res.ok, false);
+  assert.equal(res.ok === false && res.code, 4);
+  assert.equal(readLease(path)?.phase, "orient"); // holder untouched
+});
+
+test("handoff on an absent lease still re-arms (idempotent)", () => {
+  const path = tmpLease();
+  const res = handoffLease({ runId: "run-solo", fire: "fire-t10", path });
+  assert.equal(res.ok, true);
+  assert.equal(readLease(path)?.phase, "released-handoff");
 });

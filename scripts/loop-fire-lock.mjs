@@ -11,7 +11,13 @@
  *   node scripts/loop-fire-lock.mjs claim --fire <slug> [--run-id <id>]
  *   node scripts/loop-fire-lock.mjs heartbeat --run-id <id> [--phase <phase>]
  *   node scripts/loop-fire-lock.mjs release --run-id <id>
+ *   node scripts/loop-fire-lock.mjs handoff --run-id <id> [--note <text>]
  *   node scripts/loop-fire-lock.mjs status
+ *
+ * `handoff` is §11's INFINITE-loop close: instead of deleting the lease on a clean completion, it
+ * writes a `released-handoff` lease with a deliberately stale heartbeat, so space.megabyte.loop-watchdog
+ * launches a FRESH `claude -p "run the loop"` within ~10 min and the loop runs forever hands-free (the
+ * model cannot self-/clear). Deleting instead would leave NO signal and the loop would idle.
  *
  * Exit codes: 0 ok · 2 usage/error · 3 live lease (coalesce) · 4 not owner.
  * Env: LOOP_FIRE_LEASE_PATH (override lease path, tests) ·
@@ -102,6 +108,29 @@ export function releaseLease({ runId, path = leasePath() }) {
   return { ok: true, released: true };
 }
 
+/**
+ * Hand the fire off so the watchdog chains the NEXT fire — writes a `released-handoff` lease with a
+ * deliberately STALE heartbeat INSTEAD of deleting. This is §11's close on a clean completion: the
+ * out-of-session watchdog (which the model cannot replace — it cannot self-/clear) sees the handoff
+ * phase and relaunches a fresh session within ~10 min, so the loop runs forever hands-free. The stale
+ * heartbeat also makes the lease immediately reclaimable (isLive === false) by whoever runs next.
+ * Owner-only (like release), but writes the handoff even when the lease is absent (idempotent re-arm).
+ * @returns {{ok:true,lease:object}|{ok:false,code:4,holder:object}}
+ */
+export function handoffLease({ runId, note = "", fire, path = leasePath(), now = Date.now() }) {
+  const current = readLease(path);
+  if (current && current.runId !== runId) return { ok: false, code: 4, holder: current };
+  const lease = {
+    fire: fire || current?.fire || "unknown",
+    runId,
+    phase: "released-handoff",
+    heartbeat: new Date(now - 2 * staleMs()).toISOString(), // clearly stale → reclaimable + triggers the watchdog
+    note,
+  };
+  writeLease(path, lease);
+  return { ok: true, lease };
+}
+
 function parseArgs(argv) {
   const [cmd, ...rest] = argv;
   const flags = {};
@@ -157,13 +186,30 @@ function main() {
       out({ released: res.released });
       return;
     }
+    case "handoff": {
+      if (!flags["run-id"]) {
+        process.stderr.write("usage: loop-fire-lock handoff --run-id <id> [--fire <slug>] [--note <text>]\n");
+        process.exit(2);
+      }
+      const res = handoffLease({
+        runId: flags["run-id"],
+        note: flags.note && flags.note !== "true" ? flags.note : "",
+        fire: flags.fire && flags.fire !== "true" ? flags.fire : undefined,
+      });
+      if (!res.ok) {
+        out({ error: "not-owner", holder: res.holder });
+        process.exit(4);
+      }
+      out({ handoff: true, lease: res.lease });
+      return;
+    }
     case "status": {
       const lease = readLease();
       out({ lease, live: isLive(lease) });
       return;
     }
     default:
-      process.stderr.write("usage: loop-fire-lock <claim|heartbeat|release|status> [flags]\n");
+      process.stderr.write("usage: loop-fire-lock <claim|heartbeat|release|handoff|status> [flags]\n");
       process.exit(2);
   }
 }

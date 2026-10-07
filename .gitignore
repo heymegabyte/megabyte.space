@@ -10,6 +10,8 @@ deployment.local.jsonc
 .claude/run-the-loop/.watchdog-debt-hash
 .claude/run-the-loop/watchdog.log
 .claude/.worktree-pool
+# Loop health-check scratch (debug screenshots / preview HTML — ephemeral, never committed)
+loop-health/
 # Journey/explorer run artifacts (screenshots etc.) stay local
 e2e/screenshots/
 e2e/deep-ui-explorer/runs/

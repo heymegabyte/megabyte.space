@@ -74,13 +74,16 @@ console.log(
 // /activity are BLOCKED: their live contract needs a backend RPC that doesn't exist yet). This map captures
 // that analysis so a future DEPTH fire READS it instead of re-discovering. The only DEPTH-suitable RPCs
 // that return real per-user data TODAY: listGadgets (your gadgets — runtime[/compute] · governance
-// [/environments] · storage-owner[/storage] lenses), whoami (your session — /presence · /permissions),
-// getCloudflareUsage (account AI usage — /metrics · /billing · /ai-gateway), listConnectedAccounts,
-// listModels, listOutputs. A candidate with no natural fit among those is BLOCKED until its backend RPC lands.
+// [/environments] · storage-owner[/storage] · audit-subjects[/provenance] lenses), whoami (your session
+// — /presence · /permissions), getCloudflareUsage (account AI usage — /metrics · /billing · /ai-gateway),
+// listConnectedAccounts, listModels, listOutputs. A candidate with no natural fit among those is BLOCKED
+// until its backend RPC lands — OR is DESIGN-BLOCKED (a seemingly-natural RPC fit exists, but wiring it
+// would prejudge a one-way-door product decision that is deliberately deferred).
 const DEPTH_FIT = {
   '/analytics': 'BLOCKED — needs a real visitor-aggregates RPC (D1 visitor_events → getAnalytics); none exists yet',
   '/logs': 'BLOCKED — the live contract is a per-run Workers-Logs stream (WebSocket), not a stateless RPC',
   '/activity': 'BLOCKED — needs a global listRecentActions (fan-out listActions across gadgets); only per-gadget listActions exists',
+  '/agents': 'DESIGN-BLOCKED — listGadgets LOOKS like a fit, but /agents is deliberately model-neutral: wiring it prejudges the WS-N2 agent-vs-gadget one-way door (Brian\'s call). Its own comment: "live agents land once that\'s decided." Do NOT wire until WS-N2 resolves (fire-242).',
 }
 
 console.log('\nDEPTH candidates (sample surface, no live RPC yet) — the menu for the next DEPTH fire:')

@@ -162,7 +162,7 @@ if (submoduleIssues.length) {
 if (forkDirty.length) {
   process.stderr.write(`\n⚠️  ${forkDirty.length} dirty TRACKED file(s) INSIDE the ${SUBMODULE} fork — commit them to the fork + bump the gitlink before releasing the lease (fire-164 class — invisible to the parent's diff.ignoreSubmodules=dirty):\n`);
   for (const f of forkDirty) process.stderr.write(`   ${f.xy}  ${SUBMODULE}/${f.path}\n`);
-  process.stderr.write(`A deployed-but-uncommitted fork file leaves prod ahead of git (the gitlink points at source without the change).\n`);
+  process.stderr.write(`A dirty fork file is UNcommitted ⇒ NOT in the gitlink. The lease phase can't say whether prod serves it (a fire flips to verify/ship for LOCAL vitest/tsc BEFORE deploying — fire-244). Cross-check check-deploy-state: (a) if prod ALREADY ran this (deployed-but-uncommitted, prod-ahead-of-git) → salvage = commit+push fork + bump gitlink; (b) if NOT deployed (built-but-not-shipped, fire-243 class) → salvage = the FULL finish: commit+push fork → bump gitlink → DEPLOY → prod-verify. Never assume prod already serves a forkDirty change.\n`);
 } else {
   process.stderr.write(`✅ ${SUBMODULE} fork working tree clean — no deployed-but-uncommitted fork changes.\n`);
 }

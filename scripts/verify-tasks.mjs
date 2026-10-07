@@ -115,7 +115,7 @@ if (beforeAll > 0 && (await retryAllBtn.count().then((c) => c > 0).catch(() => f
 
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countSucceeded, countSearch, retryBefore, statusFilterWorks, searchWorks, retryWorks, retryAllWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 

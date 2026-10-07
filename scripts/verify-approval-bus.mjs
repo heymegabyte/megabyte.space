@@ -105,7 +105,10 @@ try {
   await browser.close();
 }
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+// "WebSocket is already in CLOSING or CLOSED state" — a benign capnweb WS-close race on the hard-reload
+// nav, filtered estate-wide (fire-161). Canonical pattern matched to the ACTUAL phrasing; the old
+// `… state` anchor missed "CLOSING or CLOSED state" so the race leaked through as a false FAIL (fire-232).
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({
   loggedIn, bandRenders, reachedPulse, raisedTitle, landedOnApprovals,
   liveShowsRaised, approveRemoved, durableAfterReload, skippedNoOpportunity,

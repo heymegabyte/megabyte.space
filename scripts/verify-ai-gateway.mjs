@@ -93,7 +93,7 @@ const searchWorks = countSearch > 0 && countSearch < countAll;
 await page.screenshot({ path: "scripts/.ai-gateway-proof.png", fullPage: true });
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDeepseek, countSearch, liveBand, cachedChips, crossLinksPresent, providerFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 

@@ -25,7 +25,7 @@ const page = await browser.newPage({
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
 // Benign capnweb WebSocket-close on nav (fire-157/159) — the only known non-defect console noise.
-const IGNORE = /already in (CLOSING|CLOSED) state/i;
+const IGNORE = /WebSocket is already in (CLOSING|CLOSED)/i;
 page.on("console", (m) => { if (m.type() === "error" && !IGNORE.test(m.text())) errors.push(m.text()); });
 page.on("pageerror", (e) => { if (!IGNORE.test(String(e))) errors.push(String(e)); });
 

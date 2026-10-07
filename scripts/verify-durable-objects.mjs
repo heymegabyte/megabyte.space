@@ -98,7 +98,7 @@ const crossLinksPresent = storageLink && computeLink;
 await page.screenshot({ path: "scripts/.durable-objects-proof.png", fullPage: true });
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countActive, countSearch, drillInWorks, instancesRender, statusFilterWorks, searchWorks, crossLinksPresent, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 

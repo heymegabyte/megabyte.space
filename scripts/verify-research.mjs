@@ -101,7 +101,7 @@ if (cancelBefore > 0 && (await firstCancel.count().then((c) => c > 0).catch(() =
 
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDone, countSearch, cancelBefore, statusFilterWorks, searchWorks, cancelWorks, agentsLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 

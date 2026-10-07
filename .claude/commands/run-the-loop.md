@@ -148,7 +148,7 @@ itself when lean) to make the merged whole coherent:
 After convergence, spawn ONE adversarial reviewer whose ONLY job is to try to BREAK the merged
 result — the assumption is that parallel slices introduced a regression:
 - Re-run the estate path end-to-end: apex renders (WebGL hero, 0 console errors) → `/login` 302 with BROWSER headers → Access gate intact → OS shell via service token → absorbed surfaces live.
-- Diff-review for: a `cloudflare-os` submodule pointer move or in-tree edit (revert unless lane §1.18 shipped it), a `run_worker_first` entry dropped, an Access policy weakened, a flag left on, contract drift between slices, a swallowed error, a lying-empty absorbed surface (reconcile display-vs-store), a fix inert behind a false precondition.
+- Diff-review for: a `cloudflare-os` submodule pointer move or in-tree edit (revert unless lane §1.18 shipped it), a `run_worker_first` entry dropped, an Access policy weakened, a flag left on, contract drift between slices, a swallowed error, a lying-empty absorbed surface (reconcile display-vs-store), a fix inert behind a false precondition, **a widened governance auto-approve allowlist** (`AUTO_APPROVE_KINDS` in `approvalStore.ts` grown beyond the reviewed `{deploy}` set, or the deny-by-default policy inverted — any widening of what skips the human HITL gate is a SECURITY decision requiring a recorded note + Opus-pinned review, never a silent diff; locked by `approvalStore.test.ts`).
 - Any regression found → fix-forward in the main thread or ONE targeted agent (never re-fan-out for repair). Re-verify before shipping.
 - The reviewer is Opus-pinned when the merged change touches auth/Access/security.
 

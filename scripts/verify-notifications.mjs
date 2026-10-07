@@ -123,7 +123,7 @@ if (await quietSwitch.count().then((c) => c > 0).catch(() => false)) {
 await page.screenshot({ path: "scripts/.notifications-proof.png", fullPage: true });
 await browser.close();
 
-const realErrors = errors.filter((e) => !/already in (CLOSING|CLOSED) state/i.test(e));
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
 console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countSecurity, countSearch, typeFilterWorks, searchWorks, sendTestWorks, channelToggleWorks, quietHoursWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 

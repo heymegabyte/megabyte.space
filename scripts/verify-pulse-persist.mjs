@@ -16,6 +16,7 @@
  * Needs BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD).
  */
 import { chromium } from "playwright";
+import { classifyPulseExercisability } from "./pulse-verify-lib.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -68,6 +69,21 @@ const UNDO = '[data-testid="pulse-undo-dismiss"]';
 // 1. Context A — dismiss the first opportunity. A is NOT reloaded, so its inline Undo stays live.
 const A = await freshPulse("A");
 const cardsA0 = await cardCount(A.page);
+
+// Exercisability gate (fire-243): the dismiss→persist proof needs ≥1 opportunity, but the ba-e2e
+// account's count is MUTABLE and legitimately reaches 0 ("all clear"). Mirror verify-pulse.mjs — a
+// genuine all-clear surface is VALID (SKIP, not a hard fail); only a blank/load-errored/erroring
+// surface fails. Pure decision: classifyPulseExercisability (unit-proven in pulse-verify-lib.test.ts).
+const bodyA = await A.page.innerText("body").catch(() => "");
+const verdict = classifyPulseExercisability({ cards: cardsA0, bodyText: bodyA, consoleErrors: A.errors.length });
+if (verdict.action !== "run") {
+  await A.page.screenshot({ path: "scripts/.pulse-persist-proof.png" }).catch(() => {});
+  await A.context.close();
+  await browser.close();
+  if (verdict.action === "skip") { console.log(`⚠️  SKIP: ${verdict.reason}`); process.exit(0); }
+  console.log(`❌ FAIL: ${verdict.reason}`); process.exit(1);
+}
+
 if (cardsA0 > 0) {
   await A.page.locator("button", { hasText: /^\s*Dismiss\s*$/i }).first().click().catch(() => {});
   await A.page.waitForTimeout(900);

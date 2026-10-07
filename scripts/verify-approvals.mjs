@@ -4,8 +4,9 @@
  * REQUIREMENTS §34/§36/§41; a NEW Resources panel). Reachable via the SIDEBAR rail (real-user path,
  * proves nav wiring); renders the stat strip + a kind filter + search + the request cards with
  * Approve/Reject controls. The SIGNATURE interactions: a kind pill + search narrow the queue, a per-item
- * "Approve" resolves one request (one fewer Approve button + an "Approved" badge), and "Auto-approve
- * low-risk" clears the low-risk backlog in bulk. It cross-links to Activity. "Preview · sample data".
+ * "Approve" resolves one request (one fewer Approve button + an "Approved" badge), "Auto-approve
+ * low-risk" clears the low-risk backlog in bulk, and (fire-240) a per-card checkbox + a sticky action
+ * bar bulk-resolve MANY selected requests at once. It cross-links to Activity. "Preview · sample data".
  * Also asserts the fire-238 "Needs a human" cluster DIVIDER — a labeled role="separator" between the
  * leading pending-high-risk block and the lower-risk/resolved rest (the prod regression net the shipped
  * UX lacked; fire-239). BA-authed real Chromium, PROD. Needs BA creds.
@@ -141,10 +142,35 @@ if (beforeAuto > 0 && (await autoBtn.count().then((c) => c > 0).catch(() => fals
   autoApproveWorks = afterAuto < beforeAuto;
 }
 
+// INTERACTIVE 5 — BULK multi-select → approve resolves MORE THAN ONE request at once (fire-240). Tick two
+// pending cards' checkboxes → the sticky "Approve N" action bar appears → approving clears >1 card AND the
+// selection (the bar disappears). This is the queue-ergonomics →10 lever: acting on MANY, not one-by-one.
+let bulkMultiApproveWorks = false;
+let bulkApproveBefore = 0, bulkApproveAfter = 0, bulkCheckboxes = 0;
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(250); }
+const queueCheckboxes = page.locator('section[aria-label="Approval queue"] input[type="checkbox"]');
+bulkCheckboxes = await queueCheckboxes.count().catch(() => 0);
+bulkApproveBefore = await countApprove().catch(() => 0);
+if (bulkCheckboxes >= 2) {
+  await queueCheckboxes.nth(0).check().catch(() => {});
+  await queueCheckboxes.nth(1).check().catch(() => {});
+  await page.waitForTimeout(250);
+  const bulkBar = page.getByRole("region", { name: /bulk approval actions/i });
+  const barAppeared = await bulkBar.count().then((c) => c > 0).catch(() => false);
+  const bulkApproveBtn = page.getByRole("button", { name: "Approve 2", exact: true }).first();
+  if (barAppeared && (await bulkApproveBtn.count().then((c) => c > 0).catch(() => false))) {
+    await bulkApproveBtn.click().catch(() => {});
+    await page.waitForTimeout(500);
+    bulkApproveAfter = await countApprove().catch(() => bulkApproveBefore);
+    const barGone = await bulkBar.count().then((c) => c === 0).catch(() => false);
+    bulkMultiApproveWorks = bulkApproveAfter === bulkApproveBefore - 2 && barGone;
+  }
+}
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, dividerCount, dividerBetween, dividerLabelled, dividerWorks, dividerWhenSingle, dividerHidesInSingleList, countAll, countDeploy, countSearch, approveBefore, kindFilterWorks, searchWorks, approveWorks, autoApproveWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, dividerCount, dividerBetween, dividerLabelled, dividerWorks, dividerWhenSingle, dividerHidesInSingleList, countAll, countDeploy, countSearch, approveBefore, kindFilterWorks, searchWorks, approveWorks, autoApproveWorks, bulkCheckboxes, bulkApproveBefore, bulkApproveAfter, bulkMultiApproveWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -158,6 +184,7 @@ check(kindFilterWorks, `Kind filter narrows the queue (All ${countAll} → Deplo
 check(searchWorks, `Search narrows the queue (All ${countAll} → "press" ${countSearch})`, "search did not narrow the queue");
 check(approveWorks, `Approve resolves one request (Approve buttons ${approveBefore} → ${approveBefore - 1} + "Approved" badge)`, "per-item approve did not resolve a request");
 check(autoApproveWorks, "Auto-approve low-risk clears the low-risk backlog (fewer Approve buttons)", "auto-approve-low-risk did not resolve the low-risk requests");
+check(bulkMultiApproveWorks, `Bulk multi-select → approve resolves >1 request at once (Approve buttons ${bulkApproveBefore} → ${bulkApproveAfter}, −2; action bar cleared)`, `bulk multi-approve did not resolve 2 cards (checkboxes=${bulkCheckboxes} before=${bulkApproveBefore} after=${bulkApproveAfter})`);
 check(activityLink, "Cross-link to Activity present (interconnect)", "no Activity cross-link");
 check(realErrors.length === 0, "0 console errors on /approvals", `${realErrors.length} console errors`);
 console.log(ok ? "✅ APPROVALS GREEN" : "❌ approvals check failed");

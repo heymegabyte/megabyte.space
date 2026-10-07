@@ -589,6 +589,18 @@
         "inline example-output preview under a suggestion"
       ],
       "notes": "fire-217 CREATED (salvage-finish of fire-215/216 stranded work) — the /create home composer: the authed home route ('/') is now a proper new-work launcher. Stepped 1·2·3 tabs (Ask·Create·Build), each keeping its OWN composer draft via a tab-scoped draftStorageKey (switching tabs never loses input); bg-kumo-base (not a bare white page); a reduced-motion-safe low-GPU WebGL nebula (NebulaField: WebGL2 fBm shader -> 2D-canvas drift -> static CSS floor ladder, half-res + 30fps + visibility-pause, aria-hidden + masked before the column); per-tab task suggestions (orderSuggestionsByMode, pure+unit-tested); ARIA tablist (roving tabindex + arrow keys), kumo brand/inverse pairing for AA in both themes. Deployed megabyte-os v1b267bd6 (fork 81a4a451). verify-home-composer 13/13 on prod (3 tabs render, createEmptyOnSwitch, per-tab draft PRESERVED across switches, nebula mounted, bg-kumo-base, 0 console errors) + verify-prod 10/10 + verify-login-gate 12/12. direct-Read vision 9/10 (polished, on-brand, embarrassingly-easy; knock vs 9.5: the dark-theme nebula is understated by design)."
+    },
+    "os.browser-runs": {
+      "beautifyPasses": 2,
+      "aiVisionScore": 9.5,
+      "density": 8,
+      "lastVisit": "2026-10-07",
+      "next": [
+        "fresh screenshot-vision CAPTURE of the inline animated frame + scrubber (fire-219 functional-verified 9/9 but did NOT run a vision model this salvage fire) — 9.5->9.7",
+        "live Cloudflare Browser-Rendering CDP view replacing the rendered-scene replay — the real ->10",
+        "per-action network/DOM detail drawer on a step"
+      ],
+      "notes": "fire-156 CREATED (/browser-runs step-trace + interactive HITL; vision 9.5). fire-218 ENHANCED to a 'browser-use-grade' inline animated browser (fork 9dfce12c; LANDED by fire-219 salvage, outer 597bd9df — prod-ahead-of-git, NO rebuild/redeploy): the detail pane now REPLAYS each run action-by-action in an inline agent-browser frame — current-action element highlight + animated cursor/ripple over a rendered page scene, a Live/Replay chrome, an action-annotation chip, a synchronized SCRUBBER (play/pause · pips · prev/next · ←/→/space keyboard), a clickable step trace, and inline HITL (the 2FA/CAPTCHA resolver renders OVER the frame -> type a code + Resume -> the run CONTINUES to the invoices page). Per-step FRAME SCENE data + pure helpers (activeStepIndex/clampStep/isHitlStep/targetElementIndex/STEP_VERB) in browserRuns.ts, unit-tested 20/20; all motion reduced-motion-gated (br-chip-in/br-ripple/br-caret/br-url-flash). Inspiration: github.com/browser-use/browser-use (memory browser-use-inline-browser-inspiration). verify-browser-runs 9/9 GREEN on prod THIS fire (reachable via rail -> renders -> scrub changes the frame -> inline HITL resolves -> run continues -> 0 console errors). Functional-verify only this salvage fire — NOT a fresh screenshot-vision pass; score carried from fire-156's 9.5 create + the clearly-additive enhancement (a fresh vision capture is the top 'next', per the os.compute/os.metrics salvage precedent). Knock vs 10: live Browser-Rendering CDP view."
     }
   }
 }

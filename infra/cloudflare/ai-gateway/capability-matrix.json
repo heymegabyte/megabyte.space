@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-10-07T03:40:35.575Z",
+  "note": "Live health of the proven model pool (gateway megabyte-space). No secrets.",
+  "quarantined": [
+    {
+      "provider": "anthropic",
+      "reason": "No valid BYOK credential on these gateways (live smoke: 401 'Invalid Anthropic API Key'). To re-enable: add a funded Anthropic BYOK key via provider_configs, smoke it, then move claude to the front of architect/critical for best-in-class judgment."
+    },
+    {
+      "provider": "deepseek (direct api.deepseek.com)",
+      "reason": "The gateway resolves a STALE account/Unified-Billing DeepSeek key (live smoke: 'api key ****6083 / ****6e22 is invalid') that overrides a freshly-created BYOK provider_config holding the valid get-secret key. Could not be displaced without globally flipping byok_only (which the task forbids). DeepSeek capability is therefore served via Workers AI (@cf/deepseek-ai/deepseek-v4-flash + deepseek-v4-pro + r1-distill), which is keyless and healthy."
+    },
+    {
+      "provider": "openai o-series (o4-mini, o3, ...)",
+      "reason": "Reasoning models reject `max_tokens` (require `max_completion_tokens`), breaking the uniform Chat-Completions contract shared by every route. Use gpt-4.1 / gpt-4o for frontier instead."
+    }
+  ],
+  "models": {
+    "tiny": {
+      "provider": "workers-ai",
+      "model": "@cf/meta/llama-3.2-1b-instruct",
+      "status": 200,
+      "ok": true
+    },
+    "cheapest": {
+      "provider": "workers-ai",
+      "model": "@cf/meta/llama-3.2-3b-instruct",
+      "status": 200,
+      "ok": true
+    },
+    "fast": {
+      "provider": "workers-ai",
+      "model": "@cf/meta/llama-3.1-8b-instruct-fp8",
+      "status": 200,
+      "ok": true
+    },
+    "deepseekFlash": {
+      "provider": "workers-ai",
+      "model": "@cf/deepseek-ai/deepseek-v4-flash-0731",
+      "status": 200,
+      "ok": true
+    },
+    "general": {
+      "provider": "workers-ai",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "status": 200,
+      "ok": true
+    },
+    "deepseekPro": {
+      "provider": "workers-ai",
+      "model": "@cf/deepseek-ai/deepseek-v4-pro-0813",
+      "status": 200,
+      "ok": true
+    },
+    "codeRoutine": {
+      "provider": "workers-ai",
+      "model": "@cf/qwen/qwen2.5-coder-32b-instruct",
+      "status": 200,
+      "ok": true
+    },
+    "reasoning": {
+      "provider": "workers-ai",
+      "model": "@cf/qwen/qwq-32b",
+      "status": 200,
+      "ok": true
+    },
+    "reasoningDs": {
+      "provider": "workers-ai",
+      "model": "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
+      "status": 200,
+      "ok": true
+    },
+    "content": {
+      "provider": "workers-ai",
+      "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
+      "status": 200,
+      "ok": true
+    },
+    "mistral": {
+      "provider": "workers-ai",
+      "model": "@cf/mistralai/mistral-small-3.1-24b-instruct",
+      "status": 200,
+      "ok": true
+    },
+    "oaiMini": {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "status": 200,
+      "ok": true
+    },
+    "oai4o": {
+      "provider": "openai",
+      "model": "gpt-4o",
+      "status": 200,
+      "ok": true
+    },
+    "oai41mini": {
+      "provider": "openai",
+      "model": "gpt-4.1-mini",
+      "status": 200,
+      "ok": true
+    },
+    "oai41": {
+      "provider": "openai",
+      "model": "gpt-4.1",
+      "status": 200,
+      "ok": true
+    }
+  }
+}

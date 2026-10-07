@@ -51,6 +51,31 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 
 - **`pnpm` is often ABSENT on the loop's shell** (node 26 via Homebrew ships no `corepack`, no global `pnpm`). Do NOT stall a fire on a missing toolchain — run every pnpm command through the pinned on-demand fetch: `npx -y pnpm@11.17.0 check` / `… deploy` / `… --dir packages/home deploy` (package.json pins `pnpm@11.17.0`). The pure-node verifiers (`node scripts/verify-prod.mjs`, `verify-ba-flip.mjs`, …) need no pnpm. (fire-55.)
 
+## AI routing (Dynamic Routes control plane)
+
+- **Application code asks for an INTENT, never a raw model id.** Eight virtual routes
+  `dynamic/{general,economy,code,architect,research,critical,batch,restricted}` exist with IDENTICAL
+  names on BOTH AI Gateways (`megabyte-space` + `projectsites-dev`). Build requests via
+  `infra/cloudflare/ai-gateway/policy.ts`. Config-as-code + full ops: `infra/cloudflare/ai-gateway/README.md`.
+- **Metadata contract — exactly 5, SERVER-DERIVED, never client-trusted:** `tenant_id · actor_id ·
+  plan · quality · environment` (via `cf-aig-metadata` header). `quality` is clamped to the plan's
+  entitlement server-side; a user header can never widen their pool/tier.
+- **Dynamic Routes = hard business policy** (plan/quality caps, provider allowlists, budget degradation,
+  cross-provider failover); Chat-Completions text ONLY. **Auto Router `cloudflare/auto` = ambiguous
+  general traffic** (always pass `cf-aig-session-id`; allowlist clamped by plan). **Media/other
+  protocols = provider-native AI Gateway path**, never Dynamic Routes.
+- **Control plane:** `node infra/cloudflare/ai-gateway/ai-routes.ts {plan|apply|verify|status|rollback|degraded-mode}`
+  — idempotent reconcile, live verify, auto-rollback; `manifest.json` + `capability-matrix.json` are
+  the secret-free records (CF stays authoritative for version history).
+- **Auth:** management = `get-secret CLOUDFLARE_API_KEY` (global key; scoped token lacks AI Gateway API
+  scope); data plane `cf-aig-authorization` = `get-secret CLOUDFLARE_API_TOKEN` (carries AI Gateway Run).
+  NEVER put provider keys in route JSON / tests / manifest / logs / git.
+- **Current provider reality:** proven = Workers AI (keyless, incl. DeepSeek-V4 `@cf/deepseek-ai/*`) +
+  OpenAI (Unified Billing). Anthropic quarantined (no valid BYOK key); direct DeepSeek API quarantined
+  (a stale account key overrides BYOK) → DeepSeek served via Workers AI. Re-check: `verify --probe-models`.
+- **Verifiers MUST send `cf-aig-skip-cache`** — megabyte-space has `cache_ttl=300`, so cached selections
+  would otherwise mask live routing (the control-plane caller does this by default).
+
 ## Upgrades
 
 The `cloudflare-os` submodule is now OUR FORK (`heymegabyte/cloudflare-os` @ `megabyte-os`; `upstream` remote = cloudflare/cloudflare-os). To take an upstream release: `git -C cloudflare-os fetch upstream`, rebase/merge `megabyte-os` onto the reviewed ref (keep our `workshop-frontend` landing edits), `git push origin megabyte-os`, bump the gitlink in this repo → `pnpm check` → `pnpm deploy`. Homepage (`packages/home` / `megabyte-home`) is RETIRED since WS-11 — deployed but unrouted (owns no hostname); kept only as the `LandingHomepage` component source.

@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-10-07T03:38:38.423Z",
+  "account_id": "84fa0d1b16ff8086dd958c468ce7fd59",
+  "note": "Secret-free deployment manifest. Cloudflare remains authoritative for version/deployment history.",
+  "routes": [
+    {
+      "gateway": "megabyte-space",
+      "route": "general",
+      "route_id": "65076312-8118-4a44-921b-14de4a884efb",
+      "prior_version_id": null,
+      "deployed_version_id": "cd772013-062c-448b-a900-51f679b30b5f",
+      "graph_hash": "1b4f837f4bcf11e3",
+      "action": "noop",
+      "verification": null,
+      "purpose": "General-purpose deterministic policy routing (our policy, not Auto Router). Branches on plan/quality/environment."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "economy",
+      "route_id": "2dace41b-5671-458e-8713-3ad50a1b3ec2",
+      "prior_version_id": "5cdeb353-f569-4a06-8650-74b93dc886f5",
+      "deployed_version_id": "3e41cca9-e3dc-4094-a1f3-435765b4bb0c",
+      "graph_hash": "c2d79612070c2355",
+      "action": "updated",
+      "verification": "ok workers-ai/@cf/meta/llama-3.2-3b-instruct",
+      "purpose": "Lowest practical cost while useful. The shared degradation target for budget/burst overflow."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "code",
+      "route_id": "99cdd183-bcf7-4495-9ff0-26bc7f179898",
+      "prior_version_id": null,
+      "deployed_version_id": "91afeca2-1b9b-44cf-8c31-c0cead4ef783",
+      "graph_hash": "2796ab246ada7e13",
+      "action": "noop",
+      "verification": null,
+      "purpose": "Routine software implementation/debug/tests/refactors; escalates to stronger coding models at quality high|maximum."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "architect",
+      "route_id": "802a5d3c-972b-4c10-9ee9-c5b922595c42",
+      "prior_version_id": null,
+      "deployed_version_id": "cfc393e1-0b63-402c-b7a4-6e58d9448427",
+      "graph_hash": "4310b7d917a952d3",
+      "action": "noop",
+      "verification": null,
+      "purpose": "Architecture, high-impact judgment, final arbitration. Strongest proven models, cross-provider, long timeouts."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "research",
+      "route_id": "041dd72d-fc46-45e9-97ed-2980fe75e89e",
+      "prior_version_id": null,
+      "deployed_version_id": "d8685c01-7951-4f91-a9c4-9e1a6644e365",
+      "graph_hash": "43418ad27ccaf792",
+      "action": "noop",
+      "verification": null,
+      "purpose": "Synthesis/reasoning over supplied evidence (NOT a web crawler). Reasoning + long-context models."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "critical",
+      "route_id": "178114eb-0ab9-4721-9ccd-14ff4188dc6e",
+      "prior_version_id": null,
+      "deployed_version_id": "d1c07e84-24c5-4469-a5c7-b8c764f3e208",
+      "graph_hash": "fbe459e83d736e29",
+      "action": "noop",
+      "verification": null,
+      "purpose": "Correctness + availability over minimum cost. Highest provider diversity, careful retries, no bargain downgrade."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "batch",
+      "route_id": "6319033f-f0e2-484b-a116-e41cfa95e0ba",
+      "prior_version_id": null,
+      "deployed_version_id": "a8ef8c8a-b6a9-468a-9b5f-0bd323bbb2e9",
+      "graph_hash": "8afd545f3f00d927",
+      "action": "noop",
+      "verification": null,
+      "purpose": "High-volume background work. Count-limit per tenant that degrades to the cheapest lane instead of breaking."
+    },
+    {
+      "gateway": "megabyte-space",
+      "route": "restricted",
+      "route_id": "b7e14846-9550-44a8-9fb8-a6b27658a2f8",
+      "prior_version_id": null,
+      "deployed_version_id": "4004e3ba-a9a8-4830-9470-fcf040e7039f",
+      "graph_hash": "5218643a4db4caf6",
+      "action": "noop",
+      "verification": null,
+      "purpose": "Sensitive/internal. workers-ai-only provider allowlist; request layer adds skip-cache + payload-log-off."
+    }
+  ]
+}

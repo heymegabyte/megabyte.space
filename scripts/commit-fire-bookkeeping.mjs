@@ -15,6 +15,13 @@
  * single guard makes the fire-52/234 class impossible: you cannot land a matrix/backlog tick without
  * the matching LEDGER entry. Fewer tail tool-calls + enforced atomicity = a far smaller death window.
  *
+ * THE FIX, HARDENED (fire-237, after a 5th consecutive strand 230->236): `--ledger-file <path>` lets
+ * this command WRITE the LEDGER entry too, so the entry-append and the commit are the SAME invocation.
+ * fires 230->236 all died AFTER the slow LEDGER Edit but BEFORE the separate commit — that intermediate
+ * "entry written, not committed" state no longer exists in the real file when you use --ledger-file
+ * (the entry lives in a scratch file until the one atomic call folds it in + commits). Idempotent:
+ * a re-run never double-appends, and the file must name the fire (a wrong-fire/junk file is refused).
+ *
  * Canonical bookkeeping paths (and ONLY these — this never sweeps source/scripts; the slice's code
  * is a separate `feat` commit):
  *   .claude/run-the-loop/LEDGER.md        (mandatory — the fire's durable record)
@@ -25,12 +32,13 @@
  * Usage:
  *   node scripts/commit-fire-bookkeeping.mjs --fire fire-235 [--note "<what shipped>"]
  *   node scripts/commit-fire-bookkeeping.mjs --fire fire-235-salvage-rotate   # slug ok; keys on fire-<n>
+ *   node scripts/commit-fire-bookkeeping.mjs --fire fire-237 --ledger-file /tmp/fire-237-entry.md  # write entry + commit, one call
  *
- * Exit: 0 committed (or nothing-to-commit no-op) · 2 guard failed (no LEDGER entry) · 1 usage/git error.
+ * Exit: 0 committed (or nothing-to-commit no-op) · 2 guard failed (no/invalid LEDGER entry) · 1 usage/git error.
  * Idempotent: a second run with the bookkeeping already committed is a clean no-op.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 export const CANONICAL_PATHS = [
   ".claude/run-the-loop/LEDGER.md",
@@ -55,14 +63,40 @@ export function ledgerHasEntry(ledgerText, fireNum) {
   return re.test(String(ledgerText || ""));
 }
 
-/** Parse `--fire`/`--note` flags from argv. Pure. */
+/** Parse `--fire`/`--note`/`--ledger-file` flags from argv. Pure. */
 export function parseArgs(argv) {
-  const out = { fire: null, note: null };
+  const out = { fire: null, note: null, ledgerFile: null };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--fire") out.fire = argv[++i];
     else if (argv[i] === "--note") out.note = argv[++i];
+    else if (argv[i] === "--ledger-file") out.ledgerFile = argv[++i];
   }
   return out;
+}
+
+/**
+ * Decide how to fold a fire's LEDGER entry into the current LEDGER text — the pure core of the
+ * `--ledger-file` mode (fire-237). This closes the strand window the orient-salvage keeps catching:
+ * fires 230->236 all died AFTER writing the LEDGER entry (a slow Edit on the 3000-line file) but
+ * BEFORE the separate commit. Letting the commit command WRITE the entry too means reaching the one
+ * Bash call completes the record — there is no "entry written but not committed" state in the real file.
+ *
+ * Validates the entry actually names the fire (so a wrong-fire file or junk can never be appended),
+ * and is idempotent: if the LEDGER already carries the entry, it skips (a re-run never double-appends).
+ * @param {string} ledgerText current LEDGER.md contents
+ * @param {string} entryText the fire's entry to fold in (must contain a `## fire-<n>` heading)
+ * @param {string|null} fireNum canonical `fire-<n>` key
+ * @returns {{action:'append',text:string}|{action:'skip'}|{action:'error',error:string}}
+ */
+export function ledgerWithEntry(ledgerText, entryText, fireNum) {
+  if (!fireNum) return { action: "error", error: "no fire number" };
+  if (!ledgerHasEntry(entryText, fireNum)) {
+    return { action: "error", error: `entry text has no '## ${fireNum}' heading — refusing to append` };
+  }
+  if (ledgerHasEntry(ledgerText, fireNum)) return { action: "skip" };
+  const base = String(ledgerText || "").replace(/\s*$/, "");
+  const entry = String(entryText).trim();
+  return { action: "append", text: `${base}\n\n${entry}\n` };
 }
 
 // --- side-effecting entrypoint (skipped when imported by the test) ---
@@ -70,7 +104,7 @@ function main() {
   const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
   const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
 
-  const { fire, note } = parseArgs(process.argv.slice(2));
+  const { fire, note, ledgerFile } = parseArgs(process.argv.slice(2));
   const fireNum = fireNumber(fire);
   if (!fireNum) {
     process.stderr.write("commit-fire-bookkeeping: pass --fire fire-<n> (e.g. --fire fire-235)\n");
@@ -78,7 +112,30 @@ function main() {
   }
 
   const ledgerPath = `${ROOT}/.claude/run-the-loop/LEDGER.md`;
-  const ledgerText = existsSync(ledgerPath) ? readFileSync(ledgerPath, "utf8") : "";
+  let ledgerText = existsSync(ledgerPath) ? readFileSync(ledgerPath, "utf8") : "";
+
+  // --ledger-file: write the entry AND commit in this one invocation (fire-237). Removes the
+  // write-then-commit gap fires 230->236 kept dying in — reaching this single call completes the record.
+  if (ledgerFile) {
+    if (!existsSync(ledgerFile)) {
+      process.stderr.write(`commit-fire-bookkeeping: --ledger-file not found: ${ledgerFile}\n`);
+      process.exit(1);
+    }
+    const entryText = readFileSync(ledgerFile, "utf8");
+    const folded = ledgerWithEntry(ledgerText, entryText, fireNum);
+    if (folded.action === "error") {
+      process.stderr.write(`commit-fire-bookkeeping: REFUSING --ledger-file — ${folded.error}.\n`);
+      process.exit(2);
+    }
+    if (folded.action === "append") {
+      writeFileSync(ledgerPath, folded.text);
+      ledgerText = folded.text;
+      process.stdout.write(`commit-fire-bookkeeping: appended ${fireNum} LEDGER entry from ${ledgerFile}\n`);
+    } else {
+      process.stdout.write(`commit-fire-bookkeeping: ${fireNum} LEDGER entry already present — not re-appending\n`);
+    }
+  }
+
   if (!ledgerHasEntry(ledgerText, fireNum)) {
     process.stderr.write(
       `commit-fire-bookkeeping: REFUSING — LEDGER.md has no entry for ${fireNum}.\n` +

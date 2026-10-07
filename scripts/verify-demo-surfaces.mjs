@@ -19,7 +19,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 const SURFACES = [
   { label: "Goals", path: "/goals", needles: [/sample data/i, /describe an outcome|set goal|new goal/i, /% complete|opportunities · .* tasks/i, /\b(running|queued)\b/i],
     interact: { fillLabel: "Describe an outcome", text: "Zz demo goal probe", submitName: "Set goal", expect: /Zz demo goal probe/ } },
-  { label: "Automations", path: "/automations", needles: [/sample data/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i],
+  { label: "Automations", path: "/automations", needles: [/sample (schedules|data)/i, /new automation|create automation/i, /next run|every 15 minutes|every day/i],
     interact: { fillLabel: "Name the automation", text: "Zz demo automation probe", submitName: "Create automation", expect: /Zz demo automation probe/ } },
   { label: "Agents", path: "/agents", needles: [/sample data/i, /new agent|hire agent|describe a role/i, /\b(working|idle)\b/i],
     interact: { fillLabel: "Describe a role", text: "Zz demo agent probe", submitName: "Hire agent", expect: /Zz demo agent probe/ } },

@@ -65,6 +65,7 @@ const CHECKS = [
   ['verify-permissions.mjs', [], 'PERMISSIONS GREEN'], // WS-DEMO Permissions: reachable + role-filter/search narrow + invite composer + capability matrix + activity link (fire-174)
   ['verify-provenance.mjs', [], 'PROVENANCE GREEN'], // WS-DEMO Provenance: reachable + action-filter/search narrow + before→after diffs + activity/releases links (fire-175)
   ['verify-workflows.mjs', [], 'WORKFLOWS GREEN'], // WS-DEMO Workflows: reachable + status-filter/search narrow + workflow→detail step-pipeline drill-in + triggers link (fire-176)
+  ['verify-automations.mjs', [], 'AUTOMATIONS GREEN'], // WS-DEMO + DEPTH Automations: reachable + composer adds a row + live listGatekeeperVendors band (fire-220)
   ['verify-ai-gateway.mjs', [], 'AI-GATEWAY GREEN'], // WS-DEMO AI Gateway: reachable + provider-filter/search narrow + cached chips + Models/Costs links (fire-177)
   ['verify-vectorize.mjs', [], 'VECTORIZE GREEN'], // WS-DEMO Vectorize: reachable + metric-filter/search narrow + index→detail sample-query matches drill-in + knowledge link (fire-178)
   ['verify-durable-objects.mjs', [], 'DURABLE-OBJECTS GREEN'], // WS-DEMO Durable Objects: reachable + status-filter/search narrow + namespace→detail instances drill-in + storage/compute links (fire-179)

@@ -3040,3 +3040,20 @@
 - SALVAGE (fire-239): `check-deploy-state` OK (prod reflects HEAD). verify-approvals **9/9 GREEN** on prod (reachable via rail, kind 9→3, search 9→1, approve 8→7 + "Approved" badge, auto-approve-low-risk, Activity x-link, 0 console errors) + verify-prod **11/11** (2 tracked WARNs: Google-SSO redirect_uri_mismatch + apex CSP — neither a regression). Fresh screenshot-vision (`.approvals-proof.png` @1280): the 3 high-risk pending (lead-scorer promote / bulk-delete / 48-journalist mass-send) LEAD, the "⌄ LOWER-RISK & RESOLVED" divider marks the boundary, the medium $750 budget card sits below — 9.5/10.
 - beautify: matrix os.approvals passes 2→3, score 9.4→9.5 (closes the fire-233 pre-registered "Needs-a-human cluster divider" knock). Knock vs 10: bulk-select + the live bus exercised with real items.
 - backlog: line 743 ticked [x]. verifier-hardening (the missing prod divider assertion) landed by fire-239 (see its entry).
+
+## fire-239 — 2026-10-07 — fire-238 salvage + verify-approvals prod-divider assertion + check-deploy-state pushAdvisory (loop-health; own §11 entry stranded → salvaged fire-241)
+
+- slice: a verifier-hardening + loop-improvement fire (no prod-code deploy). Committed real work across 3 commits but DIED before writing its OWN `## fire-239` entry — the fire-238 entry's "(see its entry)" dangled until fire-241 salvaged it.
+- fire-238 salvage: committed **db76ad11** (fire-238 §11 bookkeeping — the stranded deploy record + fire-238 LEDGER entry + matrix os.approvals 9.4→9.5 + backlog line 743 tick).
+- slice code: **faa49e50** `test(approvals)` — added the missing PROD assertion that the "Needs a human" divider is PRESENT in the full queue and ABSENT in a single-result list (the fire-238 divider had no prod guard until here).
+- loop-improvement (§8): **d12e1dcf** `feat(loop)` — `check-deploy-state` pushAdvisory: WARNs when HEAD's committed cloudflare-os gitlink is ahead of what the deploy ledger records (the "committed+pushed but DIED before pnpm deploy" drift, fire-220 class); advisory (exit 0), never red-forever.
+- no deploy (verifier + loop-script only; non-prod code). Salvage proof fire-241: `git log` confirms all 3 commits pushed on main; `check-deploy-state` OK.
+
+## fire-240 — 2026-10-07 — Approvals bulk-select multi-approve (WS-N1 / UX — the remaining queue-ergonomics →10) [shipped + deployed; died phase=build before §11 → salvaged fire-241]
+
+- slice: the risk-sort (fire-233) + "Needs a human" divider (fire-238) made the HITL /approvals queue scannable; fire-240 added the remaining lever — acting on MANY at once. Per-card checkbox + select-all + a sticky action bar ("N selected · Approve all · Reject all · Clear").
+- code: fork **9b139354** (heymegabyte/cloudflare-os@megabyte-os, pushed) / outer **2a9e41b2**. The selected set resolves through the EXISTING paths (sample → applyDecisions/bulkDecisions, live → decideApproval), partitioned by live membership; selection prunes to still-selectable ids so the bar count never lies + clears on resolve. Keyboard-operable + AA-safe (selection is text/control, not color-only). `scripts/verify-approvals.mjs` +INT5.
+- deploy: `pnpm deploy` @ 2026-10-07T15:40:55Z (six OS Workers); `.last-deploy.json` → fork 9b139354 / outer 2a9e41b2. fire-240 then DIED phase=build — deploy record + BACKLOG discovery line left UNcommitted, NO LEDGER entry, NO matrix write (died before §11).
+- SALVAGE (fire-241): `check-deploy-state` OK (prod reflects HEAD). verify-approvals **12/12 GREEN** on prod (INT5: bulk multi-select → approve resolves >1 — Approve buttons 4→2, −2, action bar cleared; + all fire-233/238 assertions intact) + verify-prod **11/11** (2 tracked WARNs: Google-SSO redirect_uri_mismatch + apex CSP — neither a regression).
+- beautify: matrix os.approvals bulk-select dropped from next[] (shipped); score held 9.5 (functional-interaction add, no fresh vision pass). Knock vs 10: the live bus exercised with real items + auto-decide result-object/observability.
+- backlog: line 739 ticked [x].

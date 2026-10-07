@@ -91,4 +91,31 @@ console.log('\n⚠️  NOT DEPTH targets (already fully live — adding a band w
 for (const r of by('live')) console.log('  •', r.route, '→', r.rpcs.join(', '))
 console.log('\nRPC usage across surfaces (prefer a LOW-count RPC for the next DEPTH band — spread live coverage, avoid redundancy):')
 for (const [rpc, n] of rpcUsageSorted) console.log(`  ${String(n).padStart(2)}×  ${rpc}`)
+
+// ── Pulse-detector inventory (fire-227 loop-improvement) ──────────────────────────────────────────
+// The Opportunity Engine (/pulse) is the OTHER recurring absorption frontier (WS-N1 "more detectors as
+// data sources arrive"). Picking the next detector BY EYE cost fire-227 a scout: it read the route + test
+// + api.ts only to discover `reconnect-integration` ALREADY existed and that computeOpportunities' input
+// space was saturated (onboarding is a blocking SHELL gate, not a nudge). This inventory makes that
+// mechanical — a future "add a Pulse detector" fire READS the shipped set + available inputs instead of
+// re-deriving it. Parsed live from pulse.tsx so it can't rot.
+const PULSE = 'cloudflare-os/packages/workshop-frontend/src/routes/pulse.tsx'
+try {
+  const psrc = readFileSync(PULSE, 'utf8')
+  const start = psrc.indexOf('export function computeOpportunities(')
+  const end = psrc.indexOf('function PulseRoute(')
+  if (start >= 0 && end > start) {
+    const body = psrc.slice(start, end)
+    const detectors = [...new Set([...body.matchAll(/id:\s*'([a-z][\w-]*)'/g)].map((m) => m[1]))]
+    const sig = body.slice(body.indexOf('(') + 1, body.indexOf('): Opportunity[]'))
+    const inputs = sig.split(',').map((s) => s.trim().split(/[:\s]/)[0]).filter(Boolean)
+    console.log(`\nPulse Opportunity-Engine detectors shipped (${detectors.length}) — the other absorption frontier (WS-N1):`)
+    console.log('  ' + detectors.join(' · '))
+    console.log(`  computeOpportunities inputs (a new detector must derive from THESE): ${inputs.join(', ')}`)
+    console.log('  → to add a genuinely-new signal, thread a NEW real RPC through computeOpportunities (e.g. getCloudflareUsage')
+    console.log('    → a "usage approaching your limit" nudge); the current input space is covered by the detectors above.')
+  }
+} catch {
+  // pulse.tsx unreadable (submodule absent) — skip the Pulse inventory; the DEPTH sections already printed.
+}
 process.exit(0)

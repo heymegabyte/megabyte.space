@@ -27,6 +27,7 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 const CHECKS = [
   ['check-provider-policy.mjs', [], 'PROVIDER-POLICY GREEN'], // STATIC GATE: no internal Anthropic/OpenAI API calls or SDK imports in scripts/+.claude/ (agent-provider-policy SSOT; AGENTS.md) — fast/static preamble
   ['check-a11y-coverage.mjs', [], 'A11Y-COVERAGE GREEN'], // DRIFT GATE (fire-151): every fork static route is in verify-a11y's list — fast/static preamble so a new surface can't ship a11y-unaudited (fire-103/117/146/147 class)
+  ['verify-resources-launchpad.mjs', [], 'RESOURCES-LAUNCHPAD GREEN'], // DRIFT GATE (fire-223): the in-editor Resources launchpad (GadgetEditor→ResourcesPanel) — every "View →" route resolves + stays in sync with /admin PLATFORM_FEATURES + 50-card floor. Static/secret-free preamble; fills the launchpad-had-no-verifier gap (verify-demo-surfaces covers the RAIL, not this)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
   ['verify-login-gate.mjs', [], 'LOGIN-GATE GREEN'], // anon first-load HTML IS the full-screen login (Google+GitHub+magic-link+email/pw); authed gets the SPA (Brian 2026-10-06)

@@ -537,12 +537,13 @@
       "beautifyPasses": 1,
       "aiVisionScore": 9.5,
       "density": 8,
-      "lastVisit": "2026-10-03",
+      "lastVisit": "2026-10-07",
       "next": [
         "extend the journey build->use->output to completion (this fire verified build-BEGINS end-to-end)",
-        "the editor IS the OS flagship + the Coinbase-Pro-density absorption surface — polish passes here compound"
+        "the editor IS the OS flagship + the Coinbase-Pro-density absorption surface — polish passes here compound",
+        "DURABLE FOLLOW-UP (fire-223): add an in-editor render assertion — a BA-authed browser verifier that opens /workspace/$id and asserts ResourcesPanel renders >=50 cards + 0 console errors (today the launchpad is only STATICALLY verified; the RAIL destinations are browser-verified by their own verify-*.mjs)"
       ],
-      "notes": "fire-78 VERIFIED (core-flow golden-path journey, journey-coreflow.mjs). The heart of the product: home composer (default model Kimi K2.7, reconciles with /models) -> send -> workspace EDITOR opens -> AI streams reasoning -> 'Using tool' builds -> Files panel + App/Code/Connections tabs + live cost ($0.0018) + cyan model picker/stop. Dense premium on-brand cyan UI, 0 console errors. The core flow WORKS end-to-end on prod. Vision 9.5."
+      "notes": "fire-78 VERIFIED (core-flow golden-path journey, journey-coreflow.mjs). The heart of the product: home composer (default model Kimi K2.7, reconciles with /models) -> send -> workspace EDITOR opens -> AI streams reasoning -> 'Using tool' builds -> Files panel + App/Code/Connections tabs + live cost ($0.0018) + cyan model picker/stop. Dense premium on-brand cyan UI, 0 console errors. The core flow WORKS end-to-end on prod. Vision 9.5. fire-223 SALVAGE of fire-222 (build-strand released-handoff; classifier outage blocked its deploy): the right-pane Resources LAUNCHPAD (ResourcesPanel) grew 38->50 cards — added Goals/Agents/Opportunities(->/pulse)/Outputs/Experiments/Browser Runs/Permissions/Provenance/Customers/Forms/Inbox/Booking, closing the sync gap vs the /admin PLATFORM_FEATURES catalog (every platform surface except the circular /gadgets now has a launchpad card). tsc --noEmit clean; shipped fork d4740fdc / outer 7caeefa5+7cde0091 / deploy c5f01104; verify-prod 11/11. STATIC-verified only this fire (new scripts/verify-resources-launchpad.mjs: 50 cards, all 'View ->' routes resolve, PLATFORM_FEATURES sync, floor 50 — wired into green-sweep) — NO fresh vision pass (pure static-array render, incremental), so aiVisionScore held at 9.5 per the DEPTH-salvage functional-only precedent. Knock vs 10: an in-editor browser render assertion (see next[])."
     },
     "os.gadgets": {
       "beautifyPasses": 5,

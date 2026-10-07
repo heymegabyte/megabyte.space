@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * WS-DEMO: the /releases surface (deploy history — versioned builds with promote/rollback). Reachable
- * via the SIDEBAR rail (real-user path, proves nav wiring); renders the stat strip + release list +
- * the selected-release detail (changes manifest + action). The SIGNATURE behavior is interactive:
- * clicking a release opens its detail, and a rollback-eligible release exposes a working "Roll back"
- * that resolves locally. Clearly labeled "Preview · sample data". BA-authed real Chromium, PROD.
+ * WS-DEMO + DEPTH: the /releases surface (deploy history — versioned builds with promote/rollback).
+ * Reachable via the SIDEBAR rail (real-user path, proves nav wiring); renders the live-deployments band
+ * + the stat strip + release list + the selected-release detail (changes manifest + action). DEPTH
+ * (fire-221): a LIVE band off listGadgets leads (the user's REAL published gadgets — each a deployed
+ * Worker, the literal subject of this surface), fail-soft; honest hybrid chip "Live gadgets · sample
+ * history". The SIGNATURE behavior is interactive: clicking a release opens its detail, and a
+ * rollback-eligible release exposes a working "Roll back" that resolves locally. BA-authed real Chromium, PROD.
  */
 import { chromium } from "playwright";
 
@@ -14,7 +16,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds"); process.exit(2); }
 
 // ≥6 content needles proving the stat strip + list + detail + honesty label all rendered.
 const NEEDLES = [
-  /sample data/i,            // honest "Preview · sample data" — never lies-empty
+  /sample history/i,         // honest hybrid chip "Live gadgets · sample history" — never lies-empty
   /\breleases\b/i,           // the page
   /\b(deployments|live|success rate)\b/i, // the stat strip
   /\bchanges\b/i,            // the changes manifest in the detail
@@ -50,6 +52,10 @@ const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
 
+// DEPTH (fire-221): the live "your deployments" band renders a fail-soft state — N gadgets deployed for
+// the ba-e2e account, or an honest loading/unavailable/empty. Proves the real listGadgets wiring.
+const liveBand = /Checking your deployments|Deployments unavailable|Nothing deployed yet|\d+\s+gadgets?\s+deployed/i.test(body);
+
 // INTERACTIVE: click the superseded v22 release → its detail opens → its "Roll back" button works
 // (resolves locally to a "now live" confirmation). Proves both the drill-in AND the rollback action.
 let drillInWorks = false, rollbackWorks = false;
@@ -70,16 +76,20 @@ if (await row.count().then((c) => c > 0).catch(() => false)) {
 await page.screenshot({ path: "scripts/.releases-proof.png", fullPage: true });
 await browser.close();
 
-console.log(JSON.stringify({ reachable, onPath, renders, missing, drillInWorks, rollbackWorks, consoleErrors: errors.length }, null, 2));
-if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
+// The DEPTH listGadgets RPC opens a capnweb WebSocket; closing it on nav logs the benign
+// "WebSocket is already in CLOSING or CLOSED state" race — filtered estate-wide (fire-161).
+const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, drillInWorks, rollbackWorks, consoleErrors: realErrors.length }, null, 2));
+if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
 const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { console.log(`❌ FAIL: ${f}`); ok = false; } };
 check(reachable, "Releases reachable from the sidebar rail", "no Releases rail link (nav wiring missing)");
 check(onPath, "Releases rail click → /releases", "rail click did not reach /releases");
-check(renders, "Releases content renders (stats + list + detail + changes + honesty label)", `content missing: ${missing.join(", ")}`);
+check(renders, "Releases content renders (chip + stats + list + detail + changes)", `content missing: ${missing.join(", ")}`);
+check(liveBand, "Live 'deployments' band renders (listGadgets DEPTH, fail-soft)", "live deployments band missing — listGadgets DEPTH not wired");
 check(drillInWorks, "Release click opens its detail (v22)", "detail did not open for v22");
 check(rollbackWorks, "Roll back resolves locally (v22 now live)", "rollback did not confirm");
-check(errors.length === 0, "0 console errors on /releases", `${errors.length} console errors`);
+check(realErrors.length === 0, "0 console errors on /releases", `${realErrors.length} console errors`);
 console.log(ok ? "✅ RELEASES GREEN" : "❌ releases check failed");
 process.exit(ok ? 0 : 1);

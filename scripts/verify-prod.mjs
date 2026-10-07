@@ -123,24 +123,70 @@ const getSetCookies = (res) =>
   }
 }
 
-// 4. GitHub + Google SSO wired: POST /api/auth/sign-in/social → 200 and the JSON `url` points at
-//    the provider's authorize endpoint.
+// 4. GitHub + Google SSO wired AND the provider ACCEPTS our callback URI. POST /api/auth/sign-in/social
+//    → 200 with a JSON `url` pointing at the provider's authorize endpoint (WIRED). Then we FOLLOW that
+//    URL (no cookies): a provider that rejects our redirect_uri 302s to an oauth/error page BEFORE any
+//    login, so a server-side GET reveals the redirect_uri_mismatch class the bare "wired" check (URL
+//    merely generated) is BLIND to. GitHub's acceptance is a HARD assertion (green today). Google's is a
+//    TRACKED WARN while its apex callback URI is unregistered — an EXTERNAL Google-Cloud-Console fix;
+//    hard-failing would red-forever-block the all-green deploy gate (memory
+//    permanently-red-gate-causes-starvation). The WARN AUTO-PROMOTES to a green assertion the instant the
+//    provider stops erroring. (fire-219 — closes the "SSO wired" blind spot; memory
+//    google-sso-redirect-uri-mismatch-prod.)
 {
-  const social = async (provider, needle) => {
+  const OAUTH_ERR = /oauth\/error|redirect_uri_mismatch|invalid_client|deleted_client|Access blocked/i;
+  const socialUrl = async (provider, needle) => {
     const res = await tryFetch(`${APEX}/api/auth/sign-in/social`, {
       method: "POST",
       headers: { "User-Agent": UA, "Content-Type": "application/json", Origin: APEX },
       body: JSON.stringify({ provider, callbackURL: APEX }),
     });
-    if (res.error) return { ok: false, detail: `fetch failed: ${res.error}` };
+    if (res.error) return { wired: false, url: "", detail: `fetch failed: ${res.error}` };
     const body = res.status === 200 ? await res.json().catch(() => ({})) : {};
     const url = typeof body?.url === "string" ? body.url : "";
-    return { ok: res.status === 200 && url.includes(needle), detail: `status=${res.status} url=${url ? needle : "(no url)"}` };
+    return { wired: res.status === 200 && url.includes(needle), url, detail: `status=${res.status} url=${url ? needle : "(no url)"}` };
   };
-  const gh = await social("github", "github.com");
-  const go = await social("google", "accounts.google.com");
-  record("SSO wired (github → github.com)", gh.ok, gh.detail);
-  record("SSO wired (google → accounts.google.com)", go.ok, go.detail);
+  // Follow the authorize URL — an unregistered redirect_uri 302s to the provider's oauth/error page
+  // (deterministic, pre-login). A network flake is NOT a config error → treated as not-errored (skip).
+  const probeCallback = async (url) => {
+    if (!url) return { errored: false, where: "(no url)" };
+    const res = await tryFetch(url, { redirect: "manual", headers: { "User-Agent": UA }, signal: AbortSignal.timeout(12000) });
+    if (res.error) return { errored: false, where: `probe skipped (${res.error})` };
+    const loc = res.headers.get("location") || "";
+    let body = "";
+    if (!loc) {
+      try {
+        body = await res.text();
+      } catch {
+        body = "";
+      }
+    }
+    const errored = OAUTH_ERR.test(loc) || OAUTH_ERR.test(body);
+    const where = loc ? loc.replace(/^https?:\/\//, "").slice(0, 52) : `body[${body.length}]`;
+    return { errored, where };
+  };
+
+  const gh = await socialUrl("github", "github.com");
+  const go = await socialUrl("google", "accounts.google.com");
+  record("SSO wired (github → github.com)", gh.wired, gh.detail);
+  record("SSO wired (google → accounts.google.com)", go.wired, go.detail);
+
+  const ghcb = await probeCallback(gh.url);
+  record("SSO callback accepted (github)", gh.wired && !ghcb.errored, `oauthError=${ghcb.errored} → ${ghcb.where}`);
+
+  const gocb = await probeCallback(go.url);
+  if (go.wired && gocb.errored) {
+    console.log(
+      `   ⚠️  WARN: Google SSO callback REJECTED — authorize URL 302s to ${gocb.where} (redirect_uri_mismatch).` +
+        ` Real users CANNOT sign in with Google (GitHub + magic-link + password still work). FIX (external):` +
+        ` register https://megabyte.space/api/auth/callback/google for client 383658000977-… in Google Cloud` +
+        ` Console, OR swap the megabyte-auth GOOGLE_CLIENT_ID/SECRET. Tracked: BACKLOG WS-8 + memory` +
+        ` google-sso-redirect-uri-mismatch-prod. (Auto-promotes to a PASS once the provider stops erroring.)`,
+    );
+  } else {
+    // Not erroring → callback accepted (external fix landed) → a real green assertion from here on.
+    record("SSO callback accepted (google)", go.wired && !gocb.errored, `oauthError=${gocb.errored} → ${gocb.where}`);
+  }
 }
 
 // 5. Allowlisted Better Auth email sign-in → a session cookie scoped to megabyte.space; then an

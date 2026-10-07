@@ -6,7 +6,9 @@
  * Approve/Reject controls. The SIGNATURE interactions: a kind pill + search narrow the queue, a per-item
  * "Approve" resolves one request (one fewer Approve button + an "Approved" badge), and "Auto-approve
  * low-risk" clears the low-risk backlog in bulk. It cross-links to Activity. "Preview · sample data".
- * BA-authed real Chromium, PROD. Needs BA creds.
+ * Also asserts the fire-238 "Needs a human" cluster DIVIDER — a labeled role="separator" between the
+ * leading pending-high-risk block and the lower-risk/resolved rest (the prod regression net the shipped
+ * UX lacked; fire-239). BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
 
@@ -55,6 +57,29 @@ const renders = missing.length === 0;
 // Proof in the ALL state — every request card (kind/risk chips + Approve/Reject) visible for the vision read.
 await page.screenshot({ path: "scripts/.approvals-proof.png", fullPage: true });
 
+// DIVIDER (fire-238) — the "Needs a human" cluster separator renders between the leading pending
+// high-risk block and the lower-risk/resolved rest. Asserted in the PRISTINE ALL state (before any
+// mutating interaction below). AA-safe: a LABELED role="separator" (not color-only); non-article, so
+// it never perturbs the article row count. Must sit BETWEEN cards (≥1 article before AND after) —
+// never at the top/bottom/uniform list (the needsHumanDividerIndex contract). The shipped UX had unit
+// tests (approvals.test.ts) but no prod real-browser net until this assertion (fire-239).
+const dividerSel = 'section[aria-label="Approval queue"] [role="separator"]';
+const dividerCount = await page.locator(dividerSel).count().catch(() => 0);
+const dividerLabel = dividerCount > 0 ? await page.locator(dividerSel).first().getAttribute("aria-label").catch(() => null) : null;
+const dividerText = dividerCount > 0 ? await page.locator(dividerSel).first().innerText().catch(() => "") : "";
+const dividerBetween = dividerCount > 0 ? await page.evaluate(() => {
+  const sec = document.querySelector('section[aria-label="Approval queue"]');
+  if (!sec) return false;
+  const kids = Array.from(sec.children);
+  const sepIdx = kids.findIndex((el) => el.getAttribute && el.getAttribute("role") === "separator");
+  if (sepIdx < 0) return false;
+  const before = kids.slice(0, sepIdx).filter((el) => el.tagName === "ARTICLE").length;
+  const after = kids.slice(sepIdx + 1).filter((el) => el.tagName === "ARTICLE").length;
+  return before >= 1 && after >= 1;
+}).catch(() => false) : false;
+const dividerLabelled = /lower-risk/i.test(`${dividerLabel || ""} ${dividerText}`);
+const dividerWorks = dividerCount === 1 && dividerBetween && dividerLabelled;
+
 // cross-link to Activity.
 const activityLink = await page.getByRole("button", { name: /^Activity/ }).count().then((c) => c > 0).catch(() => false);
 
@@ -73,7 +98,11 @@ if (await deployPill.count().then((c) => c > 0).catch(() => false)) {
 const kindFilterWorks = countAll > 0 && countDeploy > 0 && countDeploy < countAll;
 
 // INTERACTIVE 2 — search narrows. Reset to All, type a title fragment → fewer, >0.
+// Also capture the divider count in the single-RESULT state: a 1-item list is uniform, so the
+// "needs a human" divider MUST be absent (the needsHumanDividerIndex never-at-edge/uniform contract,
+// proven LIVE — the RED contrast to the present-in-ALL assertion above; robust for ANY 1-item result).
 let countSearch = countAll;
+let dividerWhenSingle = -1;
 const allPill = page.getByRole("button", { name: /^All/ }).first();
 if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(300); }
 const search = page.getByRole("searchbox", { name: /search approvals/i }).first();
@@ -81,10 +110,12 @@ if (await search.count().then((c) => c > 0).catch(() => false)) {
   await search.fill("press");
   await page.waitForTimeout(400);
   countSearch = await countRows().catch(() => countAll);
+  dividerWhenSingle = await page.locator(dividerSel).count().catch(() => -1);
   await search.fill("");
   await page.waitForTimeout(200);
 }
 const searchWorks = countSearch > 0 && countSearch < countAll;
+const dividerHidesInSingleList = countSearch === 1 && dividerWhenSingle === 0;
 
 // INTERACTIVE 3 — a per-item "Approve" resolves one request (one fewer Approve button + an "Approved" badge).
 let approveWorks = false;
@@ -113,7 +144,7 @@ if (beforeAuto > 0 && (await autoBtn.count().then((c) => c > 0).catch(() => fals
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDeploy, countSearch, approveBefore, kindFilterWorks, searchWorks, approveWorks, autoApproveWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, dividerCount, dividerBetween, dividerLabelled, dividerWorks, dividerWhenSingle, dividerHidesInSingleList, countAll, countDeploy, countSearch, approveBefore, kindFilterWorks, searchWorks, approveWorks, autoApproveWorks, activityLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -121,6 +152,8 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Approvals reachable from the sidebar rail", "no Approvals rail link (nav wiring missing)");
 check(onPath, "Approvals rail click → /approvals", "rail click did not reach /approvals");
 check(renders, "Approvals content renders (stats + kind filter + queue + risk chips + policy + honesty label)", `content missing: ${missing.join(", ")}`);
+check(dividerWorks, `"Needs a human" cluster divider renders between the high-risk block and the rest (labeled role=separator, 1 found, between cards, AA-safe)`, `divider assertion failed (count=${dividerCount} between=${dividerBetween} labelled=${dividerLabelled})`);
+check(dividerHidesInSingleList, `Divider ABSENT in a single-result list (uniform → needsHumanDividerIndex=-1, proven live)`, `divider did not hide in the 1-item list (countSearch=${countSearch} dividerWhenSingle=${dividerWhenSingle})`);
 check(kindFilterWorks, `Kind filter narrows the queue (All ${countAll} → Deploy ${countDeploy})`, "kind pill did not narrow the queue");
 check(searchWorks, `Search narrows the queue (All ${countAll} → "press" ${countSearch})`, "search did not narrow the queue");
 check(approveWorks, `Approve resolves one request (Approve buttons ${approveBefore} → ${approveBefore - 1} + "Approved" badge)`, "per-item approve did not resolve a request");

@@ -136,6 +136,14 @@ if (dirty.length) {
   process.stderr.write(`\n⚠️  ${dirty.length} dirty TRACKED file(s) at end of fire — commit or revert before releasing the lease:\n`);
   for (const d of dirty) process.stderr.write(`   ${d.xy}  ${d.path}\n`);
   process.stderr.write(`A fire that ticks the BACKLOG done but leaves work uncommitted lies to the next fire (fire-52 class).\n`);
+  // HINT (fire-225): the deploy-record-only strand. A fire that deployed + ran record-deploy but died
+  // before committing leaves EXACTLY one dirty watched file — the deploy ledger. A salvaging lead
+  // otherwise has to cross-reference the commit msg + the .last-deploy diff + check-deploy-state to
+  // conclude "prod is live, just commit it." Classify it here so the gate says it outright.
+  const DEPLOY_RECORD = ".claude/run-the-loop/.last-deploy.json";
+  if (dirty.length === 1 && dirty[0].path === DEPLOY_RECORD) {
+    process.stderr.write(`ℹ️  deploy-record-only strand (fire-224/225 class): the SOLE dirty file is the deploy ledger — a fire deployed + ran record-deploy but died before committing it. If 'node scripts/check-deploy-state.mjs' reads OK, prod already reflects HEAD → just COMMIT the record (NO rebuild/redeploy), per prod-ahead-of-git-salvage.\n`);
+  }
 } else {
   process.stderr.write(`✅ working tree clean on watched surfaces — the fire committed everything it touched.\n`);
 }

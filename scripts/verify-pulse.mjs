@@ -66,16 +66,33 @@ await page.screenshot({ path: "scripts/.pulse-proof.png" });
 // in the SAME page session right after dismissing (before any reload) — cross-context SERVER-SIDE
 // persistence is proven separately by verify-pulse-persist.mjs.
 let dismissWorks = false, undoVisible = false, cardsRestored = cards1;
+// fire-229: the snoozed/dismissed AUDIT footer. Captured read-only AROUND the existing inline-undo
+// restore flow (which is left intact) — baseline-relative (per [[pure-logic-unit-test-beats-mutable-account-verify]])
+// so a lingering hidden item on ba-e2e never false-fails: we assert the footer REFLECTS the dismiss
+// and returns to its BASELINE PRESENCE after undo, not an absolute count.
+const auditVisible = () => page.locator('[data-testid="pulse-hidden-audit"]').isVisible().catch(() => false);
+let auditBaselinePresent = false, auditVisibleAfterDismiss = false, auditTextAfterDismiss = "", auditRestoreOffered = false, auditPresentAfterUndo = false;
 if (cards1 > 0) {
+  auditBaselinePresent = await auditVisible();
   await page.locator('button', { hasText: /^\s*Dismiss\s*$/i }).first().click().catch(() => {});
   await page.waitForTimeout(700);
   const afterDismiss = await cardCount();
   undoVisible = await page.locator('[data-testid="pulse-undo-dismiss"]').isVisible().catch(() => false);
   dismissWorks = afterDismiss === cards1 - 1;
-  // Undo (server-side restore) — returns ba-e2e to its original state.
+  // The audit footer must now reflect the just-dismissed (still-true) opportunity.
+  auditTextAfterDismiss = await page.locator('[data-testid="pulse-hidden-audit"]').first().innerText().catch(() => "");
+  auditVisibleAfterDismiss = auditTextAfterDismiss.length > 0;
+  if (auditVisibleAfterDismiss) {
+    // Reveal the hidden list → confirm the new per-row Restore affordance is offered.
+    await page.locator('[data-testid="pulse-hidden-toggle"]').click().catch(() => {});
+    await page.waitForTimeout(300);
+    auditRestoreOffered = await page.locator('[data-testid^="pulse-restore-"]').first().isVisible().catch(() => false);
+  }
+  // Undo (server-side restore via the inline banner) — returns ba-e2e to its original state.
   await page.locator('[data-testid="pulse-undo-dismiss"]').click().catch(() => {});
   await page.waitForTimeout(700);
   cardsRestored = await cardCount();
+  auditPresentAfterUndo = await auditVisible();
 }
 
 // An action navigates (only testable when an ACTION-type opportunity is present — mutable).
@@ -89,7 +106,7 @@ if (actionAvailable) {
 }
 
 await browser.close();
-console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dismissWorks, undoVisible, cardsRestored, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ cards1, hasModelsOpp, hasPinOpp, pulseNavFirst, dismissWorks, undoVisible, cardsRestored, auditBaselinePresent, auditVisibleAfterDismiss, auditTextAfterDismiss: auditTextAfterDismiss.replace(/\n/g, " "), auditRestoreOffered, auditPresentAfterUndo, actionNavigates, actionUrl: page.url().replace(APEX, ""), consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -120,6 +137,15 @@ if (cards1 > 0 && !undoVisible) { console.log("❌ FAIL: the inline Undo afforda
 else if (cards1 > 0) console.log("✅ PASS: inline Undo affordance appears after Dismiss");
 if (cards1 > 0 && cardsRestored !== cards1) { console.log(`❌ FAIL: Undo didn't restore (${cardsRestored}/${cards1}) — ba-e2e may be left dirty!`); ok = false; }
 else if (cards1 > 0) console.log(`✅ PASS: Undo restores server-side (${cardsRestored}/${cards1}) — ba-e2e left clean`);
+// fire-229: the snoozed/dismissed audit footer reflects a dismiss then an undo (guarded on cards1>0).
+if (cards1 > 0) {
+  if (!auditVisibleAfterDismiss || !/dismissed/i.test(auditTextAfterDismiss)) { console.log(`❌ FAIL: the snoozed/dismissed audit line didn't reflect the dismiss (got "${auditTextAfterDismiss.replace(/\n/g, " ")}")`); ok = false; }
+  else console.log(`✅ PASS: audit line reflects the dismiss ("${auditTextAfterDismiss.replace(/\n/g, " ")}") — fire-229`);
+  if (auditVisibleAfterDismiss && !auditRestoreOffered) { console.log("❌ FAIL: the hidden-reveal didn't offer a per-row Restore control"); ok = false; }
+  else if (auditVisibleAfterDismiss) console.log("✅ PASS: hidden-reveal offers a per-row Restore — fire-229");
+  if (auditPresentAfterUndo !== auditBaselinePresent) { console.log(`❌ FAIL: audit line didn't return to baseline presence after undo (baseline ${auditBaselinePresent} vs ${auditPresentAfterUndo})`); ok = false; }
+  else console.log("✅ PASS: audit line returns to baseline presence after undo (ba-e2e left clean) — fire-229");
+}
 if (actionAvailable && !actionNavigates) { console.log("❌ FAIL: the opportunity action didn't navigate"); ok = false; }
 else if (actionAvailable) console.log(`✅ PASS: opportunity action navigates (→ ${page.url().replace(APEX, "")})`);
 else console.log("ℹ️  no ACTION-type opportunity present to test navigation (mutable account) — skipped");

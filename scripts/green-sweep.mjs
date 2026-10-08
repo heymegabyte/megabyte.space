@@ -6,10 +6,20 @@
  * a milestone). Needs BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD); exits nonzero if any check fails.
  *
  * Usage: BA_E2E_EMAIL=$(get-secret BA_E2E_EMAIL) BA_E2E_PASSWORD=$(get-secret BA_E2E_PASSWORD) node scripts/green-sweep.mjs
+ *
+ * `--static` (fire-270): run ONLY the secret-free, no-browser drift gates (the check-* preamble +
+ * verify-resources-launchpad) — ~15s, no BA creds, no prod. WHY: the full sweep is minutes + browser,
+ * so it runs only "every few fires" — and a shipped-but-unwired verifier (fire-270: verify-autorag
+ * sat SIX fires outside the net) slips past until the next full sweep. The static subset is cheap
+ * enough to run EVERY fire at §11, so coverage/a11y-coverage/ledger/types/gate drift is caught the
+ * SAME fire it lands. Exits nonzero if any static gate fails (same tally contract as the full sweep).
  */
 import { spawn } from 'node:child_process'
 
-if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
+const STATIC_ONLY = process.argv.includes('--static')
+
+// The full sweep's browser verifiers need the ba-e2e session; the static subset does not.
+if (!STATIC_ONLY && (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD)) {
   console.log('missing BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD)')
   process.exit(2)
 }
@@ -96,9 +106,10 @@ const CHECKS = [
   ['verify-skills.mjs', [], 'SKILLS GREEN'], // WS-DEMO Agent Skills (reusable-skill registry, #29): reachable + category-filter/search narrow + enable/disable toggle + tools/agents links (fire-199)
   ['verify-artifacts.mjs', [], 'ARTIFACTS GREEN'], // WS-DEMO Artifacts (explorable canvas w/ variants): reachable + type-filter/search narrow + next-variant stepper + outputs/gadgets links (fire-200)
   ['verify-sources.mjs', [], 'SOURCES GREEN'], // WS-DEMO Sources (sync-connector manifest behind Knowledge): reachable + kind-filter/search narrow + sync-now action + knowledge/connections links (fire-201)
-  ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
+  ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in + row-detail Dialog + FK drill-through to the related record (fire-148/149, verifier+wiring fire-150, row-detail+FK drill-through fire-270)
   ['verify-budgets.mjs', [], 'BUDGETS GREEN'], // WS-DEMO Budgets (cost-governance: spend caps + per-scope quotas, a NORTH-STAR primitive distinct from /billing): reachable + scope-filter/search narrow + add-budget composer + surfaceAccent over/near row borders (fire-259/260, verifier+wiring fire-261)
   ['verify-search.mjs', [], 'SEARCH GREEN'], // WS-DEMO Search (universal content search over 6 types, FTS5/BM25-style): reachable + query/type-chip narrow + <mark> term-highlight (fire-257; the check-greensweep-coverage gate caught this strand too — wiring fire-261)
+  ['verify-autorag.mjs', [], 'AUTORAG GREEN'], // WS-DEMO AutoRAG (Cloudflare AI Search / managed RAG: ask→cited-answer + index registry, distinct from /vectorize + /search + /knowledge): reachable + ask swaps cited answer + status/search narrow + accent borders + citation drill-in + stat micro-viz footers (fire-264-269; the check-greensweep-coverage gate caught this 6-fire strand retroactively — wiring fire-270)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],
@@ -126,6 +137,24 @@ const SERIAL = new Set([
   'verify-gadget-delete.mjs',
 ])
 const CONCURRENCY = 4 // 6 overloaded the machine (87% CPU → journey flakes); 4 is the stable sweet spot
+
+// The secret-free, no-browser, no-prod drift gates (lines 28-36's preamble + the static launchpad
+// gate). `--static` runs ONLY these — a ~15s subset the loop runs EVERY fire at §11 so coverage/
+// a11y-coverage/ledger/types/stale-copy/gate drift (and a newly-shipped verifier that forgot to wire
+// into the sweep) is caught the SAME fire, not whenever the minutes-long full sweep next runs (fire-270).
+const STATIC = new Set([
+  'check-provider-policy.mjs',
+  'check-a11y-coverage.mjs',
+  'check-greensweep-coverage.mjs',
+  'verify-resources-launchpad.mjs',
+  'check-ledger-current.mjs',
+  'check-scripts-types.mjs',
+  'check-stale-copy.mjs',
+  'check-gate-coverage.mjs',
+  'check-fork-tests.mjs',
+])
+// When --static, only the secret-free gates run; otherwise the whole curated sweep.
+const activeChecks = STATIC_ONLY ? CHECKS.filter((c) => STATIC.has(c[0])) : CHECKS
 
 // Run one check once (async spawn); pass = exit 0 AND the needle is in its output.
 function runOnce(script, args, needle) {
@@ -158,8 +187,8 @@ const labelOf = ([script, args]) => `${script}${args.length ? ' ' + args.join(' 
 const logResult = (lbl, r) => console.log(`${r.pass ? (r.retried ? '✅⟳' : '✅') : '❌'} ${lbl}${r.pass ? '' : `  (exit ${r.code}, failed twice)`}`)
 
 const results = []
-const serialChecks = CHECKS.filter((c) => SERIAL.has(c[0]))
-const parallelChecks = CHECKS.filter((c) => !SERIAL.has(c[0]))
+const serialChecks = activeChecks.filter((c) => SERIAL.has(c[0]))
+const parallelChecks = activeChecks.filter((c) => !SERIAL.has(c[0]))
 
 // 1) Serial group (static preamble + mutations) — in order, no racing. Restores shared state.
 for (const c of serialChecks) {
@@ -181,9 +210,13 @@ async function worker() {
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, parallelChecks.length) }, worker))
 
 const passed = results.filter((r) => r.pass).length
-console.log(`\n${passed}/${CHECKS.length} checks green`)
-if (passed !== CHECKS.length) {
+console.log(`\n${passed}/${activeChecks.length} checks green`)
+if (passed !== activeChecks.length) {
   console.log('FAILED: ' + results.filter((r) => !r.pass).map((r) => r.label).join(', '))
   process.exit(1)
 }
-console.log('✅ GREEN-SWEEP: the whole OS is coherent (every verifier + journey + a11y both themes).')
+console.log(
+  STATIC_ONLY
+    ? '✅ GREEN-SWEEP (static): all secret-free drift gates pass — coverage, a11y-coverage, ledger, types, stale-copy, gate-coverage, fork-tests.'
+    : '✅ GREEN-SWEEP: the whole OS is coherent (every verifier + journey + a11y both themes).',
+)

@@ -115,6 +115,7 @@ for (const [path, signal] of [
   ['/durable-objects', /durable objects|stateful|instance|hibernat|sample data/i], // WS-DEMO: Durable Objects (fire-179)
   ['/email', /email|deliver|bounce|ses|sample data/i], // WS-DEMO: Email SES deliverability (fire-180)
   ['/social', /social|schedule|publish|queue|sample data/i], // WS-DEMO: Social post-queue auto-scheduler (fire-254)
+  ['/search', /search|result|index|content|sample data/i], // WS-DEMO: Universal content search (D1 FTS5) (fire-257)
   ['/notifications', /notifications|alert|unread|deploy|security|sample data/i], // WS-DEMO: Notifications center (fire-181)
   ['/environments', /environments|lifecycle|quota|budget|autostop|sample data/i], // WS-DEMO: Environments governance — Coder (fire-182)
   ['/approvals', /approvals|pending|approve|risk|deploy|sample data/i], // WS-DEMO: Approvals HITL governance queue (fire-183)

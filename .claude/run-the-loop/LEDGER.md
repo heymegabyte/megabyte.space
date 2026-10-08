@@ -3587,3 +3587,60 @@ closed the standing 9→9.4 knock; next real →10 is the live Hyperdrive config
 **§11 note:** fire-282 DIED at phase=verify (heartbeat frozen) after the slice SHIPPED but before writing
 its §11 narrative — a context-saturated interactive session wrote the released-handoff. fire-283 closed
 this §11 via RESUME-CHECK (slice confirmed live, no strand; narrative + matrix filled, not re-executed).
+
+## fire-283 — SSO/original-features grounding + verify-prod redirect_uri hardening (resume from fire-282 handoff)
+
+RESUME-CHECK fire (reclaimed fire-282's released-handoff; stale heartbeat). Confirmed fire-282's /hyperdrive
+slice SHIPPED+LIVE (check-fire-committed CLEAN, check-deploy-state OK b001bd07=last-deploy) — NO strand, so
+this fire did NOT re-execute it; it CLOSED fire-282's cosmetic §11 (narrative + os.hyperdrive matrix 9→9.4,
+commit `c91f1b42`) then advanced the frontier.
+
+**Primary (TOP priority — [[original-features-work-with-sso-directive]], Brian 2026-10-08):** the ORIGINAL
+Cloudflare OS features (Workshop/gadgets) working with SSO. Per the delicate-prod-work discipline (dedicated
+session, never a loop-tail rush), this fire GROUNDED it maximally + wrote an EXECUTION SPEC + shipped a clean
+decision-independent slice.
+
+**Grounding (read-only Explore + `packages/auth/src/auth.ts`):** the original features are **auth-method-
+AGNOSTIC** — Workshop/gadget storage keys on the session **email** via `this.users.idFromName(email)`
+(`cloudflare-os/packages/workshop-backend/src/server.ts:729`); the email comes from `verifyBetterAuthSession()`
+→ `/api/auth/get-session` (`access.ts:64`), NOT the auth method. GitHub-SSO / Google-SSO / magic-link /
+password ALL converge to the same Workshop DO for a given email — no auth-method branching. So "do the
+original features work with SSO" reduces to: (1) which email GitHub returns for an SSO user (noreply vs
+primary → empty-Workshop symptom; `auth.ts:75-81` sets no explicit provider `scope`), (2) the Google external
+redirect_uri block, (3) no `accountLinking` configured. Saved as project memory
+[[original-features-sso-mechanism-grounded]] so future fires stop re-investigating.
+
+**Decision-independent slice SHIPPED (`a50752df`):** verify-prod +2 HARD assertions proving BA generates the
+EXACT apex callback `redirect_uri` per provider — `https://megabyte.space/api/auth/callback/{github,google}`.
+Proven against LIVE prod (a throwaway probe confirmed the exact values before baking). Proves OUR config
+returns a real SSO user to the right apex endpoint (GitHub fully configured for real users) and that Google's
+block is provably EXTERNAL (our URI is correct; Google Console just hasn't registered it). Catches a future
+regression repointing the callback at the wrong origin at the deploy gate.
+
+**Prod proof:** `node scripts/verify-prod.mjs` → **13/13 assertions green** (was 11/11); both new SSO
+redirect_uri assertions PASS; Google callback WARN still tracked (external). Pure-node, no deploy (verifier-
+only change). No prod mutation this fire → estate path intact (verify-prod IS the estate-path check, green live).
+
+**Exec spec (BACKLOG, after the Google SSO item):** the dedicated-session audit — verify as a REAL GitHub-SSO
+user (Playwright real-GitHub creds, or Brian logs in + capture cookie; ba-e2e password CANNOT exercise SSO):
+(1) GitHub SSO → OS shell; (2) inspect `/api/auth/get-session` email (primary vs noreply — the key check);
+(3) create a gadget → persists + lists; (4) re-login → same gadgets; (5) magic-link same email → same
+Workshop. Code follow-ups (delicate): confirm/force GitHub `user:email` scope; drop stale `os.megabyte.space`
+from `auth.ts:85-87`; Google URI registration (external).
+
+**Docs:** CLAUDE.md § Commands verify-prod 10→13 (truthful count, `6e6be151`); historical fire-82 10/10
+narratives left intact.
+
+**§8 loop-improvement:** (a) the verify-prod SSO-redirect_uri gate hardening (a future callback-origin
+regression now fails the deploy gate) + (b) the [[original-features-sso-mechanism-grounded]] memory that
+retires the recurring "re-ground SSO each fire" shortcoming.
+
+**Flagged (NOT swept — belongs to a concurrent agent-system-upgrade session):** `scripts/verify-authed.mjs`
+(a loop helper the classifier-outage path relies on; sibling `deploy-authed.mjs` IS committed) + `scripts/
+shot.mjs` are UNTRACKED (present at session start). Left untouched per don't-sweep-concurrent-work + the
+agentsys "known-lint-debt" convention; a deliberate decision on committing verify-authed.mjs is owed.
+Also present untracked: `.claude/run-the-loop/DIRECTIVE-2026-10-08-agent-system-upgrade.md` + openspec/opsx
+scaffolding (that session's domain; its own §: "fold shipped slices into a WS-AGENTSYS block next fire").
+
+**SHAs:** `c91f1b42` (fire-282 §11 salvage) · `a50752df` (verify-prod SSO hardening) · `6e6be151` (CLAUDE.md
+doc-truth) · this §11 bookkeeping commit.

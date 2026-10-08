@@ -64,10 +64,38 @@ if (await tableBtn.count().then((c) => c > 0).catch(() => false)) {
 }
 const drillInWorks = schemaBefore && schemaSwitched;
 
-await page.screenshot({ path: "scripts/.database-proof.png", fullPage: true });
+// ROW DETAIL + FK DRILL-THROUGH (the fire-270 slice): on action_log, click the top row → a detail
+// Dialog opens showing every field; its gadget_id foreign key renders a drill chip "<id> → <gadget
+// name>"; clicking it jumps to the related gadgets record (dialog title becomes the gadget's name +
+// the underlying table switches to gadgets). All over the honest sample data.
+let rowDetailOpens = false, fkChipPresent = false, drillThroughWorks = false;
+const rowBtn = page.getByRole("button", { name: /Inspect .* in action_log/ }).first();
+if (await rowBtn.count().then((c) => c > 0).catch(() => false)) {
+  await rowBtn.click().catch(() => {});
+  await page.waitForTimeout(500);
+  const dialog = page.getByRole("dialog").first();
+  rowDetailOpens = await dialog.isVisible().catch(() => false);
+  // Proof screenshot WITH the detail open (the new feature) — the FK drill chip is the standout.
+  await page.screenshot({ path: "scripts/.database-proof.png", fullPage: true }).catch(() => {});
+  const fkChip = page.getByRole("button", { name: /Open related gadgets record/ }).first();
+  fkChipPresent = await fkChip.count().then((c) => c > 0).catch(() => false);
+  if (fkChipPresent) {
+    await fkChip.click().catch(() => {});
+    await page.waitForTimeout(500);
+    const dialogText = await page.getByRole("dialog").first().innerText().catch(() => "");
+    const bodyAfter = await page.evaluate(() => document.body.innerText);
+    // Drilled into gadgets: the dialog now titles a gadget (has a `model` + `runs` field) AND the
+    // underlying schema panel switched to gadgets.
+    drillThroughWorks = /\bmodel\b/i.test(dialogText) && /\bruns\b/i.test(dialogText) && /Schema · gadgets/i.test(bodyAfter);
+  }
+} else {
+  // No interactive rows → still capture the surface for the record.
+  await page.screenshot({ path: "scripts/.database-proof.png", fullPage: true }).catch(() => {});
+}
+
 await browser.close();
 
-console.log(JSON.stringify({ reachable, onPath, renders, missing, schemaBefore, schemaSwitched, drillInWorks, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, schemaBefore, schemaSwitched, drillInWorks, rowDetailOpens, fkChipPresent, drillThroughWorks, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -76,6 +104,9 @@ check(reachable, "Database reachable from the sidebar rail", "no Database rail l
 check(onPath, "Database rail click → /database", "rail click did not reach /database");
 check(renders, "Database content renders (stats + schema + query + grid + honesty label)", `content missing: ${missing.join(", ")}`);
 check(drillInWorks, "Table click drives the schema panel (gadgets → action_log)", `schema did not switch (before=${schemaBefore}, switched=${schemaSwitched})`);
+check(rowDetailOpens, "Row click opens the detail Dialog", "clicking an action_log row did not open the detail dialog");
+check(fkChipPresent, "Detail shows a foreign-key drill chip (gadget_id → gadgets)", "no FK drill chip in the row detail");
+check(drillThroughWorks, "FK chip drills through to the related gadgets record", "drilling the FK did not switch to the related gadgets row");
 check(errors.length === 0, "0 console errors on /database", `${errors.length} console errors`);
 console.log(ok ? "✅ DATABASE GREEN" : "❌ database check failed");
 process.exit(ok ? 0 : 1);

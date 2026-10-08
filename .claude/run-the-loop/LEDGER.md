@@ -3124,3 +3124,31 @@
 - No deployment, authenticated journey, UI visit or visual scoring this fire. Submodule pin unchanged at 85abc7c5. Product acceptance remains unmet; this bounded iteration records actual repair and external blockers.
 - Recovery: no earlier failed receipts or retained project worktrees found; origin/main includes base 30d301af and prior fire-247 commits. Local commits await outer runner publication.
 - Next: initialize pinned fork, install locked dependencies, rerun full gates and authenticated journey when credentials available. No local cron/watchdog armed; GitHub owns scheduling.
+
+## fire-249 — salvage fire-248's wedged main-tree strand (3 slices) + reconcile the concurrent fleet-worktree fire-248
+
+**Shape:** a SALVAGE fire. Orient found the main-tree lease at `wedged-handoff` (session-a `fire-248-2386`, stale 2020 heartbeat) — fire-248 wedged at the Bash classifier post-`/clear` (the 2026-10-08 manual-`/clear` incident) holding ~7 uncommitted files + a dirty fork working tree. SEPARATELY, a scheduled **GitHub-fleet worktree run** (credential-less, isolated) had run its OWN fire-248 and pushed `fb4cd0e0`+`15856d3e`+`93f4b5e4` to origin/main (fleet `check-fire-committed` diagnostics + a fire-248 LEDGER entry; it honestly recorded "no deploy/journey — credentials absent"). Two DIFFERENT actors, two working trees, one origin/main. RESUME-CHECK confirmed the main-tree strand was NOT shipped by the fleet (gitlink identical `85abc7c5`, no overlap) → genuine salvage: VERIFY+COMMIT, never re-implement (per `commit-fire-bookkeeping-atomic-s11` + `manual-clear-is-a-recovery-gap`). Classifier WORKED this session (probed clean at orient).
+
+**Slice A — loop-mechanics wedged-handoff cadence fix (§8 loop-improvement) — `3b200b70` (rebased onto fleet commits):**
+- `loop-fire-lock.mjs`: `handoff --wedged` writes a distinct `wedged-handoff` phase; 3 new unit cases (**13/13 green**). `loop-watchdog.sh`: `wedged-handoff` is trigger #2 + a **10-min** phase-aware backoff (vs 30 min) so an intermittent classifier outage retries ~3× faster; single-flight stays the anti-runaway guard (`bash -n` + shellcheck clean).
+- `run-the-loop.md` §0: a MID-FIRE wedge (ANY phase past orient) hands off IMMEDIATELY + commit each slice as it lands; §11: verify the watchdog launchd agent is ARMED. `OPERATING-PRINCIPLES.md`: lease-section invariant reconciled.
+- Rebase: one §0 conflict in `run-the-loop.md` — resolved keeping BOTH the fleet's new "GitHub fleet runs" bullet (from `15856d3e`) AND the rewritten wedge/claim bullets.
+
+**Slice B — WS-FORK-TESTS: fork vitest baseline 9→0 — fork `e9910e48` / outer `d924fb54`:**
+- `useAuth.test.tsx`: 8 of 9 known-red = Node 22's native `globalThis.localStorage` (undefined without `--localstorage-file`) shadowing jsdom's → an inline in-memory `Storage` polyfill (+ `vi.unstubAllGlobals()`); the 9th = a STALE pre-BA-4b CF-Access test → mock the `/api/auth/get-session` probe + a macrotask flush. `check-fork-tests.mjs` BASELINE **9→0**. VERIFIED: `node scripts/check-fork-tests.mjs` → **889/889 green, 0 failing** (the lease-note-mandated "run it before trusting"). The gate is now a true zero-regression net. Fix is test-local (no upstream runtime touched), pushed to origin/megabyte-os (overlay we own).
+
+**Slice C — /activity surfaceAccent (8th surface) — fork `32992dd8` / outer `d924fb54` / deploy `a49cc071`:**
+- Pure+total `activityAccent(state)` helper (rejected=danger, pending=warning, observed=muted, approved/enabled=none) extending the shared `surfaceAccent.ts` left-border (after Logs/Domains/Queues/Email). `activity.tsx` applies `border-l-2 ${accentBorder(activityAccent(...))}` on both the approval-gate rows + the feed rows (constant gutter = zero layout shift); moved `EntryState` into the helper; added `role="region" aria-label="Activity and approvals"` (a11y + verifier contract). GRAPHICAL-only → AA both themes (per `kumo-accent-text-not-aa-in-light`). `activityAccent.test.ts` exhaustive (in the 889). `verify-activity.mjs` extended to assert the borders reach the live DOM.
+- `tsc --noEmit` (TS 7.0.2) clean (the `EntryState` move = the TS6133 risk per `vite-build-misses-ts6133-run-tsc-noemit`). `pnpm check` green (six Workers dry-run).
+
+**Deploy + prod proof:** `pnpm deploy` → megabyte-os version `a49cc071`, apex custom domain served; deploy chain auto-recorded `.last-deploy.json` → fork 32992dd8 / outer d924fb54 @ 2026-10-08T03:02Z. **verify-prod 11/11 GREEN** (2 tracked WARNs: Google-SSO redirect_uri_mismatch [external, `google-sso-redirect-uri-mismatch-prod`] + apex CSP absent [WS-8] — pre-existing, NOT regressions). **verify-activity GREEN** — accent borders live (danger 1 + warning 3 + muted 2), HITL Approve decremented 3→2, 0 console errors.
+
+**Beautify (§7):** os.activity passes **1→2**, vision **9→9.2** (Direct-Read of `.activity-proof.png`: the two pending approval rows carry amber warning borders, the "Delete 3 stale workspaces · Denied" feed row a red danger border, resolved rows quiet — attention cues without clutter; knocks vs 9.4 unchanged: pending-row action-column alignment + two-section same-weight).
+
+**Adversarial review (§5):** estate path 11/11; gitlink at the intentional bump 32992dd8 (no drift, no in-tree submodule edit outside the slice); no `run_worker_first` change; no flag left on (surfaceAccent is an always-on honest-preview demo); approvalStore UNTOUCHED (no auto-approve widening); 0 console errors on /activity + apex.
+
+**§8 loop-improvement:** Slice A (the wedged-handoff fast-retry cadence + §11 watchdog-armed check) — directly retires the fire-248 wedge-stranding class.
+
+**Replenished (1 discovery):** GitHub-fleet-worktree ↔ main-tree coexistence note (origin-ahead-from-fleet is normal → rebase not alarm; the main-tree strand is salvaged from the LOCAL tree, not the fleet's origin commits).
+
+**Watchdog:** ARMED (`launchctl print` succeeds). Submodule pin 85abc7c5→32992dd8 (intentional, our fork).

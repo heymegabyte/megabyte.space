@@ -117,6 +117,7 @@ for (const [path, signal] of [
   ['/email', /email|deliver|bounce|ses|sample data/i], // WS-DEMO: Email SES deliverability (fire-180)
   ['/social', /social|schedule|publish|queue|sample data/i], // WS-DEMO: Social post-queue auto-scheduler (fire-254)
   ['/search', /search|result|index|content|sample data/i], // WS-DEMO: Universal content search (D1 FTS5) (fire-257)
+  ['/autorag', /ai search|managed rag|indexes|answer|sample data/i], // WS-DEMO: AI Search / managed RAG — ask→cited-answer + citation drill-in (fire-264, a11y-covered fire-267)
   ['/notifications', /notifications|alert|unread|deploy|security|sample data/i], // WS-DEMO: Notifications center (fire-181)
   ['/environments', /environments|lifecycle|quota|budget|autostop|sample data/i], // WS-DEMO: Environments governance — Coder (fire-182)
   ['/approvals', /approvals|pending|approve|risk|deploy|sample data/i], // WS-DEMO: Approvals HITL governance queue (fire-183)

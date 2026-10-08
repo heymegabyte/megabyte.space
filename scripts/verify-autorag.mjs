@@ -104,11 +104,26 @@ const searchWorks = countSearch > 0 && countSearch < countAll;
 const accents = await countAccentBorders(page, 'section[aria-label="Search indexes"]');
 const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
 
+// INTERACTIVE 4 — citation drill-in: clicking a citation chip opens the retrieved source-chunk preview
+// (RAG provenance made inspectable). Assert the preview is absent before, present after, and carries a
+// relevance "% match" + the "Retrieved chunk" excerpt. Left OPEN so the proof screenshot shows it.
+const citeChip = page.locator('section[aria-label="Ask your indexed content"] button[title="View the cited source chunk"]').first();
+const haveCite = await citeChip.count().then((c) => c > 0).catch(() => false);
+const previewBefore = await page.locator('[data-testid="citation-preview"]').count().catch(() => 0);
+let previewAfter = 0, previewText = "";
+if (haveCite) {
+  await citeChip.click().catch(() => {});
+  await page.waitForTimeout(400);
+  previewAfter = await page.locator('[data-testid="citation-preview"]').count().catch(() => 0);
+  previewText = previewAfter ? await page.locator('[data-testid="citation-preview"]').innerText().catch(() => "") : "";
+}
+const citationDrillWorks = haveCite && previewBefore === 0 && previewAfter === 1 && /% match/i.test(previewText) && /retrieved chunk/i.test(previewText);
+
 await page.screenshot({ path: "scripts/.autorag-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, askWorks, statusFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, askWorks, statusFilterWorks, searchWorks, accents, citationDrillWorks, previewBefore, previewAfter, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -120,6 +135,7 @@ check(askWorks, "Ask panel swaps the cited answer (autostop question → autosto
 check(statusFilterWorks, `Status filter narrows the registry (All ${countAll} → Error ${countError})`, "status pill did not narrow the registry");
 check(searchWorks, `Search narrows the registry (All ${countAll} → "handbook" ${countSearch})`, "search did not narrow the registry");
 check(accentBordersRender, `Indexing + error rows carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /autorag (danger ${accents.danger}, warning ${accents.warning})`);
+check(citationDrillWorks, `Citation drill-in opens the retrieved source chunk (preview ${previewBefore}→${previewAfter}, "% match" + "Retrieved chunk")`, "clicking a citation chip did not open the source-chunk preview");
 check(realErrors.length === 0, "0 console errors on /autorag", `${realErrors.length} console errors`);
 console.log(ok ? "✅ AUTORAG GREEN" : "❌ autorag check failed");
 process.exit(ok ? 0 : 1);

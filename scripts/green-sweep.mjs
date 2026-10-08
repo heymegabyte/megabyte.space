@@ -77,6 +77,7 @@ const CHECKS = [
   ['verify-vectorize.mjs', [], 'VECTORIZE GREEN'], // WS-DEMO Vectorize: reachable + metric-filter/search narrow + index→detail sample-query matches drill-in + knowledge link (fire-178)
   ['verify-durable-objects.mjs', [], 'DURABLE-OBJECTS GREEN'], // WS-DEMO Durable Objects: reachable + status-filter/search narrow + namespace→detail instances drill-in + storage/compute links (fire-179)
   ['verify-email.mjs', [], 'EMAIL GREEN'], // WS-DEMO Email: reachable + status-filter/search narrow + masked recipients + inbox/logs links (fire-180)
+  ['verify-social.mjs', [], 'SOCIAL GREEN'], // WS-DEMO Social (auto-scheduler post-queue): reachable + platform-filter/search narrow + schedule composer + publish-now (fire-254)
   ['verify-notifications.mjs', [], 'NOTIFICATIONS GREEN'], // WS-DEMO Notifications: reachable + type-filter/search narrow + send-test + activity link (fire-181)
   ['verify-environments.mjs', [], 'ENVIRONMENTS GREEN'], // WS-DEMO Environments (Coder governance): reachable + lifecycle-filter/search narrow + stop-idle action + compute link (fire-182)
   ['verify-approvals.mjs', [], 'APPROVALS GREEN'], // WS-DEMO Approvals (HITL governance queue): reachable + kind-filter/search narrow + per-item approve + auto-approve-low-risk + activity link (fire-183)

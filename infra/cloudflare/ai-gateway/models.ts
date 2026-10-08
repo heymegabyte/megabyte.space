@@ -2,9 +2,9 @@
  * Model capability registry — the PROVEN-healthy pool.
  *
  * Every entry below was verified via live, tiny smoke tests through BOTH gateways
- * (megabyte-space + projectsites-dev) on 2026-10-06. Workers AI models are keyless and
- * keep data on Cloudflare; OpenAI models are reached via the account's Unified Billing
- * (no OpenAI BYOK key is stored on these gateways). Regenerate the machine-readable
+ * (megabyte-space + projectsites-dev). Workers AI models are keyless and keep data on
+ * Cloudflare; OpenAI AND Anthropic (current Claude 4.5) models are reached via the account's
+ * Unified Billing (no OpenAI/Anthropic BYOK key is stored on these gateways). Regenerate the
  * snapshot with `node ai-routes.ts verify --probe-models` -> capability-matrix.json.
  *
  * Capability gating: Dynamic Routes accept the OpenAI Chat-Completions request shape ONLY.
@@ -39,6 +39,9 @@ export const MODELS = {
   oai4o: { provider: PROVIDERS.OPENAI, model: "gpt-4o" },
   oai41mini: { provider: PROVIDERS.OPENAI, model: "gpt-4.1-mini" },
   oai41: { provider: PROVIDERS.OPENAI, model: "gpt-4.1" },
+  // --- Anthropic (Unified Billing; current Claude 4.5 — NOT BYOK) ---
+  anthropicSonnet: { provider: PROVIDERS.ANTHROPIC, model: "claude-sonnet-4-5" },
+  anthropicHaiku: { provider: PROVIDERS.ANTHROPIC, model: "claude-haiku-4-5" },
 } satisfies Record<string, ModelChoice>;
 
 export type ModelKey = keyof typeof MODELS;
@@ -46,19 +49,19 @@ export type ModelKey = keyof typeof MODELS;
 /** Providers/models deliberately kept OUT of production routes right now, with the reason. */
 export const QUARANTINED = [
   {
-    provider: "anthropic",
+    provider: "anthropic LEGACY model ids (e.g. claude-3-5-haiku-20241022)",
     reason:
-      "No valid BYOK credential on these gateways (live smoke: 401 'Invalid Anthropic API Key'). To re-enable: add a funded Anthropic BYOK key via provider_configs, smoke it, then move claude to the front of architect/critical for best-in-class judgment.",
+      "Dated Claude ids 401 'Invalid Anthropic API Key' through Unified Billing. Anthropic itself is NOT quarantined — current claude-sonnet-4-5 + claude-haiku-4-5 are verified healthy (200) via Unified Billing and ARE the frontier primary. Only legacy/dated Claude ids are unavailable; always use the current ids.",
   },
   {
-    provider: "deepseek (direct api.deepseek.com)",
+    provider: "deepseek direct (projectsites-dev only)",
     reason:
-      "The gateway resolves a STALE account/Unified-Billing DeepSeek key (live smoke: 'api key ****6083 / ****6e22 is invalid') that overrides a freshly-created BYOK provider_config holding the valid get-secret key. Could not be displaced without globally flipping byok_only (which the task forbids). DeepSeek capability is therefore served via Workers AI (@cf/deepseek-ai/deepseek-v4-flash + deepseek-v4-pro + r1-distill), which is keyless and healthy.",
+      "Direct DeepSeek BYOK now WORKS on megabyte-space (fixed 2026-10-07: removed the stale deepseek/default-deep provider_config + refreshed the megabyte-space_deepseek_default secret). projectsites-dev still serves a stale key (****6e22) — apply the same fix there to enable it. Routes use the keyless Workers AI DeepSeek-V4 models, which work on BOTH gateways regardless, so this blocks nothing.",
   },
   {
     provider: "openai o-series (o4-mini, o3, ...)",
     reason:
-      "Reasoning models reject `max_tokens` (require `max_completion_tokens`), breaking the uniform Chat-Completions contract shared by every route. Use gpt-4.1 / gpt-4o for frontier instead.",
+      "Reasoning models reject `max_tokens` (require `max_completion_tokens`), breaking the uniform Chat-Completions contract shared by every route. Use gpt-4.1 / gpt-4o / claude-sonnet-4-5 for frontier instead.",
   },
 ] as const;
 

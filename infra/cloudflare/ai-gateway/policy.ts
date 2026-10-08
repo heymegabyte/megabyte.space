@@ -52,9 +52,9 @@ const SENSITIVE: Workload = "restricted";
 export const PLAN_AUTOROUTER_ALLOWLIST: Record<Plan, string[]> = {
   free: ["workers-ai"],
   starter: ["workers-ai"],
-  pro: ["workers-ai", "openai"],
-  enterprise: ["workers-ai", "openai"],
-  internal: ["workers-ai", "openai"],
+  pro: ["workers-ai", "openai", "anthropic"],
+  enterprise: ["workers-ai", "openai", "anthropic"],
+  internal: ["workers-ai", "openai", "anthropic"],
 };
 
 export function buildGatewayRequest(input: PolicyInput): GatewayRequest {

@@ -100,7 +100,14 @@ async function reconcile(gw: string, desired: RouteGraph, apply: boolean): Promi
 async function verifyAndMaybeRollback(rec: Rec): Promise<void> {
   const vc = VERIFY_CASES.find((c) => c.route === rec.route);
   if (!vc || rec.action === "error" || rec.action === "noop") return;
-  const res = await cf.callDynamicRoute(rec.gateway, rec.route, { metadata: vc.metadata });
+  // Tolerate edge propagation after a fresh deploy: a just-deployed version can take a few
+  // seconds to serve, so retry briefly before concluding a regression (prevents a false rollback
+  // when the old version is still momentarily live).
+  let res = await cf.callDynamicRoute(rec.gateway, rec.route, { metadata: vc.metadata });
+  for (let i = 0; i < 4 && !(res.status === 200 && res.provider === vc.expectProvider); i++) {
+    await new Promise((r) => setTimeout(r, 5000));
+    res = await cf.callDynamicRoute(rec.gateway, rec.route, { metadata: vc.metadata });
+  }
   const pass = res.status === 200 && res.provider === vc.expectProvider;
   if (pass) {
     rec.verification = `ok ${res.provider}/${res.model}`;

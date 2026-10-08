@@ -15,7 +15,7 @@ export interface VerifyCase {
   route: string;
   label: string;
   metadata: RoutingMetadata;
-  expectProvider: "workers-ai" | "openai";
+  expectProvider: "workers-ai" | "openai" | "anthropic";
   note: string;
 }
 
@@ -30,13 +30,13 @@ const m = (
 export const VERIFY_CASES: VerifyCase[] = [
   { route: "economy", label: "economy/free/prod", metadata: m("free", "economy", "production"), expectProvider: "workers-ai", note: "cheapest keyless lane" },
   { route: "general", label: "general/free-asks-high (capped)", metadata: m("free", "high", "production"), expectProvider: "workers-ai", note: "free/starter capped to balanced(70b) even if header claims high" },
-  { route: "general", label: "general/enterprise/maximum", metadata: m("enterprise", "maximum", "production"), expectProvider: "openai", note: "maximum -> gpt-4.1" },
+  { route: "general", label: "general/enterprise/maximum", metadata: m("enterprise", "maximum", "production"), expectProvider: "anthropic", note: "maximum -> claude-sonnet-4-5 (Unified Billing)" },
   { route: "general", label: "general/pro/preview (downgraded)", metadata: m("pro", "balanced", "preview"), expectProvider: "workers-ai", note: "preview/test cheaper than prod -> economy lane" },
   { route: "code", label: "code/pro/balanced (routine)", metadata: m("pro", "balanced", "production"), expectProvider: "workers-ai", note: "routine coding -> qwen2.5-coder-32b" },
-  { route: "code", label: "code/enterprise/maximum (strong)", metadata: m("enterprise", "maximum", "production"), expectProvider: "openai", note: "high|maximum -> gpt-4.1-mini" },
-  { route: "architect", label: "architect/internal/maximum", metadata: m("internal", "maximum", "internal"), expectProvider: "openai", note: "frontier judgment" },
-  { route: "research", label: "research/enterprise/high", metadata: m("enterprise", "high", "production"), expectProvider: "openai", note: "high -> frontier reasoning" },
-  { route: "critical", label: "critical/enterprise/maximum", metadata: m("enterprise", "maximum", "production"), expectProvider: "openai", note: "strong primary, no bargain downgrade" },
+  { route: "code", label: "code/enterprise/maximum (strong)", metadata: m("enterprise", "maximum", "production"), expectProvider: "anthropic", note: "high|maximum -> claude (Unified Billing)" },
+  { route: "architect", label: "architect/internal/maximum", metadata: m("internal", "maximum", "internal"), expectProvider: "anthropic", note: "frontier judgment -> claude-sonnet-4-5 (Unified Billing)" },
+  { route: "research", label: "research/enterprise/high", metadata: m("enterprise", "high", "production"), expectProvider: "anthropic", note: "high -> claude reasoning (Unified Billing)" },
+  { route: "critical", label: "critical/enterprise/maximum", metadata: m("enterprise", "maximum", "production"), expectProvider: "anthropic", note: "strong primary -> claude-sonnet-4-5, no bargain downgrade" },
   { route: "batch", label: "batch/pro/economy", metadata: m("pro", "economy", "production"), expectProvider: "workers-ai", note: "throughput -> deepseek-v4-flash (under count limit)" },
   { route: "restricted", label: "restricted/internal/high", metadata: m("internal", "high", "internal"), expectProvider: "workers-ai", note: "provider allowlist: workers-ai only" },
 ];

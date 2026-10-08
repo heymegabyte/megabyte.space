@@ -3484,3 +3484,10 @@ detail template @9.4, a11y 0 both themes + 0 console errors verified; a Direct-R
 list + player + live inputs), then **/turnstile** (bot-challenge widgets + stats), then **/pipelines**
 (streaming ingestion → R2). OR the queued DEPTH lane (`node scripts/matrix-frontier.mjs`). Keep RESOURCES[]
 ⊇ PLATFORM_FEATURES[] synced each time. WS-PERF / WS-N2 / WS-12 remain Brian-gated dedicated-session items.
+## fire-273 — NUL porcelain guard repair (fleet run 37810852970)
+
+One bounded iteration, isolated workspace, local commit af8366fe; outer runner owns publication. Inspected fleet/machine/provider policy, prior GitHub Actions failures and receipts, worktrees and commits. Confirmed retained e9b95de0 already reachable from origin/main. Initialized unchanged fork f48f55e9 and installed both frozen workspaces.
+
+Loop improvement: check-fire-committed now parses NUL porcelain v1 for parent and fork, preserves literal filenames, records originalPath and checks both rename endpoints. Four real-Git regressions failed before the fix. Final scripts suite 96/96 and scripts typecheck green; independent cr Codex read-only reviewer accepted implementation; following-record and non-confounded exit tests addressed its coverage feedback. Research artifact under .ai/runs/heymegabyte--megabyte.space-37810852970-1/codex-research.md.
+
+Standing Long-Trail/Deep UI briefs: production and visual exploration deferred because BA E2E credentials missing. No browser journey, screenshot, vision score or matrix increment claimed. Cloudflare/DeepSeek credentials also absent; no deployment or PAYG fallback. check-deploy-state reports fork matches recorded deployment (not fresh live proof). Next-wave: real copy fixture and stale ARCHITECTURE hot-path reconciliation. GitHub schedule retained; no cron/watchdog armed. Broader pnpm check result recorded in agent-report.json once complete.

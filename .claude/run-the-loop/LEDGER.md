@@ -3534,3 +3534,5 @@ Bash-classifier flakiness (memory `bash-classifier-outage-exact-allowlist-and-au
 
 **NEXT:** Images-family continues — **/turnstile** (bot-challenge widgets + solve-rate stats) then
 **/pipelines** (streaming ingestion → R2), per the Next-wave inbox; keep RESOURCES[]⊇PLATFORM_FEATURES[] synced.
+
+## fire-281 — deploy recorded (deploy 2026-10-08T22:16:04.571Z; §11 narrative pending)

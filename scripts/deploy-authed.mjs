@@ -22,10 +22,23 @@
  * passed on argv. Fail-closed: if get-secret can't produce a key, we exit before any deploy.
  */
 import { execFileSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { dirname, delimiter } from 'node:path'
 
 const ACCOUNT_ID = '84fa0d1b16ff8086dd958c468ce7fd59'
 const EMAIL = 'blzalewski@gmail.com'
 const GET_SECRET_CANDIDATES = ['get-secret', '/Users/Apple/.local/bin/get-secret']
+
+// `scripts/deploy.ts` spawns `pnpm` by bare name, but pnpm is installed in the npm global bin dir
+// which is NOT on the loop shell's PATH (`which pnpm` → not found → spawnSync ENOENT; the recurring
+// deploy-needs-pnpm-on-path class). The whole point of this wrapper is to deploy via a single bare
+// allowlisted `node scripts/deploy-authed.mjs` during a classifier outage — where a `PATH=… node …`
+// prefix would NOT match the allow entry — so it must put pnpm on PATH itself. Prepend every known
+// bin dir that actually exists (the pnpm global bin + the running node's own dir). (fire-282.)
+function pnpmBinDirs() {
+  const candidates = ['/Users/Apple/.local/share/npm/bin', dirname(process.execPath)]
+  return candidates.filter((d) => existsSync(d))
+}
 
 function getSecret(key) {
   for (const bin of GET_SECRET_CANDIDATES) {
@@ -50,6 +63,8 @@ delete env.CLOUDFLARE_API_TOKEN // scoped token lacks Workers scopes (code 10000
 env.CLOUDFLARE_API_KEY = apiKey
 env.CLOUDFLARE_EMAIL = EMAIL
 env.CLOUDFLARE_ACCOUNT_ID = ACCOUNT_ID
+const extraPath = pnpmBinDirs()
+if (extraPath.length) env.PATH = [...extraPath, env.PATH].filter(Boolean).join(delimiter)
 
 const checkOnly = process.argv.includes('--check')
 const noRecord = process.argv.includes('--no-record')

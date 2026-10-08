@@ -58,12 +58,14 @@
  * §11 bookkeeping so the ledger still travels with git.
  */
 import { execFileSync } from "node:child_process";
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, appendFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 const LEDGER_REL = ".claude/run-the-loop/.last-deploy.json"; // repo-relative; the commit pathspec (cwd=ROOT)
 const LEDGER = `${ROOT}/${LEDGER_REL}`;
+const LEDGER_MD_REL = ".claude/run-the-loop/LEDGER.md"; // the narrative ledger; stub pathspec (cwd=ROOT)
+const LEDGER_MD = `${ROOT}/${LEDGER_MD_REL}`;
 const LEASE = `${ROOT}/.claude/run-the-loop/.fire-lease.json`;
 const SUBMODULE = "cloudflare-os";
 
@@ -168,6 +170,59 @@ export function commitRecord(fire, { exec = defaultExec, isDirty = defaultIsDirt
   }
 }
 
+function defaultReadLedgerMd() {
+  try {
+    return readFileSync(LEDGER_MD, "utf8");
+  } catch {
+    return ""; // no ledger → treat as "entry absent" so the stub is written
+  }
+}
+function defaultAppendLedgerMd(text) {
+  appendFileSync(LEDGER_MD, text);
+}
+
+// Normalize a fire SLUG ("fire-272-salvage-271-deploy", read from the lease) to its numeric id
+// ("fire-272"). LEDGER headings + commit-fire-bookkeeping's refuse-without-entry guard both key on
+// "## fire-N", never the full slug — so the stub + the match must use the numeric form.
+export function fireNum(fire) {
+  const m = (fire || "").match(/^fire-\d+/);
+  return m ? m[0] : null;
+}
+
+// Guarantee every DEPLOYED fire leaves a LEDGER trace. THE CLASS IT RETIRES: a fire ships its slice
+// + bumps/pushes the gitlink + records the deploy, then DIES before §11 writes its `## fire-N`
+// narrative — leaving LEDGER.md with ZERO record of a shipped slice (fires 270+271 each shipped a
+// /database slice yet left NO ledger entry; check-ledger-current flagged 3 un-cited feats, but that
+// gate lives in green-sweep, which dying fires skip, so the gap persisted two fires). This appends a
+// minimal stub at the reliable point — the `--commit` step one git-step after `pnpm deploy`, which
+// every fire that ships reaches — so the narrative can only be MISSING when the fire dies BEFORE
+// deploy (nothing shipped to lose). The next fire's §11 REPLACES/augments the stub with the full
+// entry; idempotent here (a `## fire-N` heading already present → no-op). Fail-soft + pathspec-limited
+// exactly like commitRecord: its own tiny commit touching ONLY LEDGER.md, never `git add -A`, and a
+// throw is swallowed (the deploy + record already succeeded; §11 is the backstop). `read`/`append`/
+// `exec` injected so the test asserts the stub text + staged path with no real git/fs.
+export function ensureLedgerStub(
+  fire,
+  note,
+  iso,
+  { read = defaultReadLedgerMd, append = defaultAppendLedgerMd, exec = defaultExec } = {},
+) {
+  const num = fireNum(fire);
+  if (!num) return { stubbed: false, reason: "no-fire" };
+  if (new RegExp(`^## ${num}\\b`, "m").test(read())) return { stubbed: false, reason: "entry-exists" };
+  try {
+    append(`\n## ${num} — ${note || "deploy recorded"} (deploy ${iso}; §11 narrative pending)\n`);
+    exec(["add", "--", LEDGER_MD_REL], ROOT);
+    exec(
+      ["commit", "-m", `chore(loop): LEDGER stub ${num} (deploy recorded; §11 narrative pending)`, "--", LEDGER_MD_REL],
+      ROOT,
+    );
+    return { stubbed: true, fire: num };
+  } catch (e) {
+    return { stubbed: false, detail: String((e && e.message) || e).split("\n")[0] };
+  }
+}
+
 export function main(argv) {
   const { iso: isoArg, noteArg, fireArg, push, commit } = parseArgs(argv);
   const iso = isoArg || new Date().toISOString();
@@ -196,6 +251,14 @@ export function main(argv) {
       r.committed
         ? `committed deploy-record (${fire || "untagged"})\n`
         : `deploy-record commit skipped: ${r.reason || r.detail}\n`,
+    );
+    // Leave a minimal LEDGER narrative stub so a fire that ships can never leave ZERO ledger trace
+    // (the fires 270/271 class). Idempotent + fail-soft; §11 replaces it with the full entry.
+    const s = ensureLedgerStub(fire, noteArg, iso);
+    process.stdout.write(
+      s.stubbed
+        ? `wrote LEDGER stub for ${s.fire} (§11 narrative pending)\n`
+        : `LEDGER stub skipped: ${s.reason || s.detail}\n`,
     );
   }
 

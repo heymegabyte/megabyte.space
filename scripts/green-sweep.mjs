@@ -78,6 +78,7 @@ const CHECKS = [
   ['verify-queues.mjs', [], 'QUEUES GREEN'], // WS-DEMO Queues: reachable + status-filter/search narrow + queue→detail drill-in + retry-failed (fire-169)
   ['verify-secrets.mjs', [], 'SECRETS GREEN'], // WS-DEMO Secrets: reachable + scope-filter/search narrow + rotate + add-secret composer (fire-170)
   ['verify-storage.mjs', [], 'STORAGE GREEN'], // WS-DEMO Storage: reachable + type-filter/search narrow + store→detail drill-in + D1→database link (fire-171)
+  ['verify-images.mjs', [], 'IMAGES GREEN'], // WS-DEMO Images (Cloudflare Images): reachable + format-filter narrows gallery + detail named variants + the TRANSFORM PLAYGROUND rewrites the flexible-variant URL live (fire-278 created /images; fire-279 shipped the playground + this dedicated verifier — it was riding only verify-demo-surfaces)
   ['verify-compute.mjs', [], 'COMPUTE GREEN'], // WS-DEMO Compute: reachable + status-filter/search narrow + worker→detail drill-in + logs link (fire-172)
   ['verify-metrics.mjs', [], 'METRICS GREEN'], // WS-DEMO Metrics: reachable + metric-toggle + gadget-select re-draw the chart + cross-links (fire-173)
   ['verify-permissions.mjs', [], 'PERMISSIONS GREEN'], // WS-DEMO Permissions: reachable + role-filter/search narrow + invite composer + capability matrix + activity link (fire-174)

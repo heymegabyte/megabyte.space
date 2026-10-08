@@ -35,22 +35,35 @@
  * (rebase-if-rejected) remains the backstop. The `.last-deploy.json` write itself is uncommitted, so
  * the push publishes only the already-committed HEAD; the record still travels with git in §11.
  *
+ * `--commit` (fire-269): after stamping, commit ONLY `.last-deploy.json` as its own tiny
+ * `chore(loop): deploy-record <fire>` commit — fail-soft, idempotent, pathspec-limited (never `git
+ * add -A`). WHY: the record WRITE was uncommitted (deferred to §11's bookkeeping commit), so a fire
+ * dying between `pnpm deploy` and §11 left EXACTLY this file dirty — the deploy-record-only strand
+ * that recurred at fires 224/225, 259/260, 262, 264/265, 268 (each cost the next fire a salvage).
+ * `--commit` closes that window to ZERO: the record is committed in the SAME invocation that writes
+ * it, one step after deploy — the record-file analog of what `--push` did for the unpushed-code
+ * window. The `deploy` npm script runs `--commit --push` (commit the record, then publish it). A
+ * commit failure is logged + NON-FATAL (the deploy already succeeded; §11 remains the backstop).
+ *
  * Usage:
  *   node scripts/record-deploy.mjs                      # stamp HEAD's SHAs, iso = now, fire from lease
  *   node scripts/record-deploy.mjs <iso>                # override the timestamp (replaying a known deploy)
  *   node scripts/record-deploy.mjs --note "<slice>"     # tag the slice that shipped
  *   node scripts/record-deploy.mjs --fire <slug>        # override the fire slug (else read from lease)
+ *   node scripts/record-deploy.mjs --commit             # commit the record as its own tiny commit (fail-soft)
  *   node scripts/record-deploy.mjs --push               # also publish origin/main + fork (fail-soft)
  *
- * Idempotent: re-running after the same deploy rewrites the same SHAs. Commit the resulting
- * .last-deploy.json alongside the fire's slice so the ledger travels with git.
+ * Idempotent: re-running after the same deploy rewrites the same SHAs; `--commit` then no-ops
+ * (nothing dirty). Without `--commit`, commit the resulting .last-deploy.json alongside the fire's
+ * §11 bookkeeping so the ledger still travels with git.
  */
 import { execFileSync } from "node:child_process";
 import { writeFileSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const LEDGER = `${ROOT}/.claude/run-the-loop/.last-deploy.json`;
+const LEDGER_REL = ".claude/run-the-loop/.last-deploy.json"; // repo-relative; the commit pathspec (cwd=ROOT)
+const LEDGER = `${ROOT}/${LEDGER_REL}`;
 const LEASE = `${ROOT}/.claude/run-the-loop/.fire-lease.json`;
 const SUBMODULE = "cloudflare-os";
 
@@ -82,8 +95,9 @@ export function parseArgs(argv) {
   const noteArg = value("--note");
   const fireArg = value("--fire");
   const push = bool("--push");
+  const commit = bool("--commit");
   const isoArg = argv.find((a, i) => !consumed.has(i) && !a.startsWith("--") && a !== "--") || null;
-  return { iso: isoArg, noteArg, fireArg, push };
+  return { iso: isoArg, noteArg, fireArg, push, commit };
 }
 
 // Auto-read the fire slug from the lease (fail-soft) so a stranded record self-identifies its fire.
@@ -119,8 +133,43 @@ export function pushMain(exec = defaultExec) {
   });
 }
 
+// Is the record file dirty in the working tree? (porcelain over ONLY the record path.) Injected into
+// commitRecord so the test needs no real git. Reads real git by default.
+function defaultIsDirty() {
+  try {
+    const out = execFileSync("git", ["status", "--porcelain", "--", LEDGER_REL], {
+      cwd: ROOT,
+      encoding: "utf8",
+    });
+    return out.trim().length > 0;
+  } catch {
+    return false; // can't tell → treat as clean so a broken git never forces a bogus commit
+  }
+}
+
+// Commit ONLY the deploy record as its own tiny `chore(loop): deploy-record <fire>` commit the instant
+// it is written — one step after `pnpm deploy`. WHY: the record write (writeFileSync below) was deferred
+// to §11's bookkeeping commit, and a fire dying in between left EXACTLY .last-deploy.json dirty — the
+// "deploy-record-only strand" that recurred at fires 224/225, 259/260, 262, 264/265, 268 (five+ fires
+// each burned salvaging it). `--commit` closes that window to ZERO: the record is committed in the SAME
+// invocation that writes it, exactly as `--push` (fire-266) closed the unpushed-code window. Fail-soft
+// (a commit failure NEVER aborts the deploy that already succeeded) · idempotent (an unchanged record is
+// a no-op) · stages ONLY the record path via a pathspec-limited commit (never `git add -A`, never sweeps a
+// concurrent shared-tree fire's edits). `exec`/`isDirty` injected so the test asserts the staged path +
+// simulates failure with no real git.
+export function commitRecord(fire, { exec = defaultExec, isDirty = defaultIsDirty } = {}) {
+  if (!isDirty()) return { committed: false, reason: "unchanged" };
+  try {
+    exec(["add", "--", LEDGER_REL], ROOT);
+    exec(["commit", "-m", `chore(loop): deploy-record${fire ? ` ${fire}` : ""}`, "--", LEDGER_REL], ROOT);
+    return { committed: true, fire: fire || null };
+  } catch (e) {
+    return { committed: false, detail: String((e && e.message) || e).split("\n")[0] };
+  }
+}
+
 export function main(argv) {
-  const { iso: isoArg, noteArg, fireArg, push } = parseArgs(argv);
+  const { iso: isoArg, noteArg, fireArg, push, commit } = parseArgs(argv);
   const iso = isoArg || new Date().toISOString();
   const fire = leaseFire(fireArg);
 
@@ -139,6 +188,16 @@ export function main(argv) {
   writeFileSync(LEDGER, JSON.stringify(record, null, 2) + "\n");
   const tag = fire ? ` · ${fire}` : "";
   process.stdout.write(`recorded deploy → fork ${forkSha.slice(0, 8)} · outer ${outerSha.slice(0, 8)} · ${iso}${tag}\n`);
+
+  // Commit the record FIRST (so a later --push publishes it) — closes the deploy-record-strand window.
+  if (commit) {
+    const r = commitRecord(fire);
+    process.stdout.write(
+      r.committed
+        ? `committed deploy-record (${fire || "untagged"})\n`
+        : `deploy-record commit skipped: ${r.reason || r.detail}\n`,
+    );
+  }
 
   if (push) {
     for (const r of pushMain()) {

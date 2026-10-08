@@ -20,6 +20,12 @@ if (!EMAIL || !PASSWORD) { console.log('missing BA creds'); process.exit(2) }
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
 const LIGHT = process.argv.includes('--light')
+// --only=<substr> scopes the sweep to matching routes (e.g. --only=/analytics) so a single-surface fire
+// can run the CANONICAL a11y gate cheaply instead of the full ~40-route dual-theme sweep (fire-273 — born
+// of hand-rolling a throwaway scoped audit). The ROUTES list stays COMPLETE (check-a11y-coverage still
+// enforces every fork route is listed); --only only subsets the RUNTIME iteration + skips the click-nav
+// editor legs. Empty = audit everything (the green-sweep default).
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) || '').slice('--only='.length)
 const MODE = LIGHT ? 'light' : 'dark (default)'
 const browser = await chromium.launch()
 // axe-core/playwright requires a page from an explicit browser context (not the default newPage()).
@@ -79,7 +85,7 @@ await page.waitForTimeout(800)
 // COVERAGE NOTE (fire-117): when adding a surface, cross-check `ls src/routes/*.tsx` — don't rely on
 // the sidebar/⌘K. Routes reached ONLY from menus (UserMenu/Header) evade nav-based memory: /providers
 // (fire-103) and /profile (fire-117) were both unaudited for many fires until a sweep caught them.
-for (const [path, signal] of [
+const ROUTES = [
   ['/', /build|create|describe|workspace|gadget|idea|start/i],
   ['/pulse', /opportunit|all clear/i],
   ['/workspaces', /workspace/i],
@@ -143,7 +149,8 @@ for (const [path, signal] of [
   ['/connections', /connection|integration|provider/i],
   ['/profile', /profile|account|display name/i],
   ['/admin', /access to this page|admin/i], // fire-151: ba-e2e (non-admin) sees the 'You don't have access' DENIED state — a real non-admin surface worth auditing; the admin CATALOG needs an admin session (verify-admin-platform). Signal matches the denied state so the audit settles honestly, not by timeout. Caught + gate-enforced by check-a11y-coverage.
-]) {
+]
+for (const [path, signal] of ROUTES.filter(([p]) => !ONLY || p.includes(ONLY))) {
   await page.goto(`${APEX}${path}`, { waitUntil: 'domcontentloaded', timeout: 40000 })
   await page.waitForSelector('aside', { timeout: 25000 }).catch(() => {})
   await page.waitForFunction((re) => new RegExp(re.source, re.flags).test(document.body.innerText), signal, { timeout: 20000 }).catch(() => {})

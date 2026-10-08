@@ -100,11 +100,48 @@ if (await search.count().then((c) => c > 0).catch(() => false)) {
 }
 const searchWorks = countSearch > 0 && countSearch < countAll;
 
+// INTERACTIVE 4 (fire-277) — R2 bucket → OBJECT browser drill-in. Click an R2 store (media-uploads);
+// its detail opens an OBJECT browser (key · kind · size · modified). A key filter narrows; clicking an
+// object opens its metadata dialog (copyable key + r2:// URI). D1 stores link to the schema instead.
+let r2DetailOpens = false, objectRows = 0, objectFilterWorks = false, objectDialogOpens = false;
+const r2Row = page.getByRole("button", { name: "Store: media-uploads" }).first();
+if (await r2Row.count().then((c) => c > 0).catch(() => false)) {
+  await r2Row.click().catch(() => {});
+  await page.waitForTimeout(500);
+  const r2Aside = page.locator('aside[aria-label="Store: media-uploads"]');
+  const asidePresent = await r2Aside.count().then((c) => c > 0).catch(() => false);
+  const asideText = asidePresent ? await r2Aside.innerText().catch(() => "") : "";
+  r2DetailOpens = asidePresent && /Objects/.test(asideText) && /objects ·/i.test(asideText);
+
+  const objList = page.locator('ul[aria-label="Objects in media-uploads"]');
+  objectRows = await objList.locator("li").count().catch(() => 0);
+
+  const objSearch = page.getByRole("searchbox", { name: /filter objects in media-uploads/i }).first();
+  if (await objSearch.count().then((c) => c > 0).catch(() => false)) {
+    await objSearch.fill("heroes");
+    await page.waitForTimeout(400);
+    const objFiltered = await objList.locator("li").count().catch(() => 0);
+    objectFilterWorks = objectRows > 0 && objFiltered > 0 && objFiltered < objectRows;
+    await objSearch.fill("");
+    await page.waitForTimeout(200);
+  }
+
+  const firstObj = objList.getByRole("button").first();
+  if (await firstObj.count().then((c) => c > 0).catch(() => false)) {
+    await firstObj.click().catch(() => {});
+    await page.waitForTimeout(400);
+    const dlg = await page.evaluate(() => document.body.innerText);
+    objectDialogOpens = /Copy r2:\/\/ URI/i.test(dlg) && /Content-Type/i.test(dlg);
+    await page.keyboard.press("Escape").catch(() => {});
+    await page.waitForTimeout(250);
+  }
+}
+
 await page.screenshot({ path: "scripts/.storage-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, r2DetailOpens, objectRows, objectFilterWorks, objectDialogOpens, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -119,5 +156,9 @@ check(typeFilterWorks, `Type filter narrows the list (All ${countAll} → D1 ${c
 check(searchWorks, `Search narrows the list (All ${countAll} → "media" ${countSearch})`, "search did not narrow the list");
 check(realErrors.length === 0, "0 console errors on /storage", `${realErrors.length} console errors`);
 check(accentBordersRender, `Near-limit store carries a warning accent border (warning ${accents.warning})`, `surfaceAccent border missing on /storage (warning ${accents.warning})`);
+check(r2DetailOpens, "R2 store detail opens an Objects browser (media-uploads → Objects header + summary)", "R2 store did not open an object browser");
+check(objectRows >= 5, `R2 object browser lists objects (media-uploads ${objectRows} rows)`, `too few object rows (${objectRows})`);
+check(objectFilterWorks, "R2 object key filter narrows the list ('heroes')", "object key filter did not narrow the list");
+check(objectDialogOpens, "R2 object click opens its metadata dialog (Content-Type + Copy r2:// URI)", "object detail dialog did not open");
 console.log(ok ? "✅ STORAGE GREEN" : "❌ storage check failed");
 process.exit(ok ? 0 : 1);

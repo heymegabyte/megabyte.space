@@ -2,6 +2,18 @@
   "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
   "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
   "surfaces": {
+    "os.stream": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.0,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "Direct-Read vision pass (@1280 library + video detail) to confirm/adjust the provisional 9.0",
+        "a real <iframe> Stream-player embed preview once the live Cloudflare Stream bridge lands (honest — no faked frames before)",
+        "a live-input detail drawer: stream-key reveal/rotate + a viewer-count sparkline"
+      ],
+      "notes": "fire-280 CREATED/SHIPPED (Brian direct WS-DEMO; Images-family doc-diff — /stream was the next glaring CF omission after /images). The /stream Cloudflare Stream surface: filterable video LIBRARY (status pills ready/processing/live/errored + search, pure filterVideos) tile gallery (thumbnail placeholder + play overlay + duration badge + Live chip + signed lock) -> per-video DETAIL (16:9 player placeholder + copyable HLS/DASH/iframe playback URLs [real cloudflarestream.com shapes] + resolution/duration/views + signed posture) + a live-inputs strip (RTMPS/SRT/WebRTC ingest) + a LIVE 'workspaces delivering video' band off listGadgets (fail-soft, mirrors summarizeStreamOwners). Honest 'sample videos'. Pure helpers unit-proven stream.test.ts (TDD; formatDuration/formatBytes/statusCounts/totals/filterVideos/hlsUrl/dashUrl/iframeUrl/thumbnailUrl/ingestUrl). AA-safe (status accent on DOTS, neutral text — kumo-accent-text-not-aa). Wired ResourcesPanel RESOURCES[] (59 cards) + AdminPage PLATFORM_FEATURES[] (bidirectional verify-resources-launchpad GREEN) + Sidebar (Operate, VideoCamera) + Cmd-K. Gates: tsc 0, vitest 1145/1145, reachability 64/0 orphans, a11y-coverage 67. Prod: verify-prod 11/11, verify-a11y --only=/stream 0 serious BOTH themes, verify-demo-surfaces Stream reachable+renders+0 console errors. Fork ed31c121->f3496d35 / outer 3ef8534b / deploy router 876a933d @22:00:54Z. Provisional 9.0 — clones the proven /images master-detail template; Direct-Read vision pass queued (next[0])."
+    },
     "os.images": {
       "beautifyPasses": 1,
       "aiVisionScore": 9.0,

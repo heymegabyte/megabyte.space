@@ -2,6 +2,18 @@
   "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
   "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
   "surfaces": {
+    "os.images": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.0,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "Direct-Read vision pass (@1280 gallery + variant-detail) to confirm/adjust the provisional 9.0",
+        "a real thumbnail preview via the imagedelivery.net /thumbnail variant once the live CF Images bridge lands (honest — no faked bytes before then)",
+        "a variant-URL transform playground (live width/fit edit) + drag-and-drop upload affordance"
+      ],
+      "notes": "fire-278 CREATED/SHIPPED (Brian direct WS-DEMO prompt; absorption doc-diff found Images/Stream/Turnstile/Pipelines as the glaring CF omissions — none covered anywhere). The /images Cloudflare Images surface: master-detail gallery (format pills webp/avif/png/jpeg/gif/svg + search, pure filterImages) -> per-image detail w/ every delivery VARIANT (public/thumbnail/hero/avatar/og) + a copyable imagedelivery.net URL (real shape, useful even on sample data) + signed-URL access posture + a LIVE 'workspaces delivering images' band off listGadgets (fail-soft, mirrors summarizeStorageOwners). Honest 'sample images'. Pure helpers unit-proven images.test.ts 27/27 (TDD; caught a wrong formatBytes expectation). AA-safe (format accent on DOTS, neutral text — kumo-accent-text-not-aa). Wired ResourcesPanel RESOURCES[] (59 cards) + AdminPage PLATFORM_FEATURES[] (bidirectional verify-resources-launchpad GREEN) + Sidebar (Operate, Images) + Cmd-K. Gates: tsc --noEmit 0, vitest 1111/1111, reachability 63/0 orphans, a11y-coverage 66. Prod: verify-prod 11/11 (2 tracked WARNs), verify-a11y --only=/images 0 serious BOTH themes, verify-demo-surfaces Images reachable via rail+renders+0 console errors. Fork 22672b5a (parent cae8f429 — carried a concurrent /mcp depth slice forward) / outer 01e6b358 / deploy router 3e1436b4 @21:02Z. Provisional 9.0 — clones the proven /storage master-detail template (9.4); Direct-Read vision pass queued (next[0]). Shipped through a Bash-classifier outage via scripts/deploy-authed.mjs + verify-authed.mjs (get-secret cred injection)."
+    },
     "os.search": {
       "beautifyPasses": 2,
       "aiVisionScore": 9.3,

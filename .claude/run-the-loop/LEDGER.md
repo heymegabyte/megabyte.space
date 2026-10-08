@@ -3152,3 +3152,21 @@
 **Replenished (1 discovery):** GitHub-fleet-worktree ↔ main-tree coexistence note (origin-ahead-from-fleet is normal → rebase not alarm; the main-tree strand is salvaged from the LOCAL tree, not the fleet's origin commits).
 
 **Watchdog:** ARMED (`launchctl print` succeeds). Submodule pin 85abc7c5→32992dd8 (intentional, our fork).
+
+## fire-250 — salvage fire-249's wedged ResourcesPanel strand (3 Editor Resources panels) + deploy-ambiguity gotcha
+
+**Lease:** reclaimed fire-249-salvage's STALE `wedged-handoff` (heartbeat 2020-01-01). RESUME-CHECK ground truth: fire-249's own slices (surfaceAccent /activity 8th surface, wedged-handoff cadence fix, §11 bookkeeping) were already committed + deployed (git log + `check-deploy-state`: prod live at fork `32992dd8`). The lease note's uncommitted work (`ResourcesPanel.tsx`) was REAL + pending → `check-fire-committed` forkDirty:1 + `check-deploy-state` OK-at-old-gitlink ⇒ built-but-not-shipped (fire-243 class) → finished it (NOT re-implemented).
+
+**Slice (WS-DEMO Absorption — surface-sync):** surfaced 3 EXISTING platform routes as new Editor Resources preview cards — Gatekeepers→`/gatekeepers` (Lock) · Providers→`/providers` (Faders) · Blueprints→`/blueprints` (Blueprint). All 3 route files pre-existed (gatekeepers.tsx 32K, providers.tsx 13K, blueprints.tsx 1.2K); the cards expose them, keeping `RESOURCES[]` in sync with shipped platform routes. 53 cards ({live:3, preview:50}).
+
+**Verify (all green this fire):** `tsc --noEmit` clean · fork vitest 889 passed / 0 failing (baseline 0) · `verify-resources-launchpad` (53 "View →" links all resolve + covers every /admin platform surface, floor 50) · `verify-resources-panel` BROWSER proof on prod (opened workspace → Resources tab → grid visible → 53 cards → 0 console errors) · `verify-prod` 11/11 (2 pre-existing tracked WARNs: Google SSO redirect_uri_mismatch, apex CSP absent — neither from this slice).
+
+**Ship:** fork `c693744f` (pushed origin/megabyte-os) · outer gitlink `84fed47b` · deploy `megabyte-os` v`a1e06a24` · record-deploy → fork c693744f / outer 84fed47b. ⚠️ deploy printed "No updated asset files to upload" (the wedged fire-249 session had already uploaded the identical dist); confirmed shipped via the 3 unique panel blurbs in the built `workspace._id-*.js` chunk + the browser proof.
+
+**Beautify:** `os.editor-resources` matrix row ADDED (passes 1, vision 9, density 7) — the launchpad is clean/dense/on-brand; the 3 new cards slot in seamlessly. Knock vs 9.5: the long single grid wants a live/preview grouping or a filter as cards climb.
+
+**§8 loop-improvement:** new CLAUDE.md Gotcha (commit `docs(loop)`) — `"No updated asset files to upload"` on deploy is NOT proof of a no-op (content-addressed bytes may already be uploaded by a wedged session's partial deploy); ground-truth by grepping the built `dist` for a unique string from your change. Retires the trap this fire navigated.
+
+**Next-wave (appended to BACKLOG WS-DEMO):** (1) group/filter the 53-card launchpad grid (real UX slice); (2) re-run the doc-diff for genuinely-new documented surfaces before minting more, else DEPTH.
+
+**Infra:** cron `106f2b18` armed (every 15 min, ~1d old, not near 7-day expiry) · watchdog `space.megabyte.loop-watchdog` loaded.

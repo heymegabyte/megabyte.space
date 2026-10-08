@@ -599,6 +599,17 @@
         "per-action network/DOM detail drawer on a step"
       ],
       "notes": "fire-156 CREATED (/browser-runs step-trace + interactive HITL; vision 9.5). fire-218 ENHANCED to a 'browser-use-grade' inline animated browser (fork 9dfce12c; LANDED by fire-219 salvage, outer 597bd9df — prod-ahead-of-git, NO rebuild/redeploy): the detail pane now REPLAYS each run action-by-action in an inline agent-browser frame — current-action element highlight + animated cursor/ripple over a rendered page scene, a Live/Replay chrome, an action-annotation chip, a synchronized SCRUBBER (play/pause · pips · prev/next · ←/→/space keyboard), a clickable step trace, and inline HITL (the 2FA/CAPTCHA resolver renders OVER the frame -> type a code + Resume -> the run CONTINUES to the invoices page). Per-step FRAME SCENE data + pure helpers (activeStepIndex/clampStep/isHitlStep/targetElementIndex/STEP_VERB) in browserRuns.ts, unit-tested 20/20; all motion reduced-motion-gated (br-chip-in/br-ripple/br-caret/br-url-flash). Inspiration: github.com/browser-use/browser-use (memory browser-use-inline-browser-inspiration). verify-browser-runs 9/9 GREEN on prod THIS fire (reachable via rail -> renders -> scrub changes the frame -> inline HITL resolves -> run continues -> 0 console errors). Functional-verify only this salvage fire — NOT a fresh screenshot-vision pass; score carried from fire-156's 9.5 create + the clearly-additive enhancement (a fresh vision capture is the top 'next', per the os.compute/os.metrics salvage precedent). Knock vs 10: live Browser-Rendering CDP view."
+    },
+    "os.editor-resources": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "as the card count climbs past ~55, group the single long grid by status (live vs preview) or add a search/filter — 9->9.5",
+        "per-card hover micro-preview of the destination surface"
+      ],
+      "notes": "fire-250 SALVAGE (of fire-249's wedged-handoff strand) — the in-editor Resources launchpad (GadgetEditor -> ResourcesPanel). Surfaced 3 EXISTING platform routes as new preview cards: Gatekeepers->/gatekeepers (Lock icon), Providers->/providers (Faders), Blueprints->/blueprints (Blueprint), keeping RESOURCES[] in sync with the shipped platform routes per WS-DEMO. 53 cards total ({live:3, preview:50}). Verified: tsc --noEmit clean + fork vitest 889/0 + verify-resources-launchpad (all 53 'View ->' links resolve, covers every /admin platform surface, floor 50) + verify-resources-panel BROWSER proof on prod (opened a workspace, Resources tab, grid visible, 53 cards, 0 console errors). The deploy printed 'No updated asset files' (wedged fire-249 had already uploaded the identical dist) — confirmed shipped via the 3 unique panel blurbs in the built workspace._id-*.js chunk + the browser proof (new CLAUDE.md Gotcha). Fork c693744f / outer 84fed47b / deploy a1e06a24 / verify-prod 11/11. Score 9 — clean, dense, on-brand launchpad; the 3 new preview cards slot in seamlessly. Knock vs 9.5: the long single grid wants a live/preview grouping or a filter as cards climb."
     }
   }
 }

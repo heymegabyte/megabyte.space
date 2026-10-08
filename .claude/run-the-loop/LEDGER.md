@@ -3308,6 +3308,30 @@
 
 **Next-wave:** (1) /analytics matrix next[] — **per-stat-card sparkline / mini-trend** (9.5→9.7) then the **LIVE D1 `visitor_events` bridge** (→10) · (2) standing DEPTH frontier (`node scripts/check-depth-candidates.mjs`) · (3) re-run the WS-DEMO doc-diff for genuinely-new documented surfaces. WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.
 
-## fire-274 — deploy recorded (deploy 2026-10-08T18:04:50.264Z; §11 narrative pending)
+## fire-274 — /analytics per-stat-card 7-day sparklines (DEPTH/BEAUTIFY) + fire-273 §11 salvage — LEDGER narrative backfilled fire-275
 
-## fire-275 — deploy recorded (deploy 2026-10-08T18:52:22.014Z; §11 narrative pending)
+**Backfilled by fire-275** (fire-274 shipped + deployed + recorded its slice but DIED mid-§11 — lease stuck at phase=`verify`, 31 min stale — leaving only the ensureLedgerStub narrative + an un-bumped matrix row; exactly the LEDGER-stub strand fire-272's `ensureLedgerStub` + this backfill convention were built for). fire-274 ALSO salvaged fire-273's §11 bookkeeping (commit `38799e38`).
+
+**The slice (matrix `os.analytics` next[0] delivered — 'per-stat-card sparkline / mini-trend', 9.5→9.7):** each of the 4 /analytics stat cards (visitors / pageviews / session / conversion) gained a 7-day trend SPARKLINE beneath its number + trend chip, filling the previously-sparse lower region so the strip reads as a real Coinbase-Pro metric row. Fork slice `b2870319` (gitlink `627030ef`→`bd99b459`), deployed 18:04:50Z; `verify-analytics` extended with a `sparklines>=4` assertion.
+
+**Prod re-verified by fire-275:** `verify-analytics.mjs` **8/8 GREEN** — `sparklines:4`, axisLabel, barButtons 14, tooltipShows, 0 console errors; `check-deploy-state` OK (fork `bd99b459` matches last-deployed 18:04:50Z). The slice fully landed; only the narrative + matrix row were owed.
+
+**UX/Beautify-10x (matrix `os.analytics` 9.5→9.7, passes 2→3):** the per-card sparklines close the standing 'stat cards sparse in the lower region' knock. AA-safe (graphical sparklines, text labels). Knock vs 10: the LIVE D1 `visitor_events` bridge.
+
+**Commits:** `b2870319` (feat: fork sparklines + verifier) · `47c8bcdb` (deploy-record) · `40e3bfb7` (stub) — all fire-274; narrative + matrix backfilled in fire-275's §11.
+
+## fire-275 — /budgets spend-trajectory sparkline + run-rate projected cap-hit (DEPTH/BEAUTIFY) + fire-274 §11 salvage + matrix-frontier loop-improvement
+
+**Shape:** lean lead-direct fire (watchdog-launched, classifier healthy). Reclaimed a 31-min-stale lease (`fire-274-salvage273-advance`, phase=`verify`). §0 RESUME-CHECK: `check-fire-committed` CLEAN + `check-deploy-state` OK (fork `bd99b459` matches last-deployed) → fire-274's analytics slice was LIVE + committed, only its §11 bookkeeping owed (NOT a rebuild; salvaged in this fire's §11 — see the fire-274 entry above).
+
+**The slice — matrix `os.budgets` next[0] delivered ('per-budget spend-trajectory sparkline + projected cap-hit date', 9→9.3):** FORWARD-LOOKING cost governance (propagates Sidekick proactivity — the guardrail the utilization bar can't show). Each /budgets row gains (1) a compact MTD burn SPARKLINE — a deterministic (seeded, no `Math.random`) cumulative curve rising toward a faint dashed CAP line; an over-cap budget's curve crosses ABOVE the line (vividly: Growth workspace's red curve crosses its cap) — and (2) a RUN-RATE projected cap-hit readout (dailyRate = spent/dayOfMonth → projectedDay), rendered 'Projected cap · Oct N' / 'Over cap' / 'On track · under cap' / 'No spend yet'. The DIFFERENTIATED insight: Inbox triage reads 'On track · 41%' yet surfaces 'Projected cap · Oct 20' — a budget UNDER today but trending over the cap mid-month, which the flat utilization bar never reveals.
+
+**TDD + purity:** two pure helpers in `budgets.ts` — `spendTrajectory` (seeded cumulative series ending exactly at spent, monotonic) + `projectedCapHit` (dayOfMonth/daysInMonth passed in → deterministic + unit-testable). +9 TDD cases RED→GREEN (budgets.test.ts 38 total; `tsc --noEmit` clean). AA-safe: the projection is NEUTRAL text + a graphical urgency DOT only (kumo-accent-text-not-aa-in-light), the sparkline is aria-hidden.
+
+**Prod-verified:** `verify-budgets.mjs` **10/10 GREEN** (sparklines 8≥8 + projections 8≥8 incl. a stable over-cap readout — date-robust PRESENCE checks by data-testid since exact projected dates shift daily; composer/scope/search/accents all still pass; 0 console errors). `verify-a11y --only=/budgets` **0 serious/critical both themes** across 5 surfaces (dogfooded fire-273's `--only` flag). `verify-prod.mjs` **11/11** (2 pre-existing tracked WARNs: Google SSO redirect_uri_mismatch + apex CSP absent — not regressions). Direct-Read vision **9.3/10** (`.budgets-proof.png` @1280).
+
+**★ §8 loop-improvement — `scripts/matrix-frontier.mjs` (the cheap read of the Beautify-10x frontier):** the modifier-matrix has grown past 60 KB of prose `notes` — Reading it in the main thread now TRUNCATES (hit THIS fire at §0, 63 KB > the 25 KB tool cap), so the loop literally can't see the frontier the command tells it to consult. The new script prints ONLY the hot list (every surface < 9.5 or < 10 passes, sorted by score asc, with its top `next[]`), `--json` / `--all` flags — the exact analog of `backlog-frontier.mjs` over BACKLOG.md. Verified: 57 hot surfaces listed cleanly, no truncation. Commit `c3fbee85`.
+
+**Commits:** `9d9bad85` (fork: budgets sparkline+projection, +9 TDD) · `efcb9b9d` (outer: gitlink + verifier) · `c3fbee85` (matrix-frontier loop-improvement) · deploy-record (auto `--commit --push`) · this §11 bookkeeping. Prod live: fork `9d9bad85` / outer `efcb9b9d` / deploy `d6c1664d` @ 18:52Z.
+
+**Next-wave:** (1) os.budgets next[] — per-row hover/expand revealing exact daily trajectory values (9.3→9.5), then the LIVE AI-Gateway per-scope spend bridge (→10) · (2) a RICH beautify frontier surfaced by `matrix-frontier`: ~11 CF-integration surfaces (analytics-engine/artifacts/durable-objects/email/hyperdrive/mcp/realtime/research/sandboxes/skills) all at 9.0/1-pass, seen 2026-10-06 — each has a queued next[] (expand-row / mini-sparkline), a ready DEPTH/BEAUTIFY lane · (3) apply the run-rate projection pattern to /billing (same forward-looking value). WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.

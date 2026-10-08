@@ -7,6 +7,7 @@
  * cross-links to Inbox + Logs. "Preview · sample data". BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -60,6 +61,12 @@ const crossLinksPresent = inboxLink && logsLink;
 const countRows = () => page.locator('section[aria-label="Email sends"] li').count();
 const countAll = await countRows().catch(() => 0);
 
+// surfaceAccent prod net (fire-246): bounced sends carry a danger left-border + complained a warning one
+// (delivered/pending stay quiet or muted) — the shared row-accent that lifts failing deliveries out of
+// the dense log. Measured on the UNFILTERED list, before the status-pill filter below narrows it.
+const accents = await countAccentBorders(page, 'section[aria-label="Email sends"]');
+const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
+
 // INTERACTIVE 1 — a status pill narrows the log. All → Bounced (fewer, >0).
 let countBounced = countAll;
 const bouncedPill = page.getByRole("button", { name: /^Bounced/ }).first();
@@ -88,7 +95,7 @@ await page.screenshot({ path: "scripts/.email-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countBounced, countSearch, recipientsMasked, crossLinksPresent, statusFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countBounced, countSearch, recipientsMasked, crossLinksPresent, statusFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -99,6 +106,7 @@ check(renders, "Email content renders (deliverability stats + status filter + se
 check(statusFilterWorks, `Status filter narrows the log (All ${countAll} → Bounced ${countBounced})`, "status pill did not narrow the log");
 check(searchWorks, `Search narrows the log (All ${countAll} → "billing" ${countSearch})`, "search did not narrow the log");
 check(recipientsMasked, "Recipients are masked (no full sample address shown)", "a full recipient address leaked");
+check(accentBordersRender, `Failing deliveries carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, "bounced/complained rows missing their surfaceAccent border");
 check(crossLinksPresent, "Cross-links to Inbox + Logs present (interconnect)", "missing Inbox / Logs cross-links");
 check(realErrors.length === 0, "0 console errors on /email", `${realErrors.length} console errors`);
 console.log(ok ? "✅ EMAIL GREEN" : "❌ email check failed");

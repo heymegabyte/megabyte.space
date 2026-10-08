@@ -27,6 +27,7 @@ const SURFACES = [
     interact: { fillLabel: "Name a collection", text: "Zz demo collection probe", submitName: "Add collection", expect: /Zz demo collection probe/ } },
   { label: "Database", path: "/database", needles: [/database studio/i, /sample data/i, /schema/i, /select \* from/i] },
   { label: "Customers", path: "/customers", needles: [/sample data/i, /conversion funnel/i, /timeline/i, /visitors/i, /in pipeline|active mrr/i] },
+  { label: "Images", path: "/images", needles: [/sample images/i, /variant/i, /imagedelivery|deliver/i] },
 ];
 
 const browser = await chromium.launch();

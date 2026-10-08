@@ -3094,3 +3094,24 @@
 - backlog: 2 fresh discovery items appended — extend surfaceAccent to /secrets·/storage·/compute (UX, the helper exists) + a prod regression net asserting the border classes render (testing; the mapping is unit-tested but not prod-asserted).
 - attrition: none (lead-direct salvage, no fan-out, no saturation).
 - NEXT (leverage order): (1) the surfaceAccent prod regression net + cross-surface extension (small, ready, pairs with this slice); (2) DEPTH one/fire — `/gadgets`·`/tools` listGadgets lens or getAiConfig on a 2nd surface (run check-depth-candidates first; /agents·/activity·/analytics·/logs annotated BLOCKED); (3) a LONG golden-path / long-trail case (testing under-shipped). WS-PERF (apex LCP ~7.5s), WS-12 (DeepSeek routing), Google-SSO external fix, WS-N2 remain Brian-gated / dedicated-session.
+
+## fire-247 — salvage fire-246's AI-gateway strand (Claude 4.5 live) + wire the orphaned fork-vitest gate + reconcile provider-reality doc
+
+**Shape:** a SALVAGE fire. Orient found fire-246's released-handoff (stale) + a multi-part strand; ps-confirmed NO concurrent LOOP fire (only my own run-the-loop PID 96614). A NON-loop session (PID 79286, prompt "make routing agent neutral") was ALSO live in the shared tree and COMMITTED the ai-gateway work mid-fire (`b28277b8` appeared between two of my Bash probes, lease untouched). Coexisted SAFELY — ADD-only commits, fetch-before-push fast-forward, never amend/rebase another actor's commit (per `never-amend-in-shared-loop-tree` + `loop-lease-race-shared-tree`).
+
+**Salvage (primary slice) — the AI-routing control-plane strand, PROVEN live THEN committed+pushed:**
+- fire-246 had APPLIED an Anthropic-Claude-4.5-via-Unified-Billing routing change to the LIVE CF AI Gateway (manifest regenerated 01:26 with recorded verifications) but died before committing it.
+- PROBED before trusting (never rebuild): `ai-routes plan --drift-check` → exit 0 "no drift — Cloudflare matches repo intent" (live CF == working tree on BOTH gateways); `ai-routes verify` → **22/22 contract cases GREEN** both gateways — architect/critical/research + code|general@high|max route to `anthropic/claude-sonnet-4-5` (+ `claude-haiku-4-5`) via Unified Billing @ HTTP 200; economy/batch keyless Workers AI DeepSeek-V4; restricted allowlist enforced.
+- Confirmed the concurrent actor's commit `b28277b8` is CORRECT (HEAD routes.ts carries the anthropic lanes) + pushed it. Un-quarantines current Claude 4.5 as the frontier primary + fixes direct-DeepSeek BYOK on megabyte-space.
+
+**§8 loop-improvement — wire the orphaned fork-vitest gate (`f985cee6`):** fire-246 wrote `scripts/check-fork-tests.mjs` (a RATCHET over the fork's ~886-test vitest — run by NO prior gate, so a red fork UNIT ships invisibly) but left it UNTRACKED + unwired despite the header claiming "Wired into green-sweep" → `check-gate-coverage` flagged it orphaned (would FAIL green-sweep). Wired into green-sweep CHECKS + the SERIAL set (CPU-bound vitest; timed **13.6s** < the 180s per-check cap). Validated empirically: **9 failed / 877 passed = exactly BASELINE** (known-red useAuth.test.tsx jsdom `localStorage`, upstream PR #260). check-gate-coverage now GREEN (14 gates, 0 orphaned).
+
+**Doc reconciliation (`77e80786`):** CLAUDE.md "Current provider reality" said "Anthropic quarantined (no valid BYOK key)" — a doc-vs-reality lie after `b28277b8`. Reconciled to the fire-247-verified state: Claude 4.5 is the LIVE frontier primary via Unified Billing; only legacy/dated Claude ids stay quarantined; projectsites-dev direct-DeepSeek still stale → keyless Workers AI DeepSeek-V4 remains the baseline on both.
+
+**Strands closed:** unpushed-commit strand (origin `eeb93963`→`f985cee6`, 4 commits) + the `.last-deploy.json` deploy-record (committed in this §11). `check-deploy-state` OK (fork gitlink 85abc7c5 current; outer-HEAD-ahead recognized as non-deployable churn — prod reflects the current fork). **NO deploy this fire** — the ai-gateway change applies to CF directly via `ai-routes apply` (not `pnpm deploy`); the other commits are infra/scripts/docs with no Worker/fork delta.
+
+**Prod proof:** `ai-routes verify` 22/22 both gateways · `check-deploy-state` OK · `check-gate-coverage` GREEN.
+
+**Replenished (3 next-wave):** WS-FORK-TESTS (fix jsdom localStorage → ratchet baseline 9→0); projectsites-dev direct-DeepSeek fix (dedicated session); shared-tree coexistence-with-non-loop-sessions §0 note.
+
+**No UI surface visited visually → no modifier-matrix change (honest).**

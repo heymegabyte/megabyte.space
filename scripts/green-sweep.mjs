@@ -32,6 +32,7 @@ const CHECKS = [
   ['check-scripts-types.mjs', [], 'SCRIPTS-TYPES GREEN'], // DRIFT GATE (fire-236): scripts/ (the loop's own tooling + *.test.ts) type-checks clean. `pnpm check` + green-sweep never ran types:scripts, so a RED hid for fires ~230-235 (backlog-frontier/loop-fire-lock test types drifted). Static/secret-free preamble
   ['check-stale-copy.mjs', [], 'stale-copy: clean'], // DRIFT GATE (fire-3, WIRED fire-241): retired-stack/slop terms in apex user-visible copy are un-shippable (the "Authentik SSO" live regression no console/axe/screenshot gate caught). Static/secret-free preamble — was ORPHANED (referenced by NO runner) from creation until the fire-241 gate-coverage meta-gate caught it
   ['check-gate-coverage.mjs', [], 'GATE-COVERAGE GREEN'], // META DRIFT GATE (fire-241, §8): every check-*.mjs pass/fail gate is wired into a runner (green-sweep/package.json) or explicitly allowlisted as a standalone orient/§11/discovery tool — so a gate can't be orphaned (written but invoked by nobody) again, the class that hid check-stale-copy. Static/secret-free preamble
+  ['check-fork-tests.mjs', [], 'FORK-TESTS OK'], // RATCHET (fire-246, WIRED fire-247): the cloudflare-os fork vitest (~886 tests) — fail-count must not EXCEED baseline(9: known-red useAuth.test.tsx jsdom localStorage, BACKLOG WS-FORK-TESTS). Catches a NEW red fork UNIT that otherwise ships INVISIBLY (nothing else runs fork vitest). Secret-free, ~14s, SERIAL (CPU-bound vitest)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
   ['verify-login-gate.mjs', [], 'LOGIN-GATE GREEN'], // anon first-load HTML IS the full-screen login (Google+GitHub+magic-link+email/pw); authed gets the SPA (Brian 2026-10-06)
@@ -112,6 +113,7 @@ const CHECKS = [
 // then-parallel also means mutations finish + RESTORE state before any parallel read sees it. ~3-4 min.
 const SERIAL = new Set([
   'check-a11y-coverage.mjs',
+  'check-fork-tests.mjs', // CPU-bound vitest (~14s) — SERIAL so it never races the browser journeys (CPU contention → flakes)
   'verify-pulse-persist.mjs',
   'verify-pulse-snooze.mjs',
   'verify-gadget-pin.mjs',

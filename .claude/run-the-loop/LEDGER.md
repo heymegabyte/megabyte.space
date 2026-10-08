@@ -3335,3 +3335,5 @@
 **Commits:** `9d9bad85` (fork: budgets sparkline+projection, +9 TDD) · `efcb9b9d` (outer: gitlink + verifier) · `c3fbee85` (matrix-frontier loop-improvement) · deploy-record (auto `--commit --push`) · this §11 bookkeeping. Prod live: fork `9d9bad85` / outer `efcb9b9d` / deploy `d6c1664d` @ 18:52Z.
 
 **Next-wave:** (1) os.budgets next[] — per-row hover/expand revealing exact daily trajectory values (9.3→9.5), then the LIVE AI-Gateway per-scope spend bridge (→10) · (2) a RICH beautify frontier surfaced by `matrix-frontier`: ~11 CF-integration surfaces (analytics-engine/artifacts/durable-objects/email/hyperdrive/mcp/realtime/research/sandboxes/skills) all at 9.0/1-pass, seen 2026-10-06 — each has a queued next[] (expand-row / mini-sparkline), a ready DEPTH/BEAUTIFY lane · (3) apply the run-rate projection pattern to /billing (same forward-looking value). WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.
+
+## fire-276 — deploy recorded (deploy 2026-10-08T19:18:30.297Z; §11 narrative pending)

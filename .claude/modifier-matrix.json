@@ -2,6 +2,19 @@
   "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
   "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
   "surfaces": {
+    "os.search": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "per-result relevance score chip + match-count badge (9->9.3)",
+        "group-by-type results view toggle (flat-ranked <-> grouped)",
+        "wire the LIVE D1 FTS5 virtual table (BM25 over real rows, incremental index) — the real ->10",
+        "Vectorize semantic/hybrid search alongside FTS5 (keyword + vector)"
+      ],
+      "notes": "fire-257 CREATED/SHIPPED (WS-DEMO doc-diff: the /search universal-content-search surface — BACKLOG fire-252 next-wave '/search (D1 FTS5)'; DISTINCT from the Cmd-K action palette). One prominent autofocused box over SAMPLE content across 6 types (customers/forms/posts/knowledge/tasks/outputs): title-weighted AND scoring (FTS5/BM25-style), type-filter chips w/ counts+dots, <mark> term-highlighting, suggested-query chips (Acme/launch/agent/security), a stat strip (Indexed/Types/Results/Top match). Pure helpers (tokenize/scoreResult/searchResults/typeCounts/topMatch/splitHighlight) unit-proven (search.test.ts 22/22, TDD). AA-safe (type accent on DOTS + brand-tint <mark> w/ strong neutral text, never colored text — kumo-accent-text-not-aa). Honest 'Preview · sample data'. Wired Sidebar (Operate, MagnifyingGlass) + Cmd-K + ResourcesPanel RESOURCES[] (55 cards) + AdminPage PLATFORM_FEATURES[] (bidirectional verify-resources-launchpad gate green). BA-authed real-browser verified (verify-search.mjs): reachable via rail, query narrows (All 12->acme 3), type chip scopes (12->Customer 2), <mark> highlight present, 0 console errors. verify-prod 11/11. Direct-Read vision 9/10 (.search-proof.png) — gorgeous, dense (Coinbase-Pro feel), on-brand; the big cyan-focused box + suggestion chips + relevance-ranked highlighted results are the standout. Fork e99d69c6 / outer e4b1ba77 / deploy b081a596. Knock vs 9.5: stat cards sparse in the lower region + no per-result relevance score; vs 10: live D1 FTS5 bridge."
+    },
     "home.hero": {
       "beautifyPasses": 2,
       "aiVisionScore": 9,

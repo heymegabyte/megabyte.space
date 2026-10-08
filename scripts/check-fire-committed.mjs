@@ -53,7 +53,7 @@ const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
 
 // Surfaces a fire is expected to COMMIT (not leave dirty). Dirty files elsewhere are ignored —
 // this guard is about "did the fire land the work it touched", not general repo hygiene.
-const WATCHED = [/^packages\//, /^scripts\//, /^deployment\.jsonc$/, /^\.claude\/run-the-loop\//, /^\.claude\/modifier-matrix\.json$/, /^docs\//, /^CLAUDE\.md$/];
+const WATCHED = [/^\.claude\/commands\/run-the-loop\.md$/, /^packages\//, /^scripts\//, /^deployment\.jsonc$/, /^\.claude\/run-the-loop\//, /^\.claude\/modifier-matrix\.json$/, /^docs\//, /^CLAUDE\.md$/];
 
 let porcelain = "";
 try {
@@ -114,7 +114,9 @@ if (forkInitialized) try {
   if (!pushed) {
     submoduleIssues.push(`submodule HEAD ${subHead.slice(0, 8)} NOT pushed to origin/megabyte-os — push the fork (the gitlink points at an unreachable SHA)`);
   }
-} catch { /* submodule absent or git error — not a stranding signal, skip quietly */ }
+} catch {
+  submoduleIssues.push(`${SUBMODULE} HEAD inspection failed — repair its Git metadata before verifying the fork`);
+}
 
 // GUARD 4 — FORK WORKING-TREE DIRT (fire-164). Query the fork's OWN porcelain directly; the parent's
 // `diff.ignoreSubmodules=dirty` can't suppress it. Dirty TRACKED fork files = a feature edited/deployed
@@ -128,7 +130,9 @@ if (forkInitialized) try {
     if (xy === "??") continue; // untracked inside the fork — allowed (generated/scratch)
     forkDirty.push({ xy, path: line.slice(3).replace(/^"|"$/g, "") });
   }
-} catch { /* submodule absent or git error — skip quietly */ }
+} catch {
+  submoduleIssues.push(`${SUBMODULE} working-tree inspection failed — fork cleanliness is unverified`);
+}
 
 const out = {
   meta: { repo: ROOT },
@@ -173,6 +177,8 @@ if (forkDirty.length) {
   process.stderr.write(`A dirty fork file is UNcommitted ⇒ NOT in the gitlink. The lease phase can't say whether prod serves it (a fire flips to verify/ship for LOCAL vitest/tsc BEFORE deploying — fire-244). Cross-check check-deploy-state: (a) if prod ALREADY ran this (deployed-but-uncommitted, prod-ahead-of-git) → salvage = commit+push fork + bump gitlink; (b) if NOT deployed (built-but-not-shipped, fire-243 class) → salvage = the FULL finish: commit+push fork → bump gitlink → DEPLOY → prod-verify. Never assume prod already serves a forkDirty change.\n`);
 } else if (!forkInitialized) {
   process.stderr.write(`⚠️  ${SUBMODULE} fork working-tree checks skipped — not initialized.\n`);
+} else if (submoduleIssues.some((issue) => issue.includes("working-tree inspection failed"))) {
+  process.stderr.write(`⚠️  ${SUBMODULE} fork working tree unverified — Git inspection failed.\n`);
 } else {
   process.stderr.write(`✅ ${SUBMODULE} fork working tree clean — no deployed-but-uncommitted fork changes.\n`);
 }

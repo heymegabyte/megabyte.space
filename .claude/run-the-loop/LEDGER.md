@@ -3292,4 +3292,18 @@
 
 **UX/Beautify-10x (matrix os.database-studio 9.3→9.5):** the schema-map SVG graph (fire-271) closes the standing "FK schema-GRAPH view" knock — the relational diagram with the drawn FK edge + clickable nodes is the new standout alongside the row-detail drawer. Knock vs 10: live D1 bridge.
 
-## fire-273 — deploy recorded (deploy 2026-10-08T17:13:49.421Z; §11 narrative pending)
+## fire-273 — /analytics visitors chart: y-axis reference + hover/focus value tooltip (DEPTH/BEAUTIFY) — §11 narrative salvaged by fire-274
+
+**Shape:** fire-273 SHIPPED a /analytics chart DEPTH+beautify slice (feat `88a5115e`, gitlink `f48f55e9`→`627030ef`), deployed it (17:13:49Z), and `record-deploy --commit` left the narrative STUB (`21684f54` + `a5c55b1b`) — then the lead DIED mid-§11 (lease stuck at phase=`ship`, note "Deploying"), leaving the full narrative unwritten + its §8 loop-improvement (`verify-a11y --only=`) UNCOMMITTED. fire-274 salvaged (see its entry).
+
+**The slice — the matrix `os.analytics` next[0] delivered ("chart hover-tooltip + y-axis reference", 9→9.5):** the 14-day visitors bar chart was rebuilt with (1) a **nice y-axis reference** — gridlines + a labelled y-axis gutter whose top tick is the human-rounded "1.5k" over the 1,240 peak — and (2) an **interactive hover/focus value tooltip** — each bar is now a FOCUSABLE `<button>` with a per-point aria-label ("… visitors on day N"); hovering or keyboard-focusing a bar reveals its exact value (focusing the day-12 peak shows "1,240"). Fork slice = pure `analytics.ts` axis/bar derivation (**22 TDD cases**) + the chart rebuild; `verify-analytics.mjs` extended **+3 prod assertions** (axisLabel "1.5k" + barButtons≥14 + tooltipShows) and pinned `locale: en-US` so `toLocaleString` → "1,240" is deterministic.
+
+**Prod re-verified by fire-274 (the lead died at "Deploying" — never prod-verified):** `verify-analytics.mjs` **7/7 GREEN** on prod — `axisLabel:true`, `barButtons:14`, `tooltipShows:true`, 0 console errors. `check-deploy-state` OK (fork `627030ef` matches last-deployed 17:13:49Z; prod reflects HEAD). The deploy the lead died mid-way through fully landed.
+
+**★ §8 loop-improvement (fire-273's, committed by fire-274's salvage) — `verify-a11y.mjs --only=<substr>`:** a single-surface fire can run the CANONICAL a11y gate cheaply (e.g. `--only=/analytics`) instead of the full ~40-route dual-theme sweep — born of fire-273 hand-rolling a throwaway scoped audit. The `ROUTES` list stays COMPLETE (`check-a11y-coverage` still enforces every fork route is listed — **65/65 green**); `--only` only subsets runtime iteration + skips the click-nav editor legs. Empty `--only` = audit everything (green-sweep default, UNCHANGED). Commit `1d99ed5c`.
+
+**UX/Beautify-10x (matrix `os.analytics` 9→9.5, passes 1→2):** the y-axis reference + the interactive tooltip close BOTH standing knocks ("no chart hover-tooltip/axis"). The chart now reads as a real Coinbase-Pro-density viz — labelled gridlines + a focus-revealed value readout, AA-safe (bars are focusable buttons with text aria-labels, axis labels are text). Knock vs 10: still sample data — the LIVE D1 `visitor_events`→aggregates bridge is the real →10 (matrix next[]).
+
+**Commits:** `88a5115e` (feat: fork chart + verify-analytics assertions) · `21684f54` (deploy-record) · `a5c55b1b` (stub) · `1d99ed5c` (verify-a11y `--only` loop-improvement, salvaged) · this §11 bookkeeping. Prod live (fork `627030ef`, deployed 17:13:49Z).
+
+**Next-wave:** (1) /analytics matrix next[] — **per-stat-card sparkline / mini-trend** (9.5→9.7) then the **LIVE D1 `visitor_events` bridge** (→10) · (2) standing DEPTH frontier (`node scripts/check-depth-candidates.mjs`) · (3) re-run the WS-DEMO doc-diff for genuinely-new documented surfaces. WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.

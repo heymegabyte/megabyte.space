@@ -3427,3 +3427,5 @@ home.404, os.artifacts, os.durable-objects, os.editor-resources, os.email, os.ho
 os.mcp, os.realtime, os.research, os.sandboxes, os.secrets, os.skills) — pick the top row, ship its next[0].
 OR continue absorption: the KV key browser (os.storage 9.4→9.5, symmetry). WS-PERF (apex LCP) / WS-N2 /
 WS-12 remain Brian-gated dedicated-session items.
+
+## fire-278 — deploy recorded (deploy 2026-10-08T21:02:24.522Z; §11 narrative pending)

@@ -362,6 +362,16 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   fire-78 gadget, 0 errors, vision 9.5. THE ABSORPTION-TABLE RECIPE (reuse for every future one): a listRPC →
   DataTable (swatch via getGradient + sortable columns + searchable) → onRowClick `useNavigate` → `gadgets-table`-
   style UI flag + a flag-gated Sidebar nav entry → commit `routeTree.gen.ts` (new route). Mirror `routes/gadgets.tsx`.
+- [x] DataTable row-INTERACTIVITY seam extended (fire-270, fork 05299621 / outer 806937e2 / deploy f4889a16) —
+  `/database` rows are now click-to-inspect: a REUSED Kumo Dialog (from /models) shows every field
+  (name·type·PK/FK·value) and a foreign-key value drills THROUGH to the related record (`gadget_id → gadgets`,
+  the related row's title shown inline — Notion/Airtable linked-records UX), over honest sample data
+  (unresolvable FKs stay visible, non-drillable; never doomed). Reused DataTable's built-in `onRowClick`
+  (keyboard-operable `role=button` rows) → ZERO shared-component change. Pure helpers
+  (parseFk/findRelatedRow/rowTitle/rowPkValue/resolveFk/rowDetailFields) unit-proven `databaseStudio.test.ts`
+  16/16 (+8 TDD, incl. a demo-honesty test that EVERY sample FK resolves so drill-through always works).
+  `verify-database.mjs` +3 prod assertions → 8/8 GREEN, 0 console errors. Vision 9.3/10 (matrix os.database-studio
+  9→9.3, pass 2). Closes both queued knocks (row-detail drawer + FK-relation half); next = the FK schema-GRAPH view.
 - [ ] (next) extend on the SAME seam — REUSE `DataTable` for: a
   Coinbase-Pro-density dashboard · the "Visitors today" analytics card (needs a capnweb **AuthenticatedApi
   RPC method** + a `ctx.exports` DO counter — NOT a Hono REST route; see § OS fork architecture facts) ·

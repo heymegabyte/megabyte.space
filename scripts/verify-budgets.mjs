@@ -98,11 +98,24 @@ const searchWorks = countSearch > 0 && countSearch < countAfterAdd;
 const accents = await countAccentBorders(page, 'section[aria-label="Budgets"]');
 const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
 
+// fire-275 — forward-looking governance: every row carries a spend-trajectory sparkline + a run-rate
+// projected cap-hit readout. Date-robust PRESENCE checks (exact projected dates shift daily, so we
+// assert one of each per row by testid, never an exact date). The over-cap budget's projection reads
+// "Over cap" on ANY day (MTD actual, not a projection) — a stable anchor.
+await page.getByRole("button", { name: /^All/ }).first().click().catch(() => {});
+await page.waitForTimeout(300);
+const rowCount = await countRows().catch(() => 0);
+const sparklines = await page.locator('section[aria-label="Budgets"] [data-testid="budget-sparkline"]').count().catch(() => 0);
+const projections = await page.locator('section[aria-label="Budgets"] [data-testid="cap-projection"]').count().catch(() => 0);
+const overCapProjection = await page.locator('section[aria-label="Budgets"] [data-testid="cap-projection"]', { hasText: /over cap/i }).count().catch(() => 0);
+const sparklinesRender = rowCount > 0 && sparklines >= rowCount;
+const projectionsRender = rowCount > 0 && projections >= rowCount && overCapProjection >= 1;
+
 await page.screenshot({ path: "scripts/.budgets-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAfterAdd, countAgent, countSearch, addWorks, scopeFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAfterAdd, countAgent, countSearch, addWorks, scopeFilterWorks, searchWorks, accents, rowCount, sparklines, projections, overCapProjection, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -114,6 +127,8 @@ check(addWorks, `Composer adds a budget (${countAll} → ${countAfterAdd})`, "ad
 check(scopeFilterWorks, `Scope filter narrows the list (All ${countAfterAdd} → Agent ${countAgent})`, "scope pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAfterAdd} → "lead-scorer" ${countSearch})`, "search did not narrow the list");
 check(accentBordersRender, `Over + near rows carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /budgets (danger ${accents.danger}, warning ${accents.warning})`);
+check(sparklinesRender, `Every row has a spend-trajectory sparkline (${sparklines} ≥ ${rowCount})`, `spend-trajectory sparklines missing (${sparklines} for ${rowCount} rows)`);
+check(projectionsRender, `Every row has a run-rate cap projection, incl. an over-cap readout (${projections} ≥ ${rowCount}, over-cap ${overCapProjection})`, `cap projections missing (${projections} for ${rowCount} rows, over-cap ${overCapProjection})`);
 check(realErrors.length === 0, "0 console errors on /budgets", `${realErrors.length} console errors`);
 console.log(ok ? "✅ BUDGETS GREEN" : "❌ budgets check failed");
 process.exit(ok ? 0 : 1);

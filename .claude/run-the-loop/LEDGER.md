@@ -3381,3 +3381,5 @@ os.skills → pick the top row (home.404)". The next lead reads the lane from th
 CF-integration surface — e.g. os.email reputation gauge, os.mcp expose-tools expand-row, os.realtime
 participant avatars). WS-PERF (apex LCP ~7.5s) / WS-N2 (agents data model) / WS-12 (DeepSeek routing) remain
 Brian-gated dedicated-session items.
+
+## fire-277 — deploy recorded (deploy 2026-10-08T19:52:44.330Z; §11 narrative pending)

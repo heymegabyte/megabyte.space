@@ -1,0 +1,7 @@
+# Independent recovery review — fire-279 fleet
+
+Remote main was observed at 5cc8d9a3. Failed run 37810852970 retained af8366fe, ff3028b8 and 8770b90e in worktree 8770b90e, absent from current main ancestry. Earlier e9b95de0 is already reachable from this base. Recovered all three commits as 4884a465, aa97e8fb and 366fe8ac; resolved only the ledger append conflict, preserving newer content byte-for-byte. No prior success receipt was treated as publication proof.
+
+Recovered loop improvement: NUL porcelain v1 preserves literal filenames, consumes both rename/copy endpoints and checks either watched path. Fresh real Git regressions pass 7/7; fresh full scripts pass 96/96; script types pass. Independent read-only cr Codex subscription review (observed gpt-6.1-sol) accepted the parser and append-only bookkeeping. It identified real copy-detection and wholly unwatched rename fixtures as remaining coverage gaps.
+
+Both frozen dependency workspaces installed. Fork remains ed31c121; no product or submodule change. check-deploy-state warns the recorded deployment is 22672b5a: this is recorded-state drift, not proof of the actual live version. verify-prod exits 2 because BA E2E credentials are missing. Cloudflare and direct DeepSeek credentials are also missing from environment and broker; no deployment, browser journey, vision score or paid fallback claimed. The old provider-policy alias is missing; canonical shared policy was read. GitHub remains scheduler; outer runner owns publication.

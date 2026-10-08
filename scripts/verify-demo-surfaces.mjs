@@ -28,6 +28,7 @@ const SURFACES = [
   { label: "Database", path: "/database", needles: [/database studio/i, /sample data/i, /schema/i, /select \* from/i] },
   { label: "Customers", path: "/customers", needles: [/sample data/i, /conversion funnel/i, /timeline/i, /visitors/i, /in pipeline|active mrr/i] },
   { label: "Images", path: "/images", needles: [/sample images/i, /variant/i, /imagedelivery|deliver/i] },
+  { label: "Stream", path: "/stream", needles: [/sample videos/i, /HLS|manifest/i, /live input/i] },
 ];
 
 const browser = await chromium.launch();

@@ -8,6 +8,7 @@
  * PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -51,6 +52,11 @@ const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
 
+// surfaceAccent prod net (fire-245): error lines carry a danger left-border + warn lines a warning one
+// (debug/info stay quiet) — the shared row-accent that lifts attention lines out of the dense stream.
+const accents = await countAccentBorders(page, 'section[aria-label="Log stream"]');
+const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
+
 // INTERACTIVE 1 — a level pill narrows the stream. All (18) → Error (fewer, >0).
 const countLines = () => page.locator('section[aria-label="Log stream"] li').count();
 const countAll = await countLines().catch(() => 0);
@@ -93,7 +99,7 @@ await browser.close();
 
 // A benign WS teardown message during nav is not a real console error.
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, levelFilterWorks, searchWorks, liveToggleWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, levelFilterWorks, searchWorks, liveToggleWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -105,5 +111,6 @@ check(levelFilterWorks, `Level filter narrows the stream (All ${countAll} → Er
 check(searchWorks, `Search narrows the stream (All ${countAll} → "scheduler" ${countSearch})`, "search did not narrow the stream");
 check(liveToggleWorks, "Live/Paused toggle flips", "live toggle did not flip");
 check(realErrors.length === 0, "0 console errors on /logs", `${realErrors.length} console errors`);
+check(accentBordersRender, `Error + warn lines carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /logs (danger ${accents.danger}, warning ${accents.warning})`);
 console.log(ok ? "✅ LOGS GREEN" : "❌ logs check failed");
 process.exit(ok ? 0 : 1);

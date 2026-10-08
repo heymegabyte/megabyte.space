@@ -8,6 +8,7 @@
  * BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -50,6 +51,11 @@ const onPath = /\/queues/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// surfaceAccent prod net (fire-245): backlogged queues carry a warning left-border + the paused consumer
+// a muted one (healthy stays quiet) — the fire-244 paused-dot knock, now a prod-asserted accent.
+const accents = await countAccentBorders(page, 'section[aria-label="Queues list"]');
+const accentBordersRender = accents.warning >= 1 && accents.muted >= 1;
 
 const countRows = () => page.locator('section[aria-label="Queues list"] li').count();
 
@@ -101,7 +107,7 @@ await page.screenshot({ path: "scripts/.queues-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countBack, countSearch, drillInWorks, retryWorks, statusFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countBack, countSearch, drillInWorks, retryWorks, statusFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -114,5 +120,6 @@ check(retryWorks, "Retry failed replays the dead-letter (Retrying…)", "retry d
 check(statusFilterWorks, `Status filter narrows the list (All ${countAll} → Backlogged ${countBack})`, "status pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAll} → "sms" ${countSearch})`, "search did not narrow the list");
 check(realErrors.length === 0, "0 console errors on /queues", `${realErrors.length} console errors`);
+check(accentBordersRender, `Backlogged + paused queues carry accent borders (warning ${accents.warning} + muted ${accents.muted})`, `surfaceAccent borders missing on /queues (warning ${accents.warning}, muted ${accents.muted})`);
 console.log(ok ? "✅ QUEUES GREEN" : "❌ queues check failed");
 process.exit(ok ? 0 : 1);

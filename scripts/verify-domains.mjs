@@ -8,6 +8,7 @@
  * data". BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -50,6 +51,11 @@ const onPath = /\/domains/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// surfaceAccent prod net (fire-245): error domains carry a danger left-border + pending-DNS ones a
+// warning border (active stays quiet) — the shared per-status row-accent.
+const accents = await countAccentBorders(page, 'section[aria-label="Domains"]');
+const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
 
 const countRows = () => page.locator('section[aria-label="Domains"] li').count();
 
@@ -100,7 +106,7 @@ await page.screenshot({ path: "scripts/.domains-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countActive, countSearch, statusFilterWorks, searchWorks, addWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countActive, countSearch, statusFilterWorks, searchWorks, addWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -112,5 +118,6 @@ check(statusFilterWorks, `Status filter narrows the list (All ${countAll} → Ac
 check(searchWorks, `Search narrows the list (All ${countAll} → "acme" ${countSearch})`, "search did not narrow the list");
 check(addWorks, "Add-domain composer provisions a new pending domain (row count +1)", "add-domain did not add a pending row");
 check(realErrors.length === 0, "0 console errors on /domains", `${realErrors.length} console errors`);
+check(accentBordersRender, `Error + pending domains carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /domains (danger ${accents.danger}, warning ${accents.warning})`);
 console.log(ok ? "✅ DOMAINS GREEN" : "❌ domains check failed");
 process.exit(ok ? 0 : 1);

@@ -9,6 +9,7 @@
  * PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -60,6 +61,11 @@ const liveBand = /Checking your workers|Workers unavailable|No workers deployed|
 const countRows = () => page.locator('section[aria-label="Workers"] li').count();
 const countAll = await countRows().catch(() => 0);
 
+// surfaceAccent prod net (fire-245): the erroring (lead-scorer) + throttled (media-orchestrator)
+// workers carry their colored left-border — proves the shared row-accent survives the build + renders.
+const accents = await countAccentBorders(page, 'section[aria-label="Workers"]');
+const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
+
 // INTERACTIVE 1 — worker→detail drill-in. Default detail = click-counter; click lead-scorer.
 let drillInWorks = false, logsLinkPresent = false;
 const row = page.getByRole("button", { name: "Worker: lead-scorer" }).first();
@@ -102,7 +108,7 @@ await browser.close();
 // already in CLOSING or CLOSED state" race — filtered estate-wide (fire-161), canonical pattern matched
 // to the actual phrasing (the old `… state` anchor missed "CLOSING or CLOSED state").
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countHealthy, countSearch, drillInWorks, logsLinkPresent, statusFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countHealthy, countSearch, drillInWorks, logsLinkPresent, statusFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -116,5 +122,6 @@ check(logsLinkPresent, "Worker detail links to its runtime Logs (View logs)", "n
 check(statusFilterWorks, `Status filter narrows the list (All ${countAll} → Healthy ${countHealthy})`, "status pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAll} → "lead" ${countSearch})`, "search did not narrow the list");
 check(realErrors.length === 0, "0 console errors on /compute", `${realErrors.length} console errors`);
+check(accentBordersRender, `Attention rows carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /compute (danger ${accents.danger}, warning ${accents.warning})`);
 console.log(ok ? "✅ COMPUTE GREEN" : "❌ compute check failed");
 process.exit(ok ? 0 : 1);

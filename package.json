@@ -13,7 +13,7 @@
     "lint:check": "vp lint",
     "lint:fix": "vp lint --fix",
     "lint": "pnpm run lint:check && pnpm run types:scripts && pnpm run build",
-    "check:interconnect": "node scripts/check-route-reachability.mjs && node scripts/check-dead-components.mjs",
+    "check:interconnect": "node scripts/check-route-reachability.mjs && node scripts/check-dead-components.mjs && node scripts/check-accent-coverage.mjs",
     "check": "node scripts/check-submodule-resolvable.mjs && pnpm run check:interconnect && node scripts/check-scripts-types.mjs && node scripts/deploy.ts --check",
     "deploy": "node scripts/deploy.ts"
   },

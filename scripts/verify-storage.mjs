@@ -8,6 +8,7 @@
  * BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -50,6 +51,11 @@ const onPath = /\/storage/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// surfaceAccent prod net (fire-245): the near-limit store (media-uploads 83%) carries a warning
+// left-border — keyed on the same NEAR_LIMIT_PERCENT as nearLimitCount + the per-row warning dot.
+const accents = await countAccentBorders(page, 'section[aria-label="Stores"]');
+const accentBordersRender = accents.warning >= 1;
 
 // DEPTH (fire-224): the live "your workspaces provisioning storage" band renders one of its fail-soft
 // states — running for the ba-e2e account (≥1 gadget). Proves the real listGadgets wiring (the STORAGE-
@@ -98,7 +104,7 @@ await page.screenshot({ path: "scripts/.storage-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countD1, countSearch, drillInWorks, browseLinkPresent, typeFilterWorks, searchWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -112,5 +118,6 @@ check(browseLinkPresent, "D1 store detail links to Database Studio (Browse schem
 check(typeFilterWorks, `Type filter narrows the list (All ${countAll} → D1 ${countD1})`, "type pill did not narrow the list");
 check(searchWorks, `Search narrows the list (All ${countAll} → "media" ${countSearch})`, "search did not narrow the list");
 check(realErrors.length === 0, "0 console errors on /storage", `${realErrors.length} console errors`);
+check(accentBordersRender, `Near-limit store carries a warning accent border (warning ${accents.warning})`, `surfaceAccent border missing on /storage (warning ${accents.warning})`);
 console.log(ok ? "✅ STORAGE GREEN" : "❌ storage check failed");
 process.exit(ok ? 0 : 1);

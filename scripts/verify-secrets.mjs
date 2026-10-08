@@ -7,6 +7,7 @@
  * masks + adds one. Clearly labeled "Preview · sample data". BA-authed real Chromium, PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -49,6 +50,11 @@ const onPath = /\/secrets/.test(page.url());
 const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
+
+// surfaceAccent prod net (fire-245): the stale secrets (STRIPE 114d + CLEARBIT 140d) carry a warning
+// left-border — keyed on the same isStale test as the "Needs rotation" badge + stat.
+const accents = await countAccentBorders(page, 'section[aria-label="Secrets"]');
+const accentBordersRender = accents.warning >= 1;
 
 const countRows = () => page.locator('section[aria-label="Secrets"] li').count();
 const countAll = await countRows().catch(() => 0);
@@ -119,7 +125,7 @@ await page.screenshot({ path: "scripts/.secrets-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAccount, countSearch, rotateWorks, staleBefore, staleAfter, staleStatStable, scopeFilterWorks, searchWorks, addWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countAccount, countSearch, rotateWorks, staleBefore, staleAfter, staleStatStable, scopeFilterWorks, searchWorks, addWorks, accents, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -133,5 +139,6 @@ check(scopeFilterWorks, `Scope filter narrows the list (All ${countAll} → Acco
 check(searchWorks, `Search narrows the list (All ${countAll} → "stripe" ${countSearch})`, "search did not narrow the list");
 check(addWorks, "Add-secret composer masks + adds a row (value never shown in full)", "add-secret did not add a masked row");
 check(realErrors.length === 0, "0 console errors on /secrets", `${realErrors.length} console errors`);
+check(accentBordersRender, `Stale secrets carry a warning accent border (warning ${accents.warning})`, `surfaceAccent border missing on /secrets (warning ${accents.warning})`);
 console.log(ok ? "✅ SECRETS GREEN" : "❌ secrets check failed");
 process.exit(ok ? 0 : 1);

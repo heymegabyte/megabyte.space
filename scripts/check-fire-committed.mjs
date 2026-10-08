@@ -57,22 +57,31 @@ const WATCHED = [/^\.claude\/commands\/run-the-loop\.md$/, /^packages\//, /^scri
 
 let porcelain = "";
 try {
-  porcelain = execFileSync("git", ["status", "--porcelain"], { cwd: ROOT, encoding: "utf8" });
+  porcelain = execFileSync("git", ["status", "--porcelain=v1", "-z"], { cwd: ROOT, encoding: "utf8" });
 } catch (e) {
   process.stderr.write(`git status failed: ${e.message}\n`);
   process.exit(CI ? 1 : 0);
 }
 
-// Each line: "XY <path>" — XY is the two-char status. "??" = untracked (allowed). Anything else
-// with a non-space in X or Y is a tracked change that should have been committed.
-const dirty = [];
-for (const line of porcelain.split("\n")) {
-  if (!line.trim()) continue;
-  const xy = line.slice(0, 2);
-  const path = line.slice(3).replace(/^"|"$/g, "");
-  if (xy === "??") continue; // untracked — allowed
-  if (WATCHED.some((re) => re.test(path))) dirty.push({ xy, path });
+// NUL framing preserves literal tabs/newlines and bypasses Git's quoted-path encoding.
+// In -z mode a rename/copy is destination NUL source NUL (no " -> " separator).
+/** @param {string} status */
+function trackedEntries(status) {
+  const fields = status.split("\0");
+  const entries = [];
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    if (!field) continue;
+    const xy = field.slice(0, 2);
+    const path = field.slice(3);
+    const originalPath = /[RC]/.test(xy) ? fields[++i] : undefined;
+    if (xy === "??" || xy === "!!") continue;
+    entries.push({ xy, path, ...(originalPath !== undefined ? { originalPath } : {}) });
+  }
+  return entries;
 }
+const dirty = trackedEntries(porcelain).filter(({ path, originalPath }) =>
+  WATCHED.some((re) => re.test(path) || (originalPath !== undefined && re.test(originalPath))));
 
 // GUARD 2 — placeholder-SHA scan of BACKLOG.md ticked items (fire-146 class). A `- [x]` line that
 // still carries `fork <…>` / `gitlink <…>` / a bare `<this>` is a ticked deliverable crediting a
@@ -123,13 +132,8 @@ if (forkInitialized) try {
 // but never committed to the fork (prod-ahead-of-git). Untracked (??) inside the fork is allowed.
 const forkDirty = [];
 if (forkInitialized) try {
-  const forkPorcelain = execFileSync("git", ["-C", SUBMODULE, "status", "--porcelain"], { cwd: ROOT, encoding: "utf8" });
-  for (const line of forkPorcelain.split("\n")) {
-    if (!line.trim()) continue;
-    const xy = line.slice(0, 2);
-    if (xy === "??") continue; // untracked inside the fork — allowed (generated/scratch)
-    forkDirty.push({ xy, path: line.slice(3).replace(/^"|"$/g, "") });
-  }
+  const forkPorcelain = execFileSync("git", ["-C", SUBMODULE, "status", "--porcelain=v1", "-z"], { cwd: ROOT, encoding: "utf8" });
+  forkDirty.push(...trackedEntries(forkPorcelain));
 } catch {
   submoduleIssues.push(`${SUBMODULE} working-tree inspection failed — fork cleanliness is unverified`);
 }

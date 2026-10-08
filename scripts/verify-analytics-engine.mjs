@@ -34,6 +34,8 @@ await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered"
 const errors = [];
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 page.on("pageerror", (e) => errors.push(String(e)));
+// Grant clipboard-write so the real click on "Copy query" resolves in headless Chromium (else it's denied).
+await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: APEX }).catch(() => {});
 
 await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 40000 });
 await page.fill('input[type="email"]', EMAIL);
@@ -88,10 +90,27 @@ if (await search.count().then((c) => c > 0).catch(() => false)) {
 }
 const searchWorks = countSearch > 0 && countSearch < countAll;
 
+// DEPTH (fire-276) — per-dataset 24h volume sparklines: one cyan polyline per dataset row (All state, 7 rows).
+const sparklineCount = await page.locator('section[aria-label="Analytics Engine datasets"] svg.ae-spark polyline').count().catch(() => 0);
+const sparklinesRender = countAll > 0 && sparklineCount >= countAll;
+
+// DEPTH (fire-276) — the Copy-query button copies the SQL and flips to a transient "Copied" confirm. The
+// button lives in the "Sample query" section (stable locator; its visible text IS the accessible name).
+const copyBtn = page.locator('section[aria-label="Sample query"] button').first();
+const hasCopyBtn = await copyBtn.count().then((c) => c > 0).catch(() => false);
+let copyBefore = "", copyAfter = "";
+if (hasCopyBtn) {
+  copyBefore = (await copyBtn.innerText().catch(() => "")).trim();
+  await copyBtn.click().catch(() => {});
+  await page.waitForTimeout(350);
+  copyAfter = (await copyBtn.innerText().catch(() => "")).trim();
+}
+const copyQueryWorks = /copy query/i.test(copyBefore) && /copied/i.test(copyAfter);
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countCustom, countSearch, sqlPanel, categoryFilterWorks, searchWorks, analyticsLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countCustom, countSearch, sqlPanel, categoryFilterWorks, searchWorks, analyticsLink, sparklineCount, sparklinesRender, hasCopyBtn, copyBefore, copyAfter, copyQueryWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -103,6 +122,8 @@ check(categoryFilterWorks, `Category filter narrows the datasets (All ${countAll
 check(searchWorks, `Search narrows the datasets (All ${countAll} → "inference" ${countSearch})`, "search did not narrow the datasets");
 check(sqlPanel, "Signature SQL-over-events query panel renders (SELECT … FROM http_requests)", "the sample SQL query panel is missing");
 check(analyticsLink, "Cross-link to Analytics present (interconnect)", "no Analytics cross-link");
+check(sparklinesRender, `Per-dataset 24h volume sparklines render (${sparklineCount} ≥ ${countAll} rows)`, `expected ≥${countAll} dataset sparklines, found ${sparklineCount}`);
+check(copyQueryWorks, `Copy-query button copies the SQL + confirms ("${copyBefore}" → "${copyAfter}")`, `copy-query button did not flip to a Copied confirm (before="${copyBefore}" after="${copyAfter}")`);
 check(realErrors.length === 0, "0 console errors on /analytics-engine", `${realErrors.length} console errors`);
 console.log(ok ? "✅ ANALYTICS-ENGINE GREEN" : "❌ analytics-engine check failed");
 process.exit(ok ? 0 : 1);

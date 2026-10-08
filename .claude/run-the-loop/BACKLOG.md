@@ -1028,3 +1028,5 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 - [ ] fire-273 discovery — add a real Git copy-detection fixture for check-fire-committed and assert subsequent-record framing. Rename and unusual-path cases passed in af8366fe; copy framing has independent in-memory review only.
 - [ ] fire-273 discovery — reconcile ARCHITECTURE.md hot-path documentation with the verified apex Better Auth topology in CLAUDE.md; remove stale public-apex/os-Access framing without changing auth. Acceptance: documented routes and boundaries agree with current deployment config and production probes when E2E credentials are available.
+
+- [ ] fire-279 recovery discovery — add a real Git wholly unwatched rename fixture to check-fire-committed; assert dirty remains empty with healthy fork metadata and a following tracked record. Independent reviewer accepted parsing but identified this exclusion gap.

@@ -1,7 +1,6 @@
 {
-  "forkSha": "b3fc9a03b2c3274d8d235b6a04fd0789b7e6bb6d",
-  "outerSha": "7aafee703c03bc72b1329b11e11e6b6cdbba5b6b",
-  "iso": "2026-10-08T08:51:32.089Z",
-  "fire": "fire-262-90c0e764",
-  "note": "/search depth — relevance chip + match count + group-by-type toggle"
+  "forkSha": "437ef949e80c9ae7238291c7cb00fd5afa68e59b",
+  "outerSha": "18bed93aa293d4264c99f6383ad94750754537cc",
+  "iso": "2026-10-08T11:06:50.256Z",
+  "fire": "fire-265-salvage-autorag"
 }

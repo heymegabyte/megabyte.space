@@ -634,6 +634,18 @@
         "per-card hover micro-preview of the destination surface"
       ],
       "notes": "fire-250 SALVAGE (of fire-249's wedged-handoff strand) — the in-editor Resources launchpad (GadgetEditor -> ResourcesPanel). Surfaced 3 EXISTING platform routes as new preview cards: Gatekeepers->/gatekeepers (Lock icon), Providers->/providers (Faders), Blueprints->/blueprints (Blueprint), keeping RESOURCES[] in sync with the shipped platform routes per WS-DEMO. 53 cards total ({live:3, preview:50}). Verified: tsc --noEmit clean + fork vitest 889/0 + verify-resources-launchpad (all 53 'View ->' links resolve, covers every /admin platform surface, floor 50) + verify-resources-panel BROWSER proof on prod (opened a workspace, Resources tab, grid visible, 53 cards, 0 console errors). The deploy printed 'No updated asset files' (wedged fire-249 had already uploaded the identical dist) — confirmed shipped via the 3 unique panel blurbs in the built workspace._id-*.js chunk + the browser proof (new CLAUDE.md Gotcha). Fork c693744f / outer 84fed47b / deploy a1e06a24 / verify-prod 11/11. Score 9 — clean, dense, on-brand launchpad; the 3 new preview cards slot in seamlessly. Knock vs 9.5: the long single grid wants a live/preview grouping or a filter as cards climb."
+    },
+    "os.autorag": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 8,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "★ Direct-Read vision re-score — NO fresh vision screenshot was captured this fire (functional verify-autorag 9/9 only); score is a conservative 8 floor pending the real verdict (expect 9, matching the sibling accent/honest-preview surfaces)",
+        "wire a LIVE AutoRAG index (point at an R2/D1 source, real embeddings + retrieval + a cited generated answer via Workers AI) replacing sample data — the real ->10",
+        "citation drill-in: click a citation chip -> open the source chunk/document"
+      ],
+      "notes": "fire-264 CREATED/SHIPPED (WS-DEMO doc-diff REOPENED AutoRAG — fire-194 had grep-SKIPPED it as 0-hits/knowledge-only, but the frontier is NEVER closed per ws-demo-saturated-rebalance-to-perf). /autorag = Cloudflare AI Search / managed RAG: a natural-language ask -> cited-answer panel + an index registry (data source / status / documents / embedding model), DISTINCT from /vectorize (raw vectors) + /search (keyword FTS5) + /knowledge (source registry) = the end-to-end ask->cited-answer pipeline. Pure helpers unit-proven (autorag.test.ts); wired Sidebar + Cmd-K + ResourcesPanel + AdminPage with the RESOURCES superset-of PLATFORM_FEATURES launchpad sync. AA-safe (status color on DOTS/BORDERS only, never colored text — kumo-accent-text-not-aa). Honest 'Preview / sample data'. fire-264 died at phase=build before the gitlink bump; fire-265 salvaged partway (bumped gitlink b3fc9a03->437ef949, committed 18bed93a, deployed 11:06:50Z, committed verify-autorag test 25242663) but DIED at phase=verify before committing the deploy record + pushing origin + S11. fire-266 completed the salvage NO-rebuild: verify-autorag.mjs 9/9 GREEN on prod (reachable via rail, ask panel swaps the cited answer, status filter All 6->Error 1, search All 6->handbook 1, indexing+error rows carry accent borders danger 1 + warning 1, 0 console errors) + verify-prod 11/11 -> committed the deploy record + published origin/main (the 18bed93a + 25242663 commits were LOCAL-ONLY, the fire-238 unpushed-outer strand). NO fresh vision pass (functional-verify-only salvage, score 8 floor pending re-score). Fork 437ef949 / outer 18bed93a / deploy 11:06:50Z (by fire-265)."
     }
   }
 }

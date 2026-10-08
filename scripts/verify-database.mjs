@@ -93,9 +93,30 @@ if (await rowBtn.count().then((c) => c > 0).catch(() => false)) {
   await page.screenshot({ path: "scripts/.database-proof.png", fullPage: true }).catch(() => {});
 }
 
+// SCHEMA MAP (the fire-271 slice): the relational graph renders as an SVG with the FK edge drawn
+// (gadget_id → gadgets.id), and clicking a graph node selects that table (drives the Schema panel).
+// Close any open drill dialog first so the map is interactable, then prove the node → table wiring.
+await page.keyboard.press("Escape").catch(() => {});
+await page.waitForTimeout(300);
+const mapSvg = page.locator('svg[aria-label^="Relationship diagram"]').first();
+const schemaMapRenders = await mapSvg.count().then((c) => c > 0).catch(() => false);
+const graphEdgeLabel = await mapSvg.getByText(/gadget_id/).count().then((c) => c > 0).catch(() => false);
+await mapSvg.scrollIntoViewIfNeeded().catch(() => {});
+await page.waitForTimeout(200);
+// Proof screenshot of the schema map (dialog closed, graph visible) — the new slice's vision frame.
+await page.screenshot({ path: "scripts/.database-schema-map.png", fullPage: false }).catch(() => {});
+let graphSelectWorks = false;
+const graphNode = page.getByRole("button", { name: /Inspect visitor_events —/ }).first();
+if (await graphNode.count().then((c) => c > 0).catch(() => false)) {
+  await graphNode.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const bodyAfterGraph = await page.evaluate(() => document.body.innerText);
+  graphSelectWorks = /Schema · visitor_events/i.test(bodyAfterGraph);
+}
+
 await browser.close();
 
-console.log(JSON.stringify({ reachable, onPath, renders, missing, schemaBefore, schemaSwitched, drillInWorks, rowDetailOpens, fkChipPresent, drillThroughWorks, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, schemaBefore, schemaSwitched, drillInWorks, rowDetailOpens, fkChipPresent, drillThroughWorks, schemaMapRenders, graphEdgeLabel, graphSelectWorks, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -107,6 +128,9 @@ check(drillInWorks, "Table click drives the schema panel (gadgets → action_log
 check(rowDetailOpens, "Row click opens the detail Dialog", "clicking an action_log row did not open the detail dialog");
 check(fkChipPresent, "Detail shows a foreign-key drill chip (gadget_id → gadgets)", "no FK drill chip in the row detail");
 check(drillThroughWorks, "FK chip drills through to the related gadgets record", "drilling the FK did not switch to the related gadgets row");
+check(schemaMapRenders, "Schema map renders as a relational SVG graph", "no schema-map SVG (Relationship diagram)");
+check(graphEdgeLabel, "Schema map draws the FK edge (gadget_id → gadgets.id)", "no FK edge label in the schema map");
+check(graphSelectWorks, "Clicking a schema-map node selects that table", "graph node click did not switch the schema panel to visitor_events");
 check(errors.length === 0, "0 console errors on /database", `${errors.length} console errors`);
 console.log(ok ? "✅ DATABASE GREEN" : "❌ database check failed");
 process.exit(ok ? 0 : 1);

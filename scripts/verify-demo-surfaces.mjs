@@ -29,6 +29,7 @@ const SURFACES = [
   { label: "Customers", path: "/customers", needles: [/sample data/i, /conversion funnel/i, /timeline/i, /visitors/i, /in pipeline|active mrr/i] },
   { label: "Images", path: "/images", needles: [/sample images/i, /variant/i, /imagedelivery|deliver/i] },
   { label: "Stream", path: "/stream", needles: [/sample videos/i, /HLS|manifest/i, /live input/i] },
+  { label: "Turnstile", path: "/turnstile", needles: [/sample widgets/i, /sitekey/i, /solve rate/i] },
 ];
 
 const browser = await chromium.launch();

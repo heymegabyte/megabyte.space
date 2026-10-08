@@ -154,7 +154,16 @@ if (dirty.length) {
   // conclude "prod is live, just commit it." Classify it here so the gate says it outright.
   const DEPLOY_RECORD = ".claude/run-the-loop/.last-deploy.json";
   if (dirty.length === 1 && dirty[0].path === DEPLOY_RECORD) {
-    process.stderr.write(`ℹ️  deploy-record-only strand (fire-224/225 class): the SOLE dirty file is the deploy ledger — a fire deployed + ran record-deploy but died before committing it. If 'node scripts/check-deploy-state.mjs' reads OK, prod already reflects HEAD → just COMMIT the record (NO rebuild/redeploy), per prod-ahead-of-git-salvage.\n`);
+    // The record self-documents its fire/slice (fire-263): echo it so the salvager knows WHAT
+    // shipped (and can grep LEDGER for that fire to see whether §11 is ALSO missing) without
+    // reverse-engineering the commit message.
+    let who = "";
+    try {
+      const rec = JSON.parse(readFileSync(`${ROOT}/${DEPLOY_RECORD}`, "utf8"));
+      const bits = [rec.fire, rec.note].filter(Boolean).join(" — ");
+      if (bits) who = ` [stranded by ${bits}]`;
+    } catch {}
+    process.stderr.write(`ℹ️  deploy-record-only strand (fire-224/225 class)${who}: the SOLE dirty file is the deploy ledger — a fire deployed + ran record-deploy but died before committing it. If 'node scripts/check-deploy-state.mjs' reads OK, prod already reflects HEAD → just COMMIT the record (NO rebuild/redeploy), per prod-ahead-of-git-salvage.\n`);
   }
 } else {
   process.stderr.write(`✅ working tree clean on watched surfaces — the fire committed everything it touched.\n`);

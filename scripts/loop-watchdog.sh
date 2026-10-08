@@ -9,13 +9,18 @@
 # lease, executes progress.md's SHIP PIPELINE, and continues the loop.
 #
 # Triggers (any one):
-#   1. Lease phase == "released-handoff"      — a lead handed off deliberately.
-#   2. Lease heartbeat older than 25 min      — a lead died mid-fire.
-#   3. No lease but progress.md exists        — unshipped debt with no live fire.
+#   1. Lease phase == "released-handoff"      — a lead handed off after a productive fire.
+#   2. Lease phase == "wedged-handoff"        — a lead hit the Bash-classifier outage at
+#                                               orient, did NO work, and bailed fast.
+#   3. Lease heartbeat older than 25 min      — a lead died mid-fire.
+#   4. No lease but progress.md exists        — unshipped debt with no live fire.
 # A LIVE lease (fresh heartbeat) means a healthy fire is running → do nothing.
 #
-# Guards: single-flight lock (skip while a launched session still runs) + 30-min
-# backoff between launches. All activity appends to watchdog.log.
+# Guards: single-flight lock (skip while a launched session still runs) + a per-phase
+# backoff between launches — 30 min after a productive/dead fire, but only 10 min after
+# a `wedged-handoff` so the loop retries ~3× faster through an intermittent classifier
+# outage (a wedged attempt burned ~no resources + has no runaway risk; single-flight is
+# the real anti-runaway guard). All activity appends to watchdog.log.
 #
 # Arm:  launchctl bootstrap "gui/$(id -u)" ~/Library/LaunchAgents/space.megabyte.loop-watchdog.plist
 # Disarm: launchctl bootout "gui/$(id -u)/space.megabyte.loop-watchdog"
@@ -30,7 +35,10 @@ DEBT_HASH_FILE="$REPO/.claude/run-the-loop/.watchdog-debt-hash"
 LOCK="$REPO/.claude/run-the-loop/.watchdog.lock"
 LOG="$REPO/.claude/run-the-loop/watchdog.log"
 STALE_SECS=1500      # 25 min — outside the loop's own 20-min stale window
-BACKOFF_SECS=1800    # at most one fresh launch per 30 min
+BACKOFF_SECS=1800    # at most one fresh launch per 30 min (productive/dead fire)
+WEDGED_BACKOFF_SECS=600  # 10 min after a `wedged-handoff` — a no-work classifier-wedge bail
+                         # retries ~3× faster to catch an unwedged window. Single-flight
+                         # (pid-alive) prevents a short backoff from stacking live sessions.
 DEBT_COOLDOWN_SECS=21600  # 6h — a progress.md whose content is UNCHANGED since the last
                           # fire is gated/stuck debt (e.g. a Brian-gated plan), not a fresh
                           # checkpoint. Fire it ONCE, then back off 6h instead of relaunching
@@ -52,8 +60,8 @@ needsFire() {
   if [ -f "$LEASE" ]; then
     local phase beat beatEpoch now
     phase="$(jsonField "$LEASE" phase)"
-    if [ "$phase" = "released-handoff" ]; then
-      log "trigger: lease phase released-handoff"
+    if [ "$phase" = "released-handoff" ] || [ "$phase" = "wedged-handoff" ]; then
+      log "trigger: lease phase $phase"
       return 0
     fi
     beat="$(jsonField "$LEASE" heartbeat)"
@@ -88,6 +96,15 @@ needsFire() {
   return 1
 }
 
+# Phase-aware backoff: a `wedged-handoff` (a session that hit the Bash-classifier wedge, did
+# NO work, and bailed fast) retries on the SHORT window; everything else on the normal window.
+# Single-flight (pid-alive, below) stays the primary anti-runaway guard, so a short backoff
+# cannot stack overlapping live sessions.
+backoff="$BACKOFF_SECS"
+if [ -f "$LEASE" ] && [ "$(jsonField "$LEASE" phase)" = "wedged-handoff" ]; then
+  backoff="$WEDGED_BACKOFF_SECS"
+fi
+
 # Single-flight + backoff
 if [ -f "$LOCK" ]; then
   lockPid="$(cat "$LOCK" 2>/dev/null || true)"
@@ -96,8 +113,8 @@ if [ -f "$LOCK" ]; then
     exit 0
   fi
   lockAge=$(( $(date +%s) - $(stat -f %m "$LOCK" 2>/dev/null || printf 0) ))
-  if [ "$lockAge" -lt "$BACKOFF_SECS" ]; then
-    log "skip: backoff (${lockAge}s < ${BACKOFF_SECS}s)"
+  if [ "$lockAge" -lt "$backoff" ]; then
+    log "skip: backoff (${lockAge}s < ${backoff}s)"
     exit 0
   fi
 fi

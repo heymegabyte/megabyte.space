@@ -11,13 +11,20 @@
  *   node scripts/loop-fire-lock.mjs claim --fire <slug> [--run-id <id>]
  *   node scripts/loop-fire-lock.mjs heartbeat --run-id <id> [--phase <phase>]
  *   node scripts/loop-fire-lock.mjs release --run-id <id>
- *   node scripts/loop-fire-lock.mjs handoff --run-id <id> [--note <text>]
+ *   node scripts/loop-fire-lock.mjs handoff --run-id <id> [--wedged] [--note <text>]
  *   node scripts/loop-fire-lock.mjs status
  *
  * `handoff` is §11's INFINITE-loop close: instead of deleting the lease on a clean completion, it
  * writes a `released-handoff` lease with a deliberately stale heartbeat, so space.megabyte.loop-watchdog
  * launches a FRESH `claude -p "run the loop"` within ~10 min and the loop runs forever hands-free (the
  * model cannot self-/clear). Deleting instead would leave NO signal and the loop would idle.
+ *
+ * `--wedged` writes a `wedged-handoff` instead: the distinct phase a session uses when it hit the
+ * Bash-classifier outage at orient + did NO work. The watchdog relaunches on it too but with a
+ * SHORT backoff (~10 min, vs ~30 min for a productive `released-handoff`), so the loop retries ~3×
+ * faster through an intermittent outage — the single change that stops a wedge from needing a human
+ * `/clear`. (During a FULL wedge, node is dead too → write this lease with the Write tool instead;
+ * see run-the-loop.md §0. The watchdog triggers on the `wedged-handoff` phase regardless of heartbeat.)
  *
  * Exit codes: 0 ok · 2 usage/error · 3 live lease (coalesce) · 4 not owner.
  * Env: LOOP_FIRE_LEASE_PATH (override lease path, tests) ·
@@ -125,22 +132,30 @@ export function releaseLease({ runId, path = leasePath() }) {
 }
 
 /**
- * Hand the fire off so the watchdog chains the NEXT fire — writes a `released-handoff` lease with a
- * deliberately STALE heartbeat INSTEAD of deleting. This is §11's close on a clean completion: the
- * out-of-session watchdog (which the model cannot replace — it cannot self-/clear) sees the handoff
- * phase and relaunches a fresh session within ~10 min, so the loop runs forever hands-free. The stale
- * heartbeat also makes the lease immediately reclaimable (isLive === false) by whoever runs next.
- * Owner-only (like release), but writes the handoff even when the lease is absent (idempotent re-arm).
- * @param {{ runId: string, note?: string, fire?: string, path?: string, now?: number }} opts
+ * Hand the fire off so the watchdog chains the NEXT fire — writes a handoff lease with a deliberately
+ * STALE heartbeat INSTEAD of deleting. The out-of-session watchdog (which the model cannot replace — it
+ * cannot self-/clear) sees the handoff phase and relaunches a fresh session, so the loop runs forever
+ * hands-free. The stale heartbeat also makes the lease immediately reclaimable (isLive === false) by
+ * whoever runs next. Owner-only (like release), but writes the handoff even when the lease is absent
+ * (idempotent re-arm).
+ *
+ * Two kinds, distinguished by `wedged`:
+ *   - `released-handoff` (default) — §11's close after a PRODUCTIVE fire; watchdog relaunches on the
+ *     normal ~30-min backoff.
+ *   - `wedged-handoff` (`wedged:true`) — a session that hit the Bash-classifier outage at orient + did
+ *     NO work; watchdog relaunches on a SHORT ~10-min backoff so the loop retries ~3× faster through an
+ *     intermittent outage instead of crawling at one attempt / 30 min (project memory
+ *     `infinite-loop-rearm-watchdog-at-s11`). Single-flight (pid-alive) remains the anti-runaway guard.
+ * @param {{ runId: string, note?: string, fire?: string, wedged?: boolean, path?: string, now?: number }} opts
  * @returns {{ok:true,lease:Lease}|{ok:false,code:4,holder:Lease}}
  */
-export function handoffLease({ runId, note = "", fire, path = leasePath(), now = Date.now() }) {
+export function handoffLease({ runId, note = "", fire, wedged = false, path = leasePath(), now = Date.now() }) {
   const current = readLease(path);
   if (current && current.runId !== runId) return { ok: false, code: 4, holder: current };
   const lease = {
     fire: fire || current?.fire || "unknown",
     runId,
-    phase: "released-handoff",
+    phase: wedged ? "wedged-handoff" : "released-handoff",
     heartbeat: new Date(now - 2 * staleMs()).toISOString(), // clearly stale → reclaimable + triggers the watchdog
     note,
   };
@@ -205,13 +220,14 @@ function main() {
     }
     case "handoff": {
       if (!flags["run-id"]) {
-        process.stderr.write("usage: loop-fire-lock handoff --run-id <id> [--fire <slug>] [--note <text>]\n");
+        process.stderr.write("usage: loop-fire-lock handoff --run-id <id> [--wedged] [--fire <slug>] [--note <text>]\n");
         process.exit(2);
       }
       const res = handoffLease({
         runId: flags["run-id"],
         note: flags.note && flags.note !== "true" ? flags.note : "",
         fire: flags.fire && flags.fire !== "true" ? flags.fire : undefined,
+        wedged: flags.wedged === "true",
       });
       if (!res.ok) {
         out({ error: "not-owner", holder: res.holder });

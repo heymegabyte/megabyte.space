@@ -105,3 +105,33 @@ test("handoff on an absent lease still re-arms (idempotent)", () => {
   assert.equal(res.ok, true);
   assert.equal(readLease(path)?.phase, "released-handoff");
 });
+
+test("handoff --wedged writes a wedged-handoff (fast-retry) lease, still stale + reclaimable", () => {
+  const path = tmpLease();
+  claimLease({ fire: "fire-t11", runId: "run-a", path });
+  const res = handoffLease({ runId: "run-a", wedged: true, note: "classifier wedge at orient, no work", path });
+  assert.equal(res.ok, true);
+  const lease = readLease(path);
+  assert.equal(lease?.phase, "wedged-handoff"); // the DISTINCT phase → watchdog uses the ~10-min backoff
+  assert.equal(lease?.fire, "fire-t11"); // carries the fire forward
+  assert.equal(lease?.note, "classifier wedge at orient, no work");
+  assert.equal(isLive(lease), false); // stale → the next (hopefully unwedged) fire reclaims instantly
+});
+
+test("handoff defaults to released-handoff when wedged is omitted (the two phases never blur)", () => {
+  const path = tmpLease();
+  claimLease({ fire: "fire-t12", runId: "run-a", path });
+  assert.equal(handoffLease({ runId: "run-a", path }).ok, true);
+  assert.equal(readLease(path)?.phase, "released-handoff");
+  assert.equal(handoffLease({ runId: "run-a", wedged: false, path }).ok, true);
+  assert.equal(readLease(path)?.phase, "released-handoff");
+});
+
+test("a wedged handoff by a non-owner is refused with code 4", () => {
+  const path = tmpLease();
+  claimLease({ fire: "fire-t13", runId: "run-a", path });
+  const res = handoffLease({ runId: "run-intruder", wedged: true, path });
+  assert.equal(res.ok, false);
+  assert.equal(res.ok === false && res.code, 4);
+  assert.equal(readLease(path)?.phase, "orient"); // holder untouched
+});

@@ -439,10 +439,20 @@ Full role contract: `.claude/commands/run-the-loop.md` §1.17. The invariants th
 ## Fire mutual exclusion (the lease)
 
 `.claude/run-the-loop/.fire-lease.json` serializes fires: claim at orient (a LIVE lease,
-heartbeat <20 min → coalesce this tick), heartbeat per phase, release (delete) at reconcile. A
-stale lease (heartbeat >20 min) is reclaimed — a dead lead never wedges the loop. If a ported
-`scripts/loop-fire-lock.mjs` exists, prefer it (exit 3 = coalesce). One fire at a time means
-one browser fleet, one deploy stream, no conflicting commits.
+heartbeat <20 min → coalesce this tick), heartbeat per phase, and CLOSE at reconcile by HANDING
+OFF — write phase `released-handoff` + a stale heartbeat (NOT deleting) so `loop-watchdog`
+auto-chains the next fire and the loop stays infinite + hands-free (landed fire-217; §11). A
+stale lease (heartbeat >20 min) is reclaimed — a dead lead never wedges the loop. A
+`wedged-handoff` is the same re-arm written by a §0 Bash-classifier-wedge bail that did NO work;
+the watchdog retries it on a short ~10-min backoff (vs ~30 min for `released-handoff`) so an
+intermittent classifier outage recovers ~3× faster (fire-247). If `scripts/loop-fire-lock.mjs`
+is present, prefer it (`claim`/`heartbeat`/`handoff [--wedged]`; exit 3 = coalesce). One fire at
+a time means one browser fleet, one deploy stream, no conflicting commits. A handoff only chains a
+successor if the `space.megabyte.loop-watchdog` launchd agent is ARMED — verify it every §11
+(`launchctl print gui/$(id -u)/space.megabyte.loop-watchdog`); an unarmed watchdog makes every
+handoff a dead-end that forces a human `/clear`. A wedge/saturation at ANY phase (not just orient)
+hands off IMMEDIATELY — never hold a lease at `build`/`verify` through an outage, and commit each
+slice the moment it lands so a wedge strands nothing (project memory `manual-clear-is-a-recovery-gap`).
 
 ## Lease heartbeat discipline for live-resource ops (fire-54↔55-58 collision, 2026-10-03)
 

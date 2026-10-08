@@ -46,7 +46,7 @@
  *   Run it last in a fire, before `loop-fire-lock release`.
  */
 import { execFileSync, } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const CI = process.argv.includes("--ci");
 const ROOT = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
@@ -92,11 +92,19 @@ try {
 // gitlink) AND the submodule's checked-out HEAD must be pushed (reachable from origin/megabyte-os).
 const SUBMODULE = "cloudflare-os";
 const submoduleIssues = [];
+// An empty submodule directory makes git -C walk up to the parent repository.
+// Require its own .git marker before reading HEAD or porcelain (fresh fleet worktrees).
+const forkInitialized = existsSync(`${ROOT}/${SUBMODULE}/.git`);
+if (!forkInitialized) {
+  submoduleIssues.push(`${SUBMODULE} not initialized — run git submodule update --init ${SUBMODULE} before verifying the fork`);
+}
 try {
   const gitlinkStatus = execFileSync("git", ["status", "--porcelain", "--", SUBMODULE], { cwd: ROOT, encoding: "utf8" }).trim();
   if (gitlinkStatus) {
     submoduleIssues.push(`gitlink uncommitted ('${gitlinkStatus}') — commit the ${SUBMODULE} pointer bump (fork advanced without a superproject commit)`);
   }
+} catch { /* parent git status unavailable */ }
+if (forkInitialized) try {
   const subHead = execFileSync("git", ["-C", SUBMODULE, "rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
   let pushed = false;
   try {
@@ -112,7 +120,7 @@ try {
 // `diff.ignoreSubmodules=dirty` can't suppress it. Dirty TRACKED fork files = a feature edited/deployed
 // but never committed to the fork (prod-ahead-of-git). Untracked (??) inside the fork is allowed.
 const forkDirty = [];
-try {
+if (forkInitialized) try {
   const forkPorcelain = execFileSync("git", ["-C", SUBMODULE, "status", "--porcelain"], { cwd: ROOT, encoding: "utf8" });
   for (const line of forkPorcelain.split("\n")) {
     if (!line.trim()) continue;
@@ -163,6 +171,8 @@ if (forkDirty.length) {
   process.stderr.write(`\n⚠️  ${forkDirty.length} dirty TRACKED file(s) INSIDE the ${SUBMODULE} fork — commit them to the fork + bump the gitlink before releasing the lease (fire-164 class — invisible to the parent's diff.ignoreSubmodules=dirty):\n`);
   for (const f of forkDirty) process.stderr.write(`   ${f.xy}  ${SUBMODULE}/${f.path}\n`);
   process.stderr.write(`A dirty fork file is UNcommitted ⇒ NOT in the gitlink. The lease phase can't say whether prod serves it (a fire flips to verify/ship for LOCAL vitest/tsc BEFORE deploying — fire-244). Cross-check check-deploy-state: (a) if prod ALREADY ran this (deployed-but-uncommitted, prod-ahead-of-git) → salvage = commit+push fork + bump gitlink; (b) if NOT deployed (built-but-not-shipped, fire-243 class) → salvage = the FULL finish: commit+push fork → bump gitlink → DEPLOY → prod-verify. Never assume prod already serves a forkDirty change.\n`);
+} else if (!forkInitialized) {
+  process.stderr.write(`⚠️  ${SUBMODULE} fork working-tree checks skipped — not initialized.\n`);
 } else {
   process.stderr.write(`✅ ${SUBMODULE} fork working tree clean — no deployed-but-uncommitted fork changes.\n`);
 }

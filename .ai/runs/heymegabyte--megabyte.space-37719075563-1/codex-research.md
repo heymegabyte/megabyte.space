@@ -1,0 +1,7 @@
+# Independent research — fire-248
+
+Fresh isolated worktree reproduction: cloudflare-os is uninitialized (git submodule status begins `-`). Git run from that directory walks upward to the outer repository, so check-fire-committed falsely identifies outer HEAD as an unpushed fork SHA and outer tracked dirt as fork dirt. Regression fixture reproduced the latter before implementation. Require the fork .git marker before its HEAD/porcelain checks; retain parent gitlink inspection and explicitly block CI pending initialization. Independent reviewer confirmed the cause and requested honest skipped-check output.
+
+No prior failed project receipts or retained worktrees found. GitHub Actions history: current run 37719075563 in progress, two older validation/build runs successful; origin/main contains base 30d301af and fire-247 commits. No publication inferred from reports. Machine provider-policy alias missing; canonical shared-fleet rules/agent-provider-policy.md read instead. cr reports codex-primary subscription enabled with stale usage observations. DeepSeek, Cloudflare and BA E2E credentials absent from environment and broker. No API fallback used.
+
+No UI visited; no visual scores invented. Full product journey/deployment remains blocked; this is a bounded environment-repair iteration, not a product-completion claim. Next: initialize pinned submodule, install locked dependencies, rerun gates; complete authenticated journey once credentials available. GitHub owns cadence and outer runner owns main publication; do not start the legacy watchdog or local cron.

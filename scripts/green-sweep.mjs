@@ -27,6 +27,7 @@ if (!process.env.BA_E2E_EMAIL || !process.env.BA_E2E_PASSWORD) {
 const CHECKS = [
   ['check-provider-policy.mjs', [], 'PROVIDER-POLICY GREEN'], // STATIC GATE: no internal Anthropic/OpenAI API calls or SDK imports in scripts/+.claude/ (agent-provider-policy SSOT; AGENTS.md) — fast/static preamble
   ['check-a11y-coverage.mjs', [], 'A11Y-COVERAGE GREEN'], // DRIFT GATE (fire-151): every fork static route is in verify-a11y's list — fast/static preamble so a new surface can't ship a11y-unaudited (fire-103/117/146/147 class)
+  ['check-greensweep-coverage.mjs', [], 'GREENSWEEP-COVERAGE GREEN'], // DRIFT GATE (fire-261): every WS-DEMO surface verifier is wired into THIS sweep — a surface that shipped+deployed but whose verifier died outside green-sweep silently left the regression net (caught fire-257 /search + fire-260 /budgets retroactively)
   ['verify-resources-launchpad.mjs', [], 'RESOURCES-LAUNCHPAD GREEN'], // DRIFT GATE (fire-223): the in-editor Resources launchpad (GadgetEditor→ResourcesPanel) — every "View →" route resolves + stays in sync with /admin PLATFORM_FEATURES + 50-card floor. Static/secret-free preamble; fills the launchpad-had-no-verifier gap (verify-demo-surfaces covers the RAIL, not this)
   ['check-ledger-current.mjs', [], 'every recent feat/fix commit is cited'], // DRIFT GATE (fire-226): a feat/fix committed to main but never cited in LEDGER.md = the committed-feature-without-bookkeeping class (fire-224/225). check-fire-committed only sees DIRTY files; a cleanly-committed-but-unledgered feat leaves a CLEAN tree. Static/secret-free preamble
   ['check-scripts-types.mjs', [], 'SCRIPTS-TYPES GREEN'], // DRIFT GATE (fire-236): scripts/ (the loop's own tooling + *.test.ts) type-checks clean. `pnpm check` + green-sweep never ran types:scripts, so a RED hid for fires ~230-235 (backlog-frontier/loop-fire-lock test types drifted). Static/secret-free preamble
@@ -96,6 +97,8 @@ const CHECKS = [
   ['verify-artifacts.mjs', [], 'ARTIFACTS GREEN'], // WS-DEMO Artifacts (explorable canvas w/ variants): reachable + type-filter/search narrow + next-variant stepper + outputs/gadgets links (fire-200)
   ['verify-sources.mjs', [], 'SOURCES GREEN'], // WS-DEMO Sources (sync-connector manifest behind Knowledge): reachable + kind-filter/search narrow + sync-now action + knowledge/connections links (fire-201)
   ['verify-database.mjs', [], 'DATABASE GREEN'], // WS-DEMO Database Studio: reachable + renders + table→schema drill-in (fire-148/149, verifier+wiring fire-150)
+  ['verify-budgets.mjs', [], 'BUDGETS GREEN'], // WS-DEMO Budgets (cost-governance: spend caps + per-scope quotas, a NORTH-STAR primitive distinct from /billing): reachable + scope-filter/search narrow + add-budget composer + surfaceAccent over/near row borders (fire-259/260, verifier+wiring fire-261)
+  ['verify-search.mjs', [], 'SEARCH GREEN'], // WS-DEMO Search (universal content search over 6 types, FTS5/BM25-style): reachable + query/type-chip narrow + <mark> term-highlight (fire-257; the check-greensweep-coverage gate caught this strand too — wiring fire-261)
   ['verify-a11y.mjs', [], '0 serious'],
   ['verify-a11y.mjs', ['--light'], '0 serious'],
   ['journey-os-nav.mjs', [], 'GOLDEN-PATH GREEN'],
@@ -114,6 +117,7 @@ const CHECKS = [
 // then-parallel also means mutations finish + RESTORE state before any parallel read sees it. ~3-4 min.
 const SERIAL = new Set([
   'check-a11y-coverage.mjs',
+  'check-greensweep-coverage.mjs', // static drift gate (fire-261) — fast preamble, no shared state
   'check-fork-tests.mjs', // CPU-bound vitest (~14s) — SERIAL so it never races the browser journeys (CPU contention → flakes)
   'verify-pulse-persist.mjs',
   'verify-pulse-snooze.mjs',

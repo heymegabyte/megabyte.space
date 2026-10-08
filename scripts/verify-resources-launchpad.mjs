@@ -6,9 +6,11 @@
  *
  *   (1) NO DEAD "View →" LINKS — every card's `to` route resolves to a real route file in
  *       src/routes/. A card that jumps to a non-existent route is a lying launchpad.
- *   (2) SYNC WITH /admin — every /admin Platform tab feature (AdminPage.tsx PLATFORM_FEATURES[])
- *       that has a management surface also has a launchpad card, minus an explicit, justified
- *       intentional-omit set. Catches "added a platform feature but forgot the launchpad card".
+ *   (2) SYNC WITH /admin (BIDIRECTIONAL) — every /admin Platform tab feature (AdminPage.tsx
+ *       PLATFORM_FEATURES[]) with a management surface has a launchpad card, AND every launchpad
+ *       card is also a Platform feature (fire-251), each minus a tiny justified intentional-omit set.
+ *       Catches BOTH "added a platform feature but forgot the launchpad card" and the reverse "added
+ *       a launchpad card but forgot the /admin feature" — so /admin always demos every surface.
  *   (3) COUNT RATCHET — reports the card count + status breakdown and asserts a floor so a future
  *       edit can't silently drop cards below what shipped.
  *
@@ -33,6 +35,11 @@ const COUNT_FLOOR = 50
 // Platform-tab routes a launchpad card deliberately does NOT carry. Keep tiny + justified.
 //   /gadgets — the launchpad lives INSIDE a gadget editor; a "Gadgets" card would be circular.
 const INTENTIONAL_OMIT = new Set(['/gadgets'])
+
+// The reverse: launchpad routes that deliberately are NOT /admin Platform-tab features. Empty today —
+// every Editor resource surface is also a platform capability (fire-251 synced the last three:
+// Gatekeepers/Providers/Blueprints); kept for symmetry + any future justified exception.
+const ADMIN_INTENTIONAL_OMIT = new Set([])
 
 const fail = []
 const pass = []
@@ -96,6 +103,16 @@ const pfRoutes = [...new Set(features.filter((f) => f.to).map((f) => f.to))]
 const missing = pfRoutes.filter((t) => !resRoutes.has(t) && !INTENTIONAL_OMIT.has(t))
 if (missing.length === 0) ok(`launchpad covers every /admin platform surface (${pfRoutes.length} routes, ${INTENTIONAL_OMIT.size} intentional omit)`)
 else bad(`platform features with NO launchpad card: ${missing.join(', ')} — add a RESOURCES[] card or justify in INTENTIONAL_OMIT`)
+
+// ---- (2b) reverse sync: every launchpad card is also a /admin Platform feature --------------
+// Symmetric to (2) (fire-251): catches "added a launchpad card but forgot the /admin Platform tab
+// feature" — the exact drift where RESOURCES gained Gatekeepers/Providers/Blueprints (fire-249/250)
+// while PLATFORM_FEATURES lagged, so /admin silently stopped demoing every capability the Editor
+// surfaces. Keeps "demo /admin with ALL features" (Brian's WS-DEMO directive) an enforced invariant.
+const pfRouteSet = new Set(pfRoutes)
+const missingFromAdmin = [...resRoutes].filter((t) => !pfRouteSet.has(t) && !ADMIN_INTENTIONAL_OMIT.has(t))
+if (missingFromAdmin.length === 0) ok(`/admin Platform tab covers every launchpad surface (${resRoutes.size} routes)`)
+else bad(`launchpad routes with NO /admin Platform feature: ${missingFromAdmin.join(', ')} — add a PLATFORM_FEATURES entry or justify in ADMIN_INTENTIONAL_OMIT`)
 
 // ---- (3) count ratchet ----------------------------------------------------------------------
 const byStatus = resources.reduce((a, r) => ((a[r.status ?? '?'] = (a[r.status ?? '?'] ?? 0) + 1), a), {})

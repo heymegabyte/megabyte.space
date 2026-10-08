@@ -171,6 +171,25 @@ const getSetCookies = (res) =>
   record("SSO wired (github → github.com)", gh.wired, gh.detail);
   record("SSO wired (google → accounts.google.com)", go.wired, go.detail);
 
+  // Stricter than "wired": assert BA generates the EXACT apex callback redirect_uri for each provider —
+  // https://megabyte.space/api/auth/callback/<provider>. This proves OUR config returns a real SSO user to
+  // the right apex endpoint (the precise value misregistered for Google on Google's side), so a Google
+  // rejection is provably EXTERNAL (our URI is correct) while GitHub is fully configured for real users; and
+  // a future regression repointing the callback at the wrong origin is caught at the deploy gate. (fire-283 —
+  // operationalizes the "ORIGINAL features work with SSO" directive: the furthest automated proof toward a
+  // working real-user GitHub round-trip short of an interactive IdP login, which no headless test can do.)
+  const redirectUriOf = (url) => {
+    try {
+      return new URL(url).searchParams.get("redirect_uri") || "";
+    } catch {
+      return "";
+    }
+  };
+  const ghRu = redirectUriOf(gh.url);
+  const goRu = redirectUriOf(go.url);
+  record("SSO redirect_uri = apex callback (github)", ghRu === `${APEX}/api/auth/callback/github`, ghRu || "(none)");
+  record("SSO redirect_uri = apex callback (google)", goRu === `${APEX}/api/auth/callback/google`, goRu || "(none)");
+
   const ghcb = await probeCallback(gh.url);
   record("SSO callback accepted (github)", gh.wired && !ghcb.errored, `oauthError=${ghcb.errored} → ${ghcb.where}`);
 

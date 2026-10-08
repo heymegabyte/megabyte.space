@@ -8,6 +8,7 @@
  * PROD. Needs BA creds.
  */
 import { chromium } from "playwright";
+import { countAccentBorders } from "./lib/accent-borders.mjs";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -51,6 +52,13 @@ const body = await page.evaluate(() => document.body.innerText);
 const missing = NEEDLES.filter((re) => !re.test(body)).map((re) => re.source);
 const renders = missing.length === 0;
 
+// fire-248: the shared surfaceAccent per-status LEFT-BORDER must actually render — pending rows carry
+// a warning border, rejected feed rows a danger border (graphical, AA-safe both themes). The shared
+// net proves it reaches the live DOM (unit-tested in activityAccent.test.ts; a class rename / Tailwind
+// purge would slip past a unit test). Scoped to the surface's labeled region.
+const accents = await countAccentBorders(page, '[aria-label="Activity and approvals"]');
+const accentBordersRender = accents.danger >= 1 && accents.warning >= 1;
+
 // Count "requests waiting" before, click the first Approve, assert it decremented (HITL is interactive).
 const waitingBefore = Number((body.match(/(\d+)\s+requests?\s+waiting/i) || [])[1] ?? NaN);
 let hitlWorks = false, waitingAfter = NaN;
@@ -66,7 +74,7 @@ if (await approve.count().then((c) => c > 0).catch(() => false)) {
 await page.screenshot({ path: "scripts/.activity-proof.png" });
 await browser.close();
 
-console.log(JSON.stringify({ reachable, onPath, renders, missing, waitingBefore, waitingAfter, hitlWorks, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, accents, waitingBefore, waitingAfter, hitlWorks, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -74,6 +82,7 @@ const check = (c, p, f) => { if (c) console.log(`✅ PASS: ${p}`); else { consol
 check(reachable, "Activity reachable from the sidebar rail", "no Activity rail link (nav wiring missing)");
 check(onPath, "Activity rail click → /activity", "rail click did not reach /activity");
 check(renders, "Activity content renders (approvals + feed + honesty label)", `content missing: ${missing.join(", ")}`);
+check(accentBordersRender, `Pending + rejected rows carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /activity (danger ${accents.danger}, warning ${accents.warning})`);
 check(hitlWorks, "Approve resolves a pending request (HITL interactive)", `Approve did not decrement waiting (${waitingBefore}→${waitingAfter})`);
 check(errors.length === 0, "0 console errors on /activity", `${errors.length} console errors`);
 console.log(ok ? "✅ ACTIVITY GREEN" : "❌ activity check failed");

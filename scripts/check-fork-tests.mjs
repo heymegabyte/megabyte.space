@@ -20,9 +20,12 @@
 import { execSync } from 'node:child_process'
 
 // Baseline = the known-red fork tests on HEAD. RATCHET DOWN ONLY.
-// 2026-10-08 (fire-246): 9 — src/useAuth.test.tsx (jsdom `localStorage` undefined; upstream PR #260).
-// Once the jsdom-localStorage env is fixed in a dedicated session, set this to 0 (BACKLOG WS-FORK-TESTS).
-const BASELINE = 9
+// 2026-10-08 (fire-248): 0 — the fork vitest suite is fully GREEN (886/886). fire-248 fixed the 9
+// known-red src/useAuth.test.tsx failures: 8 were Node 22's native `globalThis.localStorage`
+// (undefined without --localstorage-file) shadowing jsdom's → an in-memory Storage polyfill; the 9th
+// was a STALE CF-Access test asserting pre-BA-4b behaviour → mock the `/api/auth/get-session` probe.
+// This is now a true zero-regression gate: ANY newly-red fork unit test trips it (exit 1).
+const BASELINE = 0
 const FORK_DIR = 'cloudflare-os/packages/workshop-frontend'
 
 let out = ''
@@ -64,7 +67,8 @@ if (failed < BASELINE) {
   process.exit(0)
 }
 console.log(
-  `✅ FORK-TESTS OK: ${failed} failing (${passed} passed) — at the tracked baseline of ${BASELINE} ` +
-    `(known-red: useAuth.test.tsx jsdom localStorage, BACKLOG WS-FORK-TESTS). No new regression.`,
+  BASELINE === 0
+    ? `✅ FORK-TESTS OK: fork vitest fully green (${passed} passed, 0 failing). No regression.`
+    : `✅ FORK-TESTS OK: ${failed} failing (${passed} passed) — at the tracked baseline of ${BASELINE}. No new regression.`,
 )
 process.exit(0)

@@ -3562,4 +3562,28 @@ sample-data surfaces → (1) UI beautification (Beautify-10x gorgeous passes on 
 EXISTING surfaces REAL (wire the live data/backends the UI needs — depth over breadth). Keep a11y GREEN (it's a
 gate) but don't gold-plate. Memory: `ui-depth-over-a11y-polish-and-sample-breadth`.
 
-## fire-282 — deploy recorded (deploy 2026-10-08T22:44:43.685Z; §11 narrative pending)
+## fire-282 — /hyperdrive cached-vs-direct p50 value-story bars (DEPTH/BEAUTIFY, Brian "depth over new sample surfaces")
+
+Coast clear (reclaimed fire-281's released-handoff; tree clean; prod=be9b7dd3). Per the fire-281 Brian
+redirect (depth over breadth — stop minting new sample surfaces), this fire delivered the exact standing
+`os.hyperdrive` next[0] knock instead of a new panel: **a per-config cached-vs-direct latency bar (the
+value story)**.
+
+**Shipped:** the /hyperdrive config cards now VISUALIZE the pooling+cache value story — the SAME query's
+edge p50 (through Hyperdrive, cached) vs direct-origin p50, rendered as two comparison bars + an "N× faster"
+chip. This turns the prior flat "p50 8ms / p99 32ms vs 45ms / 320ms" text into the at-a-glance Hyperdrive
+VALUE narrative (why pooling+cache matters). Pure helpers (speedupFactor + bar-scale derivation) in the
+fork's `hyperdrive.ts`, unit-extended in `hyperdrive.test.ts`. AA-safe (bars graphical, metrics neutral
+text — kumo-accent-text-not-aa). Honest "Preview · sample data".
+
+**Prod proof:** `check-deploy-state` OK (b001bd07=last-deploy @22:57:23.809Z) · `verify-hyperdrive` **9/9**
+GREEN (fire-282 record) · check-fire-committed CLEAN. Live at **https://megabyte.space/hyperdrive**.
+
+**SHAs:** fork `b1f76e66`→`b001bd07` · outer `be00570f` · deploy-record `9bde22b0` @22:57Z.
+
+**Beautify matrix:** os.hyperdrive beautifyPasses 1→2, aiVisionScore 9→9.4 (the cached-vs-direct value bar
+closed the standing 9→9.4 knock; next real →10 is the live Hyperdrive configs + query-analytics bridge).
+
+**§11 note:** fire-282 DIED at phase=verify (heartbeat frozen) after the slice SHIPPED but before writing
+its §11 narrative — a context-saturated interactive session wrote the released-handoff. fire-283 closed
+this §11 via RESUME-CHECK (slice confirmed live, no strand; narrative + matrix filled, not re-executed).

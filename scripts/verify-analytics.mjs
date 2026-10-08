@@ -67,10 +67,14 @@ try {
   tooltipShows = (await page.getByText("1,240", { exact: true }).count()) > 0;
 } catch {}
 
+// fire-274 beautify: each of the 4 stat cards now carries a per-card 7-day mini-trend sparkline
+// (role=img, aria-label "<label> 7-day trend") filling the previously-sparse lower region.
+const sparklines = await page.getByRole("img", { name: /7-day trend/i }).count();
+
 await page.screenshot({ path: "scripts/.analytics-proof.png" }); // captures the focused tooltip state
 await browser.close();
 
-console.log(JSON.stringify({ reachable, onPath, renders, missing, axisLabel, barButtons, tooltipShows, consoleErrors: errors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, axisLabel, barButtons, tooltipShows, sparklines, consoleErrors: errors.length }, null, 2));
 if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -81,6 +85,7 @@ check(renders, "Analytics dashboard content renders", `dashboard content missing
 check(axisLabel, "visitors chart has a y-axis reference (nice 1.5k top gridline)", "no y-axis tick labels (axis reference missing)");
 check(barButtons >= 14, `chart bars are focusable buttons (${barButtons} ≥ 14)`, `chart bars not focusable (${barButtons} buttons)`);
 check(tooltipShows, "focusing the 1,240 peak bar reveals its value tooltip", "hover/focus tooltip did not reveal the value");
+check(sparklines >= 4, `each stat card has a 7-day trend sparkline (${sparklines} ≥ 4)`, `stat-card sparklines missing (${sparklines} found)`);
 check(errors.length === 0, "0 console errors on /analytics", `${errors.length} console errors`);
 console.log(ok ? "✅ ANALYTICS GREEN" : "❌ analytics check failed");
 process.exit(ok ? 0 : 1);

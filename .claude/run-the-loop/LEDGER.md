@@ -3309,3 +3309,5 @@
 **Next-wave:** (1) /analytics matrix next[] — **per-stat-card sparkline / mini-trend** (9.5→9.7) then the **LIVE D1 `visitor_events` bridge** (→10) · (2) standing DEPTH frontier (`node scripts/check-depth-candidates.mjs`) · (3) re-run the WS-DEMO doc-diff for genuinely-new documented surfaces. WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.
 
 ## fire-274 — deploy recorded (deploy 2026-10-08T18:04:50.264Z; §11 narrative pending)
+
+## fire-275 — deploy recorded (deploy 2026-10-08T18:52:22.014Z; §11 narrative pending)

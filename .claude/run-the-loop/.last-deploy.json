@@ -1,5 +1,7 @@
 {
-  "forkSha": "aec9771b0ac12b91e3d4b232426e814132fae575",
-  "outerSha": "a70a4961552e6f93c0770219832a25dd11463870",
-  "iso": "2026-10-08T07:39:15.491Z"
+  "forkSha": "b3fc9a03b2c3274d8d235b6a04fd0789b7e6bb6d",
+  "outerSha": "7aafee703c03bc72b1329b11e11e6b6cdbba5b6b",
+  "iso": "2026-10-08T08:51:32.089Z",
+  "fire": "fire-262-90c0e764",
+  "note": "/search depth — relevance chip + match count + group-by-type toggle"
 }

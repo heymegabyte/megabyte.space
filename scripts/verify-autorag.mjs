@@ -119,11 +119,16 @@ if (haveCite) {
 }
 const citationDrillWorks = haveCite && previewBefore === 0 && previewAfter === 1 && /% match/i.test(previewText) && /retrieved chunk/i.test(previewText);
 
+// CONTENT 5 — the stat cards carry honest micro-viz footers (fire-268 Beautify-10x): the Indexes card
+// shows a "N ready · N indexing · N error" composition caption + the Ready card a "N% query-ready" ratio.
+const statBody = await page.evaluate(() => document.body.innerText).catch(() => "");
+const statFootersRender = /\d+\s*ready\s*·\s*\d+\s*indexing\s*·\s*\d+\s*error/i.test(statBody) && /\d+%\s*query-ready/i.test(statBody);
+
 await page.screenshot({ path: "scripts/.autorag-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, askWorks, statusFilterWorks, searchWorks, accents, citationDrillWorks, previewBefore, previewAfter, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countError, countSearch, askWorks, statusFilterWorks, searchWorks, accents, citationDrillWorks, previewBefore, previewAfter, statFootersRender, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -136,6 +141,7 @@ check(statusFilterWorks, `Status filter narrows the registry (All ${countAll} �
 check(searchWorks, `Search narrows the registry (All ${countAll} → "handbook" ${countSearch})`, "search did not narrow the registry");
 check(accentBordersRender, `Indexing + error rows carry accent borders (danger ${accents.danger} + warning ${accents.warning})`, `surfaceAccent borders missing on /autorag (danger ${accents.danger}, warning ${accents.warning})`);
 check(citationDrillWorks, `Citation drill-in opens the retrieved source chunk (preview ${previewBefore}→${previewAfter}, "% match" + "Retrieved chunk")`, "clicking a citation chip did not open the source-chunk preview");
+check(statFootersRender, "Stat cards carry micro-viz footers (status composition + % query-ready)", "stat-card micro-viz footers missing (fire-268 beautify did not render)");
 check(realErrors.length === 0, "0 console errors on /autorag", `${realErrors.length} console errors`);
 console.log(ok ? "✅ AUTORAG GREEN" : "❌ autorag check failed");
 process.exit(ok ? 0 : 1);

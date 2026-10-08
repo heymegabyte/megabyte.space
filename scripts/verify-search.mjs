@@ -90,11 +90,37 @@ if (await search.count().then((c) => c > 0).catch(() => false)) {
   await page.waitForTimeout(150);
 }
 
+// INTERACTIVE 4 — with a query, each hit carries a relevance chip (a %) + an honest "N matches" count.
+let relevanceWorks = false;
+if (await search.count().then((c) => c > 0).catch(() => false)) {
+  await search.fill("acme");
+  await page.waitForTimeout(400);
+  const txt = await page.locator('section[aria-label="Search results"]').innerText().catch(() => "");
+  relevanceWorks = /\d+%/.test(txt) && /\bmatch(es)?\b/i.test(txt);
+  await search.fill("");
+  await page.waitForTimeout(150);
+}
+
+// INTERACTIVE 5 — the view toggle groups the index by content type (≥2 group headers over the full index).
+let groupToggleWorks = false;
+const groupedBtn = page.getByRole("button", { name: /^grouped$/i }).first();
+if (await groupedBtn.count().then((c) => c > 0).catch(() => false)) {
+  await groupedBtn.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const groupHeaders = await page.locator('[data-testid="result-group"]').count().catch(() => 0);
+  const rowsGrouped = await countRows().catch(() => 0);
+  groupToggleWorks = groupHeaders >= 2 && rowsGrouped > 0;
+  const rankedBtn = page.getByRole("button", { name: /^ranked$/i }).first();
+  if (await rankedBtn.count().then((c) => c > 0).catch(() => false)) { await rankedBtn.click().catch(() => {}); await page.waitForTimeout(150); }
+}
+
+// Proof shot: ranked view with a query so the relevance chips + match counts are visible.
+if (await search.count().then((c) => c > 0).catch(() => false)) { await search.fill("acme"); await page.waitForTimeout(400); }
 await page.screenshot({ path: "scripts/.search-proof.png", fullPage: true });
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countQuery, countType, highlightWorks, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countQuery, countType, highlightWorks, relevanceWorks, groupToggleWorks, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -105,6 +131,8 @@ check(renders, "Search content renders (box + stats + type chips + honesty label
 check(searchWorks, `A query narrows the index (All ${countAll} → "acme" ${countQuery})`, "typing a query did not narrow the results");
 check(typeFilterWorks, `A type chip scopes the index (All ${countAll} → Customer ${countType})`, "type chip did not narrow the results");
 check(highlightWorks, "Matched terms are <mark>-highlighted in the hits", "no <mark> highlight on matched terms");
+check(relevanceWorks, "Each hit shows a relevance % + match count when searching", "no relevance chip / match count on the hits");
+check(groupToggleWorks, "The view toggle groups results by content type (≥2 groups)", "group-by-type toggle did not render type-grouped sections");
 check(realErrors.length === 0, "0 console errors on /search", `${realErrors.length} console errors`);
 console.log(ok ? "✅ SEARCH GREEN" : "❌ search check failed");
 process.exit(ok ? 0 : 1);

@@ -3535,4 +3535,29 @@ Bash-classifier flakiness (memory `bash-classifier-outage-exact-allowlist-and-au
 **NEXT:** Images-family continues — **/turnstile** (bot-challenge widgets + solve-rate stats) then
 **/pipelines** (streaming ingestion → R2), per the Next-wave inbox; keep RESOURCES[]⊇PLATFORM_FEATURES[] synced.
 
-## fire-281 — deploy recorded (deploy 2026-10-08T22:16:04.571Z; §11 narrative pending)
+## fire-281 — /turnstile Cloudflare Turnstile demo surface (INTERACTIVE, Brian WS-DEMO) — breadth panel after /stream
+
+Coast clear (reclaimed fire-280's released-handoff; tree clean; prod=f3496d35). Images-family doc-diff: shipped
+**/turnstile** (bot protection) — 3rd of Images·Stream·Turnstile·Pipelines.
+
+**Shipped:** widget list (mode pills managed/non-interactive/invisible + search, pure `filterWidgets`) → per-widget
+detail (solve-rate bar + challenge/solved/blocked stats + protected hostnames + copyable **sitekey** + drop-in
+**embed snippet** [real `api.js` + `cf-turnstile` div]) + a LIVE "workspaces protected by Turnstile" band off
+`listGadgets`. Honest sample. `turnstile.ts` pure helpers + `turnstile.test.ts` (TDD). Wired ResourcesPanel (→60
+cards) + AdminPage PLATFORM_FEATURES (bidirectional sync) + Sidebar + ⌘K.
+
+**Gates:** `tsc --noEmit` 0 (caught+fixed a TS6133 unused import) · vitest **1167/1167** · reachability 65/0 ·
+a11y-coverage 68 · launchpad 60 cards sync GREEN.
+
+**Prod proof:** `check-deploy-state` OK (be9b7dd3=last-deploy) · `verify-prod` **11/11** · `verify-a11y
+--only=/turnstile` **0 serious BOTH themes** · `verify-demo-surfaces` Turnstile reachable+renders, 0 console errors.
+Live at **https://megabyte.space/turnstile**. (First deploy 2a0afcea had 1 serious a11y violation — scrollable
+embed-snippet `<pre>` not keyboard-focusable; fixed `tabIndex=0` + focus ring in be9b7dd3 + redeployed → 0.)
+
+**SHAs:** fork `f3496d35`→`2a0afcea`→`be9b7dd3` · outer feat `00273280` + fix `2318dcb8` · deploy router `3885f0c5` @22:25Z.
+
+**★ BRIAN REDIRECT (mid-fire-281):** "Stop working so much on a11y fixes — instead improve the UI + ensure all
+features are FULLY CODED based on whether they're needed by the UI." **NEXT fires pivot:** from minting new
+sample-data surfaces → (1) UI beautification (Beautify-10x gorgeous passes on existing surfaces) + (2) making
+EXISTING surfaces REAL (wire the live data/backends the UI needs — depth over breadth). Keep a11y GREEN (it's a
+gate) but don't gold-plate. Memory: `ui-depth-over-a11y-polish-and-sample-breadth`.

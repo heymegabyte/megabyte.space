@@ -2,6 +2,18 @@
   "$doc": "Beautify-10x modifier matrix — per-surface aesthetic state the loop reads/writes every fire. Protocol: create → beautify 10x in a row → on every revisit, if beautifyPasses < 10 or aiVisionScore < 9.5, queue more passes. Modifiers stack: gorgeous, cinematic, kinetic-type, glass+grain, bento, WebGL, motion-choreo, a11y-delight, density(coinbase-pro), speed.",
   "$scale": "aiVisionScore 0-10 (visual-qa rubric); beautifyPasses = completed 'make it more gorgeous' iterations; density 0-10 (0=marketing-airy, 10=coinbase-pro-cockpit)",
   "surfaces": {
+    "os.turnstile": {
+      "beautifyPasses": 1,
+      "aiVisionScore": 9.0,
+      "density": 7,
+      "lastVisit": "2026-10-08",
+      "next": [
+        "wire the LIVE Turnstile management + siteverify APIs (real widgets + challenge stats) — the real ->10 (Brian redirect: fully-code features the UI needs, not more sample surfaces)",
+        "a per-widget pass/fail challenge sparkline (seeded deterministic) — density",
+        "Direct-Read vision pass to confirm/adjust the provisional 9.0"
+      ],
+      "notes": "fire-281 CREATED/SHIPPED (Brian WS-DEMO Images-family doc-diff — /turnstile after /stream). Widget list (mode pills managed/non-interactive/invisible + search, pure filterWidgets) + per-widget detail (solve-rate bar + challenge/solved/blocked stats + protected hostnames + copyable sitekey + drop-in embed snippet [real Turnstile api.js + cf-turnstile div shape]) + a LIVE 'workspaces protected by Turnstile' band off listGadgets. Honest sample. Pure helpers unit-proven turnstile.test.ts (TDD). AA-safe. Wired ResourcesPanel (60 cards) + AdminPage PLATFORM_FEATURES (bidirectional verify-resources-launchpad GREEN) + Sidebar (Operate, ShieldCheck) + Cmd-K. Gates: tsc 0 (caught+fixed a TS6133), vitest 1167/1167, reachability 65/0. Prod: verify-prod 11/11, verify-a11y --only=/turnstile 0 serious BOTH themes (after fixing a scrollable-region-focusable violation on the embed-snippet <pre> — added tabIndex=0), verify-demo-surfaces 0 console errors. Fork f3496d35->2a0afcea->be9b7dd3 / outer 00273280->2318dcb8 / deploy router 3885f0c5 @22:25Z. Provisional 9.0 — clones the proven /images|/stream master-detail template."
+    },
     "os.stream": {
       "beautifyPasses": 1,
       "aiVisionScore": 9.0,

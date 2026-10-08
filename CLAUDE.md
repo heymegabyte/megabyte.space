@@ -70,9 +70,14 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 - **Auth:** management = `get-secret CLOUDFLARE_API_KEY` (global key; scoped token lacks AI Gateway API
   scope); data plane `cf-aig-authorization` = `get-secret CLOUDFLARE_API_TOKEN` (carries AI Gateway Run).
   NEVER put provider keys in route JSON / tests / manifest / logs / git.
-- **Current provider reality:** proven = Workers AI (keyless, incl. DeepSeek-V4 `@cf/deepseek-ai/*`) +
-  OpenAI (Unified Billing). Anthropic quarantined (no valid BYOK key); direct DeepSeek API quarantined
-  (a stale account key overrides BYOK) → DeepSeek served via Workers AI. Re-check: `verify --probe-models`.
+- **Current provider reality (verified fire-247 — 22/22 contract cases green on BOTH gateways):** proven =
+  Workers AI (keyless, incl. DeepSeek-V4 `@cf/deepseek-ai/*`) + OpenAI (Unified Billing) + **Anthropic
+  current Claude 4.5 (`claude-sonnet-4-5` / `claude-haiku-4-5`) via Unified Billing — now the LIVE frontier
+  primary** on architect / critical / research and code|general at quality high|maximum (NOT BYOK). Only
+  LEGACY/dated Claude ids stay quarantined (they 401 through Unified Billing — always use the current ids).
+  Direct DeepSeek BYOK now works on megabyte-space (stale provider_config removed + the gateway secret
+  refreshed 2026-10-07); projectsites-dev still serves a stale key, so keyless Workers AI DeepSeek-V4 stays
+  the baseline on both. Re-check: `verify --probe-models`.
 - **Verifiers MUST send `cf-aig-skip-cache`** — megabyte-space has `cache_ttl=300`, so cached selections
   would otherwise mask live routing (the control-plane caller does this by default).
 

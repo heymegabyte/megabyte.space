@@ -3336,4 +3336,48 @@
 
 **Next-wave:** (1) os.budgets next[] — per-row hover/expand revealing exact daily trajectory values (9.3→9.5), then the LIVE AI-Gateway per-scope spend bridge (→10) · (2) a RICH beautify frontier surfaced by `matrix-frontier`: ~11 CF-integration surfaces (analytics-engine/artifacts/durable-objects/email/hyperdrive/mcp/realtime/research/sandboxes/skills) all at 9.0/1-pass, seen 2026-10-06 — each has a queued next[] (expand-row / mini-sparkline), a ready DEPTH/BEAUTIFY lane · (3) apply the run-rate projection pattern to /billing (same forward-looking value). WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) + WS-12 (DeepSeek routing) remain Brian-gated / dedicated-session.
 
-## fire-276 — deploy recorded (deploy 2026-10-08T19:18:30.297Z; §11 narrative pending)
+## fire-276 — /analytics-engine DEPTH/BEAUTIFY 9→9.4 (per-dataset 24h volume sparkline + copy-query) + matrix-frontier READY-DEPTH-LANE loop-improvement
+
+**Shape:** lean lead-direct DEPTH fire (the handoff-noted "CF-integration 9.0/1-pass lane"; the adaptive
+3-6-role evidence favours lead-direct for a single coherent DEPTH slice). Clean orient — check-fire-committed
+CLEAN, check-deploy-state OK (fork 9d9bad85 matched last-deployed), no salvage. Lease reclaimed stale
+(fire-275 released-handoff, heartbeat ~46 min old).
+
+**Slice (Absorption/DEPTH — os.analytics-engine, matrix next[0] delivered EXACTLY):**
+- **Per-dataset 24h volume sparkline** — each of the 7 dataset rows gained a deterministic, SEEDED 24h
+  write-volume sparkline (cyan polyline + faint fill), reusing `analytics.sparklinePoints`. New pure helper
+  `datasetVolumeTrend` (12×2h buckets whose mean tracks `dataPoints24h`, seeded by dataset id via the proven
+  FNV-1a→mulberry32 `seededFloats` so each row draws a DISTINCT, never-jittering shape). The flat text list
+  now reads as a mini data-dashboard (glanceable per-dataset shape).
+- **Copy-query button** on the Sample SQL panel — `navigator.clipboard` + transient "Copied" confirm;
+  fails-QUIET where clipboard is blocked (0 console errors), and the visible text IS the accessible name
+  (title tooltip, NO masking aria-label — per the `aria-label-masks-visible-text` lesson, so it stays WCAG
+  2.5.3-clean once the label flips to "Copied").
+- **TDD:** +8 deterministic unit tests (analyticsEngine.test.ts 21 total — length · deterministic ·
+  seeded-distinct · non-negative-int · mean-tracks-total · zero-volume-flat · points≤0-empty · non-flat-curve).
+- **Verify:** verify-analytics-engine +2 assertions (sparklinesRender 7≥7 + copyQueryWorks "Copy query"→"Copied";
+  clipboard-write granted on the context). **10/10 GREEN on prod, 0 console errors.** tsc --noEmit clean.
+  verify-prod **11/11** (2 pre-existing tracked WARNs: Google-SSO redirect_uri + apex CSP). a11y **0 serious
+  BOTH themes** (`--only=/analytics-engine`, dark + --light). Direct-Read vision **9.4/10** (focused 1280
+  capture of the datasets + SQL panel). Ground-truthed the deployed chunk (ae-spark/Copy query/Copied in
+  `analytics-engine-B35x6KAe.js`).
+- **Commits:** fork `ce59267c` (pushed origin/megabyte-os) · outer gitlink bump `a858632d` (9d9bad85→ce59267c) ·
+  verifier `f6d3d5dd` · deploy **e44b8e3a** @ 19:18Z (megabyte.space custom domain).
+- **Beautify matrix:** os.analytics-engine 9→9.4, passes 1→2. Knock vs 9.6: sparkline hover/focus tooltip
+  (peak/latest) + slightly larger; vs 10: live Analytics Engine SQL API over real datasets.
+
+**§8 loop-improvement — `matrix-frontier.mjs` auto-surfaces the READY DEPTH LANE (commit `f3485c3d`).**
+fire-275's handoff note had to HAND-CURATE "the ~11 CF-integration surfaces at 9.0/1-pass — pick the top row,
+ship its next[0]". matrix-frontier now COMPUTES that lane: the cluster of actionable hot surfaces at the
+lowest (score, THEN passes) tier, excluding unscored (score 0 → needs a vision capture, not a beautify pass)
+and retired/superseded surfaces (os.login → home.signin). Prints `★ READY DEPTH LANE — N surface(s) at
+<score>/10 · <passes> pass: …` + the top row to pick; exposed in `--json` (`depthLane`) too. This fire it
+reads "13 surface(s) at 9/10 · 1 pass: home.404, os.artifacts, os.durable-objects, os.editor-resources,
+os.email, os.home-composer, os.hyperdrive, os.mcp, os.realtime, os.research, os.sandboxes, os.secrets,
+os.skills → pick the top row (home.404)". The next lead reads the lane from the tool, not a prose note.
+
+**NEXT (next fire):** run `node scripts/matrix-frontier.mjs` → the READY DEPTH LANE prints the 13-surface
+9.0/1-pass cluster; pick the top row and ship its next[0] (home.404 = closest-route suggestion; or any
+CF-integration surface — e.g. os.email reputation gauge, os.mcp expose-tools expand-row, os.realtime
+participant avatars). WS-PERF (apex LCP ~7.5s) / WS-N2 (agents data model) / WS-12 (DeepSeek routing) remain
+Brian-gated dedicated-session items.

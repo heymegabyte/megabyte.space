@@ -51,6 +51,8 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 
 - **`pnpm` is often ABSENT on the loop's shell** (node 26 via Homebrew ships no `corepack`, no global `pnpm`). Do NOT stall a fire on a missing toolchain — run every pnpm command through the pinned on-demand fetch: `npx -y pnpm@11.17.0 check` / `… deploy` / `… --dir packages/home deploy` (package.json pins `pnpm@11.17.0`). The pure-node verifiers (`node scripts/verify-prod.mjs`, `verify-ba-flip.mjs`, …) need no pnpm. (fire-55.)
 
+- **`No updated asset files to upload` on deploy is NOT proof the build changed nothing.** Workers assets are content-addressed, so when a prior (e.g. a wedged-session) PARTIAL deploy already uploaded the exact current `dist` bytes, wrangler prints this line even though the new router version DOES bundle + serve that dist — so it is neither a lying no-op NOR proof your change shipped. GROUND-TRUTH the deployed bundle: `grep -rl '<a UNIQUE string from your change>' cloudflare-os/packages/workshop-frontend/dist/assets/*.js` — a UI slice's own blurb/label is the cheapest proof it built in, then the surface's browser verifier confirms it renders live. (fire-250: the salvaged ResourcesPanel 3-panel change printed "No updated asset files" because the wedged fire-249 session had already uploaded the identical dist; confirmed live via the 3 unique panel blurbs in `workspace._id-*.js` + `verify-resources-panel.mjs`'s 53-card browser proof.)
+
 ## AI routing (Dynamic Routes control plane)
 
 - **Application code asks for an INTENT, never a raw model id.** Eight virtual routes

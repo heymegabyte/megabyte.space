@@ -986,3 +986,6 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 ## Done
 
 - (empty)
+
+- [x] fire-248 fleet initialization diagnostic — check-fire-committed no longer reads parent HEAD/status as fork evidence when cloudflare-os lacks its .git marker. Regression reproduced RED then GREEN; CI blocks honestly pending initialization. No product deployment claimed.
+- [ ] fire-248 discovery — bootstrap the pinned submodule and locked dependencies in isolated fleet worktrees before product gates; rerun deploy test (currently missing jsonc-parser), fork tests and authenticated real journey. Credentials absent this fire; do not credit a journey or deployment until observed.

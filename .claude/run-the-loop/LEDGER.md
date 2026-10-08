@@ -3382,4 +3382,48 @@ CF-integration surface — e.g. os.email reputation gauge, os.mcp expose-tools e
 participant avatars). WS-PERF (apex LCP ~7.5s) / WS-N2 (agents data model) / WS-12 (DeepSeek routing) remain
 Brian-gated dedicated-session items.
 
-## fire-277 — deploy recorded (deploy 2026-10-08T19:52:44.330Z; §11 narrative pending)
+## fire-277 — /storage R2 object browser (NEW-capability absorption; led after 6 straight beautify fires)
+
+**Shape:** lean lead-direct, 1 coherent slice + the mandatory §8. Fires 270-276 were ALL UX/Beautify-10x
+DEPTH passes → per §2's starvation trigger + the durable `ws-demo-saturated-rebalance-to-perf` correction,
+**Absorption led this fire**. A read-only Explore scout ran the doc-diff; its first rec (a standalone `/r2`
+route) was REJECTED on verification — `/storage` already browses D1·KV·R2 stores (the dupe-surface trap).
+The real gap was inside /storage: an R2 bucket's detail didn't list its objects. That is the exact queued
+`os.storage.next[2]` + BACKLOG line 751 (fire-228 discovery) — built in the RIGHT place (no duplicate route).
+
+**Slice (Absorption Delivery):** an R2 store's detail now opens an OBJECT BROWSER — the bucket's objects
+(key · kind · size · modified) with a key filter; clicking one opens a Kumo metadata dialog (bucket ·
+content-type · size · modified · kind · storage-class) with copyable **key** + **r2:// URI** and an honest
+image-preview / no-preview tile. D1 stores still link to the Database Studio; a KV key-browser is the
+symmetric next (queued). Reused the /database (fire-270) RowDetailDialog + copy pattern + the DataTable
+list idioms — pure composition, zero shared-component change.
+
+**TDD:** `storage.ts` pure helpers `objectKind` (MIME→kind, total) / `canPreview` (images only — no faked
+bytes) / `r2Uri` / `filterObjects` / `summarizeObjects` / `objectsForBucket` + `SAMPLE_R2_OBJECTS` /
+`OBJECT_KIND_META` — `storage.test.ts` **37 total (+14, RED→GREEN**; incl. a demo-honesty test that every
+r2 sample store has a non-empty object set — a browsed bucket never lies-empty). AA-safe (kind accent on
+DOTS + cyan icon chips, neutral text — `kumo-accent-text-not-aa`). `tsc --noEmit` 0 (the recurring TS6133
+gate) · full vitest **1074/1074**.
+
+**Prod proof:** `verify-storage` **14/14** (+4 R2: r2DetailOpens + objectRows 7 + objectFilterWorks +
+objectDialogOpens; 0 console errors) · `verify-prod` **11/11** (2 pre-existing tracked WARNs — Google-SSO
+redirect_uri_mismatch per `google-sso-redirect-uri-mismatch-prod` + apex CSP). Direct-Read vision **9.4/10**
+(`.storage-r2-list.png` + `.storage-r2-dialog.png` @1280 — the Objects browser under the media-uploads
+detail + the polished metadata dialog w/ gradient preview tile). Estate path intact.
+
+**Beautify matrix:** os.storage 9→9.4, passes 2→3, density 8→9.
+
+**SHAs:** fork `ce59267c`→`f25cc7b1` · outer `c4ee265b` · deploy `578610fc` (2026-10-08T19:52Z). The `deploy`
+script auto-recorded `.last-deploy.json` + committed the record + pushed main/fork (fire-269's `--commit`
+dogfood — ✅ NO deploy-record strand this fire; the strand class stays extinct).
+
+**§8 loop-improvement — durable memory `absorption-doc-diff-coverage-not-route`.** An absorption doc-diff
+must check capability COVERAGE of existing surfaces, not just whether a `/route` exists — else you build a
+duplicate surface. Caught live this fire (scout rec'd `/r2`; /storage already covered R2). Reconciled
+BACKLOG line 751 (/r2 → shipped-inside-/storage) + MEMORY.md pointer.
+
+**NEXT (next fire):** `node scripts/matrix-frontier.mjs` → the READY DEPTH LANE (13 surfaces at 9.0/1-pass:
+home.404, os.artifacts, os.durable-objects, os.editor-resources, os.email, os.home-composer, os.hyperdrive,
+os.mcp, os.realtime, os.research, os.sandboxes, os.secrets, os.skills) — pick the top row, ship its next[0].
+OR continue absorption: the KV key browser (os.storage 9.4→9.5, symmetry). WS-PERF (apex LCP) / WS-N2 /
+WS-12 remain Brian-gated dedicated-session items.

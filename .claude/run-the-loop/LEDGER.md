@@ -3170,3 +3170,21 @@
 **Next-wave (appended to BACKLOG WS-DEMO):** (1) group/filter the 53-card launchpad grid (real UX slice); (2) re-run the doc-diff for genuinely-new documented surfaces before minting more, else DEPTH.
 
 **Infra:** cron `106f2b18` armed (every 15 min, ~1d old, not near 7-day expiry) · watchdog `space.megabyte.loop-watchdog` loaded.
+
+## fire-252 — SALVAGE of fire-251 wedged-handoff: /admin↔launchpad sync + §8 bidirectional gate
+
+**Shape:** lead-direct salvage. fire-251's intermittent claude-opus-4-8 Bash classifier wedged mid-fire before validate/commit. RESUME-CHECK via `check-fire-committed` (forkDirty:1 `AdminPage.tsx` + dirty `verify-resources-launchpad.mjs`) + `check-deploy-state` (gitlink `c693744f` == last-deployed) → built-but-NOT-shipped → finished it; did NOT re-implement.
+
+**Collision handled (multi-scheduler-collision-coalesce):** a concurrent watchdog-headless `claude -p "run the loop"` (PID 65550) was alive ~3 min but STALLED (no lease claim, ~2s CPU, sleeping) → not an advancing lease → claimed fire-252 fresh (any later claim coalesces against the live heartbeat). No shared-tree collision; never killed 65550.
+
+**Slice (Absorption / WS-DEMO):** `/admin` Platform tab +3 `PLATFORM_FEATURES` cards — Gatekeepers→`/gatekeepers` · Providers→`/providers` · Blueprints→`/blueprints` (all pre-existing routes) + `Lock`/`Faders`/`Blueprint` icons (all used, no TS6133). `/admin` now demos every Editor launchpad surface (matches the 53-card launchpad).
+
+**§8 loop-improvement:** `verify-resources-launchpad.mjs` invariant 2b — a BIDIRECTIONAL reverse-sync check (every launchpad card is ALSO an `/admin` PLATFORM_FEATURES route, minus an empty `ADMIN_INTENTIONAL_OMIT`). Codifies the drift this fixes (launchpad gained the 3 cards fires 249-250 while /admin lagged); already wired in green-sweep line 30.
+
+**Verify:** `verify-resources-launchpad` 4/4 (incl. 2b) · fork `tsc --noEmit` exit 0 · built-dist ground-truth (3 blurbs in `admin-KPSjD68J.js`) · `verify-prod` 11/11 (2 pre-existing tracked WARNs: Google SSO redirect_uri_mismatch + apex CSP absent) · apex force-login real-browser smoke (0 console errors; H1 "Megabyte OS" + Google/GitHub SSO + email/password + magic-link; no pre-login shell leak).
+
+**Commits/deploy:** fork `b3109183` (origin/megabyte-os) · outer `64b68b4a` (main) · deploy `megabyte-os` version `d9b24bfe` · recorded fork `b3109183` / outer `64b68b4a`.
+
+**Beautify matrix:** `os.admin` lastVisit→2026-10-08 (3 cards added; still NOT vision-scored — ba-e2e denied; score 0 honest). `home.signin` lastVisit→2026-10-08 (force-login gate re-verified; score held 9.5).
+
+**Next unmet unit per workstream:** WS-DEMO — launchpad grid group/filter (53-card UX slice) · `/social` + `/search` doc-diff candidates · DEPTH via `check-depth-candidates` (`/gadgets`·`/tools`). WS-8 — Google SSO redirect_uri_mismatch (external fix: register the apex callback URI or swap megabyte-auth Google client secrets). WS-PERF (apex LCP ~7.5s) + WS-N2 (agents data model) remain Brian-gated.

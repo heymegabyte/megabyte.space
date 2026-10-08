@@ -97,6 +97,7 @@ for (const [path, signal] of [
   ['/releases', /releases|deploy|rollback|version|sample data/i], // WS-DEMO: Releases deploy/rollback (fire-155)
   ['/browser-runs', /browser|run|needs input|steps|sample data/i], // WS-DEMO: Browser Runs agentic sessions (fire-156)
   ['/billing', /billing|usage|spend|cost|sample/i], // WS-DEMO: Billing (live usage + sample costs) (fire-157)
+  ['/budgets', /budgets|spend cap|monthly cap|sample data/i], // WS-DEMO: Budgets cost-governance (fire-259)
   ['/experiments', /experiments|variant|conversion|winner|sample/i], // WS-DEMO: Experiments A/B (fire-158)
   ['/forms', /forms|submission|lead|spam|sample/i], // WS-DEMO: Forms lead capture (fire-159)
   ['/audit', /audit|accessibility|findings|sample/i], // WS-DEMO: Site/Gadget Audit (fire-163)

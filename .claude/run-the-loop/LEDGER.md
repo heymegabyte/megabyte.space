@@ -3561,3 +3561,5 @@ features are FULLY CODED based on whether they're needed by the UI." **NEXT fire
 sample-data surfaces → (1) UI beautification (Beautify-10x gorgeous passes on existing surfaces) + (2) making
 EXISTING surfaces REAL (wire the live data/backends the UI needs — depth over breadth). Keep a11y GREEN (it's a
 gate) but don't gold-plate. Memory: `ui-depth-over-a11y-polish-and-sample-breadth`.
+
+## fire-282 — deploy recorded (deploy 2026-10-08T22:44:43.685Z; §11 narrative pending)

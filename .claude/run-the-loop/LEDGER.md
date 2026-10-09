@@ -3689,3 +3689,5 @@ deploy router @00:42Z.
 **NEXT (standing top priority):** SSO/original-features audit (dedicated session; blocked on Brian's Google
 URI + real GitHub-login check). Meanwhile continue UI-depth/beautify on existing surfaces (matrix-frontier
 lane). a11y stays a green gate, built right the first time.
+
+## fire-287 — deploy recorded (deploy 2026-10-09T00:51:55.807Z; §11 narrative pending)

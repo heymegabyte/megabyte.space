@@ -3668,4 +3668,24 @@ on the ORIGINAL shell, verified safe in both themes. SHAs: fork `da8fbd7a` · ou
 continue UI-depth/beautify slices on existing surfaces (matrix-frontier lane). Keep a11y a green gate,
 build-right-first-time (memory `ui-depth-over-a11y-polish-and-sample-breadth`).
 
-## fire-286 — deploy recorded (deploy 2026-10-09T00:42:57.009Z; §11 narrative pending)
+## fire-286 — /artifacts selectable variant thumbnail strip (UI-depth, os.artifacts 9->9.4)
+
+UI-depth pivot slice (Brian: improve the UI on existing surfaces; NOT new sample routes). Delivered the
+queued os.artifacts next[0]: a **selectable variant THUMBNAIL STRIP** (the Figma frame-selector) on each
+multi-variant artifact — a row of v1..vN tiles, click any to jump straight to it, beyond the step-only
+"Next variant" button (the explorable-canvas "see + pick any candidate" value).
+
+New pure helper `selectVariant(artifacts, id, index)` (clamped 1..variants + rounded, non-targeted
+untouched) + 3 TDD cases. Route: the strip in ArtifactCard, wired through `selectV`. **AA-safe by
+construction** (built-right-first-time per the pivot): selection shown by the brand BORDER + a graphical
+brand dot; the `v{n}` label stays a neutral high-contrast token (kumo-accent-text-not-aa).
+
+**Gates:** `tsc --noEmit` 0 · vitest **1178/1178** (incl. selectVariant) · build clean.
+**Prod proof:** `verify-prod` **13/13** · `verify-a11y --only=/artifacts` **0 serious BOTH themes** (strip
+is contrast-clean) · `verify-demo-surfaces` 0 console errors · check-deploy-state OK.
+Live at **https://megabyte.space/artifacts**. SHAs: fork `da8fbd7a`->`f85cee9a` · outer `ccee2db4` ·
+deploy router @00:42Z.
+
+**NEXT (standing top priority):** SSO/original-features audit (dedicated session; blocked on Brian's Google
+URI + real GitHub-login check). Meanwhile continue UI-depth/beautify on existing surfaces (matrix-frontier
+lane). a11y stays a green gate, built right the first time.

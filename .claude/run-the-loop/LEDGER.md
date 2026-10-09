@@ -3708,3 +3708,5 @@ neutral high-contrast token (kumo-accent-text-not-aa).
 
 **NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
 check) + continued UI-depth/beautify on existing surfaces (matrix-frontier lane).
+
+## fire-288 — deploy recorded (deploy 2026-10-09T01:00:50.683Z; §11 narrative pending)

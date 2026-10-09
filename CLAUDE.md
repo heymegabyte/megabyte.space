@@ -25,6 +25,7 @@ Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): C
 
 ## Commands
 
+- `node scripts/journey-auth.browser.mjs` — local Chromium fixture regression for deep-journey login rejection, empty success marker, missing shell and invalid/network-failed session. `journey-deep.mjs` now aborts before dependent steps unless the marker, visible shell and matching Better Auth identity pass; closes browser on failure. This is verifier hardening, not case-001 coverage.
 - `pnpm check` — validate `deployment.jsonc` + dry-run every OS Worker
 - `pnpm deploy` — build + deploy the six OS Workers (root)
 - `pnpm --dir packages/home deploy` — (legacy) rebuild the RETIRED `megabyte-home` worker; it is UNROUTED since WS-11 (owns no hostname — kept only as the `LandingHomepage` component source; redeploy only if reviving a standalone homepage)

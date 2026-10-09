@@ -1,0 +1,9 @@
+# Fire-293 independent research and convergence
+
+Selected verifier hardening from existing case-001 restart frontier. Pinned router 91a6d443 attaches auth-success to an empty div; a visibility wait is inappropriate. Deep journey swallowed that timeout and sidebar waits, then could credit optional empty-state steps. New helper requires attached marker, visible shell and fresh matching Better Auth session; failures are sanitized and stop dependent steps. Browser closes in finally. This is mandatory loop improvement, not runtime/auth-policy change or Long-Trail coverage.
+
+Recovery: retained tips are ancestors of origin/main except 8770b90e; git cherry marks af8366fe and ff3028b8 equivalent to main. Actual parser/tests and later recovery ledger preserve that work. The divergent bookkeeping tip is retained untouched. Prior failed GitHub receipts were inspected; no success-report assumption or replay.
+
+Standing Long-Trail and Deep UI reviewers independently confirmed false-positive risk and remaining gaps: direct route loads, splash bypass, swallowed loaded-content waits, absent fixtures credited, aria-sort-only evidence, synthetic palette, missing per-action capture and durable mutation cleanup. Revision-2 cursor remains 0; matrix unchanged. Next-wave refinement: prove browser closure after rejected login at the journey process boundary and retain failed-request/auth-phase evidence without secret data.
+
+Official cr subscription Codex adversarial review found raw-email vs router-trim mismatch. Corrected expected identity to email.trim() and covered padded input. No other issue reported; no authenticated production execution. DeepSeek/Cloudflare deployment/BA credentials unavailable. Local fixture Chromium tests are not production evidence; no provider vision, UI score, cost, or storage reconciliation claimed.

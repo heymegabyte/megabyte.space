@@ -10,6 +10,7 @@
  * Needs BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD).
  */
 import { chromium } from "playwright";
+import { authenticateJourney } from "./journey-auth.ts";
 
 const APEX = "https://megabyte.space";
 const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
@@ -20,6 +21,7 @@ const page = await browser.newPage({
   viewport: { width: 1440, height: 900 },
   userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
 });
+try {
 await page.addInitScript(() => { try { localStorage.setItem("megabyteOS_entered", "1"); } catch {} });
 const errors = [];
 // Filter the benign capnweb WebSocket reconnect artifact ("...already in CLOSING or CLOSED state") —
@@ -43,7 +45,7 @@ const assert = (c, msg) => { if (!c) throw new Error(msg); };
 
 async function goto(path, settle = 1000) {
   await page.goto(`${APEX}${path}`, { waitUntil: "domcontentloaded", timeout: 40000 });
-  await page.waitForSelector("aside", { timeout: 25000 }).catch(() => {});
+  await page.waitForSelector("aside", { timeout: 25000 });
   await page.waitForTimeout(settle);
 }
 async function waitLoaded() {
@@ -59,10 +61,7 @@ async function waitLoaded() {
 
 // --- Sign in, land on Pulse ---
 await page.goto(`${APEX}/signin`, { waitUntil: "domcontentloaded", timeout: 40000 });
-await page.fill('input[type="email"]', EMAIL);
-await page.fill('input[type="password"]', PASSWORD);
-await page.click('[data-testid="auth-submit"]');
-await page.waitForSelector('[data-testid="auth-success"], [data-testid="auth-already"]', { timeout: 20000 }).catch(() => {});
+await authenticateJourney(page, APEX, EMAIL, PASSWORD);
 
 console.log("DEEP JOURNEY:");
 
@@ -204,7 +203,6 @@ await step("cmdk: open → search → navigate", async () => {
 });
 
 await page.screenshot({ path: "scripts/.journey-deep.png" });
-await browser.close();
 
 const passed = steps.filter((s) => s.ok).length;
 const failed = steps.filter((s) => !s.ok);
@@ -213,4 +211,10 @@ if (errors.length) console.log("errors:", errors.join(" | ").slice(0, 400));
 if (failed.length) console.log("FAILED:", failed.map((s) => `${s.name} (${s.detail})`).join(" · "));
 const allGood = passed === steps.length && errors.length === 0;
 console.log(allGood ? `✅ DEEP-JOURNEY GREEN: ${passed}/${steps.length} deep steps, 0 console errors` : `❌ deep journey: ${passed}/${steps.length} steps, ${errors.length} console errors`);
-process.exit(allGood ? 0 : 1);
+process.exitCode = allGood ? 0 : 1;
+} catch {
+  console.error("DEEP-JOURNEY FAILED: authentication or prerequisite failed; dependent steps aborted");
+  process.exitCode = 1;
+} finally {
+  await browser.close();
+}

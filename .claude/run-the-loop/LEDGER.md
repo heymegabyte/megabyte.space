@@ -3645,4 +3645,25 @@ scaffolding (that session's domain; its own §: "fold shipped slices into a WS-A
 **SHAs:** `c91f1b42` (fire-282 §11 salvage) · `a50752df` (verify-prod SSO hardening) · `6e6be151` (CLAUDE.md
 doc-truth) · this §11 bookkeeping commit.
 
-## fire-285 — deploy recorded (deploy 2026-10-09T00:23:26.427Z; §11 narrative pending)
+## fire-285 — SALVAGED + shipped fire-284's true-black #060610 shell (WS-13 Slice B) — verified, no regression
+
+fire-284 (WS-13 Slice B: OS shell dark-base → true-black `#060610` brand base + neutralized-brand-dark
+palette, styles.css hue-285→cool-black ladder) committed its work in the FORK (`face3e91`→`da8fbd7a`,
+already pushed) but DIED at build before bumping the gitlink / deploying / verifying — leaving a dirty
+outer gitlink (undeployed, unverified). fire-285 (interactive) SALVAGED it with a safety net.
+
+**Salvage:** build + `tsc --noEmit` clean (CSS theme compiles) → gitlink bumped `b001bd07`→`da8fbd7a`
+(outer `3edb88a6`) → deployed (router version `a494ca1e`) → verified. The gate for a GLOBAL theme change
+(it recolors every surface's shell chrome): **`verify-a11y` 0 serious violations in BOTH themes** across
+signin/signup/images/editor/Resources-tab — **no contrast regression**, so SHIPPED (no revert). Also
+`verify-prod` **13/13** + `verify-demo-surfaces` 0 console errors across 8 surfaces.
+
+**Result:** the OS shell is now true-black `#060610` (the brand base) — a visible UI-depth improvement
+on the ORIGINAL shell, verified safe in both themes. SHAs: fork `da8fbd7a` · outer `3edb88a6` · deploy
+`a494ca1e` @00:23Z. check-deploy-state OK.
+
+**NEXT (standing top priority):** the SSO / original-features audit (memory
+`original-features-work-with-sso-directive`) — DEDICATED session, blocked on Brian's Google-console URI
+(`https://megabyte.space/api/auth/callback/google`) + a real GitHub-login Workshop check. Meanwhile:
+continue UI-depth/beautify slices on existing surfaces (matrix-frontier lane). Keep a11y a green gate,
+build-right-first-time (memory `ui-depth-over-a11y-polish-and-sample-breadth`).

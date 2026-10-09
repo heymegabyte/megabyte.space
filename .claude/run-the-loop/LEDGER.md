@@ -3748,3 +3748,11 @@ strip · fire-287 /email reputation band · fire-288 /sandboxes output expand ·
 
 **NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
 check) + continued UI-depth (matrix lane: os.research/os.skills expand-rows, os.realtime participant avatars).
+
+## fire-290 — fleet architecture reconciliation (2026-10-09)
+- Slice `43bbde37`: replaced retired apex/home/Access topology with the pinned apex router, inline login, Better Auth rail and actual backend authorization boundaries. Loop improvement: future fires now have a source-grounded request/ownership map; source references and verification limits recorded.
+- Recovery: all retained result commits through `9ccb3640` are already ancestors of origin/main/base `d96eae98`; no replay or worktree deletion. Fork initialized at unchanged `91a6d443`; both frozen installs passed.
+- Fresh checks: 96/96 script tests, script typecheck and diff check passed. Deployment ledger matches fork (record-only). HTTP probes: apex and /signin 200 with inline auth-submit; /api/auth/ok 200 ok:true.
+- Independent official cr Codex review found four documentation omissions (anonymous RPC/screenshots, Access precedence, hardcoded public auth fetch, origin isolation); corrected after source inspection.
+- Production acceptance BLOCKED: BA E2E/deployment/DeepSeek credentials unavailable; verify-prod exits 2. No deployment, browser golden journey, UI visit/vision score, persistence or SSO success claimed; modifier matrix unchanged. Documentation slice only, not a full product-acceptance fire.
+- Next wave: reconcile stale implementation comments without changing auth; finish authenticated architecture/journey acceptance when credentials available. GitHub cadence unchanged; outer runner owns main publication.

@@ -1,97 +1,100 @@
 # megabyte.space — Architecture
 
-> Canonical system picture for the loop. Concise map, not a code dump. Detail owner: root
-> `CLAUDE.md`. Neighbors: [`./README.md`](./README.md) · [`./BACKLOG.md`](./BACKLOG.md).
+> Source reconciliation: fire-290, pinned fork `91a6d443`; deployment.jsonc, scripts/deploy.ts,
+> router/src/index.ts and workshop-backend/src/{access,server}.ts. This is a source map,
+> not a claim of fresh production verification. Detail owner: root `CLAUDE.md`.
+> Neighbors: [`README.md`](./README.md) · [`BACKLOG.md`](./BACKLOG.md).
 
-**Product:** the Megabyte OS estate — a PUBLIC cinematic front door at the apex + Cloudflare OS
-behind Access at `os.megabyte.space`. The estate is the **frontier playground**: it continually
-absorbs projectsites.dev capability (Notion-like tables/grids/charts · Airtable-level automation
-on SQLite/D1/DO · Coinbase-Pro-density dashboards · integrations) into the OS UI, wrapped in
-WebGL + advanced web APIs (WebGPU, Web Audio, WebRTC, View Transitions). **projectsites.dev =
-stability; megabyte.space = frontier.**
+**Product:** Megabyte OS is the frontier playground at `https://megabyte.space`, absorbing
+proven projectsites.dev capabilities into the Cloudflare OS shell. Better Auth gates the
+human experience. Cloudflare Access is retained for automation, not human SSO.
 
-## Surfaces
+## Surfaces and request path
 
-- **Homepage** — `packages/home` (React 19 + Vite + Tailwind v4 + Three.js WebGL hero), Worker
-  `megabyte-home` → `https://megabyte.space` (+ `www` 301). PUBLIC. `/login` 302s into the OS —
-  auth walls never sit on `/`.
-- **Cloudflare OS** — [cloudflare/cloudflare-os](https://github.com/cloudflare/cloudflare-os)
-  PINNED submodule via the cloudflare-os-starter wrapper → `https://os.megabyte.space`,
-  Cloudflare Access-gated. Six Workers: `megabyte-os` (router; owns the os custom domain) +
-  `megabyte-os-backend` (Workshop) + `-context` + `-scheduler` + `-custom` (gatekeepers) +
-  `-errors`.
+- **Apex:** `megabyte-os` owns `megabyte.space` in `deployment.jsonc`. Its frontend is the
+  owned fork's `cloudflare-os/packages/workshop-frontend`; `packages/home` / `megabyte-home`
+  is retired and unrouted, retained as a landing-component source.
+- **Anonymous HTML navigation:** the router serves an inlined, full-screen login with
+  Google/GitHub SSO, magic link and email/password, before SPA boot. `isAnonHtmlNav` checks
+  GET, HTML Accept, path exclusions and session-cookie presence. `BA_GATE=0` disables this
+  inline gate. Cookie presence selects HTML only; it does not authorize backend data.
+- **Authenticated navigation:** the router serves SPA assets. The WebGL landing is an
+  authenticated first-run view; the OS shell and absorbed surfaces follow.
+- **Auth rail:** `/api/auth/*` is forwarded to the `AUTH` service binding (`megabyte-auth`)
+  when `BETTER_AUTH=1`, before the broader `/api` Workshop route. Better Auth uses the
+  `megabyte-auth` D1 database. `/signin` stays on the same apex origin.
+- **Backend:** `/api` and `/blueprint-screenshot` go to `megabyte-os-backend`. Backend
+  Better Auth validation fetches `/api/auth/get-session`, requires verified email and
+  enforces `BA_ALLOWED_EMAILS` (configured admins plus the E2E account). Access JWT support
+  remains a separate compatibility path: a verified Access JWT email takes precedence and
+  bypasses the Better Auth email allowlist. `/api` requires exact-Origin requests while
+  accepting anonymous PublicApi RPC connections; authenticated operations enforce identity.
+  Blueprint screenshots are served before that RPC identity check. The backend session
+  fetch defaults to hardcoded `https://megabyte.space/api/auth/get-session`, not the AUTH
+  binding or generated PUBLIC_BASE_URL, so domain/edge-policy changes affect validation.
+  Workshop storage uses `users.idFromName(email)`;
+  matching identity email, rather than login method, selects the user's Durable Object.
+- **Other services:** router gatekeeper paths reach context, scheduler and custom
+  gatekeepers; `megabyte-os-errors` receives error reports. The root deploy manages six
+  OS Workers; the separate `megabyte-auth` Worker is the bound auth service.
+- **Legacy domain:** `os.megabyte.space` is detached from the router. It is not the current
+  human entry point. `www` redirects to the apex through the zone ruleset.
 
-## Hot path (visitor request)
-
+```text
+megabyte.space → megabyte-os router
+  /api/auth/* → AUTH → megabyte-auth → D1
+  /api → Workshop → exact-Origin RPC → PublicApi / authenticated operations → user DO
+  /blueprint-screenshot → Workshop screenshot handler
+  /gatekeeper/* → bound gatekeeper
+  anonymous HTML GET → inline login
+  session-cookie HTML GET → SPA assets → OS surfaces
 ```
-CF DNS (apex)
-  → zone redirect ruleset (www→apex 301 · legacy rules · runs BEFORE Access + Workers)
-  → megabyte-home Worker
-       ├─ static assets (SPA)   ← assets.run_worker_first: ["/login","/login/","/health"]
-       │                           (the asset layer swallows browser navigations otherwise)
-       └─ /login → 302 https://os.megabyte.space
-            → Cloudflare Access (org manhattan · OTP IdP · WARP zero-touch · 168h sessions)
-            → megabyte-os router → backend (Workshop) / context / scheduler / custom / errors
-            → AI Gateway `megabyte-os` (Workers AI, keyless) on every model call
-```
 
-## Ownership boundary (THE load-bearing decision)
+## Ownership and durable state
 
-- **Upstream `cloudflare-os` submodule = PINNED, read-only in practice.** Pointer moves only
-  via the Upstream Sync lane (every-2-fires), to a REVIEWED ref, with `pnpm check` + deploy +
-  6/6 in the same fire.
-- **Starter-owned layers (where ALL enhancements land):** `deployment.jsonc` (single config
-  source) · router worker `megabyte-os` · `packages/home` · custom gatekeepers
-  (`megabyte-os-custom`) · `/admin` branding · `scripts/` · this loop home.
-- Needs upstream internals → carefully-rebased overlay patch or an upstream PR. NEVER blind
-  in-tree submodule edits; NEVER commit a pointer move outside the lane. The adversarial
-  reviewer checks the pointer + in-tree submodule diffs every fire (#1 drift class).
-- **Absorbed features provision CF-native as needed** — D1 · Durable Objects · Queues ·
-  Workflows · R2 · Vectorize · Browser Rendering — durable, scale-to-zero, provisioned via API
-  (never dashboard-hand-created), flag-gated default-OFF.
+- `cloudflare-os` is the owned `heymegabyte/cloudflare-os` fork on `megabyte-os`, with a
+  reviewed gitlink. Deliberate fork enhancements and upstream rebases follow the current
+  `CLAUDE.md` ownership direction; never blind pointer moves or unpublished fork commits.
+- Starter-owned configuration and integrations live in `deployment.jsonc`, `scripts/`,
+  `packages/auth`, custom gatekeepers and this canonical home. Generated
+  `wrangler.prod.jsonc` files are gitignored; edit the source configuration.
+- Absorbed capabilities use D1, DO, R2, Queues and other Cloudflare primitives as needed,
+  with durable state and honest sample/live distinctions. New capabilities follow the
+  loop's default-OFF flag contract.
+- `context.sharingDomain` deliberately still reads `https://os.megabyte.space` in config.
+  It scopes persisted Context data; it is not a routed hostname. Changing that scope
+  requires a focused compatibility review, not a documentation cleanup.
 
-## Deploy topology
+## Deployment and verification
 
-- `pnpm check` — validate `deployment.jsonc` + dry-run every OS Worker (the pre-deploy gate).
-- `pnpm deploy` (root) — build + deploy the six OS Workers. `pnpm --dir packages/home deploy` —
-  build + deploy the homepage (independent).
-- `wrangler.prod.jsonc` files are GENERATED + gitignored — edit `deployment.jsonc` only.
-- Custom domains are DECLARATIVE — changing `customDomain` in `deployment.jsonc` detaches the
-  old hostname on the next `pnpm deploy` (that's how the apex was freed for `megabyte-home`).
-  Verify hostnames after any routing change.
-- Auth: the scoped `CLOUDFLARE_API_TOKEN` LACKS Workers scopes (code 10000) →
-  `unset CLOUDFLARE_API_TOKEN; export CLOUDFLARE_API_KEY=$(get-secret CLOUDFLARE_API_KEY)
-  CLOUDFLARE_EMAIL=blzalewski@gmail.com CLOUDFLARE_ACCOUNT_ID=84fa0d1b16ff8086dd958c468ce7fd59`.
-- Post-deploy: `node scripts/verify-prod.mjs` (**6/6**) + Playwright real-browser on the apex +
-  service-token fetch of the OS. Local green is never "done". Prod deploys are
-  standing-authorized.
+- `pnpm check` validates config, builds and dry-runs OS Workers. Initialize the pinned
+  submodule and install frozen dependencies in both workspaces before these gates.
+- Root `pnpm deploy` builds/deploys the six OS Workers and records deployment. Its script
+  also commits/pushes the receipt; fleet runs must preserve the outer-runner publication
+  contract rather than invoke that publishing tail without adaptation.
+- Custom domains are declarative: changing router.route.customDomain detaches the old
+  route during deployment. Never change DNS/auth policy merely to reconcile this map.
+- `node scripts/check-deploy-state.mjs` compares the gitlink with `.last-deploy.json`;
+  a match is recorded-deployment evidence, not a live probe.
+- `node scripts/verify-prod.mjs` requires `BA_E2E_EMAIL` and `BA_E2E_PASSWORD`; missing
+  credentials exit 2. Use its current assertions and tally, not the historical 6/6 gate
+  or an `os.` service-token fetch as a substitute. Production browser journeys must
+  authenticate via Better Auth and reconcile UI mutations against durable storage.
+- Google SSO's externally registered redirect URI remains tracked in BACKLOG. Correct
+  generated callback URLs alone do not prove a real OAuth login or gadget persistence.
+- Rollback is per-Worker version plus the reviewed fork pin and deployment receipt.
 
-## Resource ownership + IDs
+## Runtime boundaries and routing invariants
 
-- **Account** — `84fa0d1b16ff8086dd958c468ce7fd59`
-- **Access app "Megabyte OS"** — org `manhattan.cloudflareaccess.com` · app
-  `5a2a663c-e849-49ff-9a7c-95b3a741c6f7` · AUD `b455c445…e8fa` · OTP-only IdP (dead Authentik
-  hidden) · `auto_redirect_to_identity` on · sessions 168h · `allow_authenticate_via_warp` on ·
-  admins `hey@megabyte.space` + `blzalewski@gmail.com`.
-- **E2E service token** — `megabyte-os-e2e` · client id
-  `e276fb6a924b2419a3f216c9eb131291.access` (secret via `get-secret`; rotate via the Access API
-  if lost). Pass as `CF_ACCESS_CLIENT_ID`/`CF_ACCESS_CLIENT_SECRET` to `verify-prod.mjs` +
-  Playwright `extraHTTPHeaders`.
-- **AI Gateway** — `megabyte-os` (Workers AI, keyless). Add providers in `deployment.jsonc` +
-  gateway-stored keys.
-
-## Invariants + gotchas
-
-- **`run_worker_first` is load-bearing:** browser navigations (`Accept: text/html`) hit the
-  asset layer before the worker — `/login`, `/login/`, `/health` MUST stay listed;
-  `verify-prod.mjs` sends browser headers on that assertion as the standing regression test.
-- **Fresh-hostname negative-DNS cache:** local resolvers cache ENOTFOUND while the edge is live
-  → `sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder`, or cross-check
-  `dig @1.1.1.1` + `curl --resolve`.
-- **Zone redirect rules run BEFORE Access + Workers** — a redirect can bypass/mask a gate;
-  verify gates after any ruleset change; keep the pre-existing rules (`/source.sh`,
-  `public.megabyte.space/github-awesome.json`) + the `www → apex` 301.
-- **Rollback:** `wrangler rollback <version-id>` per worker; homepage deploys independently of
-  the OS; the submodule pin is the OS-wide rollback point (recorded in `LEDGER.md`).
-- Estate path (the priority journey): apex WebGL homepage → `/login` 302 → Access gate → OS
-  shell → absorbed surfaces. Guard it every fire.
+- Router assets use `run_worker_first: ["/*", "!/assets/*"]`: HTML navigations reach the
+  gate, while hashed assets can bypass it. Browser Accept headers matter when probing.
+- Generated OS Worker configs disable workers.dev and preview URLs; only the router
+  receives the custom domain. The separately managed auth Worker has its own configuration.
+- Zone redirects precede Workers; preserve the existing www and legacy redirect rules.
+- Product AI uses the configured `megabyte-space` gateway. Dynamic intent routing is
+  documented in `infra/cloudflare/ai-gateway/README.md`; configured catalog providers and
+  dynamic route providers are separate concerns. Local development CLI/DeepSeek compute
+  never uses Cloudflare AI Gateway.
+- Account: `84fa0d1b16ff8086dd958c468ce7fd59`. Auth D1:
+  `718b44ef-a33a-4aba-8300-8b70a21dbfd1`. Obtain credentials through the approved broker;
+  never copy OAuth credentials or store secrets in architecture/run receipts.

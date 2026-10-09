@@ -27,6 +27,37 @@ backlog — Product Discovery + the audit roles GENERATE the next wave — and *
 improvement to how future loops operate** (§8). A fire that appends zero next-wave items OR zero
 loop-improvement means a role under-delivered.
 
+## GitHub fleet execution contract
+
+For an incoming GitHub fleet run, this section overrides the legacy session instructions
+throughout §§0–11. Execute exactly one iteration inside the assigned isolated worktree.
+
+- **Recovery is local; publication is shared.** Fetch and inspect `origin/main`, prior Actions
+  receipts and retained worktree commits before selecting work. Fleet-origin-ahead is normal,
+  not proof of a lease race. Confirm retained result commits are ancestors of `origin/main`
+  before treating them as published; a success report alone is insufficient. Inspect retained
+  files/commits read-only and recover verified unpublished work into the assigned workspace
+  when appropriate. Do not mutate or delete another worktree. A dirty canonical main-tree
+  strand remains that tree's recovery responsibility; fleet commits do not salvage it.
+- **Keep the assigned snapshot.** Do not run the legacy `git pull --rebase` orientation step
+  in this isolated worktree. Preserve the incoming base and commit verified changes locally;
+  the outer runner owns fast-forward publication and reports any conflict. Never push main,
+  invoke `record-deploy --push`, or run the root `pnpm deploy` publishing tail. If deployment
+  is authorized and credentials are available, use `node scripts/deploy.ts` and then
+  `node scripts/record-deploy.mjs` without `--commit`/`--push`; include that receipt in the
+  local bookkeeping commit and verify production before claiming deployment success.
+- **GitHub owns cadence.** Do not create session cron, arm the launchd watchdog, or launch
+  another loop. Claim/heartbeat the lease only in the assigned worktree; finish with
+  `node scripts/loop-fire-lock.mjs release --run-id <incoming-run-id>` after the clean-tree
+  gate. Do not use `handoff`: it writes the legacy watchdog trigger. The worktree-local lease
+  does not lock another worktree; the fleet repository lock serializes fleet runs, while
+  independently running sessions still require conflict review at publication.
+- **Missing credentials limit evidence.** Complete useful decision-independent work and
+  report blocked deployment, authenticated long journeys, storage reconciliation and visual
+  inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep
+  acceptance items open and visual scores unchanged unless freshly verified. Record a
+  non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
+
 ## 0 — Orient (cheap; NEVER read giant ledgers in the main thread)
 - **GitHub fleet runs:** obey the incoming workspace/publication contract. In a fresh isolated worktree, initialize the PINNED submodule before fork checks (`git submodule update --init cloudflare-os`) and install locked dependencies in BOTH workspaces before build gates (`pnpm install --frozen-lockfile` and `pnpm --dir cloudflare-os install --frozen-lockfile`). The starter workspace includes only two fork packages; its install alone cannot provide the frontend/configurator build dependencies. An uninitialized fork is missing verification context, never proof of an unpushed fork commit. GitHub owns scheduling; do not arm session cron or the legacy watchdog. Commit locally and leave main publication to the outer runner when instructed.
 - **★ BASH-CLASSIFIER WEDGE → write a `wedged-handoff` + END THE TURN (the watchdog auto-chains a fresh session; Brian 2026-10-06, hands-free since fire-247).** If Bash calls fail with **"claude-opus-4-8 is temporarily unavailable, so auto mode cannot determine the safety of Bash"**, the session's permission classifier is wedged — when FULLY wedged it NEVER recovers in-place (retries, cron ticks, allow-rules, bypassPermissions all fail; confirmed fire-2/3 + fire-204); when INTERMITTENT it's SLOW not dead (probe ONCE more — a second success means flaky, keep going carefully; fire-218). Either way `node`/`git`-mutation/deploy/verify may be dead, so a verified fire may be impossible. **You CANNOT self-`/clear` (it is a client command, not a tool) — the OUT-OF-SESSION `space.megabyte.loop-watchdog` is the only driver of the next session, so hand off to it and STOP.** The MOMENT a retry confirms the wedge: (1) `Write` the lease `.claude/run-the-loop/.fire-lease.json` directly (Write/Edit never need the classifier) with **`"phase": "wedged-handoff"`** + a deliberately stale heartbeat + a `note` saying "classifier wedge at orient, no work — RESUME-CHECK clean, run a normal new fire" (the DISTINCT no-work phase makes the watchdog relaunch on a SHORT ~10-min backoff instead of the ~30-min `released-handoff` one, so the loop retries ~3× faster through an intermittent outage); (2) tell the user in ONE line that the classifier is wedged → the watchdog will auto-relaunch within ~10 min (or they can `/clear` + re-run to unblock instantly); (3) **END THE TURN IMMEDIATELY — do NOT idle waiting out the timeout.** A fast exit frees the watchdog's single-flight lock sooner, so the next relaunch comes quicker. Do NOT spam Bash retries, "stand down and wait", or write long status reports each turn — that stalls the loop while burning turns. (Heartbeat/stale timestamps: the watchdog triggers on the `wedged-handoff` phase regardless of heartbeat value, and any timestamp >25 min old keeps the lease reclaimable — when you can't compute "now", a fixed old ISO like `2020-01-01T00:00:00.000Z` is fine.) **A wedge (or an `autocompact`-thrash / "Prompt is too long" saturation) MID-FIRE — ANY phase past orient, not just §0 — hands off the SAME way, IMMEDIATELY: do NOT wait for the 25-min stale window and do NOT push through a flaky classifier hoping it clears.** If git still works, commit the completed slice FIRST (→ a normal `released-handoff`); if even git is dead, `Write` a `wedged-handoff` whose `note` NAMES the uncommitted files so the next session SALVAGES them (RESUME-CHECK, never re-implement — per `commit-fire-bookkeeping-atomic-s11`). This is why a human should NEVER need to manually `/clear`: a mid-fire wedge that leaves the lease at `build`/`verify` (no handoff) idles the loop until the 25-min window — exactly what forced the 2026-10-08 manual `/clear` (fire-248 wedged at `verify` holding ~7 uncommitted files). Committing each coherent slice the MOMENT it lands keeps a wedge from stranding a multi-slice blob that jams the next rebase. See project memory `harness-classifier-outage-playbook` + `infinite-loop-rearm-watchdog-at-s11` + `manual-clear-is-a-recovery-gap`.

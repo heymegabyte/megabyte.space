@@ -16,6 +16,13 @@
 #   4. No lease but progress.md exists        — unshipped debt with no live fire.
 # A LIVE lease (fresh heartbeat) means a healthy fire is running → do nothing.
 #
+# NEVER-FIRE phase: a lease phase matching "paused-*" (e.g. "paused-awaiting-approval") is a
+# DELIBERATE hold at a destructive/irreversible one-way door awaiting a human go-ahead (e.g. the
+# ADR-0002 fresh-OS-relaunch cutover). The watchdog skips it regardless of heartbeat age — only a
+# human re-invocation ("run the loop") clears a paused gate. Without this, a stale-heartbeat paused
+# lease churns fresh headless sessions against a human-only gate (and risks one misreading the
+# pause note + proceeding into the destructive work). (fire-301)
+#
 # Guards: single-flight lock (skip while a launched session still runs) + a per-phase
 # backoff between launches — 30 min after a productive/dead fire, but only 10 min after
 # a `wedged-handoff` so the loop retries ~3× faster through an intermittent classifier
@@ -60,6 +67,14 @@ needsFire() {
   if [ -f "$LEASE" ]; then
     local phase beat beatEpoch now
     phase="$(jsonField "$LEASE" phase)"
+    case "$phase" in
+      paused-*)
+        # Approval-gated pause at a destructive one-way door — human-only clear. Never relaunch
+        # a headless session into it, no matter how stale the heartbeat. (fire-301)
+        log "skip: lease phase $phase — approval-gated pause, human-only clear"
+        return 1
+        ;;
+    esac
     if [ "$phase" = "released-handoff" ] || [ "$phase" = "wedged-handoff" ]; then
       log "trigger: lease phase $phase"
       return 0

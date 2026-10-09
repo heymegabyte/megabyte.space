@@ -3728,3 +3728,5 @@ at **https://megabyte.space/sandboxes**. SHAs: fork `03bd9a64`->`5d93f2b8` · ou
 **NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
 check) + continued UI-depth (matrix lane: os.research/os.skills expand-rows, os.realtime participant avatars,
 os.durable-objects wake-action).
+
+## fire-289 — deploy recorded (deploy 2026-10-09T01:11:35.529Z; §11 narrative pending)

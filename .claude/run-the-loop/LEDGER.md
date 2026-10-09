@@ -3832,4 +3832,28 @@ and capture sanitized auth-phase/failed-request evidence before adding real keyb
 fixture-blocked statuses and guaranteed mutation restoration. Full product acceptance remains
 blocked. GitHub owns cadence; one fleet iteration; outer runner owns main publication.
 
-## fire-294 — deploy recorded (deploy 2026-10-09T20:23:57.736Z; §11 narrative pending)
+## fire-294 + fire-295 — /research & /skills expand-rows (interactive, SHIPPED + VERIFIED, 2026-10-09)
+
+Two UI-depth slices shipped directly in the interactive session (loop is stopped — no auto-cadence; Brian
+re-issued the WS-DEMO directive as a direct request, executed one verified slice at a time).
+
+**fire-294 /research** (fork `7c03243b`, outer `850e39ee`/`ba937d1a`): run cards gained an EXPAND-ROW —
+parallel SOURCE LIST (per-source responded/pending/no-response dot) + SYNTHESIZED FINDINGS; pure
+`sourceStatusCounts` (TDD). verify-authed /research 5/5 GREEN (verify-prod 13/13, a11y 0 both themes,
+demo-surfaces, verify-research INTERACTIVE-4 expandWorks). os.research 9→9.4. (Its own LEDGER narrative was
+raced out by concurrent fleet writes earlier; recorded here + in the matrix.)
+
+**fire-295 /skills** (fork `7c03243b→d19144a6`, outer `40b8d7fd`): skill cards gained an EXPAND-ROW — the
+DEFINITION/playbook (what the skill instructs the agent to do) + RECENT INVOCATIONS (per-run agent +
+outcome dot success/failed/running via pure `invocationOutcomeCounts` + time). Mirrors the a11y-correct
+research/mcp expand pattern (title = expand button, Enable/Disable stays a sibling, caret aria-hidden).
+Model gained `definition`/`recentInvocations` + `SkillInvocation`/`OUTCOME_META`. vitest 1199/1199 (+3),
+tsc clean. Deploy: router `megabyte-os` 36b63d56 @20:23Z. verify-authed /skills = ALL 5 GREEN —
+verify-prod 13/13, a11y --only=/skills 0 serious BOTH themes, demo-surfaces, verify-skills INTERACTIVE-4
+`expandWorks:true` (filter All 8→Writing 3, search→invoice 1, Disable 7→6), 0 console errors. os.skills 9→9.4.
+
+Numbering note: the fleet runner used fire-290…293 for its own documentation/recovery fires, so the two
+interactive slices are numbered 294/295 to avoid collision (commit messages on the research slice read
+"fire-290" — minted before the fleet entries were seen on rebase; same shipped slice).
+
+Loop remains STOPPED (Brian "stop the loop"); driver = /loop or OpenClaw, NOT a watchdog the agent manages.

@@ -3729,4 +3729,22 @@ at **https://megabyte.space/sandboxes**. SHAs: fork `03bd9a64`->`5d93f2b8` · ou
 check) + continued UI-depth (matrix lane: os.research/os.skills expand-rows, os.realtime participant avatars,
 os.durable-objects wake-action).
 
-## fire-289 — deploy recorded (deploy 2026-10-09T01:11:35.529Z; §11 narrative pending)
+## fire-289 — /durable-objects per-instance last-active + Wake action (UI-depth, os.durable-objects 9->9.3)
+
+UI-depth pivot slice (self-spec'd from fire-288's handoff, executed once the loop sat idle). Delivered
+os.durable-objects next[0]: each instance row now shows `lastActive`, and HIBERNATED instances get a
+**Wake** button that flips them → active (lastActive → "just now"). New pure `applyWake(namespaces, ids)`
+mirroring sandboxes' applyKill — all reads derive from `base = applyWake(SAMPLE_NAMESPACES, wokenIds)` so
+the detail reflects the wake. +5 TDD cases. AA-safe by construction: status via graphical dot, neutral
+text, button focus-ring.
+
+**Gates:** tsc 0 · vitest **1192/1192** · build clean. **Prod:** verify-prod **13/13** · `verify-a11y
+--only=/durable-objects` **0 serious BOTH themes** · demo-surfaces 0 console errors · check-deploy-state OK.
+Live at **https://megabyte.space/durable-objects**. SHAs: fork `5d93f2b8`->`91a6d443` · outer `a745198c` ·
+deploy @01:11Z.
+
+★ THIS SESSION's UI-depth run (5 shipped+verified): fire-285 true-black shell · fire-286 /artifacts variant
+strip · fire-287 /email reputation band · fire-288 /sandboxes output expand · fire-289 /durable-objects wake.
+
+**NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
+check) + continued UI-depth (matrix lane: os.research/os.skills expand-rows, os.realtime participant avatars).

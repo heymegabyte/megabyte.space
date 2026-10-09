@@ -98,10 +98,21 @@ if (endBefore > 0 && (await firstEnd.count().then((c) => c > 0).catch(() => fals
   endWorks = endAfter === endBefore - 1;
 }
 
+// AVATAR ROW + AUDIO METER — always-visible per-room participants + the active-speaker level meter (fire-297).
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(300); }
+const avatarRows = await page.locator('ul[aria-label$="participants"]').count().catch(() => 0);
+const meterImgs = await page.getByRole("img", { name: /audio level \d+ of 100/i }).count().catch(() => 0);
+const bodyNow = await page.evaluate(() => document.body.innerText).catch(() => "");
+const avatarMeterWorks =
+  avatarRows > 0 &&
+  meterImgs > 0 &&
+  /speaking/i.test(bodyNow) &&
+  /(Sam Rivera|Support Agent|Voice Agent|Alice Chen)/.test(bodyNow); // a real active-speaker name
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countLive, countSearch, endBefore, statusFilterWorks, searchWorks, endWorks, presenceLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countLive, countSearch, endBefore, statusFilterWorks, searchWorks, endWorks, avatarRows, meterImgs, avatarMeterWorks, presenceLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -112,6 +123,7 @@ check(renders, "Realtime content renders (stats + status filter + rooms + tracks
 check(statusFilterWorks, `Status filter narrows the rooms (All ${countAll} → Live ${countLive})`, "status pill did not narrow the rooms");
 check(searchWorks, `Search narrows the rooms (All ${countAll} → "standup" ${countSearch})`, "search did not narrow the rooms");
 check(endWorks, `End ends a live call (End buttons ${endBefore} → ${endBefore - 1})`, "end did not end a room");
+check(avatarMeterWorks, `Participant avatar rows + active-speaker audio meter render (${avatarRows} rows, ${meterImgs} meters)`, "no participant avatar row / audio meter");
 check(presenceLink, "Cross-link to Presence present (interconnect)", "no Presence cross-link");
 check(realErrors.length === 0, "0 console errors on /realtime", `${realErrors.length} console errors`);
 console.log(ok ? "✅ REALTIME GREEN" : "❌ realtime check failed");

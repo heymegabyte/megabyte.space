@@ -3876,3 +3876,5 @@ Session tally (interactive, loop stopped): 3 expand-row depth slices verified-li
 fire-295 /skills, fire-296 /sources — all following the same a11y-correct pattern; `verify-authed.mjs` now
 auto-runs each surface's dedicated `verify-<route>.mjs`. Next ready depth gaps (matrix): os.realtime
 (participant avatars + audio meter), os.tasks (group-by-type + sparkline), os.tools (group + usage sparkline).
+
+## fire-297 — deploy recorded (deploy 2026-10-09T20:49:34.912Z; §11 narrative pending)

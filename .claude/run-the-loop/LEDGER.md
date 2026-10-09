@@ -3667,3 +3667,5 @@ on the ORIGINAL shell, verified safe in both themes. SHAs: fork `da8fbd7a` · ou
 (`https://megabyte.space/api/auth/callback/google`) + a real GitHub-login Workshop check. Meanwhile:
 continue UI-depth/beautify slices on existing surfaces (matrix-frontier lane). Keep a11y a green gate,
 build-right-first-time (memory `ui-depth-over-a11y-polish-and-sample-breadth`).
+
+## fire-286 — deploy recorded (deploy 2026-10-09T00:42:57.009Z; §11 narrative pending)

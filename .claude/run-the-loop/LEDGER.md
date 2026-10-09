@@ -3899,3 +3899,5 @@ advancing (no heartbeat refresh, no commits, clean tree) before completing §11 
 Session tally (interactive, loop stopped): 4 verified depth slices live — fire-294 /research, fire-295
 /skills, fire-296 /sources, fire-297 /realtime. Next ready gaps: os.tasks (group-by-type + sparkline),
 os.tools (group + usage sparkline). Loop remains STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.
+
+## fire-298 — deploy recorded (deploy 2026-10-09T21:05:20.999Z; §11 narrative pending)

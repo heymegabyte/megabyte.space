@@ -1,5 +1,9 @@
 # Long-Trail Case 001 — The Estate Path
 
+> Historical checkpoint and plan below are retained unchanged. The current restart contract is
+> [case-001.better-auth-restart.md](case-001.better-auth-restart.md) (fire-292); its cursor is separate.
+> Actions 25–26 here prove the retired Access flow only, not current authentication.
+
 - **caseId:** case-001
 - **status:** in-progress
 - **lease:** `{ "runId": "fire-3-run", "resourcePrefix": "ltt-case-001-", "heartbeat": "2026-10-01T15:40:00Z" }`

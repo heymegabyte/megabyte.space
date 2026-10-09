@@ -3900,4 +3900,21 @@ Session tally (interactive, loop stopped): 4 verified depth slices live — fire
 /skills, fire-296 /sources, fire-297 /realtime. Next ready gaps: os.tasks (group-by-type + sparkline),
 os.tools (group + usage sparkline). Loop remains STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.
 
-## fire-298 — deploy recorded (deploy 2026-10-09T21:05:20.999Z; §11 narrative pending)
+## fire-298 — /knowledge documents + sync-log expand-row (interactive, SHIPPED + VERIFIED, 2026-10-09)
+
+5th verified depth slice this manual-drive session (loop stays stopped). **fire-298 /knowledge** (fork
+`cbdf9f23→80b7209e`, outer `eec7ec57`): each knowledge-entry card gained an EXPAND-ROW revealing its
+SYNCED DOCUMENTS (a named sample of the `docs` count — chip list + "+N more") + its PER-ENTRY SYNC LOG
+(recent runs, outcome dot synced/unchanged/failed via pure `knowledgeSyncCounts` + time + an error note,
+e.g. Competitor Teardown "a source page moved — 1 fetch failed"). Mirrors the research/skills/sources
+expand pattern (title = expand button, Resync stays a sibling, caret aria-hidden). Model gained
+`documents`/`syncLog` + `KnowledgeSyncRun`/`KSYNC_META`. vitest 1214/1214 (+3), tsc clean. Deploy: router
+`megabyte-os` d7b5788f @21:05Z. verify-authed /knowledge = ALL 5 GREEN — verify-prod 13/13, a11y
+--only=/knowledge 0 serious BOTH themes, demo-surfaces, verify-knowledge INTERACTIVE-4 `expandWorks:true`
+(scope All 8→Org 2, search→pricing 1, Resync 3→2, live-sources band), 0 console errors. os.knowledge 9→9.4.
+
+Session tally (interactive, loop stopped): 5 verified depth slices live — fire-294 /research, 295 /skills,
+296 /sources, 297 /realtime, 298 /knowledge. Four are the a11y-correct expand-row pattern; one (realtime)
+is an avatar row + audio meter. `verify-authed.mjs` auto-runs each surface's dedicated `verify-<route>.mjs`.
+Next ready depth gaps: os.tasks (group-by-type + sparkline), os.tools (group + usage sparkline). Loop remains
+STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.

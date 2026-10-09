@@ -3690,4 +3690,21 @@ deploy router @00:42Z.
 URI + real GitHub-login check). Meanwhile continue UI-depth/beautify on existing surfaces (matrix-frontier
 lane). a11y stays a green gate, built right the first time.
 
-## fire-287 — deploy recorded (deploy 2026-10-09T00:51:55.807Z; §11 narrative pending)
+## fire-287 — /email sender-reputation band + suppression count (UI-depth, os.email 9->9.3)
+
+UI-depth pivot slice (improve the UI on an existing surface; no new sample routes). Delivered os.email
+next[0]: a **SENDER-REPUTATION band** above the sends log — a tier (Healthy / At risk / Poor, derived from
+bounce+complaint rates vs Amazon SES guardrails, worse-dimension-wins) as a 3-segment meter + a
+**suppression-list count**. Honest: the sample's 20% bounce + 10% complaint correctly reads "Poor",
+vividly demonstrating what the metric catches.
+
+New pure helpers `reputationTier` + `suppressionCount` (TDD: SES-threshold cases incl. worse-dimension +
+the review band). **AA-safe by construction**: tier shown via a graphical dot + meter, every label a
+neutral high-contrast token (kumo-accent-text-not-aa).
+
+**Gates:** tsc 0 · vitest **1184/1184** · build clean. **Prod:** verify-prod **13/13** · `verify-a11y
+--only=/email` **0 serious BOTH themes** · demo-surfaces 0 console errors · check-deploy-state OK. Live at
+**https://megabyte.space/email**. SHAs: fork `f85cee9a`->`03bd9a64` · outer `740854d6` · deploy @00:51Z.
+
+**NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
+check) + continued UI-depth/beautify on existing surfaces (matrix-frontier lane).

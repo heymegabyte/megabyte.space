@@ -3831,3 +3831,5 @@ Next-wave finding refines runner-hardening: verify process-level browser closure
 and capture sanitized auth-phase/failed-request evidence before adding real keyboard navigation,
 fixture-blocked statuses and guaranteed mutation restoration. Full product acceptance remains
 blocked. GitHub owns cadence; one fleet iteration; outer runner owns main publication.
+
+## fire-294 — deploy recorded (deploy 2026-10-09T20:23:57.736Z; §11 narrative pending)

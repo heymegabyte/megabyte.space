@@ -1,5 +1,16 @@
 # BACKLOG — the live queue (frontier)
 
+> ## ⛔ DIRECTION CHANGED (Brian, 2026-10-09) — the WS-DEMO / absorption frontier below is RETIRED FOR THE APEX
+> The apex `megabyte.space` relaunches on a **FRESH official Cloudflare OS** (minimal branding); the current
+> customized app (fork + 60 panels + ProjectSites absorption + BA force-login) is PRESERVED at
+> **`demo.megabyte.space`**. This REVERSES "megabyte.space = advanced playground, absorb projectsites.dev."
+> **Do NOT grab a WS-* / WS-DEMO / absorption / beautify slice below for the apex.** The live mission is a
+> production **migration**, governed by `docs/decisions/0002-fresh-cloudflare-os-relaunch.md` (ADR) with the
+> execution-ready runbook in **`docs/MIGRATION.md`** and the authoritative procedure in
+> `.agents/skills/cloudflare-os-operator/SKILL.md`. Next action = the Phase-2 batched go-ahead (see MIGRATION §5–6);
+> the first prod DNS/resource mutation is approval-gated. The WS-* blocks below remain ONLY as (a) the legacy-demo
+> app's history and (b) candidate fixes that improve the demo without changing the native OS. (fire-300.)
+
 > The frontier the loop advances: one Next unit per workstream + executable Acceptance.
 > Advanced lines get ticked with the closing SHA + prod proof; completed workstreams move to
 > § Done. Discovery roles APPEND deduplicated next-wave items every fire (zero-append =

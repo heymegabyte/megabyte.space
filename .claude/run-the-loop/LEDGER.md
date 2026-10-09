@@ -3918,3 +3918,19 @@ Session tally (interactive, loop stopped): 5 verified depth slices live — fire
 is an avatar row + audio meter. `verify-authed.mjs` auto-runs each surface's dedicated `verify-<route>.mjs`.
 Next ready depth gaps: os.tasks (group-by-type + sparkline), os.tools (group + usage sparkline). Loop remains
 STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.
+
+## fire-300 — fresh-OS-relaunch Phase 1 close + execution runbook (MISSION PIVOT acknowledged)
+
+**Interactive drive (Brian "run the loop"). NOT a WS-DEMO fire.** The prior lease was `stopped` (ENDED-by-fresh-os-relaunch-mission); ADR 0002 (ACCEPTED 2026-10-09) RETIRES the WS-DEMO/absorption loop for the apex and replaces it with a production **migration**: relaunch `megabyte.space` on a FRESH official Cloudflare OS, preserve the current customized app at `demo.megabyte.space`. This fire ran the migration's Phase-1 close + planning — the authoritative `.agents/skills/cloudflare-os-operator/SKILL.md` requires operator approval + a batched decision set before any DNS/route/Access/resource mutation, and the fresh-OS worker names / Access app / submodule pin are genuinely undecided (skill: never guess them). So the correct, doctrine-aligned slice was: ground maximally → write the execution spec → surface the go-ahead, NOT auto-execute prod DNS/resource changes (delicate prod-mutating work + ADR/global one-way-door gate; Brian interactive).
+
+**Verified current state (read-only):** apex `https://megabyte.space` → 200 `Sign in · Megabyte OS` (BA force-login live); `demo.megabyte.space` → NXDOMAIN (not created). Git safety net already landed: tag `pre-fresh-os-relaunch-20261009` + branch `legacy/megabyte-space-v1` (local+origin). `check-fire-committed` CLEAN. Submodule pinned fork `80b7209e`.
+
+**Shipped:**
+- `docs/MIGRATION.md` — execution-ready runbook: verified state, resource/state-identity inventory (legacy keeps names→state preserved; fresh OS = new `mbspace-os*` names), **zero-downtime sequencing refinement** of ADR Phase 2 (the literal "move apex→demo" detaches the apex per the declarative-customDomain gotcha → instead ADD demo as a 2nd custom domain out-of-band, keep apex attached until cutover), per-phase commands + rollback matrix, operator-skill mutation summary, and the §6 decision batch (worker names, Access reuse-vs-fresh, submodule upstream pin, fresh resources+AI-no-keys, branding, cutover approver).
+- BACKLOG.md top banner — ⛔ DIRECTION CHANGED: WS-DEMO/absorption frontier RETIRED for the apex; points future fires at ADR 0002 + MIGRATION.md so no automated fire grabs a retired absorption slice (the §8 loop improvement).
+
+**Loop improvement (§8):** the BACKLOG direction banner + the MIGRATION runbook convert the pivot from "memory-only" into an in-repo, orient-visible guardrail + an executable spec — a future "run the loop" now reads the new mission at the frontier head instead of the retired WS-DEMO queue.
+
+**No prod mutation. No deploy. No modifier-matrix delta (no UI surface visited/beautified — migration-planning fire).**
+
+**Next action (awaiting Brian):** the single batched go-ahead for Phase 2 (MIGRATION §5 mutation summary + §6 decision batch). First prod mutation = add `demo.megabyte.space` custom domain to the live `megabyte-os` router (apex untouched). Lease left `paused-awaiting-approval` (NOT a released-handoff) — the next step is approval-gated + destructive, so the loop must not auto-chain into it.

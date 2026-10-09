@@ -99,10 +99,25 @@ if (disableBefore > 0 && (await firstDisable.count().then((c) => c > 0).catch(()
   toggleWorks = disableAfter === disableBefore - 1;
 }
 
+// INTERACTIVE 4 — expand a skill reveals its definition/playbook + recent invocations (fire-295).
+let expandWorks = false;
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(250); }
+const expandBtn = page.getByRole("button", { name: /Summarize meeting notes/i }).first();
+if (await expandBtn.count().then((c) => c > 0).catch(() => false)) {
+  await expandBtn.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const detail = await page.evaluate(() => document.body.innerText);
+  expandWorks =
+    /Definition/i.test(detail) &&
+    /Recent invocations/i.test(detail) &&
+    /decisions made|action items|open questions/i.test(detail) && // actual definition text
+    /Notetaker/i.test(detail); // an actual invocation agent
+}
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countWriting, countSearch, disableBefore, categoryFilterWorks, searchWorks, toggleWorks, toolsLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countWriting, countSearch, disableBefore, categoryFilterWorks, searchWorks, toggleWorks, expandWorks, toolsLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -113,6 +128,7 @@ check(renders, "Agent Skills content renders (stats + category filter + skills +
 check(categoryFilterWorks, `Category filter narrows the skills (All ${countAll} → Writing ${countWriting})`, "category pill did not narrow the skills");
 check(searchWorks, `Search narrows the skills (All ${countAll} → "invoice" ${countSearch})`, "search did not narrow the skills");
 check(toggleWorks, `Disable toggles a skill off (Disable buttons ${disableBefore} → ${disableBefore - 1})`, "disable did not toggle a skill off");
+check(expandWorks, "Expand-row reveals the skill's definition + recent invocations", "expand-row did not reveal the definition/invocations detail");
 check(toolsLink, "Cross-link to Tools present (interconnect)", "no Tools cross-link");
 check(realErrors.length === 0, "0 console errors on /skills", `${realErrors.length} console errors`);
 console.log(ok ? "✅ SKILLS GREEN" : "❌ skills check failed");

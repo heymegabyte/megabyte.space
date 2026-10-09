@@ -99,10 +99,25 @@ if (cancelBefore > 0 && (await firstCancel.count().then((c) => c > 0).catch(() =
   cancelWorks = cancelAfter === cancelBefore - 1;
 }
 
+// INTERACTIVE 4 — expand a DONE run reveals the synthesized findings + the parallel source list (fire-290).
+let expandWorks = false;
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(250); }
+const expandBtn = page.getByRole("button", { name: /competitors for a boutique coffee roaster/i }).first();
+if (await expandBtn.count().then((c) => c > 0).catch(() => false)) {
+  await expandBtn.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const detail = await page.evaluate(() => document.body.innerText);
+  expandWorks =
+    /Synthesized findings/i.test(detail) &&
+    /Sources\s*·/i.test(detail) &&
+    /responded/i.test(detail) &&
+    /Blue Bottle|traceability|loyalty/i.test(detail); // actual finding content, not just the header
+}
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDone, countSearch, cancelBefore, statusFilterWorks, searchWorks, cancelWorks, agentsLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, countAll, countDone, countSearch, cancelBefore, statusFilterWorks, searchWorks, cancelWorks, expandWorks, agentsLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -113,6 +128,7 @@ check(renders, "Research content renders (stats + status filter + runs + sources
 check(statusFilterWorks, `Status filter narrows the runs (All ${countAll} → Done ${countDone})`, "status pill did not narrow the runs");
 check(searchWorks, `Search narrows the runs (All ${countAll} → "coffee" ${countSearch})`, "search did not narrow the runs");
 check(cancelWorks, `Cancel stops an in-flight run (Cancel buttons ${cancelBefore} → ${cancelBefore - 1})`, "cancel did not stop a run");
+check(expandWorks, "Expand-row reveals synthesized findings + parallel sources (responded/pending)", "expand-row did not reveal the findings/sources detail");
 check(agentsLink, "Cross-link to Agents present (interconnect)", "no Agents cross-link");
 check(realErrors.length === 0, "0 console errors on /research", `${realErrors.length} console errors`);
 console.log(ok ? "✅ RESEARCH GREEN" : "❌ research check failed");

@@ -3877,4 +3877,25 @@ fire-295 /skills, fire-296 /sources — all following the same a11y-correct patt
 auto-runs each surface's dedicated `verify-<route>.mjs`. Next ready depth gaps (matrix): os.realtime
 (participant avatars + audio meter), os.tasks (group-by-type + sparkline), os.tools (group + usage sparkline).
 
-## fire-297 — deploy recorded (deploy 2026-10-09T20:49:34.912Z; §11 narrative pending)
+## fire-297 — /realtime participant avatars + audio meter (interactive, SHIPPED + VERIFIED, 2026-10-09)
+
+4th verified depth slice this manual-drive session (loop stays stopped). **fire-297 /realtime** (fork
+`5050c71f→cbdf9f23`, outer `6fdad831`): each live/connecting room card now shows a PARTICIPANT AVATAR ROW
+(initials circles; speaking = a success ring; muted = a MicrophoneSlash badge; each avatar's full
+name/role/state is in its `aria-label`) + a LIVE AUDIO METER for the active speaker — pure `activeSpeaker`
+(loudest unmuted participant) + a 10-bar discrete level via pure `meterBars`, STATIC (no animation → no
+reduced-motion concern; the speaker name is neutral text, the bars are graphical). Model gained
+`Participant`/`participantList` + pure `activeSpeaker`/`meterBars`/`initials`; `applyEnd` now also clears
+`participantList`. vitest 1211/1211 (+9), tsc clean. Deploy: router `megabyte-os` 438f82ad @20:49Z.
+verify-authed /realtime = ALL 5 GREEN — verify-prod 13/13, a11y --only=/realtime 0 serious BOTH themes,
+demo-surfaces, verify-realtime `avatarMeterWorks` (4 avatar rows, 3 active-speaker meters after the
+End-test cleared one room), 0 console errors. os.realtime 9→9.4.
+
+★ COLLISION NOTE (multi-scheduler): a concurrent OpenClaw-driven /run-the-loop claimed the lease mid-build
+(phase "build", a salvage of my then-uncommitted realtime files), but stalled with NO commits + a clean tree
+while I committed+pushed+deployed+verified the slice. Per the coalesce doctrine I confirmed it wasn't
+advancing (no heartbeat refresh, no commits, clean tree) before completing §11 + restoring the stopped lease.
+
+Session tally (interactive, loop stopped): 4 verified depth slices live — fire-294 /research, fire-295
+/skills, fire-296 /sources, fire-297 /realtime. Next ready gaps: os.tasks (group-by-type + sparkline),
+os.tools (group + usage sparkline). Loop remains STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.

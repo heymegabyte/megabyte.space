@@ -3934,3 +3934,22 @@ STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.
 **No prod mutation. No deploy. No modifier-matrix delta (no UI surface visited/beautified — migration-planning fire).**
 
 **Next action (awaiting Brian):** the single batched go-ahead for Phase 2 (MIGRATION §5 mutation summary + §6 decision batch). First prod mutation = add `demo.megabyte.space` custom domain to the live `megabyte-os` router (apex untouched). Lease left `paused-awaiting-approval` (NOT a released-handoff) — the next step is approval-gated + destructive, so the loop must not auto-chain into it.
+
+## fire-301 — fresh-OS relaunch approval-gate HOLD + watchdog paused-phase safety fix
+
+**Type:** approval-gate + loop-infra reliability (NOT feature dev — ADR-0002 migration discipline). Interactive re-invocation by Brian ("run the loop"); lease was `paused-awaiting-approval` from fire-300.
+
+**Orient / ground truth (re-verified live, read-only):**
+- Apex `https://megabyte.space` → HTTP 200, `<title>Sign in · Megabyte OS</title>` — legacy customized app still live (BA-5 router-inlined force-login).
+- `demo.megabyte.space` → NXDOMAIN (not created). `www` → 200. Submodule `cloudflare-os` pinned `80b7209e` tag `pre-fresh-os-relaunch-20261009`. All match `docs/MIGRATION.md §1`.
+- `check-fire-committed` CLEAN; `check-deploy-state` OK (fork gitlink matches last-deployed). Operator skill `.agents/skills/cloudflare-os-operator/SKILL.md` present (27K).
+
+**Decision respected (canonical #4):** "run the loop" from Brian is NOT the §6 batched go-ahead. Did NOT auto-execute any Phase-2+ mutation (demo custom-domain add, fresh resources, Access, DNS, submodule pin move) — all are destructive one-way doors behind the operator-skill hard stop. Presented the `MIGRATION.md §6` decision batch to Brian and requested his single batched go-ahead.
+
+**Loop self-improvement (§8) — SHIPPED:** `scripts/loop-watchdog.sh` now skips any lease phase matching `paused-*` regardless of heartbeat age (commit `19bd1759`). Root cause: the watchdog only skipped on a *fresh* heartbeat, so fire-300's deliberately-stale heartbeat on a `paused-awaiting-approval` lease let the watchdog relaunch headless `claude -p` sessions into the human-only approval gate — observed in `watchdog.log` at `2026-10-09T22:15:51Z` (pid 75914), which then presented the decision batch to the log/void. Now only a human re-invocation clears a paused gate; the destructive-migration pause is a durable hold. `bash -n` clean; case-match verified (`paused-awaiting-approval`→SKIP, `released-handoff`/`wedged-handoff`/`orient`/`build`→evaluated normally). Local launchd script — live on next tick, no deploy.
+
+**No deploy / no prod mutation this fire** (migration gate; the only change is the local watchdog script). No product surface visited → modifier-matrix unchanged.
+
+**NEXT unmet unit:** Brian's go-ahead on `MIGRATION.md §6` → Phase 2 (ADD `demo.megabyte.space` as a 2nd custom domain on the live `megabyte-os` router, apex untouched; zero-downtime refinement per §4) in a focused session. Phase 4 apex cutover remains separately approval-gated.
+
+**Lease:** left `paused-awaiting-approval` (fire-301), heartbeat refreshed; the patched watchdog will NOT auto-relaunch it. NOT a released-handoff (would wrongly auto-chain into destructive work). Cron/watchdog untouched (both armed).

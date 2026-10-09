@@ -103,10 +103,24 @@ if (syncBefore > 0 && (await firstSync.count().then((c) => c > 0).catch(() => fa
   syncWorks = syncAfter === syncBefore - 1;
 }
 
+// INTERACTIVE 4 — expand a source reveals its sync log (runs + outcomes + an error note) (fire-296).
+let expandWorks = false;
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(250); }
+const expandBtn = page.getByRole("button", { name: /Google Drive/i }).first();
+if (await expandBtn.count().then((c) => c > 0).catch(() => false)) {
+  await expandBtn.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const detail = await page.evaluate(() => document.body.innerText);
+  expandWorks =
+    /Sync log/i.test(detail) &&
+    /partial/i.test(detail) &&                 // an outcome only present in the sync log
+    /files skipped|permission/i.test(detail);  // an actual error note
+}
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, missing, liveBand, countAll, countDocs, countSearch, syncBefore, kindFilterWorks, searchWorks, syncWorks, knowledgeLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, missing, liveBand, countAll, countDocs, countSearch, syncBefore, kindFilterWorks, searchWorks, syncWorks, expandWorks, knowledgeLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -118,6 +132,7 @@ check(liveBand, "Live connected-accounts band renders (real listConnectedAccount
 check(kindFilterWorks, `Kind filter narrows the sources (All ${countAll} → Docs ${countDocs})`, "kind pill did not narrow the sources");
 check(searchWorks, `Search narrows the sources (All ${countAll} → "posthog" ${countSearch})`, "search did not narrow the sources");
 check(syncWorks, `Sync now kicks a connector into syncing (Sync-now buttons ${syncBefore} → ${syncBefore - 1})`, "sync-now did not move a connector into syncing");
+check(expandWorks, "Expand-row reveals the per-source sync log (runs + outcomes + error notes)", "expand-row did not reveal the sync log");
 check(knowledgeLink, "Cross-link to Knowledge present (interconnect)", "no Knowledge cross-link");
 check(realErrors.length === 0, "0 console errors on /sources", `${realErrors.length} console errors`);
 console.log(ok ? "✅ SOURCES GREEN" : "❌ sources check failed");

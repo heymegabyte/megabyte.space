@@ -3857,3 +3857,22 @@ interactive slices are numbered 294/295 to avoid collision (commit messages on t
 "fire-290" — minted before the fleet entries were seen on rebase; same shipped slice).
 
 Loop remains STOPPED (Brian "stop the loop"); driver = /loop or OpenClaw, NOT a watchdog the agent manages.
+
+## fire-296 — /sources sync-log expand-row (interactive, SHIPPED + VERIFIED, 2026-10-09)
+
+Brian re-issued the WS-DEMO directive; shipped a 3rd verified depth slice this session (loop stays stopped —
+direct manual-drive, one verified slice committed at a time). **fire-296 /sources** (fork
+`d19144a6→5050c71f`, outer `f7d7d339`): each sync-connector card gained an EXPAND-ROW revealing its recent
+SYNC LOG — per-run outcome dot (ok/partial/failed via pure `syncOutcomeCounts`) + "+N records" delta + time
++ an error note on partial/failed runs (e.g. Google Drive "3 files skipped (permission denied)", Slack
+"token expired — reconnect the account"). Mirrors the research/skills expand pattern (title = expand button,
+"Sync now" stays a sibling, caret aria-hidden). Model gained `syncLog`/`SyncRun`/`SYNC_OUTCOME_META`.
+vitest 1202/1202 (+3), tsc clean. Deploy: router `megabyte-os` 7f18124b @20:36Z. verify-authed /sources =
+ALL 5 GREEN — verify-prod 13/13, a11y --only=/sources 0 serious BOTH themes, demo-surfaces, verify-sources
+INTERACTIVE-4 `expandWorks:true` (kind All 8→Docs 4, search→posthog 1, Sync-now 7→6, live-accounts band), 0
+console errors. os.sources 9→9.4.
+
+Session tally (interactive, loop stopped): 3 expand-row depth slices verified-live — fire-294 /research,
+fire-295 /skills, fire-296 /sources — all following the same a11y-correct pattern; `verify-authed.mjs` now
+auto-runs each surface's dedicated `verify-<route>.mjs`. Next ready depth gaps (matrix): os.realtime
+(participant avatars + audio meter), os.tasks (group-by-type + sparkline), os.tools (group + usage sparkline).

@@ -3644,3 +3644,5 @@ scaffolding (that session's domain; its own §: "fold shipped slices into a WS-A
 
 **SHAs:** `c91f1b42` (fire-282 §11 salvage) · `a50752df` (verify-prod SSO hardening) · `6e6be151` (CLAUDE.md
 doc-truth) · this §11 bookkeeping commit.
+
+## fire-285 — deploy recorded (deploy 2026-10-09T00:23:26.427Z; §11 narrative pending)

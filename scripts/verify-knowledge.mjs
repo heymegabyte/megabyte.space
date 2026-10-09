@@ -104,10 +104,24 @@ if (resyncBefore > 0 && (await firstResync.count().then((c) => c > 0).catch(() =
   resyncWorks = resyncAfter === resyncBefore - 1;
 }
 
+// INTERACTIVE 4 — expand an entry reveals its synced documents + per-entry sync log (fire-298).
+let expandWorks = false;
+if (await allPill.count().then((c) => c > 0).catch(() => false)) { await allPill.click().catch(() => {}); await page.waitForTimeout(250); }
+const expandBtn = page.getByRole("button", { name: /Brand Voice & Style Guide/i }).first();
+if (await expandBtn.count().then((c) => c > 0).catch(() => false)) {
+  await expandBtn.click().catch(() => {});
+  await page.waitForTimeout(400);
+  const detail = await page.evaluate(() => document.body.innerText);
+  expandWorks =
+    /Documents/i.test(detail) &&                                        // expand-only header ("docs" count ≠ "Documents")
+    /Sync log/i.test(detail) &&                                         // expand-only header
+    /Tone of voice|Logo & color usage|Writing principles/.test(detail); // an actual document name
+}
+
 await browser.close();
 
 const realErrors = errors.filter((e) => !/WebSocket is already in (CLOSING|CLOSED)/i.test(e));
-console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countOrg, countSearch, resyncBefore, scopeFilterWorks, searchWorks, resyncWorks, connectionsLink, consoleErrors: realErrors.length }, null, 2));
+console.log(JSON.stringify({ reachable, onPath, renders, liveBand, missing, countAll, countOrg, countSearch, resyncBefore, scopeFilterWorks, searchWorks, resyncWorks, expandWorks, connectionsLink, consoleErrors: realErrors.length }, null, 2));
 if (realErrors.length) console.log("errors:", realErrors.join(" | ").slice(0, 300));
 
 let ok = true;
@@ -119,6 +133,7 @@ check(liveBand, "Live 'sources feeding your knowledge' band renders (real listCo
 check(scopeFilterWorks, `Scope filter narrows the entries (All ${countAll} → Org ${countOrg})`, "scope pill did not narrow the entries");
 check(searchWorks, `Search narrows the entries (All ${countAll} → "pricing" ${countSearch})`, "search did not narrow the entries");
 check(resyncWorks, `Resync refreshes a stale entry (Resync buttons ${resyncBefore} → ${resyncBefore - 1})`, "resync did not refresh a stale entry");
+check(expandWorks, "Expand-row reveals the synced documents + per-entry sync log", "expand-row did not reveal the documents/sync-log detail");
 check(connectionsLink, "Cross-link to Connections present (interconnect)", "no Connections cross-link");
 check(realErrors.length === 0, "0 console errors on /knowledge", `${realErrors.length} console errors`);
 console.log(ok ? "✅ KNOWLEDGE GREEN" : "❌ knowledge check failed");

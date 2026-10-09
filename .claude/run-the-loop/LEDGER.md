@@ -3709,4 +3709,22 @@ neutral high-contrast token (kumo-accent-text-not-aa).
 **NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
 check) + continued UI-depth/beautify on existing surfaces (matrix-frontier lane).
 
-## fire-288 — deploy recorded (deploy 2026-10-09T01:00:50.683Z; §11 narrative pending)
+## fire-288 — /sandboxes per-run console output on expand (UI-depth, os.sandboxes 9->9.3)
+
+UI-depth pivot slice. Delivered os.sandboxes next[0]: each run now captures stdout/stderr (a new `output`
+field + a realistic sample per run — a Python ValueError traceback on the failed run, a wall-clock-kill on
+the timeout, progress lines on the running ones) revealed by a **"Show output · N lines"** toggle into a
+keyboard-scrollable `<pre>`. New pure `outputLineCount` helper + TDD. **AA-safe by construction**: the
+scrollable `<pre>` is `tabIndex=0` + focus-ring (the scrollable-region-focusable lesson from fire-281
+applied UP FRONT, no fix cycle), the toggle carries `aria-expanded`, text stays neutral.
+
+**Gates:** tsc 0 · vitest **1187/1187** · build clean. **Prod:** verify-prod **13/13** · `verify-a11y
+--only=/sandboxes` **0 serious BOTH themes** · demo-surfaces 0 console errors · check-deploy-state OK. Live
+at **https://megabyte.space/sandboxes**. SHAs: fork `03bd9a64`->`5d93f2b8` · outer `a8f47a98` · deploy @01:00Z.
+
+★ THIS SESSION's UI-depth run (4 shipped+verified slices): fire-285 true-black `#060610` shell · fire-286
+/artifacts variant strip · fire-287 /email reputation band · fire-288 /sandboxes output expand.
+
+**NEXT:** SSO/original-features (dedicated session, Brian-blocked on the Google URI + a real GitHub-login
+check) + continued UI-depth (matrix lane: os.research/os.skills expand-rows, os.realtime participant avatars,
+os.durable-objects wake-action).

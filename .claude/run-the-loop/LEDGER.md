@@ -3953,3 +3953,22 @@ STOPPED; driver = /loop or OpenClaw, not an agent-managed watchdog.
 **NEXT unmet unit:** Brian's go-ahead on `MIGRATION.md §6` → Phase 2 (ADD `demo.megabyte.space` as a 2nd custom domain on the live `megabyte-os` router, apex untouched; zero-downtime refinement per §4) in a focused session. Phase 4 apex cutover remains separately approval-gated.
 
 **Lease:** left `paused-awaiting-approval` (fire-301), heartbeat refreshed; the patched watchdog will NOT auto-relaunch it. NOT a released-handoff (would wrongly auto-chain into destructive work). Cron/watchdog untouched (both armed).
+
+
+## Fire-302 — GitHub fleet migration-readiness inventory (2026-10-10)
+
+Run `heymegabyte--megabyte.space-38017722001-1`, base `47bf8f88`. Exactly one bounded
+control-plane iteration; ADR 0002 supersedes the old absorption frontier. Decision table:
+`docs/MIGRATION.md §9`; independent comparison/recovery evidence under `.ai/runs/<run-id>/`.
+Official main `7ec49d8c`, legacy pin `80b7209e`, comparison diverged 222 upstream / 207 legacy
+commits; 300 returned files is a cap, not the whole diff. No release/tag returned. Watch the
+candidate, backlog complete source/auth/storage review, reject blind upgrade. Fork URL clone
+and authenticated-helper retry fail; no source substitution. Latest failed retained result
+`6e13c5d9` is published by ancestry and clean; recent successes also in main. No duplicate salvage.
+
+Loop improvement: fleet orientation now checks active migration decisions before legacy tasks,
+requires fork Git metadata for recovery evidence, and flags capped comparisons. Next-wave unit
+added to WS-6. Product acceptance remains open: source bootstrap, frozen fork install, full
+check/deploy, authenticated journey and visual verification were not performed. No pin/config/
+production changes or modifier-matrix credit. Local guard tests and independent review results
+are recorded in the run artifacts/report; outer runner owns publication. No watchdog/handoff.

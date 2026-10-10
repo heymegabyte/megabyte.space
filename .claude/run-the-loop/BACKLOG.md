@@ -554,6 +554,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   case design (surfaces · action plan · lease) + ≥20 actions executed with screenshots.
 
 ### WS-6 — Upstream Sync
+- Fire-302 migration inventory: see `docs/MIGRATION.md §9` and the run artifact. ADR 0002
+  supersedes legacy feature work. Source bootstrap is blocked by declared-fork 404; no pin moved.
+- [ ] fire-302 migration readiness — restore authorized fork access or approve verified exact-source
+  provenance, retrieve the complete upstream diff (API list capped at 300), review auth/storage/
+  binding/deprecation changes, and run frozen installs + `pnpm check` before protected evaluation.
+  No release/pilot acceptance until source and production gates pass.
 - Mission: the pinned `cloudflare-os` submodule bumped deliberately to reviewed refs; overlay
   rebased clean; never blind bumps or in-tree edits.
 - Cadence: every-2-loops (lane 18)

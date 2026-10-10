@@ -32,6 +32,12 @@ loop-improvement means a role under-delivered.
 For an incoming GitHub fleet run, this section overrides the legacy session instructions
 throughout §§0–11. Execute exactly one iteration inside the assigned isolated worktree.
 
+- **Choose from the current mission before the legacy frontier.** Read active deployment/migration
+  ADRs and `docs/MIGRATION.md` when present before selecting absorption/beautify work. ADR 0002
+  retires that work for the apex. An unavailable declared submodule URL is a provenance blocker:
+  a SHA returned by another repository's API does not prove Git fetchability or authorize a URL
+  substitution. Never use parent-repository Git fallback as fork evidence; require its `.git`
+  marker before retained-source checks. Record capped API comparisons as incomplete diffs.
 - **Recovery is local; publication is shared.** Fetch and inspect `origin/main`, prior Actions
   receipts and retained worktree commits before selecting work. Fleet-origin-ahead is normal,
   not proof of a lease race. Confirm retained result commits are ancestors of `origin/main`

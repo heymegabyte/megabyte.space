@@ -1,0 +1,15 @@
+{
+  "status": "diverged",
+  "ahead_by": 222,
+  "behind_by": 207,
+  "total_commits": 222,
+  "observedAt": "2026-10-10T02:43Z",
+  "legacyPin": "80b7209e03c29b62d944abfe41ad3cb317abbe33",
+  "upstreamHead": "7ec49d8c865917c7be0401938eadc7218ed9d398",
+  "mergeBase": "6478a1448a11524e2f7c2575ad66fab0bc47c433",
+  "returnedFileCount": 300,
+  "fileInventoryComplete": false,
+  "releases": [],
+  "tags": [],
+  "compareDirection": "80b7209e03c29b62d944abfe41ad3cb317abbe33...7ec49d8c865917c7be0401938eadc7218ed9d398 (legacy base to upstream head)"
+}

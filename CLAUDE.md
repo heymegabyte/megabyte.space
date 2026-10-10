@@ -1,3 +1,10 @@
+> **Current mission (ADR 0002, ACCEPTED 2026-10-09):** relaunch the apex on a fresh official
+> Cloudflare OS and preserve the customized app at a protected legacy demo. Follow
+> [ADR 0002](docs/decisions/0002-fresh-cloudflare-os-relaunch.md) and
+> [MIGRATION](docs/MIGRATION.md) before the historical absorption/fork instructions below.
+> Fire-302 source-bootstrap blocker and upstream inventory: MIGRATION §9. No feature expansion
+> or unreviewed pointer move; migration acceptance remains open.
+
 # megabyte.space — Megabyte OS estate
 
 Two surfaces in one repo. **DIRECTION (Brian, 2026-10-01; REFINED 2026-10-02): Cloudflare OS moves to the APEX `megabyte.space`, and the WebGL homepage becomes a COMPONENT INSIDE the OS frontend** — a FORK we own becomes the base UI, and the homepage is the first-view component shown after auth, dismissible ("Enter the OS") + persisted once. This supersedes the earlier wrapper-worker overlay idea (the homepage lives in `cloudflare-os/packages/workshop-frontend`, not a worker in front) and DELIBERATELY OVERRIDES `public-front-door` for this estate. WS-11 has **LANDED** (verified fire-82: the apex serves the OS; `os.megabyte.space` is detached) — the surfaces below are the CURRENT (post-migration) topology; rollback runbook `docs/ws-11-rollback.md`.

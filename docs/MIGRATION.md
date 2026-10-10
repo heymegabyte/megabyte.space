@@ -112,3 +112,28 @@ Before the FIRST prod mutation (the Phase-2 demo custom-domain add), approve:
 ## 8. Acceptance (ADR §16 / operator skill §11)
 
 Done only when: legacy preserved (tag+branch) · demo live + Access-protected + data intact · apex runs a clean official OS (no old custom windows) · native OS tested · auth works on both · state isolated (prod≠legacy) · `pnpm check` green · browser smoke green both hosts · visual defects fixed · AI billing controlled (no keys) · subscription feasibility documented (`docs/AI-SUBSCRIPTIONS.md`) · git/branches/tags/versions/rollback documented · README accurate. Report completed-vs-blocked with evidence; never invent success.
+
+## 9. Upstream readiness inventory — fire-302 (2026-10-10T02:43Z)
+
+This is a read-only migration inventory, not Phase 2–5 completion or an approved pin.
+Evidence: [independent research](../.ai/runs/heymegabyte--megabyte.space-38017722001-1/codex-research.md)
+and [comparison snapshot](../.ai/runs/heymegabyte--megabyte.space-38017722001-1/upstream-evidence.json).
+
+| Surface | Observed evidence | Decision |
+|---|---|---|
+| Official upstream | GitHub commit API + `git ls-remote` agree on main `7ec49d8c865917c7be0401938eadc7218ed9d398`; release/tag endpoints return `[]` | Watch immutable commit as a candidate; no reviewed release/tag available in these responses |
+| Legacy vs upstream | GitHub compare `80b7209e...7ec49d8c` (legacy base → upstream head): diverged, ahead_by 222 upstream-side / behind_by 207 legacy-side commits; merge base `6478a1448a11524e2f7c2575ad66fab0bc47c433`; returned file list capped at 300 | Reject blind merge/rebase or pin bump; fresh official OS remains ADR target |
+| Chat prompt caching (#665) | Upstream commit subject/message describes fixing the gadget list per chat compaction | Backlog focused source/test review for native chat stability; no runtime/performance claim |
+| Google creation/approval (#694, #716, #718) | Recent upstream commit subjects describe external creation and approver-account behavior | Backlog authority/OAuth/approval review before evaluating native Google integration; do not port features into legacy |
+| Declared fork source | `git submodule update --init` and retry with existing GitHub credential helper both fail `Repository not found`; repository API 404 | Block current-pin bootstrap; restore authorized access or approve exact-source provenance change, never guess deletion vs visibility |
+| Legacy SHA in upstream API | Commit API resolves `80b7209e`; retained initialized clones cannot resolve it locally | Watch recovery option; API reachability alone does not prove clone/fetch support or permit changing `.gitmodules` |
+| Build and production gates | Source uninitialized; no frozen fork install, `pnpm check`, deploy, authenticated journey or visual inspection | Acceptance stays open; no pointer, deployment receipt or visual-score change |
+
+Availability checks find the Cloudflare global key available, but BA E2E email/password and
+DeepSeek key unavailable. No credential value was read or stored. Missing fork access is a
+separate provenance blocker; availability of a Cloudflare key does not resolve it.
+
+Next review must retrieve the complete source diff rather than treating the API's 300-file
+list as exhaustive, inspect deprecations/binding/migration/auth changes, and validate both
+locked workspaces. The existing §6 operator decision batch remains unresolved; this inventory
+does not approve resource names, Access policies, evaluation hostname, DNS or apex cutover.

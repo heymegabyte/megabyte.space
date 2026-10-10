@@ -1082,9 +1082,20 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [x] Exact-source pin gate (`b66b440f`): valid ancestor passes; missing/unreachable
   pins fail; HEAD metadata, isolated Git environment and URL-rewrite rejection prevent
   local provenance substitution. Root test command includes the nine .mjs fixtures.
-- [ ] Extend committed-metadata gate: enumerate HEAD gitlinks independently and reject
+- [x] Extend committed-metadata gate (fire-306): enumerate HEAD gitlinks independently and reject
   missing/empty `.gitmodules` or undeclared links. Acceptance: real Git fixture proves
   a committed orphan gitlink cannot pass; ordinary repositories without links still pass.
 - [ ] Relative submodule URLs: resolve against the superproject's default remote with
   Git-compatible semantics and exact-source fixtures before permitting them. Current
   verifier deliberately fails closed; this repository's absolute URL passes.
+
+
+## Fire-306 verification follow-up
+
+- [x] Complete committed-gitlink coverage: missing/empty metadata, omitted nested links
+  and duplicate paths fail closed before fetch; no-link repositories pass. Exact SHA
+  map prevents Git pathspec substitution; >1 MiB tree fixture passes with bounded output.
+- [ ] Official upstream advanced to `33a5b70cc45e210b9aada8b5a1d61013528f4e5f`
+  (live declared-official Git ref observation). Review `7ec49d8c..33a5b70c` source,
+  dependency/config/migration/authority changes before selecting any candidate ref.
+  This observation is not approval to move the gitlink or replace declared fork source.

@@ -1063,3 +1063,15 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   user-enabled per-kind auto-approval, restricted-data latch and Google approver-account
   behavior with candidate tests + protected eval journey. Do not transplant the fork's
   deploy-only policy or declare auth parity from source review.
+
+## Fire-304 migration follow-up
+
+- [x] Candidate adapter source-contract checklist: docs/MIGRATION.md §11 and this run's
+  independent artifact identify workspace/catalog, config generation, build, legacy-auth,
+  routing and manifest seams. Review only; candidate rehearsal remains open.
+- [ ] Rehearse §11 dependency closure/config/build checklist in run-local candidate source
+  after ref selection; prove frozen installs, configs:check and complete dry-run. Keep the
+  production gitlink and resource identities unchanged until the approved migration lane.
+- [ ] Fix check-submodule-resolvable's remote-ref-tip assumption with a real Git fixture:
+  an ancestor pin obtainable from the declared remote must pass; absent/unfetchable pins
+  must fail. Never resolve this false negative by automatically advancing the gitlink.

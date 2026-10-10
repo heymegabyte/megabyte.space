@@ -3998,3 +3998,22 @@ Loop improvement: canonical loop README now foregrounds the active migration ove
 absorption and makes source-blocker status per-run. Next-wave candidate adapter rehearsal
 and native authority acceptance added to BACKLOG; migration decision batch stays open.
 GitHub owns publication/cadence; local clean gate then lease release, no watchdog/handoff.
+
+## fire-304 — 2026-10-10 — official candidate adapter contract
+
+- Committed `96ec5d5c`: independent exact-source adapter review, source blob evidence,
+  selected candidate contracts and MIGRATION §11 rehearsal checklist. Official candidate
+  stays `7ec49d8c`; retained pin stays `1739f191`. No candidate checkout/build or pointer move.
+- Recovery: prior successful results 50fc0821/58de2948 are ancestors of origin/main;
+  retained tracked worktrees clean; unpublished fire-273 bookkeeping already represented
+  in current backlog, so not replayed. No other worktree modified.
+- Verification: root frozen install passed (corepack pnpm 11.17.0); deploy/lease/clean-tree
+  tests 46/46; provider-policy gate green (148 files); git diff --check green.
+  check-deploy-state observed drift against receipt 80b7209e, not deployment success.
+- Adversarial review confirmed catalog/Vite alias, BA hooks, router prefix and migration
+  gaps. Loop improvement: ref-tip-only failure must not trigger a reviewed-pin move.
+  Backlog replenished with reachable-ancestor regression and candidate rehearsal acceptance.
+- No deploy, authenticated long journey, storage reconciliation or visual inspection;
+  acceptance remains open and modifier matrix unchanged. No runtime/UI code changed.
+- Next: select candidate/ref and concrete migration configuration; rehearse dependency
+  closure, native config generation and complete dry-run, then protected eval authority.

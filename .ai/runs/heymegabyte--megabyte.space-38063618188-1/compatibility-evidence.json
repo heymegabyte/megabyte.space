@@ -1,0 +1,22 @@
+{
+  "rootCommit": "50fc08211e7775af3ecc7fa960982ab06f052c03",
+  "retainedPin": "1739f1915af71f12c4bb3802458502c6453ba450",
+  "officialCandidate": "7ec49d8c865917c7be0401938eadc7218ed9d398",
+  "sourceBlobs": {
+    "package.json": "fe72eeec85ed3965ed881848e7d6eba5c6bf61df",
+    "pnpm-workspace.yaml": "3ab26b463d368e33401e060c84c9568b523ecdc0",
+    "scripts/package.json": "a2a7884d7f61d4cb086096af7f17ec47e3bee8cc",
+    "scripts/generate-worker-configs.ts": "123273ebdf5ad49adba6597df7877a90d547b075",
+    "scripts/vp/run.ts": "eddc315dae93e6f0008ac7efb66d3e02e11685b9",
+    "scripts/release/manifest-lib.ts": "9afbaa2f052b609de8c3a7801fd3969de28db93f",
+    "packages/router/cloudflare.config.ts": "f206acfe1bedf08434fe1b5cba10d7422a3b5c5b",
+    "packages/router/wrangler.jsonc": "4b67902db0bcaa4d8490f36e815c21d735d166ad",
+    "packages/workshop-backend/cloudflare.config.ts": "4a1bee3a7c5efc2073a90c7d3fd7a5db137fb04c",
+    "packages/workshop-backend/wrangler.jsonc": "c53d095a9280ceadace1e30039eb546e3ccb2f6b",
+    "packages/workshop-shared/package.json": "ab98ad4224a88945e9ca991af28dbd0ee1cd1201",
+    "packages/workshop-frontend/vite.config.ts": "cb4377dd5eafae177a3b34eb358e28143b86e326"
+  },
+  "candidateCheckoutOrBuild": false,
+  "productionMutation": false,
+  "manifestVersion": 1
+}

@@ -185,3 +185,19 @@ Current-pin verification completed: full `pnpm check` exited 0 (submodule/interc
 script types/tests, workspace tests, frontend/worker builds and six Worker dry-runs).
 This clears current-pin build-context debt for this run, not official-candidate compatibility.
 No generated source, deployment receipt, production configuration or visual score changed.
+
+## 11. Candidate adapter contract — fire-304 (2026-10-10)
+
+Official upstream still advertises `7ec49d8c`; current fork remains `1739f191`.
+The [independent review](../.ai/runs/heymegabyte--megabyte.space-38063618188-1/codex-research.md)
+and [source contracts](../.ai/runs/heymegabyte--megabyte.space-38063618188-1/candidate-source-contracts.txt)
+turn §10's adapter warning into a bounded rehearsal checklist. Concrete blockers:
+root catalog lacks candidate workshop-shared workers-types; shared versions and Vite
+alias override differ; candidate scripts workspace/config generator must be included
+where its dependency closure requires it; fresh configs must omit legacy BA hooks and
+preserve candidate routing/migrations. Current-pin tests do not prove this compatibility.
+
+Next: follow the review's rehearsal acceptance before any candidate pin/deploy decision.
+Also fix the ref-tip-only source gate with a real reachable-ancestor Git regression;
+its failure must not cause an unnecessary pin move. No production receipt, routing,
+storage, auth policy, submodule pointer or visual score changed this fire.

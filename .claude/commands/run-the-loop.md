@@ -36,7 +36,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   ADRs and `docs/MIGRATION.md` when present before selecting absorption/beautify work. ADR 0002
   retires that work for the apex. An unavailable declared submodule URL is a provenance blocker:
   a SHA returned by another repository's API does not prove Git fetchability or authorize a URL
-  substitution. Never use parent-repository Git fallback as fork evidence; require its `.git`
+  substitution. A ref-tip-only gate is not proof that an ancestor pin is unfetchable;
+  verify the declared remote before moving a reviewed pin. Never use parent-repository
+  Git fallback as fork evidence; require its `.git`
   marker before retained-source checks. Record capped API comparisons as incomplete diffs.
 - **Recovery is local; publication is shared.** Fetch and inspect `origin/main`, prior Actions
   receipts and retained worktree commits before selecting work. Fleet-origin-ahead is normal,

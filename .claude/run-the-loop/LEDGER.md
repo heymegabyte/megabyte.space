@@ -4017,3 +4017,13 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   acceptance remains open and modifier matrix unchanged. No runtime/UI code changed.
 - Next: select candidate/ref and concrete migration configuration; rehearse dependency
   closure, native config generation and complete dry-run, then protected eval authority.
+
+## fire-305 — Exact-source reviewed-pin verification (2026-10-10)
+
+- Run: `heymegabyte--megabyte.space-38079933447-1`; one bounded GitHub fleet iteration under ADR 0002. Source fix + independent research: `b66b440f`.
+- Reproduced ancestor-pin false negative RED; gate now fetches exact committed gitlinks from committed declared metadata into a fresh bare object store, verifies commit identity, strips repository/object environment and rejects Git URL rewrites. Argument arrays and sanitized diagnostics protect source paths/credentials; root suite includes .mjs regressions.
+- Verification: `node --test scripts/*.test.ts scripts/*.test.mjs` 115/115 GREEN (nine new real-Git fixtures); `node scripts/check-submodule-resolvable.mjs` exact live pin `1739f191` PASS; `npx --yes pnpm@11.17.0 check` exit 0, complete builds and Worker dry-runs; root + fork frozen installs passed; diff whitespace and clean fork checks passed. Initial broad test attempt lacked jsonc-parser; locked install resolved it. Bare pnpm unavailable; pinned npx fallback succeeded.
+- Independent adversarial review and official `cr --provider codex exec --sandbox read-only` subscription review completed; Git-context and URL-rewrite findings fixed with regressions; final independent review found no material blockers for this repository.
+- Recovery: prior Actions + failed receipts, worktree state and ancestry reviewed. Retained failed results published except historical 8770b90e bookkeeping, whose code/research are patch-equivalent and recovery is already recorded on main; no duplicate salvage or retained-tree deletion.
+- Loop improvement: exact-source verification prevents false-negative pin advancement. Backlog ticked and replenished with orphan-gitlink metadata and relative-URL coverage. Migration rehearsal/native authority acceptance remain open.
+- No deployment or browser/visual/storage journey claimed; verifier-only slice. No product surfaces visited; visual matrix unchanged. Gitlink and resource identities unchanged. Main publication belongs to outer runner; worktree lease released after clean-tree gate, no new scheduler/watchdog.

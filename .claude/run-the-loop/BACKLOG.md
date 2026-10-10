@@ -1072,6 +1072,19 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Rehearse §11 dependency closure/config/build checklist in run-local candidate source
   after ref selection; prove frozen installs, configs:check and complete dry-run. Keep the
   production gitlink and resource identities unchanged until the approved migration lane.
-- [ ] Fix check-submodule-resolvable's remote-ref-tip assumption with a real Git fixture:
+- [x] Fix check-submodule-resolvable's remote-ref-tip assumption with a real Git fixture:
   an ancestor pin obtainable from the declared remote must pass; absent/unfetchable pins
   must fail. Never resolve this false negative by automatically advancing the gitlink.
+
+
+## Fire-305 verification follow-up
+
+- [x] Exact-source pin gate (`b66b440f`): valid ancestor passes; missing/unreachable
+  pins fail; HEAD metadata, isolated Git environment and URL-rewrite rejection prevent
+  local provenance substitution. Root test command includes the nine .mjs fixtures.
+- [ ] Extend committed-metadata gate: enumerate HEAD gitlinks independently and reject
+  missing/empty `.gitmodules` or undeclared links. Acceptance: real Git fixture proves
+  a committed orphan gitlink cannot pass; ordinary repositories without links still pass.
+- [ ] Relative submodule URLs: resolve against the superproject's default remote with
+  Git-compatible semantics and exact-source fixtures before permitting them. Current
+  verifier deliberately fails closed; this repository's absolute URL passes.

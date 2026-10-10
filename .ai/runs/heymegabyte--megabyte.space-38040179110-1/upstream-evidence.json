@@ -1,0 +1,32 @@
+{
+  "legacyPin": "1739f1915af71f12c4bb3802458502c6453ba450",
+  "officialUpstream": "7ec49d8c865917c7be0401938eadc7218ed9d398",
+  "mergeBase": "6478a1448a11524e2f7c2575ad66fab0bc47c433",
+  "leftRightCommitCounts": "208\t222",
+  "fullDiffShortstat": "1336 files changed, 317084 insertions(+), 68043 deletions(-)",
+  "changedPathCount": 1336,
+  "sourceBootstrap": "success at declared fork URL; exact committed pin",
+  "pinMoved": false,
+  "releaseCount": 0,
+  "tagCount": 0,
+  "candidateReviewScope": "source inspection of selected auth/deploy/storage/approval seams, not exhaustive semantic audit",
+  "independentClaudeReview": "completed; upstream Git reads denied by its sandbox; path-only findings",
+  "deploymentReceiptDrift": {
+    "currentPin": "1739f1915af71f12c4bb3802458502c6453ba450",
+    "recordedPin": "80b7209e03c29b62d944abfe41ad3cb317abbe33",
+    "liveVersion": "unknown"
+  },
+  "anonymousApexProbe": {
+    "status": 200,
+    "title": "Sign in \u00b7 Megabyte OS",
+    "versionProof": false
+  },
+  "currentPinCheck": {
+    "status": "passed",
+    "exitCode": 0,
+    "scriptsTests": 106,
+    "workspaceTests": 52,
+    "workerDryRuns": 6,
+    "candidateCheck": false
+  }
+}

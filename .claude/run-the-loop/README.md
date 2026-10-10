@@ -1,5 +1,10 @@
 # /run-the-loop — Canonical Home (megabyte.space)
 
+> **Current mission:** ADR 0002 fresh official OS migration supersedes the historical
+> absorption frontier below. Read `docs/MIGRATION.md` and current committed gitlink
+> before choosing work. Source bootstrap status is per-run evidence, not a permanent
+> blocker. GitHub fleet execution/publication rules live in the loop command.
+
 > The single canonical home for the Megabyte OS convergence loop. Brian says **"run the loop"**
 > / `/run-the-loop` → a fire reads this dir to know how a cycle runs. Product: the **Megabyte OS
 > estate** — public cinematic apex + Cloudflare OS behind Access at `os.megabyte.space`.

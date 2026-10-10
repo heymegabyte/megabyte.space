@@ -137,3 +137,51 @@ Next review must retrieve the complete source diff rather than treating the API'
 list as exhaustive, inspect deprecations/binding/migration/auth changes, and validate both
 locked workspaces. The existing §6 operator decision batch remains unresolved; this inventory
 does not approve resource names, Access policies, evaluation hostname, DNS or apex cutover.
+
+## 10. Exact-source review — fire-303 (2026-10-10)
+
+The source-bootstrap blocker in §9 is **cleared for this run**: the declared fork URL
+cloned and checked out the current committed pin `1739f1915af71f12c4bb3802458502c6453ba450`.
+This supersedes §9's source-availability observation; it does not establish why access
+previously failed. The pin advanced on main before this run; this iteration did not move it.
+Official upstream still advertises `7ec49d8c865917c7be0401938eadc7218ed9d398`.
+
+The complete local comparison contains **1,336 changed paths**, 317,084 insertions and
+68,043 deletions, with 208 legacy-only / 222 upstream-only commits. The former 300-file
+API response was incomplete. Exact refs, uncapped path inventory and independent review:
+[research](../.ai/runs/heymegabyte--megabyte.space-38040179110-1/codex-research.md),
+[evidence](../.ai/runs/heymegabyte--megabyte.space-38040179110-1/upstream-evidence.json),
+[paths](../.ai/runs/heymegabyte--megabyte.space-38040179110-1/source-diff-name-status.txt).
+
+Source review identifies four prerequisites before an approved candidate evaluation:
+
+- Keep legacy Better Auth with legacy workers: official router/backend remove the fork
+  auth layer. Prove fresh Access allow/deny/admin behavior independently.
+- Review starter compatibility with upstream's scripts workspace, `@gadgets/scripts`,
+  generated `cloudflare.config.ts`/Wrangler configuration, release-manifest templates,
+  new task-cache syntax and changed dependency catalog. Current-pin builds cannot prove
+  candidate compatibility. Mirror catalog and lockfiles together in the approved lane.
+- Use new worker/storage identities. Upstream retains PendingLogin and adds UserDirectory at migration v3
+  and Overseer schema migrations through version 5, including code-log→Git conversion.
+  Never attach legacy state or attempt storage downgrades as rollback.
+- Review native per-kind, user-enabled auto-approval and Google approver-account authority;
+  upstream lacks the fork's `approvalStore.ts` deploy-only policy. No silent policy port.
+
+Both current-pin frozen installs succeeded with `corepack pnpm` 11.17.0. Plain `pnpm`
+was unavailable via Volta; a temporary run-local launcher enabled recursive checks without
+host configuration changes. Gate results and limitations are recorded in the run report.
+No candidate checkout/build, production mutation, migration acceptance, authenticated
+journey or visual score is credited. The existing §6 decision batch remains unresolved.
+
+
+Deployment evidence remains separate: `check-deploy-state --json` reports the committed
+fork `1739f191` differs from receipt `80b7209e` (2026-10-09T21:05:20.999Z). Anonymous
+apex HTML returned 200 with `Sign in · Megabyte OS` and the inline login gate. That
+probe proves neither the deployed fork SHA nor authenticated model setup. Preserve the
+receipt until a verified deployment or version inventory establishes ground truth.
+
+
+Current-pin verification completed: full `pnpm check` exited 0 (submodule/interconnect,
+script types/tests, workspace tests, frontend/worker builds and six Worker dry-runs).
+This clears current-pin build-context debt for this run, not official-candidate compatibility.
+No generated source, deployment receipt, production configuration or visual score changed.

@@ -18,20 +18,29 @@ export function checkSubmodules(root) {
     delete env[key];
   }
   const git = (cwd, ...args) => execFileSync('git', args, {
-    cwd, encoding: 'utf8', timeout: 120000,
+    cwd, encoding: 'utf8', timeout: 120000, maxBuffer: 64 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
     env,
   }).trim();
   let entries;
+  const links = new Map();
   try {
+    for (const entry of git(root, 'ls-tree', '-r', '-z', 'HEAD').split('\0').filter(Boolean)) {
+      const match = entry.match(/^160000 commit ([0-9a-f]{40,64})\t([\s\S]+)$/);
+      if (match) links.set(match[2], match[1]);
+    }
     if (!git(root, 'ls-tree', 'HEAD', '--', '.gitmodules')) {
-      console.log('no committed .gitmodules — nothing to check');
+      if (links.size) {
+        console.error('FAIL: committed gitlinks lack .gitmodules');
+        return 1;
+      }
+      console.log('no committed gitlinks — nothing to check');
       return 0;
     }
     entries = git(root, 'config', '-z', '--blob', 'HEAD:.gitmodules', '--list')
       .split('\0').filter(Boolean);
   } catch {
-    console.error('FAIL: cannot parse committed .gitmodules');
+    console.error('FAIL: cannot inspect committed gitlinks or parse .gitmodules');
     return 1;
   }
   const mods = new Map();
@@ -43,16 +52,27 @@ export function checkSubmodules(root) {
     if (!mods.has(match[1])) mods.set(match[1], {});
     mods.get(match[1])[match[2]] = entry.slice(split + 1);
   }
+  // Match every committed gitlink exactly once before network verification.
+  // Enumerating metadata alone would let omitted links silently evade the gate.
+  const declared = new Set();
+  for (const { path, url } of mods.values()) {
+    if (!path || !url || !links.has(path) || declared.has(path)) {
+      console.error('FAIL: submodule metadata must declare each gitlink exactly once with a URL');
+      return 1;
+    }
+    declared.add(path);
+  }
+  if (declared.size !== links.size) {
+    console.error('FAIL: committed gitlink missing from .gitmodules');
+    return 1;
+  }
   let failed = 0;
   for (const [name, { path, url }] of mods) {
     let scratch;
     try {
       if (!path || !url) throw new Error('missing path or url');
-      const tree = git(root, 'ls-tree', '-z', 'HEAD', '--', path);
-      const entry = tree.split('\0')[0];
-      const match = entry.match(/^160000 commit ([0-9a-f]{40,64})\t/);
-      if (!match) throw new Error('missing committed gitlink');
-      const pin = match[1];
+      // Use the exact enumerated path, never reinterpret it as a Git pathspec.
+      const pin = links.get(path);
       // Relative submodule URLs are relative to the superproject remote, not cwd.
       // Fail closed rather than accidentally proving a different local source.
       if (/^\.\.?\//.test(url)) throw new Error('relative remote URL requires explicit resolution');

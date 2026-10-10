@@ -92,3 +92,39 @@ test('global URL rewrite cannot substitute a local source for an unavailable dec
     else process.env.GIT_CONFIG_GLOBAL = previous;
   }
 }));
+
+for (const kind of ['missing metadata', 'empty metadata', 'undeclared nested link', 'duplicate path']) {
+  test(`${kind} cannot hide a committed gitlink`, () => fixture(({ root, pin }) => {
+    if (kind === 'missing metadata') git(root, 'rm', '.gitmodules');
+    else if (kind === 'empty metadata') writeFileSync(join(root, '.gitmodules'), '');
+    else if (kind === 'undeclared nested link') git(root, 'update-index', '--add', '--cacheinfo', `160000,${pin},nested/orphan`);
+    else {
+      git(root, 'config', '-f', '.gitmodules', 'submodule.alias.path', 'fork');
+      git(root, 'config', '-f', '.gitmodules', 'submodule.alias.url', git(root, 'config', '-f', '.gitmodules', '--get', 'submodule.fork.url'));
+    }
+    if (kind !== 'missing metadata') git(root, 'add', '.gitmodules');
+    git(root, 'commit', '-qm', kind);
+    assert.equal(checkSubmodules(root), 1);
+  }));
+}
+test('ordinary repository with no submodules passes without metadata', () => fixture(({ root }) => {
+  git(root, 'rm', '--cached', 'fork'); git(root, 'rm', '.gitmodules');
+  git(root, 'commit', '-qm', 'no links');
+  assert.equal(checkSubmodules(root), 0);
+}));
+
+test('Git pathspec magic cannot substitute another gitlink pin', () => fixture(({ root }) => {
+  const absent = '1111111111111111111111111111111111111111';
+  git(root, 'update-index', '--add', '--cacheinfo', `160000,${absent},:(glob)fork`);
+  git(root, 'config', '-f', '.gitmodules', 'submodule.wildcard.path', ':(glob)fork');
+  git(root, 'config', '-f', '.gitmodules', 'submodule.wildcard.url', git(root, 'config', '-f', '.gitmodules', '--get', 'submodule.fork.url'));
+  git(root, 'add', '.gitmodules'); git(root, 'commit', '-qm', 'literal wildcard');
+  assert.equal(checkSubmodules(root), 1);
+}));
+test('tree listing larger than the default child-process buffer still verifies pins', () => fixture(({ root }) => {
+  const blob = git(root, 'rev-parse', 'HEAD:.gitmodules');
+  const records = Array.from({ length: 6500 }, (_, i) => `100644 ${blob}\tlarge/${String(i).padStart(5, '0')}-${'x'.repeat(180)}\n`).join('');
+  execFileSync('git', ['update-index', '--index-info'], { cwd: root, input: records });
+  git(root, 'commit', '-qm', 'large tree');
+  assert.equal(checkSubmodules(root), 0);
+}));

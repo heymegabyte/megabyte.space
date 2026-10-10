@@ -1048,3 +1048,18 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] fire-279 recovery discovery — add a real Git wholly unwatched rename fixture to check-fire-committed; assert dirty remains empty with healthy fork metadata and a following tracked record. Independent reviewer accepted parsing but identified this exclusion gap.
 
 - [ ] fire-290 discovery — reconcile stale auth topology comments in scripts/deploy.ts and pinned router source: comments still promise anonymous 302/old os hostname while inline login returns 200. Update comments only in an authorized fork lane; preserve runtime behavior. Acceptance: comments distinguish HTML cookie selection, anonymous PublicApi, Access-JWT precedence and authenticated RPC authorization; fresh credentialed estate journey remains required.
+
+
+## Fire-303 migration follow-up
+
+- [x] Exact-source availability and uncapped inventory: declared fork bootstrap succeeds
+  at current pin `1739f191`; official candidate remains `7ec49d8c`; 1,336 changed paths.
+  Evidence: `.ai/runs/heymegabyte--megabyte.space-38040179110-1/`; no pointer move.
+- [ ] Candidate adapter rehearsal after pin/provenance approval: reconcile starter's
+  `@gadgets/scripts` dependencies, config generators, cache syntax and dependency catalog
+  in an isolated candidate checkout; frozen installs + complete dry-run must pass.
+  Keep production and legacy worker/storage identities unchanged during rehearsal.
+- [ ] Native authority acceptance: prove upstream Access allow/deny/admin enforcement,
+  user-enabled per-kind auto-approval, restricted-data latch and Google approver-account
+  behavior with candidate tests + protected eval journey. Do not transplant the fork's
+  deploy-only policy or declare auth parity from source review.

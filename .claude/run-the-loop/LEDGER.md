@@ -3972,3 +3972,29 @@ added to WS-6. Product acceptance remains open: source bootstrap, frozen fork in
 check/deploy, authenticated journey and visual verification were not performed. No pin/config/
 production changes or modifier-matrix credit. Local guard tests and independent review results
 are recorded in the run artifacts/report; outer runner owns publication. No watchdog/handoff.
+
+## fire-303 — exact-source migration inventory (GitHub fleet)
+
+Run heymegabyte--megabyte.space-38040179110-1; base a3f98d68; source/docs commit
+1240e872. Exactly one ADR 0002 control-plane iteration. Declared fork URL bootstrap
+now succeeds at current pin 1739f191; official upstream 7ec49d8c fetched read-only.
+Full comparison 1,336 paths, 208 legacy-only / 222 upstream-only commits. Complete path
+inventory and focused auth/config/storage/approval findings committed under .ai/runs.
+No pin/config mutation. Candidate remains unapproved and unbuilt.
+
+Verified both frozen installs; current-pin full pnpm check exited 0: scripts typecheck,
+106 scripts tests, 52 workspace tests, frontend/worker builds and six Worker dry-runs.
+Focused guard/deploy-state 17 and deploy 26 tests passed. Volta pnpm was unavailable;
+Corepack 11.17.0 plus a removed run-local launcher enabled child checks without host edits.
+Anonymous apex HTTP 200 inline sign-in confirmed, not authenticated/version proof.
+Deployment receipt names 80b7209e while git names 1739f191: drift remains unresolved.
+
+Recovery: all retained worktrees clean; failed result 8770b90e not in main by SHA,
+but code/artifact/bookkeeping replayed as 4884a465/aa97e8fb/366fe8ac; no duplicate salvage.
+Claude subscription cr review completed with upstream Git tool denial; path-only findings
+are marked limited and not credited as independent source verification. No long journey,
+visual inspection, matrix credit, candidate deploy, new resource or paid inference.
+Loop improvement: canonical loop README now foregrounds the active migration over historical
+absorption and makes source-blocker status per-run. Next-wave candidate adapter rehearsal
+and native authority acceptance added to BACKLOG; migration decision batch stays open.
+GitHub owns publication/cadence; local clean gate then lease release, no watchdog/handoff.

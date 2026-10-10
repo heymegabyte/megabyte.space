@@ -1,127 +1,87 @@
 #!/usr/bin/env node
-/**
- * check-submodule-resolvable — assert every submodule's committed gitlink SHA is
- * actually resolvable from the URL recorded in `.gitmodules`.
- *
- * The trap this retires (fire-26, WS-11): the submodule's gitlink was moved to a
- * commit that exists ONLY in our fork (`heymegabyte/cloudflare-os@7358a9d8`), but
- * `.gitmodules` still pointed at upstream (`cloudflare/cloudflare-os`) which does
- * NOT have that commit. Nothing local catches it — `pnpm check`/`pnpm deploy` use
- * the already-checked-out submodule and never re-resolve `.gitmodules`; only a fresh
- * `git clone --recurse-submodules` (CI, a new machine) fails, loudly and late.
- *
- * This gate makes that failure local + instant: for each submodule it reads the
- * committed gitlink (`git ls-tree HEAD <path>`) and the `.gitmodules` url, then
- * `git ls-remote <url>` and asserts the gitlink SHA is a ref tip on that remote.
- *
- * Exit 0 = every gitlink resolvable from its .gitmodules url. Exit 1 = a gitlink
- * the recorded url cannot resolve (push the commit, or repoint the url).
+/** Prove committed submodule pins can be fetched from their declared URLs.
+ * A ref-tip listing cannot decide ancestor availability. Each pin is fetched by
+ * SHA into a fresh temporary object store, never the existing fork checkout.
+ * This is a provenance gate, not a recommendation to advance reviewed pins.
  */
-import { execSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const gm = join(ROOT, ".gitmodules");
-
-const sh = (cmd) => execSync(cmd, { cwd: ROOT, encoding: "utf8" }).trim();
-
-if (!existsSync(gm)) {
-  console.log("no .gitmodules — nothing to check");
-  process.exit(0);
-}
-
-// Parse .gitmodules into { name: { path, url, branch } }.
-const mods = {};
-let cur = null;
-for (const raw of readFileSync(gm, "utf8").split("\n")) {
-  const line = raw.trim();
-  const m = line.match(/^\[submodule "(.+)"\]$/);
-  if (m) {
-    cur = m[1];
-    mods[cur] = {};
-    continue;
+export function checkSubmodules(root) {
+  const env = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
+  for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_COMMON_DIR', 'GIT_INDEX_FILE',
+    'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_NAMESPACE',
+    'GIT_SHALLOW_FILE', 'GIT_PREFIX', 'GIT_CONFIG', 'GIT_CONFIG_PARAMETERS', 'GIT_CONFIG_COUNT']) {
+    delete env[key];
   }
-  if (!cur) continue;
-  const kv = line.match(/^(path|url|branch)\s*=\s*(.+)$/);
-  if (kv) mods[cur][kv[1]] = kv[2].trim();
-}
-
-let failed = 0;
-const names = Object.keys(mods);
-if (names.length === 0) {
-  console.log("no submodules declared in .gitmodules");
-  process.exit(0);
-}
-
-for (const name of names) {
-  const { path, url, branch } = mods[name];
-  if (!path || !url) {
-    console.error(`FAIL  ${name}: missing path or url in .gitmodules`);
-    failed++;
-    continue;
-  }
-  let gitlink;
+  const git = (cwd, ...args) => execFileSync('git', args, {
+    cwd, encoding: 'utf8', timeout: 120000,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env,
+  }).trim();
+  let entries;
   try {
-    // `<mode> commit <sha>\t<path>` for a gitlink entry.
-    gitlink = sh(`git ls-tree HEAD "${path}"`).split(/\s+/)[2];
+    if (!git(root, 'ls-tree', 'HEAD', '--', '.gitmodules')) {
+      console.log('no committed .gitmodules — nothing to check');
+      return 0;
+    }
+    entries = git(root, 'config', '-z', '--blob', 'HEAD:.gitmodules', '--list')
+      .split('\0').filter(Boolean);
   } catch {
-    console.error(`FAIL  ${name}: no committed gitlink at ${path} (git ls-tree HEAD)`);
-    failed++;
-    continue;
+    console.error('FAIL: cannot parse committed .gitmodules');
+    return 1;
   }
-  if (!gitlink || !/^[0-9a-f]{40}$/.test(gitlink)) {
-    console.error(`FAIL  ${name}: unexpected gitlink "${gitlink}" at ${path}`);
-    failed++;
-    continue;
+  const mods = new Map();
+  for (const entry of entries) {
+    const split = entry.indexOf('\n');
+    const key = entry.slice(0, split);
+    const match = key.match(/^submodule\.(.+)\.(path|url)$/);
+    if (!match) continue;
+    if (!mods.has(match[1])) mods.set(match[1], {});
+    mods.get(match[1])[match[2]] = entry.slice(split + 1);
   }
-  let refs;
-  try {
-    refs = sh(`git ls-remote "${url}"`);
-  } catch (e) {
-    console.error(`FAIL  ${name}: cannot reach ${url} (${String(e.message).split("\n")[0]})`);
-    failed++;
-    continue;
-  }
-  const tips = new Set(refs.split("\n").map((l) => l.split(/\s+/)[0]));
-  if (tips.has(gitlink)) {
-    const where = branch ? ` (branch ${branch})` : "";
-    console.log(`PASS  ${name}: gitlink ${gitlink.slice(0, 8)} is a ref tip on ${url}${where}`);
-  } else {
-    // Distinguish the common prod-ahead-of-git salvage case (fire-147/164/166: the fork was
-    // committed + FF-pushed, but the parent repo never bumped the gitlink, so HEAD's gitlink is
-    // a now-superseded ancestor) from a genuinely-unreachable gitlink. If the WORKING-TREE
-    // checkout is itself a ref tip AND a descendant of the stale gitlink, the fix is a one-liner
-    // (`git add <path>`), not a push/repoint — so say THAT instead of the misleading remedy.
-    let wt = null;
+  let failed = 0;
+  for (const [name, { path, url }] of mods) {
+    let scratch;
     try {
-      wt = sh(`git -C "${path}" rev-parse HEAD`);
-    } catch {}
-    let wtAhead = false;
-    if (wt && tips.has(wt) && wt !== gitlink) {
-      try {
-        execSync(`git -C "${path}" merge-base --is-ancestor ${gitlink} ${wt}`, { cwd: ROOT });
-        wtAhead = true;
-      } catch {}
+      if (!path || !url) throw new Error('missing path or url');
+      const tree = git(root, 'ls-tree', '-z', 'HEAD', '--', path);
+      const entry = tree.split('\0')[0];
+      const match = entry.match(/^160000 commit ([0-9a-f]{40,64})\t/);
+      if (!match) throw new Error('missing committed gitlink');
+      const pin = match[1];
+      // Relative submodule URLs are relative to the superproject remote, not cwd.
+      // Fail closed rather than accidentally proving a different local source.
+      if (/^\.\.?\//.test(url)) throw new Error('relative remote URL requires explicit resolution');
+      const remote = isAbsolute(url) || /^(?:[a-z][a-z0-9+.-]*:\/\/|[^/]+:)/i.test(url)
+        ? url : resolve(root, url);
+      scratch = mkdtempSync(join(tmpdir(), 'submodule-resolvable-'));
+      git(scratch, 'init', '--bare', '-q');
+      if (git(scratch, 'ls-remote', '--get-url', '--', remote) !== remote) {
+        throw new Error('Git URL rewrite changes declared source');
+      }
+      git(scratch, 'fetch', '--no-tags', '--depth=1', '--', remote, pin);
+      const fetched = git(scratch, 'rev-parse', '--verify', 'FETCH_HEAD^{commit}');
+      if (fetched !== pin) throw new Error('fetch returned a different commit');
+      console.log(`PASS  ${name}: committed gitlink ${pin.slice(0, 8)} fetched from declared remote`);
+    } catch (error) {
+      // Avoid raw Git stderr/URL output: credential-bearing remote URLs can leak.
+      const reason = error.status !== undefined || error.code
+        ? 'Git verification failed (unavailable source, pin or timeout)'
+        : error.message;
+      console.error(`FAIL  ${name}: ${reason}`);
+      failed++;
+    } finally {
+      if (scratch) rmSync(scratch, { recursive: true, force: true });
     }
-    if (wtAhead) {
-      console.error(
-        `FAIL  ${name}: STALE GITLINK — committed gitlink ${gitlink.slice(0, 8)} is BEHIND the ` +
-          `working-tree checkout ${wt.slice(0, 8)} (a ref tip on ${url}). The fork is already ` +
-          `pushed; the parent repo just didn't record it (prod-ahead-of-git). ` +
-          `Bump it: git add ${path} && commit.`,
-      );
-    } else {
-      console.error(
-        `FAIL  ${name}: gitlink ${gitlink.slice(0, 8)} is NOT a ref tip on ${url}. ` +
-          `A fresh clone cannot resolve it. Push the commit to that remote, or repoint ` +
-          `the .gitmodules url (git submodule set-url ${path} <url-that-has-it>).`,
-      );
-    }
-    failed++;
   }
+  console.log(failed ? `${failed} unresolvable gitlink(s)` : 'OK — all submodule gitlinks resolvable');
+  return failed ? 1 : 0;
 }
 
-console.log(failed === 0 ? "\nOK — all submodule gitlinks resolvable" : `\n${failed} unresolvable gitlink(s)`);
-process.exit(failed === 0 ? 0 : 1);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  process.exit(checkSubmodules(join(dirname(fileURLToPath(import.meta.url)), '..')));
+}

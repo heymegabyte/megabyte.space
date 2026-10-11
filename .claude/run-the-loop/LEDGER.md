@@ -4061,3 +4061,12 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Official upstream commits API reports 54d4685d (2026-10-11T04:24:29Z, install-local native app session handoff #712); releases query returned no entries. Head observation only; new range remains unreviewed and not selected/fetched as a migration candidate. Backlog replenished with range review and copy-in/fork-copy cases.
 - Assigned fork pin 9904d808, deployment configuration/resources/auth and historical deployment receipt 80b7209e unchanged. No deployment, production journey/storage verification, candidate rehearsal or visual acceptance claimed. Modifier matrix unchanged; migration acceptance remains open.
 - Main publication left to outer runner. Clean-tree gate and local lease release close this iteration without handoff or scheduler mutation.
+
+## fire-309 — native-session upstream source review (2026-10-11)
+
+- Slice `355f683e`: reviewed official `33a5b70c..54d4685d` (#712), full 27-path inventory + patch, independent Codex research and official subscription Claude review. No candidate pin or deployment change.
+- Recovery: fetched origin/main; six failed retained results published by ancestry; seventh implementation integrated under identical patch-id. No retained worktree modified or duplicate cherry-pick.
+- Verification: source gate passes unchanged `9904d808`; 20 source tests + 9 committed-tree tests + 25 lease/bookkeeping tests pass; diff whitespace clean. Deploy-state comparison reports receipt drift `9904d808` vs `80b7209e`; actual live SHA unverified.
+- Acceptance stays open: candidate frozen install/build, concurrent DO lifecycle, open-RPC expiry/revocation, native app/link/Access journey, authenticated production journey and visual inspection. No runtime defect, deployment, migration phase or vision score credited.
+- Next wave: concurrent stage/redeem and open-session expiry proof; review supplement covers revocation, native web fallback, alarm/gatekeeper/valid-Access integration.
+- Loop improvement: session/ticket reviews must separate concurrent schedules and open-capability expiry from sequential replay and external native-client acceptance.

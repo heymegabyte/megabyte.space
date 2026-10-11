@@ -1118,7 +1118,7 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [x] Real-Git copy and wholly unwatched rename acceptance: explicit C/R NUL records
   precede a watched edit; original-source watch coverage and second-field consumption
   mutations are rejected. Final independent subscription review reports no blocker.
-- [ ] Review official upstream `33a5b70c..54d4685d` before candidate selection. GitHub
+- [x] Review official upstream `33a5b70c..54d4685d` before candidate selection (fire-309 source review; runtime acceptance remains open). GitHub
   commits API reports install-local native app session handoff (#712) at the new head;
   source range is unreviewed. Record complete diff, dependency/config/auth/lifecycle
   implications and candidate native-session acceptance; do not advance the fork pin
@@ -1127,3 +1127,11 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   C framing and record ordering. Acceptance: watched destination and fork tracked
   copy remain CI blockers; healthy metadata and an independent following edit prevent
   unrelated guard failures or heuristic fallback from masking the cases.
+
+
+## Fire-309 native-session candidate acceptance
+
+- [ ] Run candidate concurrent stage/stage, consume/consume and stage/consume Worker/DO fixtures: prove one redemption, ticket invalidation and no orphan usable session. Source reads precede crypto awaits; sequential lifecycle tests alone do not prove atomicity.
+- [ ] Prove protected calls on an already-open authenticated RPC capability fail after Workshop device-session expiry/deletion; also exercise Access JWT expiry before callback and before new handoff staging. Alarm cleanup does not by itself prove per-call revocation.
+- [ ] Run actual native-client handoff through protected evaluation router: app-link association, key/state/deadline validation, secure credential storage, Access binding-cookie handling, absent-app fallback, auth-page/OAuth preservation and reconnect identity rejection. No candidate runtime or migration completion credited by source review.
+- [ ] Native-session acceptance supplement from independent review: test password-change/revocation semantics, alarm cleanup and gatekeeper token roundtrip; verify valid Access owner callback and claimed app-link web fallback query/referrer handling. Treat these as candidate evaluation requirements, not new legacy features.

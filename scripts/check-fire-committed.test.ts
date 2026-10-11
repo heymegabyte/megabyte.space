@@ -141,3 +141,65 @@ for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename"
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
 }
+
+
+for (const scenario of ["copy-in", "fork-copy"] as const) {
+  test(`real Git copy blocks CI without unrelated failures: ${scenario}`, () => {
+    const root = mkdtempSync(join(tmpdir(), "fire-copy-"));
+    try {
+      mkdirSync(join(root, "scripts"));
+      mkdirSync(join(root, "docs"));
+      mkdirSync(join(root, "cloudflare-os"));
+      copyFileSync(new URL("./check-fire-committed.mjs", import.meta.url), join(root, "scripts/check-fire-committed.mjs"));
+      const fork = join(root, "cloudflare-os");
+      const gitAt = (cwd: string, ...args: string[]) => execFileSync("git", args, { cwd, encoding: "utf8" });
+      for (const cwd of [root, fork]) {
+        gitAt(cwd, "init", "-q");
+        gitAt(cwd, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "--allow-empty", "-qm", "fixture");
+      }
+      writeFileSync(join(root, ".gitignore"), "cloudflare-os/\n");
+      gitAt(root, "add", ".gitignore");
+      gitAt(root, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "ignore fork");
+      const repo = scenario === "fork-copy" ? fork : root;
+      const source = "outside-source.txt";
+      const destination = scenario === "copy-in" ? "docs/aaa-copy.txt" : "aaa-copy.txt";
+      const following = scenario === "copy-in" ? "docs/zzz-following.txt" : "zzz-following.txt";
+      writeFileSync(join(repo, source), "before\n".repeat(100));
+      writeFileSync(join(repo, following), "before");
+      gitAt(repo, "add", source, following);
+      gitAt(repo, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "copy sources");
+      gitAt(fork, "update-ref", "refs/remotes/origin/megabyte-os", "HEAD");
+      gitAt(repo, "config", "status.renames", "copies");
+      copyFileSync(join(repo, source), join(repo, destination));
+      writeFileSync(join(repo, source), "before\n".repeat(100) + "changed\n");
+      gitAt(repo, "add", source, destination);
+      writeFileSync(join(repo, following), "after");
+      const status = gitAt(repo, "status", "--porcelain=v1", "-z");
+      const record = "C  " + destination + "\0" + source + "\0";
+      assert.ok(status.includes(record), "must exercise Git C framing, not an added-file fallback");
+      assert.ok(status.indexOf(record) < status.indexOf(" M " + following + "\0"), "independent edit must follow the complete copy record");
+      const run = () => spawnSync(process.execPath, ["scripts/check-fire-committed.mjs", "--ci"], { cwd: root, encoding: "utf8" });
+      const result = run();
+      const out = JSON.parse(result.stdout);
+      assert.deepEqual(out.submoduleIssues, [], "healthy fork metadata must not mask copy detection");
+      assert.deepEqual(out.placeholders, []);
+      const entries = scenario === "fork-copy" ? out.forkDirty : out.dirty;
+      assert.deepEqual(entries.find((item: { path: string }) => item.path === destination), { xy: "C ", path: destination, originalPath: source });
+      assert.ok(entries.some((item: { path: string; xy: string }) => item.path === following && item.xy === " M"));
+      assert.equal(entries.length, scenario === "fork-copy" ? 3 : 2);
+      assert.deepEqual(scenario === "fork-copy" ? out.dirty : out.forkDirty, []);
+      assert.equal(result.status, 1);
+      // Remove the following edit. Copy-in now has only the copy in WATCHED;
+      // fork-copy retains the modified source required for Git copy detection.
+      // Exact C-entry assertions (rather than exit alone) prove fork-copy coverage.
+      gitAt(repo, "restore", following);
+      const isolated = run();
+      const isolatedOut = JSON.parse(isolated.stdout);
+      assert.equal(isolated.status, 1);
+      assert.deepEqual(isolatedOut.submoduleIssues, []);
+      const isolatedEntries = scenario === "fork-copy" ? isolatedOut.forkDirty : isolatedOut.dirty;
+      assert.ok(isolatedEntries.some((item: { path: string; xy: string }) => item.path === destination && item.xy === "C "));
+      assert.equal(isolatedEntries.length, scenario === "fork-copy" ? 2 : 1);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}

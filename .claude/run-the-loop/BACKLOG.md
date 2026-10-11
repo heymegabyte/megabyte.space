@@ -1042,10 +1042,10 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [x] fire-262 discovery — harden check-fire-committed porcelain path parsing with `-z` and both sides of renames. Current line parsing can miss a watched source renamed to an unwatched location and Git-quoted unusual paths. Acceptance: real Git fixtures for watched→unwatched rename and quoted path; guard catches tracked source changes without treating generated untracked artifacts as dirt.
 - [ ] fire-262 verification debt — homepage standalone `tsc --noEmit` fails on untouched Login.tsx unknown JSON, NotFound.tsx unchecked indexing, StatusView.tsx unknown deploy metadata and webgl.ts possibly-undefined uniforms. Acceptance: fix typed boundaries/index guards without weakening strict flags, add homepage typecheck to its build gate, build + authenticated/anonymous journey when deployment credentials are available.
 
-- [ ] fire-273 discovery — add a real Git copy-detection fixture for check-fire-committed and assert subsequent-record framing. Rename and unusual-path cases passed in af8366fe; copy framing has independent in-memory review only.
+- [x] fire-273 discovery — add a real Git copy-detection fixture for check-fire-committed and assert subsequent-record framing. Rename and unusual-path cases passed in af8366fe; copy framing now has a real C-record fixture, following-record ordering and mutation rejection (fire-308).
 - [ ] fire-273 discovery — source reconciliation shipped fire-290 (live anonymous HTTP probes; authenticated acceptance remains blocked by missing BA E2E credentials). Reconcile ARCHITECTURE.md hot-path documentation with the verified apex Better Auth topology in CLAUDE.md; remove stale public-apex/os-Access framing without changing auth. Acceptance: documented routes and boundaries agree with current deployment config and production probes when E2E credentials are available.
 
-- [ ] fire-279 recovery discovery — add a real Git wholly unwatched rename fixture to check-fire-committed; assert dirty remains empty with healthy fork metadata and a following tracked record. Independent reviewer accepted parsing but identified this exclusion gap.
+- [x] fire-279 recovery discovery — add a real Git wholly unwatched rename fixture to check-fire-committed; assert dirty remains empty with healthy fork metadata and a following tracked record. Fire-308 proves real R framing, following-record ordering, dirty/clean CI behavior and rejection of an unconsumed-source mutation.
 
 - [ ] fire-290 discovery — reconcile stale auth topology comments in scripts/deploy.ts and pinned router source: comments still promise anonymous 302/old os hostname while inline login returns 200. Update comments only in an authorized fork lane; preserve runtime behavior. Acceptance: comments distinguish HTML cookie selection, anonymous PublicApi, Access-JWT precedence and authenticated RPC authorization; fresh credentialed estate journey remains required.
 
@@ -1111,3 +1111,19 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Candidate Slack revocation: prove same-token membership/app-assignment removal denies
   long-lived cursor reads and observer disclosure; cached token proof alone is insufficient.
   Run frozen Slack tests/configurator/schema/dry-run before any candidate deployment.
+
+
+## Fire-308 verification and upstream follow-up
+
+- [x] Real-Git copy and wholly unwatched rename acceptance: explicit C/R NUL records
+  precede a watched edit; original-source watch coverage and second-field consumption
+  mutations are rejected. Final independent subscription review reports no blocker.
+- [ ] Review official upstream `33a5b70c..54d4685d` before candidate selection. GitHub
+  commits API reports install-local native app session handoff (#712) at the new head;
+  source range is unreviewed. Record complete diff, dependency/config/auth/lifecycle
+  implications and candidate native-session acceptance; do not advance the fork pin
+  or migration phase from a head observation.
+- [ ] Expand real-Git copy fixtures to copy-in and fork-copy records using explicit
+  C framing and record ordering. Acceptance: watched destination and fork tracked
+  copy remain CI blockers; healthy metadata and an independent following edit prevent
+  unrelated guard failures or heuristic fallback from masking the cases.

@@ -1095,7 +1095,19 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [x] Complete committed-gitlink coverage: missing/empty metadata, omitted nested links
   and duplicate paths fail closed before fetch; no-link repositories pass. Exact SHA
   map prevents Git pathspec substitution; >1 MiB tree fixture passes with bounded output.
-- [ ] Official upstream advanced to `33a5b70cc45e210b9aada8b5a1d61013528f4e5f`
-  (live declared-official Git ref observation). Review `7ec49d8c..33a5b70c` source,
-  dependency/config/migration/authority changes before selecting any candidate ref.
-  This observation is not approval to move the gitlink or replace declared fork source.
+- [x] Review `7ec49d8c..33a5b70c` official upstream range (fire-307): one Slack
+  workspace-scoping commit, 16 paths; dependency/config/lazy-state/consent/observer review
+  recorded in `.ai/runs/heymegabyte--megabyte.space-38102997946-1/codex-research.md`.
+  Candidate selection and runtime proof remain open; no gitlink/source change authorized.
+
+## Fire-307 verification and candidate follow-up
+
+- [x] Reject repeated path/URL declarations within one committed submodule subsection,
+  even identical repeats. Four real-Git fixtures cover identical/conflicting fields with
+  a valid final value; source-provenance gate stays exact-SHA and fails closed.
+- [ ] Candidate Slack upgrade ordering: reproduce reconnect-before-first-use for legacy
+  workspace/conversation/thread bindings. Accept only original workspace preservation or
+  explicit fail-closed reselection; current upstream tests pin before reconnect.
+- [ ] Candidate Slack revocation: prove same-token membership/app-assignment removal denies
+  long-lived cursor reads and observer disclosure; cached token proof alone is insufficient.
+  Run frozen Slack tests/configurator/schema/dry-run before any candidate deployment.

@@ -66,10 +66,10 @@
 
     // "cloudflare" is Workers AI, which needs no key of your own. anthropic/openai need keys
     // stored on the gateway; "google" additionally requires CF_AI_GATEWAY_API_TOKEN.
-    // anthropic rides AI Gateway Unified Billing (Claude 4.5, verified fire-247). openai (direct) +
-    // google are pending confirmed model ids / the HTTPS token — GPT-OSS is already covered keyless
-    // under cloudflare.
-    "providers": ["cloudflare", "anthropic"]
+    // openai + anthropic ride AI Gateway Unified Billing (gpt-4o/4.1 + Claude 4.5, verified fire-247 +
+    // live Workshop submit). openai is first in SUGGESTED_MODELS so gpt-4o is the Home default.
+    // google still needs CF_AI_GATEWAY_API_TOKEN (HTTPS-only) — pending.
+    "providers": ["openai", "cloudflare", "anthropic"]
   },
 
   "context": {

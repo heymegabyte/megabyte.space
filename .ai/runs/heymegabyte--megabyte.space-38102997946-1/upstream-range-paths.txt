@@ -1,0 +1,16 @@
+M	packages/gatekeeper-slack/README.md
+M	packages/gatekeeper-slack/package.json
+M	packages/gatekeeper-slack/src/configurator/conversation-configurator-types.d.ts
+A	packages/gatekeeper-slack/src/configurator/conversation-configurator-ui.test.ts
+M	packages/gatekeeper-slack/src/configurator/conversation-configurator-ui.tsx
+M	packages/gatekeeper-slack/src/configurator/workspace-configurator-types.d.ts
+M	packages/gatekeeper-slack/src/configurator/workspace-configurator-ui.tsx
+A	packages/gatekeeper-slack/src/slack-api.test.ts
+M	packages/gatekeeper-slack/src/slack-api.ts
+M	packages/gatekeeper-slack/src/slack-configurators.ts
+A	packages/gatekeeper-slack/src/slack.test.ts
+M	packages/gatekeeper-slack/src/slack.ts
+M	packages/gatekeeper-slack/src/types.d.ts
+M	packages/gatekeeper-slack/vite.config.ts
+A	packages/gatekeeper-slack/vitest.config.ts
+M	pnpm-lock.yaml

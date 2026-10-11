@@ -50,7 +50,12 @@ export function checkSubmodules(root) {
     const match = key.match(/^submodule\.(.+)\.(path|url)$/);
     if (!match) continue;
     if (!mods.has(match[1])) mods.set(match[1], {});
-    mods.get(match[1])[match[2]] = entry.slice(split + 1);
+    const mod = mods.get(match[1]);
+    if (Object.hasOwn(mod, match[2])) {
+      console.error('FAIL: submodule path and URL must each be declared once');
+      return 1;
+    }
+    mod[match[2]] = entry.slice(split + 1);
   }
   // Match every committed gitlink exactly once before network verification.
   // Enumerating metadata alone would let omitted links silently evade the gate.

@@ -201,3 +201,26 @@ Next: follow the review's rehearsal acceptance before any candidate pin/deploy d
 Also fix the ref-tip-only source gate with a real reachable-ancestor Git regression;
 its failure must not cause an unnecessary pin move. No production receipt, routing,
 storage, auth policy, submodule pointer or visual score changed this fire.
+
+
+## 12. New upstream range review — fire-307 (2026-10-10)
+
+Official HEAD still advertises `33a5b70c`. The uncapped local range from `7ec49d8c`
+contains one Slack org-workspace-scoping commit (16 paths). See the
+[independent review](../.ai/runs/heymegabyte--megabyte.space-38102997946-1/codex-research.md)
+and [path inventory](../.ai/runs/heymegabyte--megabyte.space-38102997946-1/upstream-range-paths.txt).
+The delta adds workspace selection and per-credential access checks, lazy `boundTeamId`
+persistence, observer scoping and additional conversation/thread metadata scopes requiring
+renewed consent. No wrapper/router/backend/explicit Wrangler migration delta occurs in this
+range; earlier adapter blockers remain. Candidate tests/builds have not been run here.
+
+Official subscription review identifies two acceptance gaps before adopting the candidate:
+legacy reconnect before first upgraded binding use may select a replacement workspace, and
+same-token long-lived access proofs do not demonstrate immediate membership revocation.
+Reproduce those orders and prove preserved authority or fail-closed behavior. Review the
+candidate's mixed Vitest peer versions with frozen installs, tests and configurator/schema
+builds. Findings are source-based risks, not claims of observed production defects.
+
+The assigned current fork is `9af3a71d` (advanced on main before this run), while the deploy
+receipt still records `80b7209e`. Actual deployed SHA remains unverified. No production
+mutation, pin change, visual score, state-isolation or migration acceptance is credited.

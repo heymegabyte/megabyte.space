@@ -128,3 +128,22 @@ test('tree listing larger than the default child-process buffer still verifies p
   git(root, 'commit', '-qm', 'large tree');
   assert.equal(checkSubmodules(root), 0);
 }));
+
+for (const field of ['path', 'url']) {
+  test(`duplicate ${field} declarations fail even when identical`, () => fixture(({ root }) => {
+    const value = git(root, 'config', '-f', '.gitmodules', '--get', `submodule.fork.${field}`);
+    git(root, 'config', '-f', '.gitmodules', '--add', `submodule.fork.${field}`, value);
+    git(root, 'add', '.gitmodules'); git(root, 'commit', '-qm', `duplicate ${field}`);
+    assert.equal(checkSubmodules(root), 1);
+  }));
+}
+
+for (const field of ['path', 'url']) {
+  test(`conflicting ${field} declarations fail with a valid final value`, () => fixture(({ root }) => {
+    const value = git(root, 'config', '-f', '.gitmodules', '--get', `submodule.fork.${field}`);
+    git(root, 'config', '-f', '.gitmodules', `submodule.fork.${field}`, 'unavailable-first-value');
+    git(root, 'config', '-f', '.gitmodules', '--add', `submodule.fork.${field}`, value);
+    git(root, 'add', '.gitmodules'); git(root, 'commit', '-qm', `conflicting ${field}`);
+    assert.equal(checkSubmodules(root), 1);
+  }));
+}

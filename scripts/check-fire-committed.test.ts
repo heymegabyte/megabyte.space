@@ -64,12 +64,13 @@ test("broken fork gitdir marker fails closed instead of skipping inspection", ()
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
-for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename"] as const) {
+for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename", "copy-out", "unwatched-rename"] as const) {
   test(`NUL porcelain preserves tracked paths: ${scenario}`, () => {
     const root = mkdtempSync(join(tmpdir(), "fire-paths-"));
     try {
       mkdirSync(join(root, "scripts"));
       mkdirSync(join(root, "docs"));
+      mkdirSync(join(root, "xxxdocs"));
       mkdirSync(join(root, "cloudflare-os"));
       copyFileSync(new URL("./check-fire-committed.mjs", import.meta.url), join(root, "scripts/check-fire-committed.mjs"));
       const repo = scenario === "fork-rename" ? join(root, "cloudflare-os") : root;
@@ -84,30 +85,58 @@ for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename"
       writeFileSync(join(root, ".gitignore"), "cloudflare-os/\n");
       execFileSync("git", ["add", ".gitignore"], { cwd: root });
       execFileSync("git", ["-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "parent fixture"], { cwd: root });
-      const source = scenario === "rename-in" ? "outside.txt" : scenario === "unusual-path" ? "docs/雪\tline\nfile.txt" : scenario === "fork-rename" ? "source.txt" : "docs/source.txt";
-      writeFileSync(join(repo, source), "before");
+      // A parser that forgets the second NUL field would read xxxdocs/source.txt
+      // as status "xx" plus watched path docs/source.txt, exposing framing errors.
+      const source = scenario === "unwatched-rename" ? "xxxdocs/source.txt" : scenario === "rename-in" ? "outside-source.txt" : scenario === "unusual-path" ? "docs/雪\tline\nfile.txt" : scenario === "fork-rename" ? "source.txt" : "docs/source.txt";
+      writeFileSync(join(repo, source), "before\n".repeat(100));
       const following = scenario === "fork-rename" ? "following.txt" : "docs/z-following.txt";
       writeFileSync(join(repo, following), "before");
       git("add", source, following);
       git("-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "fixture");
       if (repo !== root) git("update-ref", "refs/remotes/origin/megabyte-os", "HEAD");
+      const destination = scenario === "rename-in" ? "docs/destination.txt" : (scenario === "unwatched-rename" || scenario === "copy-out") ? "aaa-outside.txt" : "outside.txt";
       if (scenario === "unusual-path") writeFileSync(join(repo, source), "after");
-      else {
-        const destination = scenario === "rename-in" ? "docs/destination.txt" : "outside.txt";
+      else if (scenario === "copy-out") {
+        git("config", "status.renames", "copies");
+        copyFileSync(join(repo, source), join(repo, destination));
+        writeFileSync(join(repo, source), "before\n".repeat(100) + "changed\n");
+        git("add", source, destination);
+        const status = git("status", "--porcelain=v1", "-z");
+        assert.ok(status.includes("C  " + destination + "\0" + source + "\0"), "fixture must emit a real Git copy record");
+      } else {
         git("mv", source, destination);
       }
       writeFileSync(join(repo, following), "after");
+      if (scenario === "unwatched-rename" || scenario === "copy-out") {
+        const status = git("status", "--porcelain=v1", "-z");
+        const record = (scenario === "copy-out" ? "C  " : "R  ") + destination + "\0" + source + "\0";
+        assert.ok(status.includes(record), "fixture must emit a two-path Git record");
+        assert.ok(status.indexOf(record) < status.indexOf(" M " + following + "\0"), "watched edit must follow the complete two-path record");
+      }
       writeFileSync(join(root, "docs/scratch.txt"), "untracked artifact");
       const run = spawnSync(process.execPath, ["scripts/check-fire-committed.mjs", "--ci"], { cwd: root, encoding: "utf8" });
       const out = JSON.parse(run.stdout);
       assert.deepEqual(out.submoduleIssues, [], "no unrelated fork failure may mask the dirty-path gate");
       const entries = scenario === "fork-rename" ? out.forkDirty : out.dirty;
-      assert.equal(entries.length, 2);
-      const entry = entries.find((item: { path: string }) => item.path !== following);
+      if (scenario === "unwatched-rename") {
+        assert.deepEqual(entries, [{ xy: " M", path: following }], "both unwatched rename paths must be excluded without consuming the following record");
+        assert.equal(run.status, 1, "the following watched edit must still block CI");
+        git("restore", following);
+        const clean = spawnSync(process.execPath, ["scripts/check-fire-committed.mjs", "--ci"], { cwd: root, encoding: "utf8" });
+        assert.deepEqual(JSON.parse(clean.stdout).dirty, []);
+        assert.equal(clean.status, 0, "an unwatched rename alone must not block CI");
+        return;
+      }
+      assert.equal(entries.length, scenario === "copy-out" ? 3 : 2);
+      const entry = entries.find((item: { path: string }) => item.path !== following && (scenario !== "copy-out" || item.path === destination));
       assert.ok(entry);
       assert.ok(entries.some((item: { path: string; xy: string }) => item.path === following && item.xy === " M"));
-      assert.equal(entry.path, scenario === "unusual-path" ? source : scenario === "rename-in" ? "docs/destination.txt" : "outside.txt");
+      assert.equal(entry.path, scenario === "unusual-path" ? source : destination);
       if (scenario !== "unusual-path") assert.equal(entry.originalPath, source);
+      if (scenario === "copy-out") {
+        assert.equal(entry.xy, "C ");
+        assert.ok(entries.some((item: { path: string; xy: string }) => item.path === source && item.xy === "M "));
+      }
       assert.equal(run.status, 1);
     } finally { rmSync(root, { recursive: true, force: true }); }
   });

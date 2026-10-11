@@ -1,0 +1,14 @@
+{
+  "base": "33a5b70cc45e210b9aada8b5a1d61013528f4e5f",
+  "candidate": "54d4685d27fc7a1ba58b4ff1e1842ebf4701d0b7",
+  "declaredForkPin": "9904d80867b6825d81b6b1189e2fccfd07af2ff5",
+  "officialRemote": "https://github.com/cloudflare/cloudflare-os.git",
+  "commits": [
+    "54d4685d27fc7a1ba58b4ff1e1842ebf4701d0b7 Add install-local native app session handoff (#712)"
+  ],
+  "changedPaths": 27,
+  "stat": "27 files changed, 1574 insertions(+), 45 deletions(-)",
+  "dependencyManifestChanges": [],
+  "explicitWranglerChanges": [],
+  "runtimeVerification": "not performed"
+}

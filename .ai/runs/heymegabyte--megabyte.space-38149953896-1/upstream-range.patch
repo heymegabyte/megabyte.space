@@ -1,0 +1,2122 @@
+diff --git a/docs/oauth-signin.md b/docs/oauth-signin.md
+index a40e190..c50b77e 100644
+--- a/docs/oauth-signin.md
++++ b/docs/oauth-signin.md
+@@ -63,6 +63,63 @@ email and is then discarded by the gatekeeper. To use a gatekeeper's capabilitie
+ or Cloudflare AI Gateway billing, the user explicitly **connects** it afterward (which requests the
+ full scopes and persists the connection).
+ 
++## Native app return after installation sign-in
++
++The native Cloudflare OS shell uses a system authentication session, rather than an embedded web
++view, to sign in to an installation. This is required for identity-provider and security-key flows
++that reject or cannot complete in embedded browsers. The app opens the installation with a fresh
++opaque `cfos_native_state` value and a fresh, non-extractable P-256 key pair, passing only the
++public key as `cfos_native_key`. That uncompressed 65-byte public key is encoded as 87 characters
++of unpadded base64url.
++
++Once the browser is authenticated, the Workshop presents an explicit **Continue in Cloudflare
++OS** confirmation. It does not mint a transfer merely because a specially formed URL was loaded.
++After confirmation:
++
++1. `AuthenticatedApi.beginDeviceSessionHandoff()` stages an encrypted transfer in the authenticated
++   user's Durable Object. Page JavaScript receives its routing `userDoId` and a single-use, 256-bit
++   hex `ticket`; only the ticket's SHA-256 hash is stored with the transfer. It never receives the
++   encrypted envelope or its credential. Retrying a staged state reissues the ticket without
++   minting another credential, invalidating the earlier ticket.
++2. The page performs a same-origin, top-level form POST containing `userDoId`, `state`, and `ticket`
++   to `/api/device-session/callback`. The ticket is required to redeem the transfer, while the
++   navigation headers are CSRF checks, not authentication. In Access mode the route also verifies
++   the Access JWT and requires its user to own the `userDoId`, including when the backend Worker
++   is reached directly. The endpoint rejects fetches, frames, cross-origin requests, duplicate
++   fields, malformed values, and wrong owners before it consumes anything.
++3. The endpoint atomically consumes the staged record and returns a `303` to the fixed claimed HTTPS
++   app link `https://os.cloudflare.app/oauthredirect?cfos_callback=install-connected&…`. The native
++   app verifies the state, decrypts the envelope with its per-attempt private key, and validates the
++   credential before storing it in platform secure storage. A web page cannot claim this callback;
++   the app-domain association controls which installed native app receives it.
++
++The transfer is server-enforced as single-use and expires after two minutes, independently of the
++credential encrypted inside it. A password or gatekeeper-authenticated installation gets a new
++Workshop device session which remains unusable until the callback consumes the transfer and which
++the server expires after 30 days. A Cloudflare Access installation transfers its current Access
++JWT; that credential retains the Access policy and JWT `exp` chosen by the installation's Access
++configuration. The native app cannot refresh or extend it, and the user must complete Access again
++after it expires. The app also needs to preserve any Access binding cookie required by that
++installation's policy.
++
++The encrypted wire payload is a `DeviceSessionTransfer`: a discriminated credential plus the
++two-minute transfer deadline. Its `workshop` token is `<user-id>:<standard-base64-secret>` (the
++32-byte session secret is padded standard base64); its `cloudflare-access` token is the Access
++application JWT. The envelope's P-256 public key, salt, IV, and ciphertext are all unpadded
++base64url. Encryption uses ephemeral P-256 ECDH, HKDF-SHA-256, and AES-GCM with the opaque state as
++additional authenticated data. There is no central native-login relay, poller, or cross-install
++session store; each installation owns and consumes its transfers.
++
++Inside an installation's embedded web view, the native shell exposes the versioned
++`window.cloudflareOSNative` capability. The Workshop calls `loginReady()` only after its normal
++`whoami()` call confirms authentication. It may call `loginReady()` again after a reconnect, so the
++app treats that notification as idempotent. The Workshop offers **Back to installs** through
++`returnToInstalls()`.
++Notification enrollment is an optional capability on the same object. The legacy notification
++globals remain temporarily as a fallback for the currently distributed TestFlight build; new
++navigation and login behavior uses only the versioned object. These native hooks are available in
++every installation and are not conditioned on Cloudflare Access mode.
++
+ ## Configuration
+ 
+ ```
+diff --git a/packages/workshop-backend/__tests__/device-session-callback.test.ts b/packages/workshop-backend/__tests__/device-session-callback.test.ts
+new file mode 100644
+index 0000000..f7cf94c
+--- /dev/null
++++ b/packages/workshop-backend/__tests__/device-session-callback.test.ts
+@@ -0,0 +1,135 @@
++import { env } from "cloudflare:workers";
++import { createExecutionContext } from "cloudflare:test";
++import { describe, expect, it, vi } from "vitest";
++import type { DeviceSessionHandoff } from "../src/auth/device-session-handoff";
++import { deviceSessionCallback } from "../src/auth/device-session-callback";
++import server from "../src/server";
++
++const origin = "https://install.example.test";
++const state = "ABCDEFab-0000-0000-0000-000000000001";
++const userDoId = "a".repeat(64);
++const ticket = "b".repeat(64);
++const fields = { userDoId, state, ticket };
++const handoff: DeviceSessionHandoff = {
++  publicKey: "A".repeat(87),
++  salt: "B".repeat(43),
++  iv: "C".repeat(16),
++  ciphertext: "D".repeat(128),
++};
++
++function request(body: URLSearchParams, options?: {
++  origin?: string;
++  method?: string;
++  mode?: string;
++  destination?: string;
++}): Request {
++  return new Request(`${origin}/api/device-session/callback`, {
++    method: options?.method ?? "POST",
++    headers: {
++      Origin: options?.origin ?? origin,
++      "Content-Type": "application/x-www-form-urlencoded",
++      "Sec-Fetch-Site": "same-origin",
++      "Sec-Fetch-Mode": options?.mode ?? "navigate",
++      "Sec-Fetch-Dest": options?.destination ?? "document",
++    },
++    body: options?.method === "GET" ? undefined : body,
++  });
++}
++
++describe("device session callback", () => {
++  it("redeems a staged transfer through the Worker route exactly once", async () => {
++    const user = env.TEST_USER.getByName(`device-session-route-${crypto.randomUUID()}`);
++    await user.authenticateFromCfAccess("route-user@example.com", true);
++    const key = await crypto.subtle.generateKey(
++        { name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]) as CryptoKeyPair;
++    const publicKey = new Uint8Array(
++        await crypto.subtle.exportKey("raw", key.publicKey) as ArrayBuffer)
++        .toBase64({ alphabet: "base64url", omitPadding: true });
++    const start = await user.stageDeviceSessionHandoff(publicKey, state);
++    const body = new URLSearchParams({ ...start, state });
++
++    const response = await server.fetch(request(body), env, createExecutionContext());
++    expect(response.status).toBe(303);
++    const callback = new URL(response.headers.get("Location")!);
++    expect(callback.origin + callback.pathname).toBe("https://os.cloudflare.app/oauthredirect");
++    expect(callback.searchParams.get("state")).toBe(state);
++    expect(callback.searchParams.get("ciphertext")).toBeTruthy();
++
++    const replay = await server.fetch(request(body), env, createExecutionContext());
++    expect(replay.status).toBe(410);
++  });
++
++  it("consumes the server-held handoff and redirects to the claimed HTTPS app link", async () => {
++    const consume = vi.fn().mockResolvedValue(handoff);
++    const response = await deviceSessionCallback(
++      request(new URLSearchParams(fields)),
++      consume,
++    );
++    expect(consume).toHaveBeenCalledWith(userDoId, state, ticket);
++    expect(response.status).toBe(303);
++    const callback = new URL(response.headers.get("Location")!);
++    expect(callback.origin + callback.pathname).toBe("https://os.cloudflare.app/oauthredirect");
++    expect(Object.fromEntries(callback.searchParams)).toEqual({
++      cfos_callback: "install-connected",
++      state,
++      ...handoff,
++    });
++    expect(response.headers.get("Cache-Control")).toBe("no-store");
++    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
++  });
++
++  it("rejects script fetches, frames, cross-origin posts, and malformed handles", async () => {
++    const consume = vi.fn().mockResolvedValue(handoff);
++    for (const candidate of [
++      request(new URLSearchParams(fields), { mode: "cors" }),
++      request(new URLSearchParams(fields), { destination: "iframe" }),
++      request(new URLSearchParams(fields), { origin: "https://other.test" }),
++      request(new URLSearchParams({ ...fields, userDoId: "bad" })),
++      request(new URLSearchParams({ userDoId, state })),
++      request(new URLSearchParams({ ...fields, ticket: "bad" })),
++      request(new URLSearchParams([
++        ["userDoId", userDoId], ["state", state], ["state", state], ["ticket", ticket],
++      ])),
++      request(new URLSearchParams([
++        ["userDoId", userDoId], ["state", state], ["ticket", ticket], ["ticket", ticket],
++      ])),
++      request(new URLSearchParams(fields), { method: "GET" }),
++    ]) {
++      expect((await deviceSessionCallback(candidate, consume)).status).toBeGreaterThanOrEqual(400);
++    }
++    expect(consume).not.toHaveBeenCalled();
++  });
++
++  it("reports an already consumed or expired transfer", async () => {
++    const response = await deviceSessionCallback(
++      request(new URLSearchParams(fields)),
++      vi.fn().mockResolvedValue(null),
++    );
++    expect(response.status).toBe(410);
++  });
++
++  it("rejects another Access user's handoff before consuming its ticket", async () => {
++    const consume = vi.fn().mockResolvedValue(handoff);
++    const response = await deviceSessionCallback(
++      request(new URLSearchParams(fields)), consume, "c".repeat(64));
++    expect(response.status).toBe(403);
++    expect(consume).not.toHaveBeenCalled();
++  });
++
++  it("rejects forged navigation headers without an Access assertion on the Worker route", async () => {
++    const response = await server.fetch(
++      request(new URLSearchParams(fields)),
++      { ...env, CF_ACCESS_AUD: "audience", CF_ACCESS_ISS: "https://access.example" },
++      {} as ExecutionContext,
++    );
++    expect(response.status).toBe(403);
++    expect(response.headers.get("Cache-Control")).toBe("no-store");
++  });
++
++  it("does not disguise a storage failure as an expired transfer", async () => {
++    await expect(deviceSessionCallback(
++      request(new URLSearchParams(fields)),
++      vi.fn().mockRejectedValue(new Error("storage unavailable")),
++    )).rejects.toThrow("storage unavailable");
++  });
++});
+diff --git a/packages/workshop-backend/__tests__/device-session-handoff.test.ts b/packages/workshop-backend/__tests__/device-session-handoff.test.ts
+new file mode 100644
+index 0000000..7e32574
+--- /dev/null
++++ b/packages/workshop-backend/__tests__/device-session-handoff.test.ts
+@@ -0,0 +1,66 @@
++import { describe, expect, it } from "vitest";
++import {
++  DEVICE_HANDOFF_LIFETIME_MS,
++  sealDeviceSessionHandoff,
++  type DeviceSessionTransfer,
++} from "../src/auth/device-session-handoff";
++
++const state = "ABCDEFab-0000-0000-0000-000000000001";
++const context = new TextEncoder().encode("cloudflare-os-device-session-v1");
++
++describe("device session handoff encryption", () => {
++  it("only the initiating app key and opaque state can decrypt the credential", async () => {
++    const appKey = await crypto.subtle.generateKey(
++        { name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]) as CryptoKeyPair;
++    const appPublic = new Uint8Array(
++        await crypto.subtle.exportKey("raw", appKey.publicKey) as ArrayBuffer)
++        .toBase64({ alphabet: "base64url", omitPadding: true });
++    expect(appPublic).toHaveLength(87);
++    const before = Date.now();
++    const sealed = await sealDeviceSessionHandoff(
++        appPublic, state, { kind: "cloudflare-access", token: "sensitive-jwt" });
++    expect(JSON.stringify(sealed)).not.toContain("sensitive-jwt");
++    expect(sealed.publicKey).toHaveLength(87);
++    expect(sealed.salt).toHaveLength(43);
++    expect(sealed.iv).toHaveLength(16);
++    expect(Object.values(sealed).every(value => !value.includes("="))).toBe(true);
++    const serverPublic = await crypto.subtle.importKey(
++        "raw", Uint8Array.fromBase64(sealed.publicKey, { alphabet: "base64url" }),
++        { name: "ECDH", namedCurve: "P-256" }, false, []);
++    const bits = await crypto.subtle.deriveBits(
++        { name: "ECDH", public: serverPublic } as
++          SubtleCryptoDeriveKeyAlgorithm & { public: CryptoKey },
++        appKey.privateKey, 256);
++    const material = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
++    const key = await crypto.subtle.deriveKey(
++        { name: "HKDF", hash: "SHA-256",
++          salt: Uint8Array.fromBase64(sealed.salt, { alphabet: "base64url" }), info: context },
++        material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
++    const algorithm = {
++      name: "AES-GCM",
++      iv: Uint8Array.fromBase64(sealed.iv, { alphabet: "base64url" }),
++      additionalData: new TextEncoder().encode(state),
++    };
++    const decrypted = await crypto.subtle.decrypt(
++        algorithm, key,
++        Uint8Array.fromBase64(sealed.ciphertext, { alphabet: "base64url" }));
++    const transfer = JSON.parse(new TextDecoder().decode(decrypted)) as DeviceSessionTransfer;
++    expect(transfer.credential).toEqual({ kind: "cloudflare-access", token: "sensitive-jwt" });
++    expect(transfer.expiresAt).toBeGreaterThanOrEqual(before + DEVICE_HANDOFF_LIFETIME_MS);
++    expect(transfer.expiresAt).toBeLessThanOrEqual(Date.now() + DEVICE_HANDOFF_LIFETIME_MS);
++    await expect(crypto.subtle.decrypt({
++      ...algorithm,
++      additionalData: new TextEncoder().encode("another-opaque-state-value"),
++    }, key, Uint8Array.fromBase64(sealed.ciphertext, { alphabet: "base64url" })))
++      .rejects.toThrow();
++  });
++
++  it("rejects short states and malformed public keys before transfer", async () => {
++    await expect(sealDeviceSessionHandoff(
++        "not-a-key", state, { kind: "workshop", token: "secret", expiresAt: Date.now() }))
++      .rejects.toThrow("Invalid device handoff key");
++    await expect(sealDeviceSessionHandoff(
++        "A".repeat(87), "short", { kind: "workshop", token: "secret", expiresAt: Date.now() }))
++      .rejects.toThrow("Invalid device sign-in state");
++  });
++});
+diff --git a/packages/workshop-backend/__tests__/device-session-lifecycle.test.ts b/packages/workshop-backend/__tests__/device-session-lifecycle.test.ts
+new file mode 100644
+index 0000000..b72874d
+--- /dev/null
++++ b/packages/workshop-backend/__tests__/device-session-lifecycle.test.ts
+@@ -0,0 +1,162 @@
++import { env } from "cloudflare:workers";
++import { runInDurableObject } from "cloudflare:test";
++import { describe, expect, it } from "vitest";
++import type { DeviceSessionHandoff, DeviceSessionTransfer } from
++  "../src/auth/device-session-handoff";
++import type { UserDurableObject } from "../src/user";
++
++declare module "cloudflare:workers" {
++  interface ProvidedEnv {
++    TEST_USER: DurableObjectNamespace<UserDurableObject>;
++  }
++}
++
++type UserInternals = UserDurableObject & {
++  storage: {
++    pendingDeviceHandoffs: {
++      list(): Iterable<{
++        stateHash: string; ticketHash: string; handoff: DeviceSessionHandoff; expiresAt: Date;
++      }>;
++      put(record: unknown): void;
++    };
++    sessions: {
++      list(): Iterable<{ tokenId: string; expiresAt?: Date; pendingUntil?: Date }>;
++      get(tokenId: string): { tokenId: string; expiresAt?: Date; pendingUntil?: Date } | undefined;
++      put(record: unknown): void;
++    };
++  };
++};
++
++const state = "ABCDEFab-0000-0000-0000-000000000001";
++const context = new TextEncoder().encode("cloudflare-os-device-session-v1");
++let counter = 0;
++
++async function appKey() {
++  const key = await crypto.subtle.generateKey(
++      { name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]) as CryptoKeyPair;
++  const publicKey = new Uint8Array(
++      await crypto.subtle.exportKey("raw", key.publicKey) as ArrayBuffer)
++      .toBase64({ alphabet: "base64url", omitPadding: true });
++  return { key, publicKey };
++}
++
++async function decrypt(
++    handoff: DeviceSessionHandoff,
++    keyPair: CryptoKeyPair,
++    handoffState = state,
++): Promise<DeviceSessionTransfer> {
++  const peer = await crypto.subtle.importKey(
++      "raw", Uint8Array.fromBase64(handoff.publicKey, { alphabet: "base64url" }),
++      { name: "ECDH", namedCurve: "P-256" }, false, []);
++  const bits = await crypto.subtle.deriveBits(
++      { name: "ECDH", public: peer } as
++        SubtleCryptoDeriveKeyAlgorithm & { public: CryptoKey },
++      keyPair.privateKey, 256);
++  const material = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
++  const key = await crypto.subtle.deriveKey({
++    name: "HKDF",
++    hash: "SHA-256",
++    salt: Uint8Array.fromBase64(handoff.salt, { alphabet: "base64url" }),
++    info: context,
++  }, material, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
++  const plaintext = await crypto.subtle.decrypt({
++    name: "AES-GCM",
++    iv: Uint8Array.fromBase64(handoff.iv, { alphabet: "base64url" }),
++    additionalData: new TextEncoder().encode(handoffState),
++  }, key, Uint8Array.fromBase64(handoff.ciphertext, { alphabet: "base64url" }));
++  return JSON.parse(new TextDecoder().decode(plaintext)) as DeviceSessionTransfer;
++}
++
++async function authResult(user: DurableObjectStub<UserDurableObject>, token: string) {
++  return runInDurableObject(user, async (instance: UserDurableObject) => {
++    try {
++      await instance.authenticate(token);
++      return "ok";
++    } catch {
++      return "invalid";
++    }
++  });
++}
++
++describe("device session lifecycle", () => {
++  it("stages idempotently, activates once, and enforces the device-session expiry", async () => {
++    const user = env.TEST_USER.getByName(`device-session-${++counter}`);
++    await user.authenticateFromCfAccess("alice@example.com", true);
++    const { key, publicKey } = await appKey();
++
++    const first = await user.stageDeviceSessionHandoff(publicKey, state);
++    const second = await user.stageDeviceSessionHandoff(publicKey, state);
++    expect(second.userDoId).toBe(first.userDoId);
++    expect(second.ticket).not.toBe(first.ticket);
++    expect(second.ticket).toMatch(/^[0-9a-f]{64}$/);
++    const staged = await runInDurableObject(user, (instance: UserDurableObject) => {
++      const internals = instance as UserInternals;
++      expect([...internals.storage.pendingDeviceHandoffs.list()]).toHaveLength(1);
++      expect([...internals.storage.sessions.list()]).toHaveLength(1);
++      const [pending] = [...internals.storage.pendingDeviceHandoffs.list()];
++      expect(pending.ticketHash).toMatch(/^[0-9a-f]{64}$/);
++      expect(pending.ticketHash).not.toBe(second.ticket);
++      return pending.handoff;
++    });
++    const transfer = await decrypt(staged, key);
++    expect(transfer.credential.kind).toBe("workshop");
++    if (transfer.credential.kind !== "workshop") throw new Error("wrong credential kind");
++    const [, token] = transfer.credential.token.split(":");
++    expect(await authResult(user, token)).toBe("invalid");
++
++    expect(await user.consumeDeviceSessionHandoff(state, first.ticket)).toBeNull();
++    expect(await user.consumeDeviceSessionHandoff(state, second.ticket)).toEqual(staged);
++    expect(await user.consumeDeviceSessionHandoff(state, second.ticket)).toBeNull();
++    expect(await authResult(user, token)).toBe("ok");
++
++    await runInDurableObject(user, (instance: UserDurableObject) => {
++      const internals = instance as UserInternals;
++      const [session] = [...internals.storage.sessions.list()];
++      internals.storage.sessions.put({ ...session, expiresAt: new Date(Date.now() - 1) });
++    });
++    expect(await authResult(user, token)).toBe("invalid");
++  });
++
++  it("drops an unconsumed session when its server-side handoff expires", async () => {
++    const user = env.TEST_USER.getByName(`device-session-${++counter}`);
++    await user.authenticateFromCfAccess("bob@example.com", true);
++    const { publicKey } = await appKey();
++    const start = await user.stageDeviceSessionHandoff(publicKey, state);
++    await runInDurableObject(user, (instance: UserDurableObject) => {
++      const internals = instance as UserInternals;
++      const [pending] = [...internals.storage.pendingDeviceHandoffs.list()];
++      internals.storage.pendingDeviceHandoffs.put({
++        ...pending,
++        expiresAt: new Date(Date.now() - 1),
++      });
++    });
++    expect(await user.consumeDeviceSessionHandoff(state, start.ticket)).toBeNull();
++    await runInDurableObject(user, (instance: UserDurableObject) => {
++      const internals = instance as UserInternals;
++      expect([...internals.storage.sessions.list()]).toHaveLength(0);
++      expect([...internals.storage.pendingDeviceHandoffs.list()]).toHaveLength(0);
++    });
++  });
++
++  it("keeps an Access JWT server-side until the single-use native callback", async () => {
++    const user = env.TEST_USER.getByName(`device-session-${++counter}`);
++    await user.authenticateFromCfAccess("access-user@example.com", true);
++    const { key, publicKey } = await appKey();
++    const start = await user.stageDeviceSessionHandoff(publicKey, state, "access.jwt.value");
++    expect(start.userDoId).toMatch(/^[0-9a-f]{64}$/);
++    expect(start.ticket).toMatch(/^[0-9a-f]{64}$/);
++
++    const staged = await runInDurableObject(user, (instance: UserDurableObject) => {
++      const internals = instance as UserInternals;
++      expect([...internals.storage.sessions.list()]).toHaveLength(0);
++      return [...internals.storage.pendingDeviceHandoffs.list()][0].handoff;
++    });
++    expect((await decrypt(staged, key)).credential).toEqual({
++      kind: "cloudflare-access",
++      token: "access.jwt.value",
++    });
++    expect(await user.consumeDeviceSessionHandoff(state, "0".repeat(64))).toBeNull();
++    expect(await user.consumeDeviceSessionHandoff(state, start.ticket)).toEqual(staged);
++    expect(await user.consumeDeviceSessionHandoff(state, start.ticket)).toBeNull();
++  });
++});
+diff --git a/packages/workshop-backend/src/auth/device-session-callback.ts b/packages/workshop-backend/src/auth/device-session-callback.ts
+new file mode 100644
+index 0000000..d99d7c0
+--- /dev/null
++++ b/packages/workshop-backend/src/auth/device-session-callback.ts
+@@ -0,0 +1,68 @@
++import { isDeviceHandoffState, type DeviceSessionHandoff } from "./device-session-handoff.js";
++
++const CALLBACK_URL = "https://os.cloudflare.app/oauthredirect";
++const LOWER_HEX_64 = /^[0-9a-f]{64}$/;
++
++type ConsumeDeviceHandoff = (
++  userDoId: string,
++  state: string,
++  ticket: string,
++) => Promise<DeviceSessionHandoff | null>;
++
++/**
++ * Check browser navigation metadata and a one-use ticket before delivering the envelope to the
++ * claimed HTTPS callback. Access installations additionally pass the verified user's DO id;
++ * navigation headers alone do not authenticate a direct Worker request.
++ */
++export async function deviceSessionCallback(
++    req: Request,
++    consume: ConsumeDeviceHandoff,
++    expectedUserDoId?: string,
++): Promise<Response> {
++  const headers = {
++    "Cache-Control": "no-store",
++    "Referrer-Policy": "no-referrer",
++  };
++  const origin = new URL(req.url).origin;
++  if (req.method !== "POST" || req.headers.get("Origin") !== origin ||
++      req.headers.get("Sec-Fetch-Site") !== "same-origin" ||
++      req.headers.get("Sec-Fetch-Mode") !== "navigate" ||
++      req.headers.get("Sec-Fetch-Dest") !== "document") {
++    return new Response("Invalid device session request.", { status: 403, headers });
++  }
++
++  let form: FormData;
++  try {
++    form = await req.formData();
++  } catch {
++    return new Response("Invalid device session request.", { status: 400, headers });
++  }
++  const userDoIds = form.getAll("userDoId");
++  const states = form.getAll("state");
++  const tickets = form.getAll("ticket");
++  const userDoId = userDoIds.length === 1 ? userDoIds[0] : null;
++  const state = states.length === 1 ? states[0] : null;
++  const ticket = tickets.length === 1 ? tickets[0] : null;
++  if (typeof userDoId !== "string" || !LOWER_HEX_64.test(userDoId) ||
++      typeof state !== "string" || !isDeviceHandoffState(state) ||
++      typeof ticket !== "string" || !LOWER_HEX_64.test(ticket)) {
++    return new Response("Invalid device session request.", { status: 400, headers });
++  }
++  if (expectedUserDoId !== undefined && userDoId !== expectedUserDoId) {
++    return new Response("Invalid device session owner.", { status: 403, headers });
++  }
++
++  const handoff = await consume(userDoId, state, ticket);
++  if (!handoff) {
++    return new Response("This device session request has expired.", { status: 410, headers });
++  }
++  const callback = new URL(CALLBACK_URL);
++  callback.searchParams.set("cfos_callback", "install-connected");
++  for (const [name, value] of Object.entries({ state, ...handoff })) {
++    callback.searchParams.set(name, value);
++  }
++  return new Response(null, {
++    status: 303,
++    headers: { ...headers, Location: callback.href },
++  });
++}
+diff --git a/packages/workshop-backend/src/auth/device-session-handoff.ts b/packages/workshop-backend/src/auth/device-session-handoff.ts
+new file mode 100644
+index 0000000..9d2de18
+--- /dev/null
++++ b/packages/workshop-backend/src/auth/device-session-handoff.ts
+@@ -0,0 +1,100 @@
++/** Credential encrypted for the native app. The native wire format is documented in oauth-signin.md. */
++export type DeviceSessionCredential =
++  | {
++      kind: "workshop";
++      /** `<user-id>:<standard-base64-secret>`, accepted by `PublicApi.authenticate()`. */
++      token: string;
++      /** Server-enforced expiry of this install-local session, in Unix milliseconds. */
++      expiresAt: number;
++    }
++  | {
++      kind: "cloudflare-access";
++      /** Access application JWT; its `exp` bounds this credential's lifetime. */
++      token: string;
++    };
++
++/** Plaintext encrypted for one device-session transfer. */
++export type DeviceSessionTransfer = {
++  credential: DeviceSessionCredential;
++  /** Deadline for consuming the transfer, independent of the credential's own lifetime. */
++  expiresAt: number;
++};
++
++/** Envelope delivered only through the claimed native-app HTTPS callback. */
++export type DeviceSessionHandoff = {
++  /** Ephemeral P-256 public key, uncompressed and unpadded base64url encoded. */
++  publicKey: string;
++  /** Random HKDF salt, unpadded base64url encoded. */
++  salt: string;
++  /** AES-GCM nonce, unpadded base64url encoded. */
++  iv: string;
++  /** AES-GCM ciphertext and tag, unpadded base64url encoded. */
++  ciphertext: string;
++};
++
++const CONTEXT = new TextEncoder().encode("cloudflare-os-device-session-v1");
++const OPAQUE_STATE = /^[A-Za-z0-9._~-]{16,512}$/;
++
++/** How long a staged device-session transfer can wait for its claimed HTTPS callback. */
++export const DEVICE_HANDOFF_LIFETIME_MS = 2 * 60_000;
++
++/** Whether a native app state value satisfies the bounded opaque wire contract. */
++export function isDeviceHandoffState(state: string): boolean {
++  return OPAQUE_STATE.test(state);
++}
++
++function decodePublicKey(value: string): Uint8Array {
++  let bytes: Uint8Array;
++  try {
++    bytes = Uint8Array.fromBase64(value, {
++      alphabet: "base64url",
++      lastChunkHandling: "loose",
++    });
++  } catch {
++    throw new Error("Invalid device handoff key.");
++  }
++  if (bytes.length !== 65 || bytes[0] !== 4 ||
++      bytes.toBase64({ alphabet: "base64url", omitPadding: true }) !== value) {
++    throw new Error("Invalid device handoff key.");
++  }
++  return bytes;
++}
++
++/**
++ * Encrypt a credential for the native app's per-attempt P-256 key. The caller keeps the result
++ * server-side until a single-use, top-level callback delivers it to the claimed HTTPS app link.
++ */
++export async function sealDeviceSessionHandoff(
++    publicKey: string,
++    state: string,
++    credential: DeviceSessionCredential,
++    expiresAt = Date.now() + DEVICE_HANDOFF_LIFETIME_MS,
++): Promise<DeviceSessionHandoff> {
++  if (!isDeviceHandoffState(state)) throw new Error("Invalid device sign-in state.");
++  const recipient = await crypto.subtle.importKey(
++      "raw", decodePublicKey(publicKey), { name: "ECDH", namedCurve: "P-256" }, false, []);
++  const ephemeral = await crypto.subtle.generateKey(
++      { name: "ECDH", namedCurve: "P-256" }, false, ["deriveBits"]) as CryptoKeyPair;
++  // Workers' generated Crypto types call the standard ECDH `public` field `$public`.
++  const secret = await crypto.subtle.deriveBits(
++      { name: "ECDH", public: recipient } as SubtleCryptoDeriveKeyAlgorithm & { public: CryptoKey },
++      ephemeral.privateKey, 256);
++  const material = await crypto.subtle.importKey("raw", secret, "HKDF", false, ["deriveKey"]);
++  const salt = crypto.getRandomValues(new Uint8Array(32));
++  const key = await crypto.subtle.deriveKey(
++      { name: "HKDF", hash: "SHA-256", salt, info: CONTEXT }, material,
++      { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
++  const iv = crypto.getRandomValues(new Uint8Array(12));
++  const plaintext: DeviceSessionTransfer = { credential, expiresAt };
++  const ciphertext = await crypto.subtle.encrypt(
++      { name: "AES-GCM", iv, additionalData: new TextEncoder().encode(state) }, key,
++      new TextEncoder().encode(JSON.stringify(plaintext)));
++  return {
++    publicKey: new Uint8Array(
++        await crypto.subtle.exportKey("raw", ephemeral.publicKey) as ArrayBuffer)
++        .toBase64({ alphabet: "base64url", omitPadding: true }),
++    salt: salt.toBase64({ alphabet: "base64url", omitPadding: true }),
++    iv: iv.toBase64({ alphabet: "base64url", omitPadding: true }),
++    ciphertext: new Uint8Array(ciphertext).toBase64({ alphabet: "base64url", omitPadding: true }),
++  };
++}
+diff --git a/packages/workshop-backend/src/observability.ts b/packages/workshop-backend/src/observability.ts
+index a130aba..7d596df 100644
+--- a/packages/workshop-backend/src/observability.ts
++++ b/packages/workshop-backend/src/observability.ts
+@@ -11,6 +11,7 @@ export type WorkshopObservabilityFields = {
+   chatId: number;
+   claimedType: string;
+   commitCount: number;
++  credentialKind: "workshop" | "cloudflare-access";
+   durableObjectId: string;
+   durationMs: number;
+   eventName: string;
+diff --git a/packages/workshop-backend/src/server.ts b/packages/workshop-backend/src/server.ts
+index 2620878..cd7bb1b 100644
+--- a/packages/workshop-backend/src/server.ts
++++ b/packages/workshop-backend/src/server.ts
+@@ -32,6 +32,7 @@ import { resolveUiFeatureFlags } from "./feature-flags";
+ import { serveSiteLogo, SITE_LOGO_PATH } from "./site-logo.js";
+ import { createWorkshopLogger } from "./observability";
+ import { retryOnDoReset, wrapDoStubForTelemetry } from "./do-retry";
++import { deviceSessionCallback } from "./auth/device-session-callback.js";
+ 
+ const logger = createWorkshopLogger("workshop.server");
+ 
+@@ -84,7 +85,8 @@ type Env = Cloudflare.Env & {
+ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
+   constructor(private ctx: ExecutionContext, private env: Env,
+       userId: DurableObjectId,
+-      private abortSession: (reason: Error) => void) {
++      private abortSession: (reason: Error) => void,
++      private accessSession?: { jwt: string; expiresAt: number }) {
+     super();
+ 
+     this.#userId = userId;
+@@ -142,6 +144,15 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
+     // Pure-read delegations retry once across a user-DO reset (see retryOnDoReset); writes never do.
+     return retryOnDoReset(() => this.#user.whoami());
+   }
++  async beginDeviceSessionHandoff(publicKey: string, state: string) {
++    if (this.accessSession?.expiresAt !== undefined &&
++        this.accessSession.expiresAt <= Date.now()) {
++      throw new Error("The Access session has expired. Sign in again before connecting the app.");
++    }
++    const result = await this.#user.stageDeviceSessionHandoff(
++        publicKey, state, this.accessSession?.jwt);
++    return result;
++  }
+   setOwnDisplayName(name: string): Promise<void> {
+     return this.#user.setOwnDisplayName(name);
+   }
+@@ -682,7 +693,7 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
+ 
+   constructor(private ctx: ExecutionContext, private env: Env,
+       private abortSession: (reason: Error) => void,
+-      private accessPayload?: JWTPayload) {
++      private accessSession?: { payload: JWTPayload; jwt: string }) {
+     super();
+     this.users = this.ctx.exports.UserDurableObject;
+   }
+@@ -754,11 +765,11 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
+   }
+ 
+   async authenticateFromCfAccess(): Promise<AuthenticatedApi> {
+-    if (!this.accessPayload) {
++    if (!this.accessSession) {
+       throw createAuthError(AUTH_ERROR_CODES.notAuthenticatedWithAccess);
+     }
+ 
+-    let email = this.accessPayload.email as string;
++    let email = this.accessSession.payload.email as string;
+     let userId = this.users.idFromName(email);
+     let signupsEnabled = (await readAdminConfig(this.env)).signupsEnabled;
+     let accountCreated =
+@@ -775,7 +786,8 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
+       user_id: userId.toString(),
+       source: "cf_access",
+     });
+-    return new AuthenticatedApiImpl(this.ctx, this.env, userId, this.abortSession);
++    return new AuthenticatedApiImpl(this.ctx, this.env, userId, this.abortSession,
++        { jwt: this.accessSession.jwt, expiresAt: (this.accessSession.payload.exp ?? 0) * 1000 });
+   }
+ 
+   async login(username: string, passwordHash: Uint8Array): Promise<string | null> {
+@@ -873,6 +885,29 @@ export default {
+       return handleClientErrorRequest(req, env, ctx);
+     }
+ 
++    if (url.pathname === "/api/device-session/callback") {
++      let expectedUserDoId: string | undefined;
++      if (env.CF_ACCESS_AUD) {
++        const payload = await verifyCfAccessJwt(req, env);
++        if (typeof payload?.email !== "string" || payload.email.length === 0) {
++          return new Response("Invalid CF access JWT.", {
++            status: 403,
++            headers: { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" },
++          });
++        }
++        expectedUserDoId = ctx.exports.UserDurableObject.idFromName(payload.email).toString();
++      }
++      return deviceSessionCallback(req, async (userDoId, state, ticket) => {
++        let id: DurableObjectId;
++        try {
++          id = ctx.exports.UserDurableObject.idFromString(userDoId);
++        } catch {
++          return null;
++        }
++        return await ctx.exports.UserDurableObject.get(id).consumeDeviceSessionHandoff(state, ticket);
++      }, expectedUserDoId);
++    }
++
+     if (url.pathname === "/api") {
+       // Make sure the bundled blueprints are installed. The AdminSettings DO doesn't wake
+       // merely because someone deployed, so the install needs a trigger; hanging it off API
+@@ -897,7 +932,7 @@ export default {
+             }));
+       }
+ 
+-      let accessPayload: JWTPayload | undefined;
++      let accessSession: { payload: JWTPayload; jwt: string } | undefined;
+ 
+       if (env.CF_ACCESS_AUD) {
+         if (req.headers.get("Origin") !== url.origin) {
+@@ -911,7 +946,10 @@ export default {
+           return new Response("Access JWT didn't specify email address.", { status: 403 });
+         }
+ 
+-        accessPayload = payload;
++        accessSession = {
++          payload,
++          jwt: req.headers.get("cf-access-jwt-assertion")!,
++        };
+       }
+ 
+       // HACK: Implement `abortSession` callback by closing the websocket.
+@@ -924,7 +962,7 @@ export default {
+       };
+ 
+       return await newWorkersRpcResponse(req,
+-          new PublicApiImpl(ctx, env, abortSession, accessPayload),
++          new PublicApiImpl(ctx, env, abortSession, accessSession),
+           { abortSignal: abortController.signal });
+     }
+ 
+diff --git a/packages/workshop-backend/src/storage-schema/user-storage.ts b/packages/workshop-backend/src/storage-schema/user-storage.ts
+index 4795d3d..f255b67 100644
+--- a/packages/workshop-backend/src/storage-schema/user-storage.ts
++++ b/packages/workshop-backend/src/storage-schema/user-storage.ts
+@@ -6,9 +6,11 @@
+ 
+ import { createTypedStorage, collection } from "@gadgets/typed-storage";
+ import type {
+-  AiChatAuthorInfo, AiModelConfig, BlueprintMetadata, BlueprintOutput, GadgetMetadata, WorkpieceId,
++  AiChatAuthorInfo, AiModelConfig, BlueprintMetadata, BlueprintOutput,
++  GadgetMetadata, WorkpieceId,
+ } from "@gadgets/workshop-shared/api";
+ import type { AccountDescription, GatekeeperUser } from "@gadgets/workshop-shared/gatekeeper";
++import type { DeviceSessionHandoff } from "../auth/device-session-handoff.js";
+ 
+ export type ConnectedAccountRecord = {
+   id: number;
+@@ -59,11 +61,29 @@ export type UserAiModelRecord = {
+   config: AiModelConfig;
+ }
+ 
+-type LoginSessionRecord = {
++export type LoginSessionRecord = {
+   tokenId: string,  // sha256 hash of token, hex-formatted
+   created: Date,
++  /** Device sessions expire server-side; legacy browser sessions have no expiry. */
++  expiresAt?: Date,
++  /** A staged device session cannot authenticate until its handoff is consumed. */
++  pendingUntil?: Date,
+ }
+ 
++/**
++ * A device-session transfer staged by an authenticated browser. Keyed by a hash of the native
++ * app's opaque state, idempotent for that state, single-use, and swept after `expiresAt`.
++ */
++export type PendingDeviceHandoffRecord = {
++  stateHash: string;
++  ticketHash: string;
++  publicKey: string;
++  handoff: DeviceSessionHandoff;
++  expiresAt: Date;
++  /** Password/gatekeeper mode only: activated on consumption, deleted on abandoned expiry. */
++  sessionTokenId?: string;
++};
++
+ /** Blueprint record stored in the user's `blueprints` collection. */
+ export type BlueprintUserRecord = {
+   id: string;
+@@ -142,6 +162,9 @@ export function makeUserStorage(storage: DurableObjectStorage) {
+       pendingConnectFlows: collection<PendingConnectFlow>()({
+         primaryKey: "nonceHash",
+       }),
++      pendingDeviceHandoffs: collection<PendingDeviceHandoffRecord>()({
++        primaryKey: "stateHash",
++      }),
+       blueprints: collection<BlueprintUserRecord>()({
+         primaryKey: "id",
+       }),
+diff --git a/packages/workshop-backend/src/user.ts b/packages/workshop-backend/src/user.ts
+index c1ff484..6e31ff2 100644
+--- a/packages/workshop-backend/src/user.ts
++++ b/packages/workshop-backend/src/user.ts
+@@ -1,13 +1,13 @@
+ import { RpcStub } from "capnweb";
+-import { GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, RedactedAiModelConfig, CollaboratorRole, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, GadgetMetadata, BlueprintMetadata, BlueprintLibrarySummary, BlueprintSource, BlueprintUserSummary, BLUEPRINT_SCREENSHOT_R2_PREFIX, GatekeeperVendorInfo, OutputSummary, ListOutputsResult, AUTH_ERROR_CODES, createAuthError, ConnectFlowStart, validateCommitEmail, NotificationSubscriber, UserNotification } from '@gadgets/workshop-shared/api';
++import { GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, RedactedAiModelConfig, CollaboratorRole, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, GadgetMetadata, BlueprintMetadata, BlueprintLibrarySummary, BlueprintSource, BlueprintUserSummary, BLUEPRINT_SCREENSHOT_R2_PREFIX, GatekeeperVendorInfo, OutputSummary, ListOutputsResult, AUTH_ERROR_CODES, createAuthError, ConnectFlowStart, validateCommitEmail, NotificationSubscriber, UserNotification, type DeviceSessionHandoffStart } from '@gadgets/workshop-shared/api';
+ import { ActionDescription, Gatekeeper, GatekeeperUser, GatekeeperUserVerifier, GatekeeperVendor, AccountDescription, VendorDescription, GatekeeperConnectCallback, ConnectHandoff, SupportedResource, ResourceConfiguratorFrame, AppUiContext, GatekeeperUiFrame } from "@gadgets/workshop-shared/gatekeeper";
+ import { shouldAutoProvisionAccount, ambientGatekeeperMode } from "./provisioning-policy.js";
+ import { CloudflareGatekeeperUser } from "@gadgets/workshop-shared/cloudflare-gatekeeper";
+ import { DurableObject, WorkerEntrypoint } from "cloudflare:workers";
+ import {
+   makeUserStorage, type BlueprintUserRecord, type CloudflareBilling, type ConnectedAccountRecord,
+-  type GadgetRecord, type PendingConnectFlow, type PendingHandoffRecord, type UserAiModelRecord,
+-  type UserStorage, type WorkspaceOutputEntry,
++  type GadgetRecord, type PendingConnectFlow, type PendingDeviceHandoffRecord,
++  type PendingHandoffRecord, type UserAiModelRecord, type UserStorage, type WorkspaceOutputEntry,
+ } from "./storage-schema/user-storage.js";
+ import { recordAnalytics } from "./analytics";
+ import { createWorkshopLogger } from "./observability";
+@@ -18,8 +18,12 @@ import { deleteBlueprintContent } from "./blueprint-archive.js";
+ import { isReservedBlueprintKey, readBlueprintKvRecord } from "./storage-schema/blueprints-kv.js";
+ import { filterEnabledResources, isResourceDisabled, readAdminConfig } from "./admin-config.js";
+ import { buildGatekeeperVendorMap } from "./auth/auth-vendors.js";
+-import { CONNECT_FLOW_LIFETIME_MS, handoffTargetOrigin, hashPresentedSecret, newSecretToken, PENDING_HANDOFF_LIFETIME_MS } from "./connect-handoff.js";
++import { CONNECT_FLOW_LIFETIME_MS, handoffTargetOrigin, hashPresentedSecret, hashSecret, newSecretToken, PENDING_HANDOFF_LIFETIME_MS } from "./connect-handoff.js";
+ import { deliver, registerDevice } from "./notification-service.js";
++import {
++  DEVICE_HANDOFF_LIFETIME_MS, isDeviceHandoffState, sealDeviceSessionHandoff,
++  type DeviceSessionCredential, type DeviceSessionHandoff,
++} from "./auth/device-session-handoff.js";
+ 
+ const logger = createWorkshopLogger("workshop.user");
+ 
+@@ -27,6 +31,9 @@ const logger = createWorkshopLogger("workshop.user");
+ // listOutputs() call wakes and how long it waits. The client calls again until catch-up is done.
+ const OUTPUTS_BACKFILL_PAGE = 16;
+ 
++/** Server-enforced lifetime of a Workshop session issued to a native device. */
++export const DEVICE_SESSION_LIFETIME_MS = 30 * 24 * 60 * 60_000;
++
+ /**
+  * Metadata about an auto-provisioned account that provides an agent singleton and/or a management UI.
+  * Returned to the overseer (ambient capsules / catalog) and the management-UI listing.
+@@ -237,6 +244,15 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
+     if (!session) {
+       throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
+     }
++    const now = Date.now();
++    if ((session.expiresAt && session.expiresAt.getTime() <= now) ||
++        (session.pendingUntil && session.pendingUntil.getTime() <= now)) {
++      this.storage.sessions.delete(tokenId);
++      throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
++    }
++    if (session.pendingUntil) {
++      throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
++    }
+     this.#syncDirectory();
+   }
+ 
+@@ -263,12 +279,113 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
+     return isNew;
+   }
+ 
+-  async #newSessionToken(): Promise<string> {
++  async #newSessionToken(options: { expiresAt?: Date; pendingUntil?: Date } = {}): Promise<string> {
+     let { secret, hash: tokenId } = await newSecretToken();
+-    this.storage.sessions.put({ tokenId, created: new Date() });
++    this.storage.sessions.put({ tokenId, created: new Date(), ...options });
+     return secret.toBase64();
+   }
+ 
++  /**
++   * Stage an idempotent, single-use transfer without returning encrypted credentials to page
++   * JavaScript. A Workshop session remains inactive until the HTTPS callback consumes the record;
++   * an Access token is already bounded by its JWT expiry and is stored only inside `handoff`.
++   */
++  async stageDeviceSessionHandoff(publicKey: string, state: string, accessJwt?: string)
++      : Promise<DeviceSessionHandoffStart> {
++    if (!this.storage.created.get()) {
++      throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
++    }
++    if (!isDeviceHandoffState(state)) throw new Error("Invalid device sign-in state.");
++    const stateHash = await hashSecret(new TextEncoder().encode(state));
++    const existing = this.storage.pendingDeviceHandoffs.get(stateHash);
++    if (existing && existing.expiresAt.getTime() > Date.now()) {
++      if (existing.publicKey !== publicKey) {
++        throw new Error("This device sign-in state is already bound to another key.");
++      }
++      // Reissue only the one-use ticket; a retry must not mint another credential or session.
++      const { secret, hash: ticketHash } = await newSecretToken();
++      this.storage.pendingDeviceHandoffs.put({ ...existing, ticketHash });
++      return { userDoId: this.ctx.id.toString(), ticket: secret.toHex() };
++    }
++    if (existing) this.#dropPendingDeviceHandoff(existing);
++
++    const { secret: ticket, hash: ticketHash } = await newSecretToken();
++    const now = Date.now();
++    const handoffExpiresAt = now + DEVICE_HANDOFF_LIFETIME_MS;
++    let credential: DeviceSessionCredential;
++    let sessionTokenId: string | undefined;
++    let deviceSessionExpiresAt: number | undefined;
++    if (accessJwt) {
++      credential = { kind: "cloudflare-access", token: accessJwt };
++    } else {
++      const { secret, hash } = await newSecretToken();
++      sessionTokenId = hash;
++      deviceSessionExpiresAt = now + DEVICE_SESSION_LIFETIME_MS;
++      credential = {
++        kind: "workshop",
++        token: `${this.storage.profile.get().id}:${secret.toBase64()}`,
++        expiresAt: deviceSessionExpiresAt,
++      };
++    }
++    const handoff = await sealDeviceSessionHandoff(
++        publicKey, state, credential, handoffExpiresAt);
++    if (sessionTokenId && deviceSessionExpiresAt) {
++      this.storage.sessions.put({
++        tokenId: sessionTokenId,
++        created: new Date(now),
++        expiresAt: new Date(deviceSessionExpiresAt),
++        pendingUntil: new Date(handoffExpiresAt),
++      });
++    }
++    this.storage.pendingDeviceHandoffs.put({
++      stateHash,
++      ticketHash,
++      publicKey,
++      handoff,
++      expiresAt: new Date(handoffExpiresAt),
++      sessionTokenId,
++    });
++    await this.#armHandoffSweep();
++    logger.info("device session handoff staged", {
++      event: "auth.device_handoff.staged",
++      credentialKind: credential.kind,
++    });
++    return { userDoId: this.ctx.id.toString(), ticket: ticket.toHex() };
++  }
++
++  /** Consume a staged handoff once and activate its pending Workshop device session, if any. */
++  async consumeDeviceSessionHandoff(state: string, ticket: string): Promise<DeviceSessionHandoff | null> {
++    if (!isDeviceHandoffState(state)) return null;
++    const presentedHash = hashPresentedSecret(ticket);
++    if (!presentedHash) return null;
++    const stateHash = await hashSecret(new TextEncoder().encode(state));
++    const pending = this.storage.pendingDeviceHandoffs.get(stateHash);
++    if (!pending) return null;
++    if (pending.expiresAt.getTime() <= Date.now()) {
++      this.#dropPendingDeviceHandoff(pending);
++      await this.#armHandoffSweep();
++      return null;
++    }
++    if (pending.ticketHash !== await presentedHash) return null;
++    this.storage.pendingDeviceHandoffs.delete(stateHash);
++    if (pending.sessionTokenId) {
++      const session = this.storage.sessions.get(pending.sessionTokenId);
++      if (!session || !session.pendingUntil || session.pendingUntil.getTime() <= Date.now()) {
++        if (session) this.storage.sessions.delete(pending.sessionTokenId);
++        await this.#armHandoffSweep();
++        return null;
++      }
++      const { pendingUntil: _pendingUntil, ...active } = session;
++      this.storage.sessions.put(active);
++    }
++    await this.#armHandoffSweep();
++    logger.info("device session handoff consumed", {
++      event: "auth.device_handoff.consumed",
++      credentialKind: pending.sessionTokenId ? "workshop" : "cloudflare-access",
++    });
++    return pending.handoff;
++  }
++
+   async login(passwordHash: Uint8Array): Promise<string | null> {
+     let passwordHashHash = new Uint8Array(await crypto.subtle.digest('SHA-256', passwordHash));
+ 
+@@ -1838,11 +1955,22 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
+     });
+   }
+ 
+-  // Arm the alarm for the soonest pending expiry (the alarm is used for nothing else).
++  #dropPendingDeviceHandoff(pending: PendingDeviceHandoffRecord): void {
++    this.storage.pendingDeviceHandoffs.delete(pending.stateHash);
++    if (pending.sessionTokenId) this.storage.sessions.delete(pending.sessionTokenId);
++  }
++
++  // Arm the alarm for the soonest pending handoff or expiring device session.
+   async #armHandoffSweep(): Promise<void> {
+     let next: number | undefined;
+     let consider = (at: number) => { if (next === undefined || at < next) next = at; };
+     for (let flow of this.storage.pendingConnectFlows.list()) consider(flow.expiresAt.getTime());
++    for (let pending of this.storage.pendingDeviceHandoffs.list()) {
++      consider(pending.expiresAt.getTime());
++    }
++    for (let session of this.storage.sessions.list()) {
++      if (session.expiresAt) consider(session.expiresAt.getTime());
++    }
+     try {
+       for (let pending of this.storage.pendingHandoffs.list()) consider(pending.expiresAt.getTime());
+     } catch (err) {
+@@ -1887,6 +2015,14 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
+       this.storage.pendingHandoffs.delete(pending.ticketHash);
+       await this.#dropPendingConnect(pending);
+     }
++    for (let pending of Array.from(this.storage.pendingDeviceHandoffs.list())) {
++      if (pending.expiresAt.getTime() <= now) this.#dropPendingDeviceHandoff(pending);
++    }
++    for (let session of Array.from(this.storage.sessions.list())) {
++      if ((session.expiresAt?.getTime() ?? Infinity) <= now) {
++        this.storage.sessions.delete(session.tokenId);
++      }
++    }
+     await this.#armHandoffSweep();
+   }
+ 
+diff --git a/packages/workshop-frontend/src/AuthContext.test.tsx b/packages/workshop-frontend/src/AuthContext.test.tsx
+new file mode 100644
+index 0000000..34f513c
+--- /dev/null
++++ b/packages/workshop-frontend/src/AuthContext.test.tsx
+@@ -0,0 +1,75 @@
++// @vitest-environment jsdom
++/* eslint-disable react/react-in-jsx-scope */
++
++import { act } from 'react'
++import { createRoot } from 'react-dom/client'
++import type { RpcStub } from 'capnweb'
++import type { AiChatAuthorInfo, AuthenticatedApi } from '@gadgets/workshop-shared/api'
++import { afterEach, describe, expect, it, vi } from 'vitest'
++import { AuthProvider, useAuthenticatedApi } from './AuthContext'
++
++;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
++
++const user: AiChatAuthorInfo = { type: 'user', id: 'tester@example.com', name: 'Tester' }
++
++const apiWithWhoami = (whoami: () => Promise<AiChatAuthorInfo>) => ({
++  whoami,
++  amIAdmin: async () => false,
++}) as RpcStub<AuthenticatedApi>
++
++const CurrentUserProbe = () => {
++  const { currentUser } = useAuthenticatedApi()
++  return <span>{currentUser?.id ?? 'loading'}</span>
++}
++
++describe('AuthProvider', () => {
++  afterEach(() => vi.useRealTimers())
++
++  it('keeps the current user available while a reconnected API confirms the same account', async () => {
++    let confirmReconnect!: (info: AiChatAuthorInfo) => void
++    const nextIdentity = new Promise<AiChatAuthorInfo>(resolve => { confirmReconnect = resolve })
++    const firstApi = apiWithWhoami(async () => ({ ...user }))
++    const nextApi = apiWithWhoami(() => nextIdentity)
++    const container = document.createElement('div')
++    const root = createRoot(container)
++
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={firstApi} onLogout={() => {}}>
++        <CurrentUserProbe />
++      </AuthProvider>
++    ))
++    expect(container.textContent).toBe(user.id)
++
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={nextApi} onLogout={() => {}}>
++        <CurrentUserProbe />
++      </AuthProvider>
++    ))
++    expect(container.textContent).toBe(user.id)
++
++    await act(async () => confirmReconnect({ ...user }))
++    expect(container.textContent).toBe(user.id)
++    act(() => root.unmount())
++  })
++
++  it('confirms the current user after a transient identity lookup failure', async () => {
++    vi.useFakeTimers()
++    const whoami = vi.fn<AuthenticatedApi['whoami']>()
++      .mockRejectedValueOnce(new Error('WebSocket not ready'))
++      .mockResolvedValue(user)
++    const container = document.createElement('div')
++    const root = createRoot(container)
++
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={apiWithWhoami(whoami)} onLogout={() => {}}>
++        <CurrentUserProbe />
++      </AuthProvider>
++    ))
++    expect(container.textContent).toBe('loading')
++
++    await act(async () => vi.advanceTimersByTimeAsync(250))
++    expect(container.textContent).toBe(user.id)
++    expect(whoami).toHaveBeenCalledTimes(2)
++    act(() => root.unmount())
++  })
++})
+diff --git a/packages/workshop-frontend/src/AuthContext.tsx b/packages/workshop-frontend/src/AuthContext.tsx
+index 5d61eb3..1d22b1a 100644
+--- a/packages/workshop-frontend/src/AuthContext.tsx
++++ b/packages/workshop-frontend/src/AuthContext.tsx
+@@ -5,8 +5,10 @@ import { AuthenticatedApi, AiChatAuthorInfo } from '@gadgets/workshop-shared/api
+ interface AuthContextType {
+   authenticatedApi: RpcStub<AuthenticatedApi>
+   logout: () => void
+-  /** Current user info, fetched once on mount. Null while loading. */
++  /** Last confirmed user; retained while an API reconnect is being authenticated. */
+   currentUser: AiChatAuthorInfo | null
++  /** True only when the current API, not a previous connection, confirmed the user. */
++  isCurrentUserConfirmed: boolean
+   /** Whether the current user is a deployment admin. False while loading / for non-admins. */
+   isAdmin: boolean
+ }
+@@ -20,15 +22,30 @@ interface AuthProviderProps {
+ }
+ 
+ export function AuthProvider({ children, authenticatedApi, onLogout }: AuthProviderProps) {
+-  const [currentUser, setCurrentUser] = useState<AiChatAuthorInfo | null>(null)
++  const [identity, setIdentity] = useState<{
++    api: RpcStub<AuthenticatedApi>
++    user: AiChatAuthorInfo
++  } | null>(null)
+   const [isAdmin, setIsAdmin] = useState(false)
+ 
+   useEffect(() => {
+     let cancelled = false
+-    authenticatedApi.whoami().then((info) => {
+-      if (!cancelled) setCurrentUser(info)
+-    }).catch(() => {})
+-    return () => { cancelled = true }
++    let retryTimer: ReturnType<typeof setTimeout> | undefined
++    let retryCount = 0
++    const retryDelays = [250, 1000, 2000]
++    const confirmUser = () => {
++      authenticatedApi.whoami().then((info) => {
++        if (!cancelled) setIdentity({ api: authenticatedApi, user: info })
++      }).catch(() => {
++        if (cancelled || retryCount >= retryDelays.length) return
++        retryTimer = setTimeout(confirmUser, retryDelays[retryCount++])
++      })
++    }
++    confirmUser()
++    return () => {
++      cancelled = true
++      if (retryTimer) clearTimeout(retryTimer)
++    }
+   }, [authenticatedApi])
+ 
+   useEffect(() => {
+@@ -40,7 +57,10 @@ export function AuthProvider({ children, authenticatedApi, onLogout }: AuthProvi
+   }, [authenticatedApi])
+ 
+   return (
+-    <AuthContext.Provider value={{ authenticatedApi, logout: onLogout, currentUser, isAdmin }}>
++    <AuthContext.Provider value={{
++      authenticatedApi, logout: onLogout, currentUser: identity?.user ?? null,
++      isCurrentUserConfirmed: identity?.api === authenticatedApi, isAdmin,
++    }}>
+       {children}
+     </AuthContext.Provider>
+   )
+diff --git a/packages/workshop-frontend/src/LoginPage.tsx b/packages/workshop-frontend/src/LoginPage.tsx
+index 6c6289a..aa00847 100644
+--- a/packages/workshop-frontend/src/LoginPage.tsx
++++ b/packages/workshop-frontend/src/LoginPage.tsx
+@@ -10,6 +10,7 @@ import { useDocumentTitle } from './useDocumentTitle'
+ import { useConnectionLost } from './RpcContext'
+ import OAuthButtons from './components/auth/OAuthButtons'
+ import SiteLogo from './components/SiteLogo'
++import { deviceSessionSearch } from './features/native-app/DeviceSessionHandoff'
+ 
+ 
+ interface LoginPageProps {
+@@ -153,7 +154,11 @@ export default function LoginPage({ rpcStub, onLoginSuccess }: LoginPageProps) {
+ 
+             <p className="text-center text-sm text-kumo-subtle mt-6">
+               Don't have an account?{' '}
+-              <Link to="/signup" className="text-kumo-brand hover:underline font-medium">
++              <Link
++                to="/signup"
++                search={deviceSessionSearch(window.location.search)}
++                className="text-kumo-brand hover:underline font-medium"
++              >
+                 Create one
+               </Link>
+             </p>
+diff --git a/packages/workshop-frontend/src/SignupPage.tsx b/packages/workshop-frontend/src/SignupPage.tsx
+index ba06977..3ee2713 100644
+--- a/packages/workshop-frontend/src/SignupPage.tsx
++++ b/packages/workshop-frontend/src/SignupPage.tsx
+@@ -10,6 +10,10 @@ import { useDocumentTitle } from "./useDocumentTitle";
+ import OAuthButtons from "./components/auth/OAuthButtons";
+ import SiteLogo from "./components/SiteLogo";
+ import { useConnectionLost } from "./RpcContext";
++import {
++  deviceSessionDestination,
++  deviceSessionSearch,
++} from "./features/native-app/DeviceSessionHandoff";
+ 
+ interface SignupPageProps {
+   rpcStub: RpcStub<PublicApi>;
+@@ -27,6 +31,10 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState<string | null>(null);
+ 
++  const handleSignupSuccess = () => {
++    window.location.href = deviceSessionDestination("/", window.location.search);
++  };
++
+   const usernameError =
+     username && !/^[a-z0-9_-]+$/i.test(username)
+       ? "Letters, numbers, underscores, and hyphens only"
+@@ -66,7 +74,7 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
+       );
+       if (token) {
+         localStorage.setItem("authToken", token);
+-        window.location.href = "/";
++        handleSignupSuccess();
+       } else {
+         setError("Username already exists");
+       }
+@@ -211,14 +219,22 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
+                 <div className="h-px flex-1 bg-kumo-line" />
+               </div>
+             )}
+-            <OAuthButtons rpcStub={rpcStub} vendors={authVendors} />
++            <OAuthButtons
++              rpcStub={rpcStub}
++              vendors={authVendors}
++              onSuccess={handleSignupSuccess}
++            />
+           </div>
+         )}
+ 
+         {passwordAuthEnabled && (
+           <p className="text-center text-sm text-kumo-subtle mt-6">
+             Already have an account?{" "}
+-            <Link to="/" className="text-kumo-brand hover:underline font-medium">
++            <Link
++              to="/"
++              search={deviceSessionSearch(window.location.search)}
++              className="text-kumo-brand hover:underline font-medium"
++            >
+               Sign in
+             </Link>
+           </p>
+diff --git a/packages/workshop-frontend/src/components/AppShell/Sidebar.tsx b/packages/workshop-frontend/src/components/AppShell/Sidebar.tsx
+index 13adde2..03359c1 100644
+--- a/packages/workshop-frontend/src/components/AppShell/Sidebar.tsx
++++ b/packages/workshop-frontend/src/components/AppShell/Sidebar.tsx
+@@ -1,5 +1,6 @@
+ import { Link } from '@tanstack/react-router'
+ import {
++  ArrowLeft,
+   Blueprint,
+   BookOpen,
+   Compass,
+@@ -21,6 +22,7 @@ import {
+   SidebarWorkspacesLists,
+ } from './SidebarWorkspaces'
+ import SidebarUtilityStrip from './SidebarUtilityStrip'
++import { inNativeApp, returnToInstalls } from '../../features/native-app/nativeApp'
+ 
+ /**
+  * The persistent left rail. Three pinned regions sandwich a single scrolling region of lists, so
+@@ -200,6 +202,20 @@ export default function Sidebar({
+       </SidebarWorkspacesProvider>
+ 
+       <SidebarUtilityStrip collapsed={collapsed} />
++      {inNativeApp() && (
++        <button
++          type="button"
++          onClick={returnToInstalls}
++          aria-label="Back to installs"
++          className={[
++            'flex min-h-11 shrink-0 items-center border-t border-kumo-line py-2 text-sm text-kumo-default hover:bg-kumo-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kumo-ring',
++            collapsed ? 'justify-center px-2' : 'gap-2 px-4',
++          ].join(' ')}
++        >
++          <ArrowLeft size={16} aria-hidden="true" />
++          {!collapsed && 'Back to installs'}
++        </button>
++      )}
+     </aside>
+   )
+ }
+diff --git a/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.test.tsx b/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.test.tsx
+new file mode 100644
+index 0000000..dfb764e
+--- /dev/null
++++ b/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.test.tsx
+@@ -0,0 +1,164 @@
++// @vitest-environment jsdom
++/* eslint-disable react/react-in-jsx-scope */
++
++import { act } from 'react'
++import { createRoot, type Root } from 'react-dom/client'
++import { afterEach, describe, expect, it, vi } from 'vitest'
++import type { RpcStub } from 'capnweb'
++import type { AiChatAuthorInfo, AuthenticatedApi, DeviceSessionHandoffStart } from '@gadgets/workshop-shared/api'
++import {
++  DeviceSessionHandoff,
++  deviceSessionAttempt,
++  deviceSessionDestination,
++  deviceSessionSearch,
++  hasDeviceSessionParameters,
++} from './DeviceSessionHandoff'
++
++const state = 'ABCDEFab-0000-0000-0000-000000000001'
++const publicKey = 'A'.repeat(87)
++const user: AiChatAuthorInfo = { type: 'user', id: 'alice@example.com', name: 'Alice' }
++type Begin = (publicKey: string, state: string) => Promise<DeviceSessionHandoffStart>
++
++;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
++
++describe('native device-session handoff', () => {
++  let root: Root | undefined
++  let container: HTMLDivElement | undefined
++
++  afterEach(() => {
++    act(() => root?.unmount())
++    container?.remove()
++    window.history.replaceState({}, '', '/')
++    vi.restoreAllMocks()
++  })
++
++  const render = async (
++    begin: Begin,
++    search = `?cfos_native_state=${state}&cfos_native_key=${publicKey}`,
++    whoami: () => Promise<AiChatAuthorInfo> = async () => user,
++  ) => {
++    window.history.replaceState({}, '', `/${search}`)
++    container = document.createElement('div')
++    document.body.appendChild(container)
++    root = createRoot(container)
++    const api = Object.assign(vi.fn<() => void>(), {
++      beginDeviceSessionHandoff: begin,
++      whoami,
++    }) as unknown as RpcStub<AuthenticatedApi>
++    await act(async () => {
++      root!.render(<DeviceSessionHandoff authenticatedApi={api} />)
++    })
++    return container
++  }
++
++  it('accepts a bounded opaque state and one ephemeral public key', () => {
++    expect(deviceSessionAttempt(
++      `?other=hello&cfos_native_state=${state}&cfos_native_key=${publicKey}`,
++    )).toEqual({ state, publicKey })
++    expect(hasDeviceSessionParameters('?cfos_native_state=bad')).toBe(true)
++  })
++
++  it('rejects missing, duplicated, or malformed attempt parameters', () => {
++    expect(deviceSessionAttempt('')).toBeNull()
++    expect(deviceSessionAttempt(
++      `?cfos_native_state=${state}&cfos_native_key=${publicKey}&cfos_native_state=${state}`,
++    )).toBeNull()
++    expect(deviceSessionAttempt(`?cfos_native_state=${state}`)).toBeNull()
++    expect(deviceSessionAttempt(`?cfos_native_state=short&cfos_native_key=${publicKey}`)).toBeNull()
++    expect(deviceSessionAttempt(`?cfos_native_state=${state}&cfos_native_key=bad`)).toBeNull()
++  })
++
++  it('preserves only a validated attempt across authentication pages', () => {
++    const search = `?unrelated=value&cfos_native_state=${state}&cfos_native_key=${publicKey}`
++    expect(deviceSessionSearch(search)).toEqual({
++      cfos_native_state: state,
++      cfos_native_key: publicKey,
++    })
++    expect(deviceSessionDestination('/signup', search))
++      .toBe(`/signup?cfos_native_state=${state}&cfos_native_key=${publicKey}`)
++    expect(deviceSessionDestination('/', '?cfos_native_state=short')).toBe('/')
++  })
++
++  it('requires confirmation before staging and submits the one-use ticket', async () => {
++    const begin = vi.fn<Begin>().mockResolvedValue({
++      userDoId: 'a'.repeat(64), ticket: 'b'.repeat(64),
++    })
++    const submit = vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(
++      function (this: HTMLFormElement) {
++        expect(this.method).toBe('post')
++        expect(new URL(this.action).pathname).toBe('/api/device-session/callback')
++        expect(Object.fromEntries(new FormData(this))).toEqual({
++          state,
++          userDoId: 'a'.repeat(64),
++          ticket: 'b'.repeat(64),
++        })
++      },
++    )
++    const page = await render(begin)
++    expect(begin).not.toHaveBeenCalled()
++    expect(page.textContent).toContain('Continue only if you started this sign-in')
++    expect(page.textContent).toContain('Signed in as Alice (alice@example.com)')
++
++    await act(async () => {
++      page.querySelector('button')!.click()
++    })
++    expect(begin).toHaveBeenCalledOnce()
++    expect(begin).toHaveBeenCalledWith(publicKey, state)
++    expect(submit).toHaveBeenCalledOnce()
++    expect(page.textContent).toContain('Finishing sign-in')
++  })
++
++  it('shows malformed attempts and staging failures instead of the Workshop', async () => {
++    let page = await render(vi.fn<Begin>(), '?cfos_native_state=bad')
++    expect(page.textContent).toContain('This device-session request is invalid')
++    act(() => root?.unmount())
++    page.remove()
++    root = undefined
++    container = undefined
++
++    const failure = new Error('The Access session has expired. Sign in again before connecting the app.')
++    const logged = vi.spyOn(console, 'error').mockImplementation(() => {})
++    const begin = vi.fn<Begin>().mockRejectedValue(failure)
++    page = await render(begin)
++    await act(async () => {
++      page.querySelector('button')!.click()
++    })
++    expect(page.textContent).toContain(failure.message)
++    expect(logged).toHaveBeenCalledWith('Failed to prepare a device session:', failure)
++    expect(page.querySelector('button')).not.toBeNull()
++  })
++
++  it('keeps a retryable connection failure generic', async () => {
++    const logged = vi.spyOn(console, 'debug').mockImplementation(() => {})
++    const failure = new Error('Peer closed WebSocket')
++    const page = await render(vi.fn<Begin>().mockRejectedValue(failure))
++    await act(async () => {
++      page.querySelector('button')!.click()
++    })
++    expect(page.textContent).toContain('Could not prepare this device session. Try again.')
++    expect(logged).toHaveBeenCalledWith('Failed to prepare a device session:', failure)
++    expect(page.querySelector('button')).not.toBeNull()
++  })
++
++  it('requires a confirmed account before allowing the handoff', async () => {
++    let confirm!: (user: AiChatAuthorInfo) => void
++    const identity = new Promise<AiChatAuthorInfo>(resolve => { confirm = resolve })
++    const begin = vi.fn<Begin>()
++    const page = await render(begin, undefined, () => identity)
++    expect((page.querySelector('button') as HTMLButtonElement).disabled).toBe(true)
++    expect(page.textContent).toContain('Checking your account')
++
++    await act(async () => confirm(user))
++    expect((page.querySelector('button') as HTMLButtonElement).disabled).toBe(false)
++    expect(begin).not.toHaveBeenCalled()
++  })
++
++  it('does not offer a transfer when the stored session is rejected', async () => {
++    const begin = vi.fn<Begin>()
++    const page = await render(begin, undefined, async () => { throw new Error('session expired') })
++    expect(page.textContent).toContain('Could not confirm your account')
++    expect(page.querySelector('[role="alert"]')).not.toBeNull()
++    expect(page.querySelector('button')).toBeNull()
++    expect(begin).not.toHaveBeenCalled()
++  })
++})
+diff --git a/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.tsx b/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.tsx
+new file mode 100644
+index 0000000..6664e66
+--- /dev/null
++++ b/packages/workshop-frontend/src/features/native-app/DeviceSessionHandoff.tsx
+@@ -0,0 +1,162 @@
++import { Button } from '@cloudflare/kumo'
++import { useEffect, useState } from 'react'
++import type { RpcStub } from 'capnweb'
++import type { AiChatAuthorInfo, AuthenticatedApi, DeviceSessionHandoffStart } from '@gadgets/workshop-shared/api'
++import { logRpcFailure, rpcFailureDescription } from '../../rpcErrors'
++
++const STATE_PARAMETER = 'cfos_native_state'
++const KEY_PARAMETER = 'cfos_native_key'
++const OPAQUE_STATE = /^[A-Za-z0-9._~-]{16,512}$/
++const PUBLIC_KEY = /^[A-Za-z0-9_-]{87}$/
++
++export type DeviceSessionAttempt = { state: string; publicKey: string }
++
++/** Parse the native app's bounded opaque state and unpadded P-256 public key. */
++export const deviceSessionAttempt = (search: string): DeviceSessionAttempt | null => {
++  const params = new URLSearchParams(search)
++  const states = params.getAll(STATE_PARAMETER)
++  const keys = params.getAll(KEY_PARAMETER)
++  if (states.length !== 1 || !OPAQUE_STATE.test(states[0]) || keys.length !== 1 ||
++      !PUBLIC_KEY.test(keys[0])) return null
++  return { state: states[0], publicKey: keys[0] }
++}
++
++/** Whether a URL is trying to start a device session, including a malformed attempt. */
++export const hasDeviceSessionParameters = (search: string): boolean => {
++  const params = new URLSearchParams(search)
++  return params.has(STATE_PARAMETER) || params.has(KEY_PARAMETER)
++}
++
++/** Keep only a validated device-session attempt when navigating between authentication pages. */
++export const deviceSessionSearch = (search: string): {
++  cfos_native_state?: string
++  cfos_native_key?: string
++} => {
++  const attempt = deviceSessionAttempt(search)
++  return attempt ? {
++    [STATE_PARAMETER]: attempt.state,
++    [KEY_PARAMETER]: attempt.publicKey,
++  } : {}
++}
++
++/** Build an authentication destination without forwarding unrelated or invalid search data. */
++export const deviceSessionDestination = (pathname: string, search: string): string => {
++  const preserved = deviceSessionSearch(search)
++  const params = new URLSearchParams()
++  for (const [name, value] of Object.entries(preserved)) params.set(name, value)
++  const query = params.toString()
++  return query ? `${pathname}?${query}` : pathname
++}
++
++/** Navigate the browser through the single-use callback without exposing its response to script. */
++export const submitDeviceSession = (state: string, start: DeviceSessionHandoffStart): void => {
++  const form = document.createElement('form')
++  form.method = 'POST'
++  form.action = '/api/device-session/callback'
++  form.style.display = 'none'
++  for (const [name, value] of Object.entries({ state, ...start })) {
++    const input = document.createElement('input')
++    input.name = name
++    input.value = value
++    form.append(input)
++  }
++  document.body.append(form)
++  try {
++    form.submit()
++  } finally {
++    form.remove()
++  }
++}
++
++/** Ask the user before transferring an install session to the native Cloudflare OS app. */
++export const DeviceSessionHandoff = ({
++  authenticatedApi,
++}: {
++  authenticatedApi: RpcStub<AuthenticatedApi>
++}) => {
++  const attempt = deviceSessionAttempt(window.location.search)
++  const [working, setWorking] = useState(false)
++  const [error, setError] = useState<string | null>(null)
++  const [identity, setIdentity] = useState<{
++    api: RpcStub<AuthenticatedApi>
++    user: AiChatAuthorInfo | null
++    failed: boolean
++  } | null>(null)
++  const confirmedUser = identity?.api === authenticatedApi && identity.user?.type === 'user'
++    ? identity.user : null
++  const identityFailed = identity?.api === authenticatedApi && identity.failed
++
++  useEffect(() => {
++    let cancelled = false
++    authenticatedApi.whoami().then(user => {
++      if (!cancelled) setIdentity({ api: authenticatedApi, user, failed: user.type !== 'user' })
++    }).catch(() => {
++      if (!cancelled) setIdentity({ api: authenticatedApi, user: null, failed: true })
++    })
++    return () => { cancelled = true }
++  }, [authenticatedApi])
++
++  const continueInApp = async () => {
++    if (!attempt || !confirmedUser || working) return
++    setWorking(true)
++    setError(null)
++    try {
++      const start = await authenticatedApi.beginDeviceSessionHandoff(
++        attempt.publicKey,
++        attempt.state,
++      )
++      submitDeviceSession(attempt.state, start)
++    } catch (err) {
++      logRpcFailure('Failed to prepare a device session:', err)
++      setError(rpcFailureDescription(err) ?? 'Could not prepare this device session. Try again.')
++      setWorking(false)
++    }
++  }
++
++  if (!attempt) {
++    return (
++      <main className="flex min-h-full items-center justify-center bg-kumo-base p-6">
++        <div className="flex max-w-sm flex-col items-center gap-4 text-center">
++          <h1 className="text-lg font-semibold text-kumo-default">Couldn&apos;t start app sign-in</h1>
++          <p role="alert" className="text-sm text-kumo-danger">
++            This device-session request is invalid. Return to the app and start again.
++          </p>
++        </div>
++      </main>
++    )
++  }
++
++  return (
++    <main className="flex min-h-full items-center justify-center bg-kumo-base p-6">
++      <div className="flex max-w-sm flex-col items-center gap-4 text-center">
++        {working && <div aria-hidden="true" className="h-8 w-8 animate-spin rounded-full border-2 border-kumo-brand border-t-transparent" />}
++        <h1 className="text-lg font-semibold text-kumo-default">
++          {working ? 'Finishing sign-in…' : 'Continue in Cloudflare OS?'}
++        </h1>
++        <p className="text-sm text-kumo-subtle">
++          {working
++            ? 'This browser will close and return to the app.'
++            : 'Continue only if you started this sign-in from the Cloudflare OS app.'}
++        </p>
++        {!working && identityFailed && (
++          <p role="alert" className="text-sm text-kumo-danger">
++            Could not confirm your account. Return to the app and try again.
++          </p>
++        )}
++        {!working && !identityFailed && (
++          <p className="text-sm text-kumo-subtle">
++            {confirmedUser
++              ? `Signed in as ${confirmedUser.name} (${confirmedUser.id}) on ${window.location.host}.`
++              : 'Checking your account…'}
++          </p>
++        )}
++        {error && <p role="alert" className="text-sm text-kumo-danger">{error}</p>}
++        {!working && !identityFailed && (
++          <Button variant="primary" disabled={!confirmedUser} onClick={() => { void continueInApp() }}>
++            Continue in Cloudflare OS
++          </Button>
++        )}
++      </div>
++    </main>
++  )
++}
+diff --git a/packages/workshop-frontend/src/features/native-app/NativeAppBridge.test.tsx b/packages/workshop-frontend/src/features/native-app/NativeAppBridge.test.tsx
+new file mode 100644
+index 0000000..aa5971b
+--- /dev/null
++++ b/packages/workshop-frontend/src/features/native-app/NativeAppBridge.test.tsx
+@@ -0,0 +1,126 @@
++// @vitest-environment jsdom
++/* eslint-disable react/react-in-jsx-scope */
++
++import { act } from 'react'
++import { createRoot } from 'react-dom/client'
++import type { RpcStub } from 'capnweb'
++import type { AiChatAuthorInfo, AuthenticatedApi } from '@gadgets/workshop-shared/api'
++import { afterEach, describe, expect, it, vi } from 'vitest'
++import { AuthProvider } from '../../AuthContext'
++import { NativeAppBridge } from './NativeAppBridge'
++import { inNativeApp, returnToInstalls } from './nativeApp'
++
++;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
++
++const user: AiChatAuthorInfo = { type: 'user', id: 'tester@example.com', name: 'Tester' }
++
++const pendingWhoami = () => {
++  let resolve!: (info: AiChatAuthorInfo) => void
++  let reject!: (error: Error) => void
++  const promise = new Promise<AiChatAuthorInfo>((res, rej) => {
++    resolve = res
++    reject = rej
++  })
++  return { promise, resolve, reject }
++}
++
++const apiWithWhoami = (whoami: () => Promise<AiChatAuthorInfo>) => ({
++  whoami,
++  amIAdmin: async () => false,
++}) as RpcStub<AuthenticatedApi>
++
++describe('native app bridge', () => {
++  afterEach(() => {
++    vi.unstubAllGlobals()
++  })
++
++  it('reports login only after whoami confirms a user, then uses the versioned native object for navigation', async () => {
++    const loginReady = vi.fn<() => void>()
++    const returnHome = vi.fn<() => void>()
++    const identity = pendingWhoami()
++    vi.stubGlobal('cloudflareOSNative', {
++      version: 1,
++      isAvailable: () => true,
++      loginReady,
++      returnToInstalls: returnHome,
++    })
++    const container = document.createElement('div')
++    const root = createRoot(container)
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={apiWithWhoami(() => identity.promise)} onLogout={() => {}}>
++        <NativeAppBridge />
++      </AuthProvider>
++    ))
++
++    expect(inNativeApp()).toBe(true)
++    expect(loginReady).not.toHaveBeenCalled()
++    await act(async () => identity.resolve(user))
++    expect(loginReady).toHaveBeenCalledOnce()
++    returnToInstalls()
++    expect(returnHome).toHaveBeenCalledOnce()
++    act(() => root.unmount())
++  })
++
++  it('does not report login when authentication is rejected', async () => {
++    const loginReady = vi.fn<() => void>()
++    const identity = pendingWhoami()
++    vi.stubGlobal('cloudflareOSNative', {
++      version: 1,
++      isAvailable: () => true,
++      loginReady,
++      returnToInstalls: vi.fn<() => void>(),
++    })
++    const root = createRoot(document.createElement('div'))
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={apiWithWhoami(() => identity.promise)} onLogout={() => {}}>
++        <NativeAppBridge />
++      </AuthProvider>
++    ))
++
++    await act(async () => identity.reject(new Error('session expired')))
++    expect(loginReady).not.toHaveBeenCalled()
++    act(() => root.unmount())
++  })
++
++  it('reports login again only after the reconnected session confirms its identity', async () => {
++    const loginReady = vi.fn<() => void>()
++    const nextIdentity = pendingWhoami()
++    vi.stubGlobal('cloudflareOSNative', {
++      version: 1,
++      isAvailable: () => true,
++      loginReady,
++      returnToInstalls: vi.fn<() => void>(),
++    })
++    const firstApi = apiWithWhoami(async () => ({ ...user }))
++    const nextApi = apiWithWhoami(() => nextIdentity.promise)
++    const root = createRoot(document.createElement('div'))
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={firstApi} onLogout={() => {}}>
++        <NativeAppBridge />
++      </AuthProvider>
++    ))
++    expect(loginReady).toHaveBeenCalledOnce()
++
++    await act(async () => root.render(
++      <AuthProvider authenticatedApi={nextApi} onLogout={() => {}}>
++        <NativeAppBridge />
++      </AuthProvider>
++    ))
++    expect(loginReady).toHaveBeenCalledOnce()
++    // A real RPC call materializes a fresh profile object for the new connection.
++    await act(async () => nextIdentity.resolve({ ...user }))
++    expect(loginReady).toHaveBeenCalledTimes(2)
++    act(() => root.unmount())
++  })
++
++  it('ignores malformed, unavailable, and legacy-only bridges', () => {
++    vi.stubGlobal('cloudflareOSNative', {
++      version: 1,
++      isAvailable: () => false,
++      loginReady: vi.fn<() => void>(),
++      returnToInstalls: vi.fn<() => void>(),
++    })
++    vi.stubGlobal('webkit', { messageHandlers: { cloudflareOSLoginReady: {} } })
++    expect(inNativeApp()).toBe(false)
++  })
++})
+diff --git a/packages/workshop-frontend/src/features/native-app/NativeAppBridge.tsx b/packages/workshop-frontend/src/features/native-app/NativeAppBridge.tsx
+new file mode 100644
+index 0000000..6207949
+--- /dev/null
++++ b/packages/workshop-frontend/src/features/native-app/NativeAppBridge.tsx
+@@ -0,0 +1,14 @@
++import { useEffect } from 'react'
++import { useAuthenticatedApi } from '../../AuthContext'
++import { nativeApp } from './nativeApp'
++
++/** Reports an authenticated embedded-web-view session to the single versioned native bridge. */
++export const NativeAppBridge = () => {
++  const { currentUser, isCurrentUserConfirmed } = useAuthenticatedApi()
++
++  useEffect(() => {
++    if (isCurrentUserConfirmed && currentUser?.type === 'user') nativeApp()?.loginReady()
++  }, [currentUser, isCurrentUserConfirmed])
++
++  return null
++}
+diff --git a/packages/workshop-frontend/src/features/native-app/nativeApp.ts b/packages/workshop-frontend/src/features/native-app/nativeApp.ts
+new file mode 100644
+index 0000000..cefebc7
+--- /dev/null
++++ b/packages/workshop-frontend/src/features/native-app/nativeApp.ts
+@@ -0,0 +1,35 @@
++type NativeNotificationBridge = {
++  currentDeviceRegistration: () => string | undefined
++  requestDeviceRegistration: () => void
++  registrationFinished: (outcome: 'ready' | 'failed') => void
++}
++
++export type CloudflareOSNative = {
++  version: number
++  isAvailable: () => boolean
++  loginReady: () => void
++  returnToInstalls: () => void
++  notifications?: NativeNotificationBridge
++}
++
++type NativeAppWindow = Window & { cloudflareOSNative?: CloudflareOSNative }
++
++/** Return the versioned native-app capability only when its required surface is usable. */
++export const nativeApp = (): CloudflareOSNative | undefined => {
++  const bridge = (window as NativeAppWindow).cloudflareOSNative
++  try {
++    return bridge && bridge.version >= 1 &&
++      typeof bridge.isAvailable === 'function' &&
++      typeof bridge.loginReady === 'function' &&
++      typeof bridge.returnToInstalls === 'function' &&
++      bridge.isAvailable() ? bridge : undefined
++  } catch {
++    return undefined
++  }
++}
++
++export const inNativeApp = (): boolean => nativeApp() !== undefined
++
++export const returnToInstalls = (): void => {
++  nativeApp()?.returnToInstalls()
++}
+diff --git a/packages/workshop-frontend/src/features/notifications/NotificationBridge.test.tsx b/packages/workshop-frontend/src/features/notifications/NotificationBridge.test.tsx
+index 21b24c9..242b32a 100644
+--- a/packages/workshop-frontend/src/features/notifications/NotificationBridge.test.tsx
++++ b/packages/workshop-frontend/src/features/notifications/NotificationBridge.test.tsx
+@@ -140,6 +140,64 @@ describe("NotificationBridge", () => {
+     Reflect.deleteProperty(window, "webkit");
+   });
+ 
++  it("uses notification controls on the versioned native bridge", async () => {
++    let request = vi.fn<() => void>();
++    let finished = vi.fn<(outcome: "ready" | "failed") => void>();
++    Object.assign(window, {
++      cloudflareOSNative: {
++        version: 1,
++        isAvailable: () => true,
++        loginReady: () => {},
++        returnToInstalls: () => {},
++        notifications: {
++          currentDeviceRegistration: () => "registration-2",
++          requestDeviceRegistration: request,
++          registrationFinished: finished,
++        },
++      },
++    });
++    await render();
++    expect(authenticatedApi.registerNotificationDevice).toHaveBeenCalledWith("registration-2");
++    expect(finished).toHaveBeenCalledWith("ready");
++    expect(request).not.toHaveBeenCalled();
++    Reflect.deleteProperty(window, "cloudflareOSNative");
++  });
++
++  it("does not redeem a versioned one-use registration again during an RPC reconnect", async () => {
++    using _ = vi.spyOn(console, "error").mockImplementation(() => {});
++    let failRegistration!: (reason: Error) => void;
++    const pending = new Promise<void>((_resolve, reject) => { failRegistration = reject; });
++    authenticatedApi.registerNotificationDevice.mockReturnValue(pending);
++    const finished = vi.fn<(outcome: "ready" | "failed") => void>();
++    Object.assign(window, {
++      cloudflareOSNative: {
++        version: 1,
++        isAvailable: () => true,
++        loginReady: () => {},
++        returnToInstalls: () => {},
++        notifications: {
++          currentDeviceRegistration: () => "registration-reconnect",
++          requestDeviceRegistration: vi.fn<() => void>(),
++          registrationFinished: finished,
++        },
++      },
++    });
++
++    await render();
++    const firstApi = authenticatedApi;
++    authenticatedApi = {
++      ...authenticatedApi,
++      registerNotificationDevice: vi.fn<(id: string) => Promise<void>>().mockResolvedValue(),
++    };
++    await render();
++    expect(firstApi.registerNotificationDevice).toHaveBeenCalledOnce();
++    expect(authenticatedApi.registerNotificationDevice).not.toHaveBeenCalled();
++
++    await act(async () => failRegistration(new Error("registration expired")));
++    expect(finished).toHaveBeenCalledExactlyOnceWith("failed");
++    Reflect.deleteProperty(window, "cloudflareOSNative");
++  });
++
+   it("asks the native app for a registration once, not again on reconnect", async () => {
+     let request = vi.fn<() => void>();
+     Object.assign(window, { __CLOUDFLARE_OS_REQUEST_NOTIFICATION_DEVICE_REGISTRATION__: request });
+diff --git a/packages/workshop-frontend/src/features/notifications/NotificationBridge.tsx b/packages/workshop-frontend/src/features/notifications/NotificationBridge.tsx
+index da30a43..855e195 100644
+--- a/packages/workshop-frontend/src/features/notifications/NotificationBridge.tsx
++++ b/packages/workshop-frontend/src/features/notifications/NotificationBridge.tsx
+@@ -8,10 +8,11 @@ import type {
+   UserNotification,
+ } from "@gadgets/workshop-shared/api";
+ import { logRpcFailure } from "../../rpcErrors";
++import { nativeApp } from "../native-app/nativeApp";
+ 
+ const DEVICE_REGISTRATION_EVENT = "cloudflare-os:notification-device-registration";
+ 
+-type NativeNotificationWindow = Window & {
++type LegacyNativeNotificationWindow = Window & {
+   __CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__?: string;
+   __CLOUDFLARE_OS_REQUEST_NOTIFICATION_DEVICE_REGISTRATION__?: () => void;
+   webkit?: { messageHandlers?: { cloudflareOSNotificationReady?: {
+@@ -57,27 +58,33 @@ export const NotificationBridge = ({
+   addToast.current = toasts.add;
+   const router = useRouter();
+   const askedNative = useRef(false);
++  const claimedRegistrations = useRef(new Set<string>());
+ 
+   useEffect(() => {
+-    let lastRegistered: string | undefined;
+-    let nativeWindow = window as NativeNotificationWindow;
++    let legacyWindow = window as LegacyNativeNotificationWindow;
++    let notifications = nativeApp()?.notifications;
++    let reportRegistration = (outcome: "ready" | "failed") => {
++      if (notifications) {
++        notifications.registrationFinished(outcome);
++      } else {
++        legacyWindow.webkit?.messageHandlers?.cloudflareOSNotificationReady
++          ?.postMessage({ type: outcome });
++      }
++    };
+     let register = async (deviceRegistrationId: string | undefined) => {
+-      if (!deviceRegistrationId || deviceRegistrationId === lastRegistered) return;
+-      lastRegistered = deviceRegistrationId;
+-      // The native handle is single-use. Claim it before awaiting so an Effect restart cannot
+-      // submit it concurrently or retry it after the central exchange consumed it.
+-      if (nativeWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__ ===
++      if (!deviceRegistrationId || claimedRegistrations.current.has(deviceRegistrationId)) return;
++      // The native handle is single-use, including across authenticatedApi reconnects. A failed
++      // exchange may already have consumed it, so native must issue a fresh id for any retry.
++      claimedRegistrations.current.add(deviceRegistrationId);
++      if (legacyWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__ ===
+           deviceRegistrationId) {
+-        delete nativeWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__;
++        delete legacyWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__;
+       }
+       try {
+         await authenticatedApi.registerNotificationDevice(deviceRegistrationId);
+-        nativeWindow.webkit?.messageHandlers?.cloudflareOSNotificationReady
+-          ?.postMessage({ type: "ready" });
++        reportRegistration("ready");
+       } catch (error) {
+-        lastRegistered = undefined;
+-        nativeWindow.webkit?.messageHandlers?.cloudflareOSNotificationReady
+-          ?.postMessage({ type: "failed" });
++        reportRegistration("failed");
+         logRpcFailure("Failed to register notification device:", error);
+       }
+     };
+@@ -85,14 +92,20 @@ export const NotificationBridge = ({
+       void register(eventDeviceRegistration(event));
+     };
+ 
+-    let injected = nativeWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__;
++    // The legacy globals remain only for the currently distributed TestFlight build. New shells
++    // expose notification controls through the same versioned object as navigation and login.
++    let injected = notifications?.currentDeviceRegistration() ??
++      legacyWindow.__CLOUDFLARE_OS_NOTIFICATION_DEVICE_REGISTRATION__;
+     void register(injected);
+     window.addEventListener(DEVICE_REGISTRATION_EVENT, onDeviceRegistration);
+     // Each id costs a central registration, and this Effect reruns on every reconnect: ask at most
+     // once per mount, and not at all when native already injected one.
+     if (!askedNative.current) {
+       askedNative.current = true;
+-      if (!injected) nativeWindow.__CLOUDFLARE_OS_REQUEST_NOTIFICATION_DEVICE_REGISTRATION__?.();
++      if (!injected) {
++        if (notifications) notifications.requestDeviceRegistration();
++        else legacyWindow.__CLOUDFLARE_OS_REQUEST_NOTIFICATION_DEVICE_REGISTRATION__?.();
++      }
+     }
+     return () => window.removeEventListener(DEVICE_REGISTRATION_EVENT, onDeviceRegistration);
+   }, [authenticatedApi]);
+diff --git a/packages/workshop-frontend/src/routes/__root.tsx b/packages/workshop-frontend/src/routes/__root.tsx
+index 1eb8914..ef7908f 100644
+--- a/packages/workshop-frontend/src/routes/__root.tsx
++++ b/packages/workshop-frontend/src/routes/__root.tsx
+@@ -15,6 +15,11 @@ import LoginPage from '../LoginPage'
+ import OnboardingWizard from '../OnboardingWizard'
+ import AccountSelectionModal from '../components/billing/AccountSelectionModal'
+ import { NotificationBridge } from '../features/notifications/NotificationBridge'
++import {
++  DeviceSessionHandoff,
++  hasDeviceSessionParameters,
++} from '../features/native-app/DeviceSessionHandoff'
++import { NativeAppBridge } from '../features/native-app/NativeAppBridge'
+ 
+ export const Route = createRootRoute({
+   component: RootComponent,
+@@ -110,12 +115,18 @@ function RootComponent() {
+   // authenticatedApi is guaranteed non-null here: isLoading, error, and
+   // !isAuthenticated branches all return early above.
+   if (!authenticatedApi) return null
++  // The native handoff is a dedicated destination: never render the Workshop home page
++  // behind it while the browser is returning credentials to the app.
++  if (hasDeviceSessionParameters(window.location.search)) {
++    return <DeviceSessionHandoff authenticatedApi={authenticatedApi} />
++  }
+   return (
+     <AuthProvider authenticatedApi={authenticatedApi} onLogout={logout}>
+       <FeatureFlagsProvider>
+         <TooltipProvider>
+           <Toasty>
+             <NotificationBridge authenticatedApi={authenticatedApi} />
++            <NativeAppBridge />
+             <AuthenticatedShell
+               authenticatedApi={authenticatedApi}
+               isWorkspaceEditor={isWorkspaceEditor}
+diff --git a/packages/workshop-frontend/src/routes/index.tsx b/packages/workshop-frontend/src/routes/index.tsx
+index f62dcd8..c122271 100644
+--- a/packages/workshop-frontend/src/routes/index.tsx
++++ b/packages/workshop-frontend/src/routes/index.tsx
+@@ -23,12 +23,20 @@ import { useDocumentTitle } from "../useDocumentTitle";
+ import { homePromptFromSearch } from "../homePrompt";
+ import { composerDraftStorageKey } from "../features/chat/composer/draft/composerDraft";
+ 
+-type HomeSearch = { prompt?: string };
++type HomeSearch = {
++  prompt?: string;
++  cfos_native_state?: string;
++  cfos_native_key?: string;
++};
+ 
+ export const Route = createFileRoute("/")({
+   component: HomePage,
+   validateSearch: (search: Record<string, unknown>): HomeSearch => ({
+     prompt: homePromptFromSearch(search.prompt),
++    cfos_native_state: typeof search.cfos_native_state === "string"
++      ? search.cfos_native_state : undefined,
++    cfos_native_key: typeof search.cfos_native_key === "string"
++      ? search.cfos_native_key : undefined,
+   }),
+ });
+ 
+diff --git a/packages/workshop-frontend/vite.config.test.ts b/packages/workshop-frontend/vite.config.test.ts
+index 148df5c..944fc90 100644
+--- a/packages/workshop-frontend/vite.config.test.ts
++++ b/packages/workshop-frontend/vite.config.test.ts
+@@ -25,6 +25,7 @@ describe('Vite development proxy', () => {
+     const resolved = await resolveConfig(config)
+     expect(resolved.server?.proxy).toMatchObject({
+       '/api/client-errors': 'http://backend.from-env.test:9999',
++      '/api/device-session/callback': 'http://backend.from-env.test:9999',
+       '/api/site-logo': 'http://backend.from-env.test:9999',
+     })
+     expect(resolved.build?.sourcemap).toBe('hidden')
+diff --git a/packages/workshop-frontend/vite.config.ts b/packages/workshop-frontend/vite.config.ts
+index cb4377d..402629d 100644
+--- a/packages/workshop-frontend/vite.config.ts
++++ b/packages/workshop-frontend/vite.config.ts
+@@ -83,6 +83,7 @@ export default defineConfig(({ mode }) => {
+       host: true,
+       proxy: {
+         '/api/client-errors': `http://${backendHost}`,
++        '/api/device-session/callback': `http://${backendHost}`,
+         '/blueprint-screenshot': `http://${backendHost}`,
+         '/api/site-logo': `http://${backendHost}`,
+       },
+diff --git a/packages/workshop-shared/src/api.ts b/packages/workshop-shared/src/api.ts
+index dfa826c..70f0473 100644
+--- a/packages/workshop-shared/src/api.ts
++++ b/packages/workshop-shared/src/api.ts
+@@ -446,11 +446,29 @@ export type UserDirectoryRecord = {
+   name: string;
+ };
+ 
++/** Routing identity and one-use proof posted by the authenticated browser to redeem a transfer. */
++export type DeviceSessionHandoffStart = {
++  /** Durable Object identifier for the staging user; this value is not secret. */
++  userDoId: string;
++  /** Single-use 256-bit secret in lowercase hex; only its hash is stored server-side. */
++  ticket: string;
++};
++
+ /** Top-level API exposed to the user after they have authenticated. */
+ export interface AuthenticatedApi extends RpcTarget {
+   /** Get profile info for the user who is logged in. */
+   whoami(): Promise<AiChatAuthorInfo>;
+ 
++  /**
++   * Stage a two-minute, single-use device-session transfer for a native app. The state is an
++   * opaque 16–512 character URL-safe value and the key is an uncompressed P-256 public key encoded
++   * as unpadded base64url. The encrypted credential remains server-side until the browser POSTs
++   * the returned ticket to `/api/device-session/callback`, which redirects to the fixed, claimed
++   * HTTPS app link. Repeating a live state reissues its ticket and invalidates the previous one.
++   */
++  beginDeviceSessionHandoff(publicKey: string, state: string)
++    : Promise<DeviceSessionHandoffStart>;
++
+   /** Set the user's own display name, seen in chats, etc. */
+   setOwnDisplayName(name: string): Promise<void>;
+ 

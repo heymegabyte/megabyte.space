@@ -40,6 +40,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   verify the declared remote before moving a reviewed pin. Never use parent-repository
   Git fallback as fork evidence; require its `.git`
   marker before retained-source checks. Record capped API comparisons as incomplete diffs.
+  For new session/ticket lifecycles,
+  review concurrent stage/redeem schedules and already-open capability expiry separately
+  from sequential replay tests; source review never credits native-client/runtime acceptance.
 - **Recovery is local; publication is shared.** Fetch and inspect `origin/main`, prior Actions
   receipts and retained worktree commits before selecting work. Fleet-origin-ahead is normal,
   not proof of a lease race. Confirm retained result commits are ancestors of `origin/main`

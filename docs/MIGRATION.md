@@ -224,3 +224,35 @@ builds. Findings are source-based risks, not claims of observed production defec
 The assigned current fork is `9af3a71d` (advanced on main before this run), while the deploy
 receipt still records `80b7209e`. Actual deployed SHA remains unverified. No production
 mutation, pin change, visual score, state-isolation or migration acceptance is credited.
+
+
+## 13. Native-session upstream review — fire-309 (2026-10-11)
+
+Official upstream remains `54d4685d`; the complete local range from `33a5b70c`
+contains one install-local native-session handoff commit (#712), 27 changed paths.
+See [independent research](../.ai/runs/heymegabyte--megabyte.space-38149953896-1/codex-research.md),
+[exact evidence](../.ai/runs/heymegabyte--megabyte.space-38149953896-1/upstream-evidence.json)
+and the adjacent uncapped path inventory/patch. No dependency manifest, lockfile or
+explicit Wrangler migration delta occurs; user typed storage gains pending transfers
+and optional session expiry fields. Backend and Vite add the callback route.
+
+The source uses explicit browser confirmation, current-connection identity, encrypted
+P-256 handoff, hashed random tickets, two-minute transfer TTL, pending Workshop sessions
+with 30-day expiry, fixed claimed HTTPS callback and Access owner validation. Those
+contracts require candidate proof, including concurrent staging/redemption and expiry
+of an already-open RPC capability. Sequential upstream fixtures do not establish either.
+The external native client must prove key/state/deadline checks, secure storage, claimed
+app-link routing and Access binding-cookie fidelity. Findings are source-review risks;
+no production defect, runtime test or migration acceptance is asserted.
+
+Declared fork bootstrap and exact-source verifier pass at unchanged `9904d808`.
+Production config, deployment receipt, gitlink and visual scores remain unchanged.
+
+Deployment-ledger comparison still reports fork `9904d808` versus receipt `80b7209e`
+(2026-10-09T21:05:20.999Z). This is recorded drift, not a verified live version;
+keep the receipt unchanged until deployment/version inventory supplies evidence.
+
+[Independent Claude review](../.ai/runs/heymegabyte--megabyte.space-38149953896-1/claude-review.md)
+and [convergence](../.ai/runs/heymegabyte--megabyte.space-38149953896-1/review-synthesis.md)
+add revocation/password-change semantics, alarm/gatekeeper coverage and app-link web
+fallback handling to candidate acceptance. Neither review executed candidate tests.

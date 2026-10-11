@@ -1123,7 +1123,7 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   source range is unreviewed. Record complete diff, dependency/config/auth/lifecycle
   implications and candidate native-session acceptance; do not advance the fork pin
   or migration phase from a head observation.
-- [ ] Expand real-Git copy fixtures to copy-in and fork-copy records using explicit
+- [x] (fire-310) Expand real-Git copy fixtures to copy-in and fork-copy records using explicit
   C framing and record ordering. Acceptance: watched destination and fork tracked
   copy remain CI blockers; healthy metadata and an independent following edit prevent
   unrelated guard failures or heuristic fallback from masking the cases.
@@ -1135,3 +1135,8 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Prove protected calls on an already-open authenticated RPC capability fail after Workshop device-session expiry/deletion; also exercise Access JWT expiry before callback and before new handoff staging. Alarm cleanup does not by itself prove per-call revocation.
 - [ ] Run actual native-client handoff through protected evaluation router: app-link association, key/state/deadline validation, secure credential storage, Access binding-cookie handling, absent-app fallback, auth-page/OAuth preservation and reconnect identity rejection. No candidate runtime or migration completion credited by source review.
 - [ ] Native-session acceptance supplement from independent review: test password-change/revocation semantics, alarm cleanup and gatekeeper token roundtrip; verify valid Access owner callback and claimed app-link web fallback query/referrer handling. Treat these as candidate evaluation requirements, not new legacy features.
+
+
+## Fire-310 verification follow-up
+
+- [ ] Add a real-Git copy with a literal tab/newline destination to the end-of-fire guard fixtures. Require explicit C framing and a following tracked record; exact parsed paths must remain unquoted. Existing unusual-path fixture covers a modification only.

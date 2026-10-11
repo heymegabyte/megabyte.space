@@ -1139,4 +1139,9 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 ## Fire-310 verification follow-up
 
-- [ ] Add a real-Git copy with a literal tab/newline destination to the end-of-fire guard fixtures. Require explicit C framing and a following tracked record; exact parsed paths must remain unquoted. Existing unusual-path fixture covers a modification only.
+- [x] (fire-311, `57997618`, focused 13/13 + script suite 132/132) Add a real-Git copy with a literal tab/newline destination to the end-of-fire guard fixtures. Require explicit C framing and a following tracked record; exact parsed paths must remain unquoted. Existing unusual-path fixture covers a modification only.
+
+
+## Fire-311 verification follow-up
+
+- [ ] Extend real-Git copy fixtures with literal tab/newline source names (the second NUL-delimited field), in parent and fork. Require actual C framing, exact originalPath and an intact following tracked record. Destination coverage is green; unusual copy-source coverage remains unproved.

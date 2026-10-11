@@ -1,0 +1,17 @@
+{
+  "focusedTests": {
+    "passed": 13,
+    "failed": 0
+  },
+  "scriptTests": {
+    "passed": 132,
+    "failed": 0
+  },
+  "scriptTypes": "passed",
+  "diffCheck": "passed",
+  "pin": "9904d80867b6825d81b6b1189e2fccfd07af2ff5",
+  "declaredSourceFetch": "passed",
+  "officialUpstreamHead": "54d4685d27fc7a1ba58b4ff1e1842ebf4701d0b7",
+  "deployment": "not attempted; test-only change",
+  "visualAcceptance": "not performed"
+}

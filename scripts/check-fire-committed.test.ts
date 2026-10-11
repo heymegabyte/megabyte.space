@@ -143,7 +143,7 @@ for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename"
 }
 
 
-for (const scenario of ["copy-in", "fork-copy"] as const) {
+for (const scenario of ["copy-in", "fork-copy", "copy-in-unusual", "fork-copy-unusual"] as const) {
   test(`real Git copy blocks CI without unrelated failures: ${scenario}`, () => {
     const root = mkdtempSync(join(tmpdir(), "fire-copy-"));
     try {
@@ -160,10 +160,12 @@ for (const scenario of ["copy-in", "fork-copy"] as const) {
       writeFileSync(join(root, ".gitignore"), "cloudflare-os/\n");
       gitAt(root, "add", ".gitignore");
       gitAt(root, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "ignore fork");
-      const repo = scenario === "fork-copy" ? fork : root;
+      const inFork = scenario.startsWith("fork-copy");
+      const unusual = scenario.endsWith("-unusual");
+      const repo = inFork ? fork : root;
       const source = "outside-source.txt";
-      const destination = scenario === "copy-in" ? "docs/aaa-copy.txt" : "aaa-copy.txt";
-      const following = scenario === "copy-in" ? "docs/zzz-following.txt" : "zzz-following.txt";
+      const destination = `${inFork ? "" : "docs/"}aaa-${unusual ? "雪\tline\n" : ""}copy.txt`;
+      const following = inFork ? "zzz-following.txt" : "docs/zzz-following.txt";
       writeFileSync(join(repo, source), "before\n".repeat(100));
       writeFileSync(join(repo, following), "before");
       gitAt(repo, "add", source, following);
@@ -183,11 +185,11 @@ for (const scenario of ["copy-in", "fork-copy"] as const) {
       const out = JSON.parse(result.stdout);
       assert.deepEqual(out.submoduleIssues, [], "healthy fork metadata must not mask copy detection");
       assert.deepEqual(out.placeholders, []);
-      const entries = scenario === "fork-copy" ? out.forkDirty : out.dirty;
+      const entries = inFork ? out.forkDirty : out.dirty;
       assert.deepEqual(entries.find((item: { path: string }) => item.path === destination), { xy: "C ", path: destination, originalPath: source });
       assert.ok(entries.some((item: { path: string; xy: string }) => item.path === following && item.xy === " M"));
-      assert.equal(entries.length, scenario === "fork-copy" ? 3 : 2);
-      assert.deepEqual(scenario === "fork-copy" ? out.dirty : out.forkDirty, []);
+      assert.equal(entries.length, inFork ? 3 : 2);
+      assert.deepEqual(inFork ? out.dirty : out.forkDirty, []);
       assert.equal(result.status, 1);
       // Remove the following edit. Copy-in now has only the copy in WATCHED;
       // fork-copy retains the modified source required for Git copy detection.
@@ -197,9 +199,9 @@ for (const scenario of ["copy-in", "fork-copy"] as const) {
       const isolatedOut = JSON.parse(isolated.stdout);
       assert.equal(isolated.status, 1);
       assert.deepEqual(isolatedOut.submoduleIssues, []);
-      const isolatedEntries = scenario === "fork-copy" ? isolatedOut.forkDirty : isolatedOut.dirty;
-      assert.ok(isolatedEntries.some((item: { path: string; xy: string }) => item.path === destination && item.xy === "C "));
-      assert.equal(isolatedEntries.length, scenario === "fork-copy" ? 2 : 1);
+      const isolatedEntries = inFork ? isolatedOut.forkDirty : isolatedOut.dirty;
+      assert.deepEqual(isolatedEntries.find((item: { path: string }) => item.path === destination), { xy: "C ", path: destination, originalPath: source });
+      assert.equal(isolatedEntries.length, inFork ? 2 : 1);
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
 }

@@ -1144,4 +1144,9 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 ## Fire-311 verification follow-up
 
-- [ ] Extend real-Git copy fixtures with literal tab/newline source names (the second NUL-delimited field), in parent and fork. Require actual C framing, exact originalPath and an intact following tracked record. Destination coverage is green; unusual copy-source coverage remains unproved.
+- [x] (fire-312 recovery; focused 15/15, full scripts 134/134) Extend real-Git copy fixtures with literal tab/newline source names (the second NUL-delimited field), in parent and fork. Require actual C framing, exact originalPath and an intact following tracked record. Destination coverage is green; unusual copy-source coverage remains unproved.
+
+
+## Fire-312 verification follow-up
+
+- [ ] Add a combined unusual-source/unusual-destination real-Git copy fixture to prove both NUL fields simultaneously; retain explicit C framing, exact endpoints and following-record assertions. Current source-only and destination-only cases pass independently.

@@ -4089,3 +4089,12 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Upstream HEAD remains `54d4685d`; no pin/config/receipt changes or candidate runtime acceptance. ADR 0002 migration remains open. No product surface visited; golden journey, native UI states and vision checks deferred, matrix unchanged. BA E2E credentials unavailable; Cloudflare and DeepSeek availability checked without retrieving values. No compute fallback.
 - Runtime tooling: legacy provider-policy alias absent; canonical fleet contract read. Volta pnpm launcher missing; root frozen install succeeded using pinned npx pnpm@11.17.0. Fork dependencies/builds not needed for test-only scope. No full pnpm check or deployment claimed.
 - Next: unusual copy-source fixture; candidate adapter/native-session acceptance and migration decision batch remain open. Publication belongs to outer runner; GitHub owns cadence, no session cron/watchdog.
+
+
+## fire-312 — recover unusual copy-source verification (2026-10-12)
+
+- Run `heymegabyte--megabyte.space-38231524745-1`; exactly one bounded fleet iteration under ADR 0002. Recovered only the uncommitted two-case test patch from failed run 38195931942; its actual files remain untouched. Incoming base and fetched origin/main are 1d59427d, proving fire-311 publication.
+- Focused real-Git suite 15/15 and complete script suite 134/134 pass. Frozen root install and diff whitespace check pass. Source cases assert explicit C framing, Unicode/tab/newline originalPath, following record and isolated rerun. Runtime verifier unchanged.
+- Loop improvement: retained unverified work is now tested rather than duplicated; second-field unusual-path proof extends end-of-fire framing coverage. Next-wave combined unusual endpoints fixture recorded.
+- Official env-sanitized cr Codex read-only review timed out after 100 seconds without a verdict; direct reviewer findings recorded separately. No independent acceptance falsely credited.
+- Declared fork initialized at unchanged 9904d808. No runtime, gitlink, deployment manifest, resource/auth or receipt changes. No deployment, candidate build, authenticated/native/storage journey or visual score credited. Standing UI/journey roles deferred for test-only recovery. Publication remains outer-runner responsibility; local clean gate and lease release only, no watchdog/scheduler mutation.

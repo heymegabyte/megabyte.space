@@ -1,0 +1,3 @@
+Subscription reviewer timed out (exit 124, 100-second bound); no verdict obtained.
+
+Direct final review: unusual-source scenarios select parent/fork correctly; destination remains ordinary; literal source is passed via argv, not shell interpolation. Actual C record precondition includes exact destination-NUL-source-NUL. Both parsed endpoints are asserted and following edit remains intact. After restore, parent watched copy stands alone; fork retains source modification required for Git copy detection and exact C assertion prevents masking. No blocker found in this test-only patch. This is lead review, not independent subscription acceptance.

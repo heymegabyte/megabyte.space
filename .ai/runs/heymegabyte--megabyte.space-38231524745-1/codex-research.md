@@ -19,3 +19,10 @@ Long-Trail and Deep UI roles remain blocked/deferred: this test-only slice does
 not visit product surfaces or earn authenticated/native/visual acceptance.
 Candidate migration rehearsal and the approval batch remain open. Neither a
 passing fixture nor source review proves deployment or native-client acceptance.
+
+Final checks: full script suite 134/134, scripts typecheck and exact-source pin
+fetch all pass. Official upstream main is 8cbfb2b67e3da6222e4d7faeade0ff88eb4253bf
+(#651); releases API returned zero entries. The new range from 54d4685d remains
+unreviewed. BA E2E email/password availability checks both failed without
+retrieving values. Independent cr subscription review timed out; direct review
+found no local fixture blocker. Clean-tree gate passed and local lease released.

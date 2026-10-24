@@ -11,24 +11,21 @@
 > the first prod DNS/resource mutation is approval-gated. The WS-* blocks below remain ONLY as (a) the legacy-demo
 > app's history and (b) candidate fixes that improve the demo without changing the native OS. (fire-300.)
 
-> ## ⚠️ ACTIVE BLOCKERS — current OS (2026-10-19, `/loop` Home-setup fire)
-> 1. **BACKEND DEPLOY IS BLOCKED (code 10195, Dynamic Workers).** `megabyte-os-backend`'s base
->    `wrangler.jsonc` declares a `worker_loaders`/`LOADER` binding (upstream feature for running
->    gadgets in isolates) that requires the **paid Dynamic Workers plan**. `node scripts/deploy.ts`
->    aborts at the backend (deployed BEFORE the router), so no backend change ships. Last good backend
->    deploy = **2026-10-11**; every other worker (router/context/scheduler/custom/errors) still deploys.
->    **Frontend-only changes: `node scripts/deploy-router-only.ts`** (reuses generateConfigs; ships
->    workshop-frontend/dist via the router). **UNBLOCK (Brian): enable Dynamic Workers / upgrade the
->    Workers plan** at dash.cloudflare.com/<acct>/workers/plans. Memory: [[megabyte-backend-deploy-blocked-dynamic-workers]].
-> 2. **"Home > Add resource" lists only bound gatekeepers** (the internal Megabyte OS vendor: AI Model
->    + Agent). The connection picker = `listGatekeeperVendors()` = every `GATEKEEPER_*` service bound in
->    `deploy.ts` `workshop.services` (today: context/scheduler/custom). To "list everything", bind the
->    external gatekeepers (google/github/slack/notion/linear/spotify/supabase/mcp/mcp-portal/homeassistant/
->    confluence/zoominfo) — add each to `deployment.jsonc workers` + `deploy.ts` packageDirs/services +
->    OAuth creds. **GATED by blocker #1** (binding changes need a backend deploy). Scoped, OAuth-per-vendor.
-> - ✅ Home model dropdown lists 11 models (GPT-4o default), apex set up (verify-prod 13/13) — verified
->   fire-2026-10-19; `scripts/verify-home-models.mjs` is the durable gate. Shipped: honest "Loading
->   models…" state (router @ 951606b9 / fork bb88b90e).
+> ## ✅ RESOLVED — Home setup complete (2026-10-24)
+> 1. **Deploy freeze (R2 + Dynamic Workers) — FIXED.** A billing lapse had disabled both paid features
+>    (`10195` worker_loader + `10136` R2), freezing backend deploys ~2 weeks (last good 2026-10-11) and
+>    downing the memorial video. Brian re-enabled both 2026-10-24 → full `node scripts/deploy.ts` heals
+>    (all 6 core + 12 gatekeeper workers), memorial video back to 200. Recurrence playbook:
+>    [[megabyte-backend-deploy-blocked-dynamic-workers]]. Frontend-only can still ship via `scripts/deploy-router-only.ts`.
+> 2. **"Home > Add resource" now lists everything — DONE** (superproject 2a4f34ec). Extensible
+>    `EXTRA_GATEKEEPERS` registry in `deploy.ts` deploys + binds all 12 external gatekeepers
+>    (github/google/slack/notion/linear/spotify/supabase/homeassistant/confluence/mcp/mcp-portal/zoominfo);
+>    each = `megabyte-os-<key>` bound into backend (GatekeeperVendor RPC) + router (/gatekeeper path).
+>    Picker now lists **13 vendors** (was 2), 0 console errors — `scripts/verify-add-resource.mjs`.
+>    mcp-portal bound but config-gated (lists once a portal URL is set). Grow the array for more; OAuth
+>    per-vendor = a separate "make connectable" phase. [[megabyte-add-resource-lists-bound-gatekeepers]].
+> - ✅ Home model dropdown lists 11 models (GPT-4o default), apex set up (verify-prod 13/13);
+>   `scripts/verify-home-models.mjs` is the durable gate. Shipped: honest "Loading models…" state.
 
 > The frontier the loop advances: one Next unit per workstream + executable Acceptance.
 > Advanced lines get ticked with the closing SHA + prod proof; completed workstreams move to

@@ -11,6 +11,25 @@
 > the first prod DNS/resource mutation is approval-gated. The WS-* blocks below remain ONLY as (a) the legacy-demo
 > app's history and (b) candidate fixes that improve the demo without changing the native OS. (fire-300.)
 
+> ## ⚠️ ACTIVE BLOCKERS — current OS (2026-10-19, `/loop` Home-setup fire)
+> 1. **BACKEND DEPLOY IS BLOCKED (code 10195, Dynamic Workers).** `megabyte-os-backend`'s base
+>    `wrangler.jsonc` declares a `worker_loaders`/`LOADER` binding (upstream feature for running
+>    gadgets in isolates) that requires the **paid Dynamic Workers plan**. `node scripts/deploy.ts`
+>    aborts at the backend (deployed BEFORE the router), so no backend change ships. Last good backend
+>    deploy = **2026-10-11**; every other worker (router/context/scheduler/custom/errors) still deploys.
+>    **Frontend-only changes: `node scripts/deploy-router-only.ts`** (reuses generateConfigs; ships
+>    workshop-frontend/dist via the router). **UNBLOCK (Brian): enable Dynamic Workers / upgrade the
+>    Workers plan** at dash.cloudflare.com/<acct>/workers/plans. Memory: [[megabyte-backend-deploy-blocked-dynamic-workers]].
+> 2. **"Home > Add resource" lists only bound gatekeepers** (the internal Megabyte OS vendor: AI Model
+>    + Agent). The connection picker = `listGatekeeperVendors()` = every `GATEKEEPER_*` service bound in
+>    `deploy.ts` `workshop.services` (today: context/scheduler/custom). To "list everything", bind the
+>    external gatekeepers (google/github/slack/notion/linear/spotify/supabase/mcp/mcp-portal/homeassistant/
+>    confluence/zoominfo) — add each to `deployment.jsonc workers` + `deploy.ts` packageDirs/services +
+>    OAuth creds. **GATED by blocker #1** (binding changes need a backend deploy). Scoped, OAuth-per-vendor.
+> - ✅ Home model dropdown lists 11 models (GPT-4o default), apex set up (verify-prod 13/13) — verified
+>   fire-2026-10-19; `scripts/verify-home-models.mjs` is the durable gate. Shipped: honest "Loading
+>   models…" state (router @ 951606b9 / fork bb88b90e).
+
 > The frontier the loop advances: one Next unit per workstream + executable Acceptance.
 > Advanced lines get ticked with the closing SHA + prod proof; completed workstreams move to
 > § Done. Discovery roles APPEND deduplicated next-wave items every fire (zero-append =

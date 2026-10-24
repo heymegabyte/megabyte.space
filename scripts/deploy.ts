@@ -30,6 +30,33 @@ const packageDirs = {
 const generatedPaths = Object.fromEntries(
   Object.entries(packageDirs).map(([name, dir]) => [name, join(root, dir, generatedName)]),
 ) as Record<keyof typeof packageDirs, string>;
+
+// External integration gatekeepers wired into Home > "Add resource" (the connection picker lists every
+// bound GATEKEEPER_* vendor; see workshop-backend/src/auth/auth-vendors.ts buildGatekeeperVendorMap).
+// Each deploys as its own Worker named <router>-<key>, binds into the backend (vendor RPC) + router
+// (/gatekeeper/<name> path), and shares a uniform build: `vp build:configurator` here, then wrangler's
+// own capnweb-validate `build.command`. All are service-bindings-only (no gated features) and need NO
+// OAuth just to LIST — connecting prompts for creds later. Grow this array to list more integrations.
+const EXTRA_GATEKEEPERS: readonly { key: string; pkg: string }[] = [
+  { key: "github", pkg: "@gadgets/github-gatekeeper" },
+  { key: "google", pkg: "@gadgets/google-gatekeeper" },
+  { key: "slack", pkg: "@gadgets/slack-gatekeeper" },
+  { key: "notion", pkg: "@gadgets/notion-gatekeeper" },
+  { key: "linear", pkg: "@gadgets/linear-gatekeeper" },
+  { key: "spotify", pkg: "@gadgets/spotify-gatekeeper" },
+  { key: "supabase", pkg: "@gadgets/supabase-gatekeeper" },
+  { key: "homeassistant", pkg: "@gadgets/homeassistant-gatekeeper" },
+  { key: "confluence", pkg: "@gadgets/confluence-gatekeeper" },
+  { key: "mcp", pkg: "@gadgets/mcp-gatekeeper" },
+  { key: "mcp-portal", pkg: "@gadgets/mcp-portal-gatekeeper" },
+  { key: "zoominfo", pkg: "@gadgets/zoominfo-gatekeeper" },
+];
+const gatekeeperBinding = (key: string) => "GATEKEEPER_" + key.toUpperCase().replace(/-/g, "_");
+const gatekeeperDir = (key: string) => `cloudflare-os/packages/gatekeeper-${key}`;
+const gatekeeperGeneratedPath = (key: string) => join(root, gatekeeperDir(key), generatedName);
+const gatekeeperWorkerName = (config: DeploymentConfig, key: string) =>
+  `${config.workers.router.name}-${key}`;
+
 const defaultContextArtifactsNamespace = "gatekeeper-context-collections";
 const accountIdPattern = /^[a-f\d]{32}$/i;
 
@@ -570,6 +597,16 @@ export function generateConfigs(config: DeploymentConfig, bases: BaseConfigs): G
     setCommon(errorReporter, config, config.workers.errorReporter!.name);
   }
 
+  // Bind every extra gatekeeper into the router (whole-HTTP forward for its /gatekeeper/<name>
+  // configurator) and the backend (vendor RPC via the GatekeeperVendor entrypoint). The backend's
+  // buildGatekeeperVendorMap discovers it by the GATEKEEPER_ prefix, so it appears in "Add resource".
+  for (const g of EXTRA_GATEKEEPERS) {
+    const service = gatekeeperWorkerName(config, g.key);
+    const binding = gatekeeperBinding(g.key);
+    router.services.push({ binding, service });
+    workshop.services.push({ binding, service, entrypoint: "GatekeeperVendor" });
+  }
+
   return {
     router, workshop, context, scheduler, customGatekeeper,
     ...(errorReporter && { errorReporter }),
@@ -618,6 +655,9 @@ export function buildCommands(config: DeploymentConfig): BuildCommand[] {
     // The Scheduler's `build` nests the same cached `vp run build:app`, so it needs the same pair.
     { args: submoduleBuild("@gadgets/gatekeeper-scheduler", "build:app") },
     { args: submoduleBuild("@gadgets/gatekeeper-scheduler") },
+    // Each extra gatekeeper builds its configurator UI; wrangler's own capnweb-validate build.command
+    // then generates the worker entry at deploy time (see EXTRA_GATEKEEPERS).
+    ...EXTRA_GATEKEEPERS.map((g) => ({ args: submoduleBuild(g.pkg, "build:configurator") })),
     { args: ownBuild("custom-gatekeeper") },
     ...(config.errorReporting.enabled ? [{ args: ownBuild("error-reporter") }] : []),
     // Access mode is a build-time constant in the frontend bundle (`src/useAuth.ts`), so it is set
@@ -736,6 +776,13 @@ async function main(): Promise<void> {
     customGatekeeper: await readJsonc(join(root, packageDirs.customGatekeeper, "wrangler.jsonc")),
     errorReporter: await readJsonc(join(root, packageDirs.errorReporter, "wrangler.jsonc")),
   });
+  // Each extra gatekeeper's generated config = its base (migrations, compat flags, capnweb-validate
+  // build.command, rules) with the common block (account, derived name, no public route) applied.
+  const gatekeepers = await Promise.all(EXTRA_GATEKEEPERS.map(async (g) => {
+    const base = await readJsonc<ProdWranglerConfig>(join(root, gatekeeperDir(g.key), "wrangler.jsonc"));
+    setCommon(base, config, gatekeeperWorkerName(config, g.key));
+    return { key: g.key, config: base };
+  }));
   reportAiGateway(config);
 
   try {
@@ -743,6 +790,9 @@ async function main(): Promise<void> {
       await writeFile(
         generatedPaths[name as keyof typeof generatedPaths],
         JSON.stringify(generatedConfig, null, 2) + "\n");
+    }
+    for (const g of gatekeepers) {
+      await writeFile(gatekeeperGeneratedPath(g.key), JSON.stringify(g.config, null, 2) + "\n");
     }
     const check = process.argv.includes("--check");
     if (check) run(["test"]);
@@ -754,11 +804,16 @@ async function main(): Promise<void> {
     deployWorker(packageDirs.context, deployArgs);
     deployWorker(packageDirs.scheduler, deployArgs);
     deployWorker(packageDirs.customGatekeeper, deployArgs);
+    // Extra gatekeepers before the backend + router, which bind them by service name.
+    for (const g of gatekeepers) deployWorker(gatekeeperDir(g.key), deployArgs);
     deployWorker(packageDirs.workshop, deployArgs);
     // Last: it binds every one of the above.
     deployWorker(packageDirs.router, deployArgs);
   } finally {
-    await Promise.all(Object.values(generatedPaths).map((path) => rm(path, { force: true })));
+    await Promise.all([
+      ...Object.values(generatedPaths),
+      ...EXTRA_GATEKEEPERS.map((g) => gatekeeperGeneratedPath(g.key)),
+    ].map((path) => rm(path, { force: true })));
   }
 }
 

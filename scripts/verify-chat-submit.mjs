@@ -16,8 +16,10 @@ const EMAIL = process.env.BA_E2E_EMAIL, PASSWORD = process.env.BA_E2E_PASSWORD;
 const PICK = process.env.MODEL || null; // substring of a model name to select, or null = default
 if (!EMAIL || !PASSWORD) { console.log("missing BA creds (BA_E2E_EMAIL / BA_E2E_PASSWORD)"); process.exit(2); }
 
-// The catalog we expect after the setup fix (names from SUGGESTED_MODELS).
-const EXPECT = ["DeepSeek V4 Pro", "DeepSeek V4 Flash", "GLM 5.3", "Kimi K2.7", "Llama 4 Scout", "GPT-OSS 120B", "Claude Sonnet 4.5", "Claude Haiku 4.5"];
+// The catalog we expect in the picker (names from SUGGESTED_MODELS). GPT-4o (OpenAI) is the Home
+// DEFAULT (first SUGGESTED_MODELS provider); the Workers-AI set + Claude 4.5 + DeepSeek fill it out.
+const EXPECT = ["GPT-4o", "DeepSeek V4 Pro", "DeepSeek V4 Flash", "GLM 5.3", "Kimi K2.7", "Llama 4 Scout", "GPT-OSS 120B", "Claude Sonnet 4.5", "Claude Haiku 4.5"];
+const DEFAULT_MODEL = "GPT-4o"; // the Home composer's default label must start with this
 
 const browser = await chromium.launch();
 const page = await browser.newPage({
@@ -92,6 +94,11 @@ if (fatal.length) console.log("fatal:", fatal.slice(0, 4).join(" | ").slice(0, 4
 let ok = true;
 if (found.length < 5) { console.log(`❌ FAIL: picker listed only ${found.length}/${EXPECT.length} expected models`); ok = false; }
 else console.log(`✅ PASS: picker lists ${found.length}/${EXPECT.length} expected models (${found.join(", ")})`);
+// Home default must be GPT-4o (OpenAI) — only meaningful when we did NOT override the selection.
+if (!PICK) {
+  if (!new RegExp(DEFAULT_MODEL, "i").test(defaultLabel)) { console.log(`❌ FAIL: Home default is "${defaultLabel}", expected ${DEFAULT_MODEL} (OpenAI)`); ok = false; }
+  else console.log(`✅ PASS: Home default model is ${defaultLabel}`);
+}
 if (!navigated) { console.log("❌ FAIL: submit did not navigate into a /workspace"); ok = false; }
 else console.log("✅ PASS: submit created a workspace");
 if (!replied) { console.log("❌ FAIL: no visible agent reply within 90s"); ok = false; }

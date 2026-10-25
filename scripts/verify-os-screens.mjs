@@ -66,12 +66,20 @@ for (const route of ROUTES) {
   try {
     const resp = await page.goto(`${APEX}${route}`, { waitUntil: "domcontentloaded", timeout: 35000 });
     status = resp ? resp.status() : 0;
-    await page.waitForTimeout(900);
+    // Poll for real content (up to ~6s) instead of a fixed wait — a cold deep-link to a lazy route
+    // chunk can still be hydrating at 900ms, which false-flagged a live SPA route as "blank" (the
+    // per-surface verifiers wait on selectors so they don't flake; this full-set gate must poll too).
+    // fire-2026-10-24: confirmed /gadgets,/analytics,/tasks,/explore,/admin all render 800-2285 chars.
+    const marker = MARKERS[route];                   // marker routes assert INTENDED content
+    let body = "";
+    for (let i = 0; i < 30; i++) {
+      body = await page.locator("body").innerText().catch(() => "");
+      if (marker ? marker.test(body) : body.trim().length >= 50) break;
+      await page.waitForTimeout(200);
+    }
     finalUrl = page.url().replace(APEX, "") || "/";
-    const body = await page.locator("body").innerText().catch(() => "");
     textLen = body.trim().length;
     const bounced = /^\/signin/.test(finalUrl) && route !== "/signin";
-    const marker = MARKERS[route];                   // marker routes assert INTENDED content
     const rendered = marker ? marker.test(body) : textLen >= 50; // blank/5xx would be ~0 chars
     const http5xx = status >= 500;
     const newErr = errors.length - before;

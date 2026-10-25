@@ -4122,3 +4122,11 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Convergence green-sweep found ONE remaining failure (the 4 prior-fire fixes all held): `check-a11y-coverage` flagged `/settings` (settings.tsx, shipped with Settings+Profile screens fork 9af3a71d) as a11y-UNAUDITED — a real OS screen not in verify-a11y's list.
 - Slice `812b8694`: added `/settings` to `verify-a11y` (audit list) + `verify-os-screens` (load-test list). Confirmed the screen is WORKING: renders 2261 chars, 0 console errors; axe-clean (0 serious/critical across 5 surfaces); verify-os-screens 60/60; check-a11y-coverage GREEN (69/69 routes).
 - All original CF OS feature verifiers now green: chat (model-select -> query -> streamed reply), 60/60 screens, resources launchpad (60 cards), ~46 per-surface verifiers, apex 13/13, bookkeeping. Note: a full verify-a11y run can crash on browser exhaustion when many browser verifiers run back-to-back in one fire (bare waitForTimeout -> 'browser closed') — environmental, not a surface defect; green-sweep runs it fresh.
+
+## fire-316 — recover provenance guard after publication conflict (2026-10-25)
+
+- Slice `c307433a`: recovered missing implementation from retained `7fe32d3c`; direct file comparison and red regression prove main lacked the fix. Failed result `baa0faf5` is not an ancestor of fetched main. Four inspected retained worktrees are clean and untouched.
+- Provenance regression failed before recovery (actual 0, expected 1); after recovery 21/21 tests passed. Fire-commit/bookkeeping tests 27/27 passed; independent reviewer reported no blocking findings and separately passed the provenance suite.
+- Unchanged fork bb88b90e fetched from declared remote. Official upstream advertised bd10b0ec only; no candidate range review or adoption credited.
+- Deployment not attempted: receipt still 80b7209e versus committed bb88b90e; actual live version unverified. No authenticated journey, storage reconciliation, full app build or visual pass; modifier scores unchanged. Migration acceptance remains open.
+- Loop improvement: restored replacement-ref bypass protection lost to publication conflict. Next: verify outer publication; inventory live Worker versions; review complete intervening official upstream range. GitHub owns cadence; no watchdog or schedules changed.

@@ -39,6 +39,12 @@
 > partial items grouped by workstream, ~12KB vs 185KB; `--json` for machine reads). Read the raw
 > file only to edit a specific workstream block (jump via `grep -n '### WS-' BACKLOG.md`).
 
+> **Fire-316 recovery (2026-10-25):** `c307433a` restores the unpublished replacement-ref
+> provenance guard from failed run 40145905691 (21 provenance tests + 27 bookkeeping
+> tests green). No pin/deployment change. Official upstream now advertises `bd10b0ec`;
+> this is discovery only. Next upstream review must cover the complete range since the
+> last reviewed candidate, including intervening releases, before compatibility/adoption.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

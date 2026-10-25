@@ -10,6 +10,23 @@ import type {
   ProdWranglerConfig,
 } from "./deployment-config.ts";
 
+// Reviewed integration inventory, deliberately independent of deploy.ts's list. Exact array
+// assertions below catch missing/extra bindings, naming drift, and HTTP-vs-RPC entrypoints.
+const integrationServices = [
+  { binding: "GATEKEEPER_GITHUB", service: "acme-cloudflare-os-github" },
+  { binding: "GATEKEEPER_GOOGLE", service: "acme-cloudflare-os-google" },
+  { binding: "GATEKEEPER_SLACK", service: "acme-cloudflare-os-slack" },
+  { binding: "GATEKEEPER_NOTION", service: "acme-cloudflare-os-notion" },
+  { binding: "GATEKEEPER_LINEAR", service: "acme-cloudflare-os-linear" },
+  { binding: "GATEKEEPER_SPOTIFY", service: "acme-cloudflare-os-spotify" },
+  { binding: "GATEKEEPER_SUPABASE", service: "acme-cloudflare-os-supabase" },
+  { binding: "GATEKEEPER_HOMEASSISTANT", service: "acme-cloudflare-os-homeassistant" },
+  { binding: "GATEKEEPER_CONFLUENCE", service: "acme-cloudflare-os-confluence" },
+  { binding: "GATEKEEPER_MCP", service: "acme-cloudflare-os-mcp" },
+  { binding: "GATEKEEPER_MCP_PORTAL", service: "acme-cloudflare-os-mcp-portal" },
+  { binding: "GATEKEEPER_ZOOMINFO", service: "acme-cloudflare-os-zoominfo" },
+];
+
 const validConfig: DeploymentConfig = {
   accountId: "0123456789abcdef0123456789abcdef",
   publicBaseUrl: null,
@@ -225,6 +242,7 @@ test("generates Access-mode Workshop, Context, and custom Gatekeeper configs", a
       service: "acme-cloudflare-os-custom",
       entrypoint: "GatekeeperVendor",
     },
+    ...integrationServices.map((service) => ({ ...service, entrypoint: "GatekeeperVendor" })),
   ]);
   assert.deepEqual(generated.workshop.kv_namespaces, [
     { binding: "BLUEPRINTS", id: "blueprints-kv-id" },
@@ -270,6 +288,7 @@ test("gives the router the public route, the frontend, and every service binding
     { binding: "GATEKEEPER_CUSTOM", service: "acme-cloudflare-os-custom" },
     // WS-11 P1: the Better Auth worker, so the router forwards /api/auth/* to it (baked-in auth).
     { binding: "AUTH", service: "megabyte-auth" },
+    ...integrationServices,
   ]);
   // Inherited untouched: the base config already carries the ASSETS binding and the SPA fallback.
   // run_worker_first is ["/*", "!/assets/*"] so the worker runs on EVERY navigation — the BA_GATE

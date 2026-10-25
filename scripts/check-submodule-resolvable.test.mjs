@@ -147,3 +147,15 @@ for (const field of ['path', 'url']) {
     assert.equal(checkSubmodules(root), 1);
   }));
 }
+
+test('local replacement refs cannot hide committed gitlinks', () => fixture(({ root, remote }) => {
+  const original = git(root, 'rev-parse', 'HEAD');
+  git(root, 'rm', '--cached', 'fork');
+  git(root, 'rm', '.gitmodules');
+  git(root, 'commit', '-qm', 'alternate tree without submodules');
+  const alternate = git(root, 'rev-parse', 'HEAD');
+  git(root, 'checkout', '--detach', '-q', original);
+  git(root, 'replace', original, alternate);
+  rmSync(remote, { recursive: true, force: true });
+  assert.equal(checkSubmodules(root), 1);
+}));

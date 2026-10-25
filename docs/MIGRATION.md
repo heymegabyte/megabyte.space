@@ -256,3 +256,30 @@ keep the receipt unchanged until deployment/version inventory supplies evidence.
 and [convergence](../.ai/runs/heymegabyte--megabyte.space-38149953896-1/review-synthesis.md)
 add revocation/password-change semantics, alarm/gatekeeper coverage and app-link web
 fallback handling to candidate acceptance. Neither review executed candidate tests.
+
+
+## 14. Complete upstream inventory — fire-317 (2026-10-25)
+
+Official candidate `bd10b0ec` was fetched directly and proven a descendant of the last
+reviewed `54d4685d`. The uncapped local range contains **75 commits / 778 changed paths**.
+See [research and acceptance seams](../.ai/runs/heymegabyte--megabyte.space-40181840083-1/codex-research.md)
+and [machine-readable inventory](../.ai/runs/heymegabyte--megabyte.space-40181840083-1/upstream-evidence.json).
+This is a complete inventory with targeted review, **not a complete source audit**.
+
+New rehearsal requirements: Vitest 5/plugin/browser-toolchain compatibility in both
+workspaces; backend version metadata and reconnect; Google AI binding; GitHubHookDriver
+migration; Web Search's separate identity/migration, ambient discovery and Gateway
+billing/retention; uncertain provider effects after deny. The official release manifest's
+new Web Search preinstall does not establish that the custom wrapper deploys it.
+Do not silently add it to the legacy estate. Prior acceptance from §§11–13 remains open.
+
+Declared fork `8ccbb45d` remains unchanged and fetchable. No candidate build/runtime,
+production mutation or visual acceptance was performed. Receipt `80b7209e` remains
+unreconciled until live Worker inventory supplies evidence.
+
+
+[Independent review and convergence](../.ai/runs/heymegabyte--megabyte.space-40181840083-1/adversarial-review.md)
+adds two concrete adapter checks: Web Search lacks the `build:configurator` task the
+extras loop assumes, and its Gateway vars belong on its own Worker. Router metadata
+requires installer injection too. Preserve legacy Better Auth on the demo; remove its
+hooks from the fresh wrapper intentionally under ADR 0002, with negative auth tests.

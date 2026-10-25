@@ -1,0 +1,41 @@
+{
+  "base": "54d4685d27fc7a1ba58b4ff1e1842ebf4701d0b7",
+  "candidate": "bd10b0ece6842b8f486b3467eab6cc3b9c920920",
+  "declaredForkPin": "8ccbb45d4ca8f6a4982e375e48ad92eedef65fb7",
+  "officialRemote": "https://github.com/cloudflare/cloudflare-os.git",
+  "rangeAncestry": "verified",
+  "commitCount": 75,
+  "changedPaths": 778,
+  "stat": "778 files changed, 129394 insertions(+), 15848 deletions(-)",
+  "dependencyManifests": [
+    "packages/bundled-blueprints/package.json",
+    "packages/configurator-ui/package.json",
+    "packages/gatekeeper-cloudflare/package.json",
+    "packages/gatekeeper-context/package.json",
+    "packages/gatekeeper-github/package.json",
+    "packages/gatekeeper-gitlab/package.json",
+    "packages/gatekeeper-google/package.json",
+    "packages/gatekeeper-kit/package.json",
+    "packages/gatekeeper-scheduler/package.json",
+    "packages/gatekeeper-websearch/package.json",
+    "packages/gatekeeper-x/package.json",
+    "packages/integration-tests/package.json",
+    "packages/observability/package.json",
+    "packages/router/package.json",
+    "packages/typed-storage/package.json",
+    "packages/ui/package.json",
+    "packages/workshop-backend/package.json",
+    "packages/workshop-frontend/package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "scripts/package.json"
+  ],
+  "wranglerPaths": [
+    "packages/gatekeeper-github/wrangler.jsonc",
+    "packages/gatekeeper-google/wrangler.jsonc",
+    "packages/gatekeeper-websearch/wrangler.jsonc",
+    "packages/gatekeeper-x/wrangler.jsonc",
+    "packages/workshop-backend/wrangler.jsonc"
+  ],
+  "coverage": "Complete local Git commit/path inventory; targeted source review only; no candidate build/runtime verification"
+}

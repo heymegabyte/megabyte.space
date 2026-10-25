@@ -40,6 +40,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   verify the declared remote before moving a reviewed pin. Never use parent-repository
   Git fallback as fork evidence; require its `.git`
   marker before retained-source checks. Record capped API comparisons as incomplete diffs.
+  Record complete-range inventories separately from reviewed coverage: commit/path counts
+  never imply a full security audit. Include changed dependency manifests, generated
+  Worker bindings/migrations and ambient preinstalls in candidate rehearsal acceptance.
   For new session/ticket lifecycles,
   review concurrent stage/redeem schedules and already-open capability expiry separately
   from sequential replay tests; source review never credits native-client/runtime acceptance.

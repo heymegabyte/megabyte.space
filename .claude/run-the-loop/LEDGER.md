@@ -4147,3 +4147,12 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   Receipt 80b7209e remains stale/unreconciled, not a live-version observation.
 - Publication belongs to outer runner. Next: isolated candidate rehearsal and live Worker
   inventory; migration acceptance remains open.
+
+## fire-318 — bounded official-candidate tooling rehearsal (2026-10-25)
+
+- Slice `6496fb10`: directly fetched official bd10b0ec into ignored archive scratch, frozen install with unchanged lock checksum. Web Search tsc + 7 Node tests pass; GitHub configurator + 48 Node / 189 workerd tests pass; configurator UI 32 Node tests pass. Node/workerd fixture evidence only, no live-provider or browser acceptance.
+- Root frozen install and scripts typecheck pass. Focused provenance/bookkeeping 48/48. Full script suite 133/135: existing deploy.test.ts:189,266 service-array fixtures omit the 12 integration bindings. Acceptance remains open; next-wave repair recorded without weakening assertions.
+- Independent read-only reviewer confirms Web Search build-task/Gateway/preinstall adapter gaps; research and sanitized command evidence in .ai/runs/heymegabyte--megabyte.space-40200009420-1/. Full candidate wrapper builds, browser/native/session/provisioning and migration acceptance remain pending.
+- Recovery: fetched main contains fea81748/bae955e2 despite failed GitHub job conclusions. Four retained trees clean. Unpublished baa0faf5 implementation already recovered by fire-316; no replay or retained mutation.
+- Declared fork 8ccbb45d unchanged and fetchable. Receipt still 80b7209e, actual live version unverified. No deployment/config/resource/auth changes, no prod journey/storage reconciliation/UI visit/visual score. Matrix unchanged.
+- Loop improvement: candidate rehearsal records exact source and frozen-lock checksum, isolates installs from gitlink, distinguishes Node/workerd fixtures from native/browser/live-provider acceptance. Next: repair wrapper fixtures, full candidate adapter rehearsal and live Worker inventory. Legacy provider-policy path absent; current runtime/fleet policy followed. No scheduler/watchdog or credential changes; outer runner owns publication.

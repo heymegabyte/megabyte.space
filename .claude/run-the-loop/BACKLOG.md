@@ -53,6 +53,15 @@
   Web Search capability/billing decision. Accept only with candidate build/test and
   isolated-runtime proof; targeted source review is not adoption. Details: MIGRATION §14.
 
+## Migration next-wave — fire-318
+
+- [ ] Reconcile `scripts/deploy.test.ts:189,266` complete service-array fixtures with
+  the existing 12 integration bindings; accept only with the full root script suite green
+  while preserving Access, AUTH and vendor-binding assertions. Observed 133/135 this fire.
+- Candidate `bd10b0ec` partial rehearsal now recorded in MIGRATION §15: frozen install,
+  Web Search build/7 tests, GitHub configurator/48 Node/189 workerd tests and configurator
+  UI 32 Node tests pass. Full wrapper/browser/provisioning acceptance remains unticked.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

@@ -44,7 +44,7 @@
   "access": {
     "issuer": "https://manhattan.cloudflareaccess.com",
     "audience": "b455c445ec6c8b874f840bfa16d27a1a293eac851e416f50c2e582495151e8fa",
-    "admins": ["hey@megabyte.space", "blzalewski@gmail.com"]
+    "admins": ["hey@megabyte.space", "blzalewski@gmail.com", "brian@megabyte.space"]
   },
 
   // Model catalog served through Cloudflare AI Gateway. Enabled by default: the Workshop reaches

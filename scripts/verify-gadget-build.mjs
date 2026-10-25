@@ -58,8 +58,8 @@ try { await page.waitForURL(/\/workspace\//, { timeout: 30000 }); navigated = tr
 // wait (up to ~360s) for a gadget to actually RENDER — DOM signals only (never prompt-echo text):
 //   a running <iframe> preview appears, OR a real code editor (monaco/cm) renders the generated files.
 // Also track whether the agent is still Thinking/Waiting so a timeout tells slow-vs-stuck.
-let built = false, how = "", iframes = 0, lastThinking = true, replies = 0;
-const deadline = Date.now() + 360000;
+let built = false, how = "", iframes = 0, lastThinking = true, replies = 0, codeEditorSeen = false;
+const deadline = Date.now() + 420000;
 while (Date.now() < deadline) {
   const state = await page.evaluate(() => ({
     iframeCount: document.querySelectorAll("iframe").length,
@@ -68,11 +68,43 @@ while (Date.now() < deadline) {
     replyCount: document.querySelectorAll('[aria-label="Copy message"]').length,
   }));
   iframes = state.iframeCount; lastThinking = state.thinking; replies = state.replyCount;
-  if (state.iframeCount > 0) { built = true; how = "iframe-preview"; break; }
-  if (state.hasCodeEditor) { built = true; how = "code-editor-rendered"; break; }
+  if (state.hasCodeEditor) codeEditorSeen = true; // weak signal — keep waiting for the RUNNING app
+  // the iframe (running app) is the signal we want for the runtime test — only break on it, and only
+  // once the agent has stopped (so we interact with the finished app, not a mid-build frame).
+  if (state.iframeCount > 0 && !state.thinking) { built = true; how = "iframe-preview"; break; }
   await page.waitForTimeout(4000);
 }
-await page.waitForTimeout(1500);
+if (!built && codeEditorSeen) { built = true; how = "code-editor-only (no live preview)"; }
+await page.waitForTimeout(2000);
+
+// RUNTIME FUNCTIONALITY: the built gadget must actually WORK, not just render. Click Increment
+// twice inside the gadget's iframe and assert the displayed count rises (0 → 2). frameLocator
+// reads + clicks across origins (the gadget sandbox), which page.evaluate(contentDocument) can't.
+let functions = null, countBefore = null, countAfter = null;
+if (built && how === "iframe-preview") {
+  try {
+    const fr = page.frameLocator("iframe").first();
+    const readCount = async () => {
+      const t = await fr.locator("body").innerText({ timeout: 6000 }).catch(() => "");
+      const m = t.match(/\b\d+\b/);           // the counter display is the first number on the gadget
+      return m ? m[0] : null;
+    };
+    await page.waitForTimeout(1500);
+    countBefore = await readCount();
+    const inc = fr.getByRole("button", { name: /increment|add|^\s*\+\s*$|count\s*up/i }).first();
+    if (await inc.count().catch(() => 0) > 0) {
+      await inc.click({ timeout: 8000 }).catch(() => {});
+      await page.waitForTimeout(400);
+      await inc.click({ timeout: 8000 }).catch(() => {});
+      await page.waitForTimeout(700);
+      countAfter = await readCount();
+      functions = countBefore != null && countAfter != null && Number(countAfter) > Number(countBefore);
+    } else {
+      functions = "no-increment-button";
+    }
+  } catch (e) { functions = "error:" + String(e).slice(0, 50); }
+}
+
 await page.screenshot({ path: "scripts/.gadget-build-proof.png", fullPage: false });
 
 // persistence: the new gadget should appear in /gadgets
@@ -84,7 +116,7 @@ const gadgetRows = await page.locator("tbody tr").count().catch(() => 0);
 
 await browser.close();
 const fatal = errors.filter((e) => !/favicon|beacon|cloudflareinsights|ResizeObserver|WebSocket is already/i.test(e));
-console.log(JSON.stringify({ model, selected: PICK || "(default)", navigatedToWorkspace: navigated, gadgetBuilt: built, how, iframes, stillThinkingAtEnd: lastThinking, agentReplies: replies, gadgetRowsAfter: gadgetRows, consoleErrors: errors.length, fatalErrors: fatal.length }, null, 2));
+console.log(JSON.stringify({ model, selected: PICK || "(default)", navigatedToWorkspace: navigated, gadgetBuilt: built, how, iframes, functionsAtRuntime: functions, countBefore, countAfter, stillThinkingAtEnd: lastThinking, agentReplies: replies, gadgetRowsAfter: gadgetRows, consoleErrors: errors.length, fatalErrors: fatal.length }, null, 2));
 if (fatal.length) console.log("fatal:", fatal.slice(0, 3).join(" | ").slice(0, 300));
 
 let ok = true;
@@ -95,6 +127,10 @@ if (!built) {
   console.log(`❌ FAIL: no working gadget rendered — ${why}`); ok = false;
 }
 else console.log(`✅ PASS: a gadget BUILT and rendered (${how}, iframes=${iframes})`);
+// runtime functionality — the deepest "does it actually WORK" check
+if (functions === true) console.log(`✅ PASS: the built gadget FUNCTIONS at runtime — count ${countBefore} → ${countAfter} on Increment`);
+else if (functions === false) { console.log(`❌ FAIL: gadget rendered but does NOT function — count stayed at ${countBefore} after clicking Increment`); ok = false; }
+else if (functions != null) console.log(`ℹ️  runtime-interaction inconclusive (${functions}) — rendered but couldn't auto-drive it`);
 if (gadgetRows < 1) { console.log("⚠️  WARN: /gadgets shows 0 rows (persistence not confirmed)"); }
 else console.log(`✅ PASS: gadget persisted — /gadgets lists ${gadgetRows} row(s)`);
 if (fatal.length) { console.log("❌ FAIL: fatal console errors"); ok = false; }

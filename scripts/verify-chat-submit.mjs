@@ -18,7 +18,7 @@ if (!EMAIL || !PASSWORD) { console.log("missing BA creds (BA_E2E_EMAIL / BA_E2E_
 
 // The catalog we expect in the picker (names from SUGGESTED_MODELS). GPT-4o (OpenAI) is the Home
 // DEFAULT (first SUGGESTED_MODELS provider); the Workers-AI set + Claude 4.5 + DeepSeek fill it out.
-const EXPECT = ["GPT-4o", "DeepSeek V4 Pro", "DeepSeek V4 Flash", "GLM 5.3", "Kimi K2.7", "Llama 4 Scout", "GPT-OSS 120B", "Claude Sonnet 4.5", "Claude Haiku 4.5"];
+const EXPECT = ["GPT-4o", "DeepSeek V4 Pro", "DeepSeek V4 Flash", "GLM 5.3", "Kimi K2.7", "Llama 4 Scout", "GPT-OSS 120B", "Claude Opus", "Claude Sonnet", "Claude Haiku"];
 const DEFAULT_MODEL = "GPT-4o"; // the Home composer's default label must start with this
 
 const browser = await chromium.launch();

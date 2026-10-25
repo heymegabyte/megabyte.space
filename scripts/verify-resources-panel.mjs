@@ -45,29 +45,41 @@ await page.waitForFunction(
   { timeout: 20000 },
 ).catch(() => {});
 await page.waitForTimeout(1200);
-let openedWorkspace = false;
-const openLink = page.getByRole("link", { name: /^Open / }).first();
-if (await openLink.count().then((c) => c > 0).catch(() => false)) {
-  await openLink.click().catch(() => {});
-  await page.waitForTimeout(3000);
-  openedWorkspace = /\/workspace\//.test(page.url());
+// 3/4 — open gadgets until one shows the FULL editor, then assert the Resources launchpad there.
+// The launchpad renders ONLY in the expanded right pane, which appears only when a gadget HAS AN APP
+// (GadgetEditor: showFullEditor requires hasAnyApps); a chat-only gadget keeps the pane collapsed to
+// 0 width BY DESIGN, so its grid is 0x0. Open each gadget, click Resources, and MEASURE the grid's real
+// box — the first app-bearing gadget (grid width>0) is the one to assert against. Robust to the chat-only
+// gadgets verify-chat-submit leaves first in the /gadgets table. (fire-2026-10-24.)
+let openedWorkspace = false, tabClicked = false, gridVisible = false, cardCount = 0;
+const grid = page.locator('[data-testid="resources-grid"]').first();
+const totalOpen = await page.getByRole("link", { name: /^Open / }).count().catch(() => 0);
+const attempts = Math.min(Math.max(totalOpen, 1), 10);
+for (let i = 0; i < attempts; i++) {
+  if (i > 0) {
+    await page.goto(`${APEX}/gadgets`, { waitUntil: "domcontentloaded", timeout: 40000 });
+    await page.waitForSelector("tbody tr", { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(700);
+  }
+  const link = page.getByRole("link", { name: /^Open / }).nth(i);
+  if (!(await link.count().then((c) => c > 0).catch(() => false))) break;
+  await link.click().catch(() => {});
+  await page.waitForTimeout(2800);
+  if (!/\/workspace\//.test(page.url())) continue;
+  openedWorkspace = true;
+  const tab = page.getByRole("button", { name: /^Resources/ }).first();
+  await tab.waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
+  if (await tab.count().then((c) => c > 0).catch(() => false)) {
+    await tab.click().catch(() => {});
+    tabClicked = true;
+    await page.waitForTimeout(900);
+  }
+  await grid.waitFor({ state: "attached", timeout: 10000 }).catch(() => {});
+  const box = await grid.boundingBox().catch(() => null);
+  const liNow = await grid.locator("li").count().catch(() => 0);
+  cardCount = Math.max(cardCount, liNow);
+  if (box && box.width > 0 && box.height > 0) { gridVisible = true; cardCount = liNow; break; } // app-bearing — assert here
 }
-
-// 3 — click the Resources right-pane tab (a PaneTab <button>; rail entries are links, so this is unique).
-let tabClicked = false;
-const resourcesTab = page.getByRole("button", { name: /^Resources/ }).first();
-await resourcesTab.waitFor({ state: "visible", timeout: 20000 }).catch(() => {});
-if (await resourcesTab.count().then((c) => c > 0).catch(() => false)) {
-  await resourcesTab.click().catch(() => {});
-  tabClicked = true;
-  await page.waitForTimeout(800);
-}
-
-// 4 — the ResourcesPanel grid is VISIBLE (not display:none) with ≥MIN_CARDS cards.
-const grid = page.locator('[data-testid="resources-grid"]');
-await grid.waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
-const gridVisible = await grid.isVisible().catch(() => false);
-const cardCount = await grid.locator("li").count().catch(() => 0);
 
 // Honesty: the launchpad's real content renders (proves it's the live panel, not a stub).
 const body = await page.evaluate(() => document.body.innerText).catch(() => "");

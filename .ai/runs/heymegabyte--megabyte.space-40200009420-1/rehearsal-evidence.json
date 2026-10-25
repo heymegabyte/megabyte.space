@@ -32,7 +32,7 @@
     {
       "command": "node --test 'scripts/**/*.test.ts' 'scripts/**/*.test.mjs'",
       "status": "failed",
-      "evidence": "135 tests: 133 passed, 2 failed; scripts/deploy.test.ts:189 and :266 expect service arrays without existing 12 integration bindings"
+      "evidence": "135 tests: 133 passed, 2 failed; scripts/deploy.test.ts:189 and :257 (router assertion :266) expect service arrays without existing 12 integration bindings"
     },
     {
       "command": "npx -y pnpm@11.17.0 run types:scripts",

@@ -55,7 +55,7 @@
 
 ## Migration next-wave — fire-318
 
-- [ ] Reconcile `scripts/deploy.test.ts:189,266` complete service-array fixtures with
+- [ ] Reconcile `scripts/deploy.test.ts:189,257` complete service-array fixtures with
   the existing 12 integration bindings; accept only with the full root script suite green
   while preserving Access, AUTH and vendor-binding assertions. Observed 133/135 this fire.
 - Candidate `bd10b0ec` partial rehearsal now recorded in MIGRATION §15: frozen install,

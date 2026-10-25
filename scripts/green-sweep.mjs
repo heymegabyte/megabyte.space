@@ -165,7 +165,11 @@ function runOnce(script, args, needle) {
     const onData = (d) => { out += d.toString() }
     child.stdout.on('data', onData)
     child.stderr.on('data', onData)
-    const timer = setTimeout(() => { try { child.kill('SIGKILL') } catch {} }, 180000)
+    // 300s (was 180s): the thorough verifiers legitimately run long — verify-a11y audits ~71 surfaces
+    // × axe in BOTH themes (~200s) and was being SIGKILL'd at 180s → "exit null" false-RED even when
+    // clean. Most verifiers finish in <60s, so this only gives the thorough ones room; a genuinely
+    // hung verifier still dies (just at 5 min). (fire 2026-10-25.)
+    const timer = setTimeout(() => { try { child.kill('SIGKILL') } catch {} }, 300000)
     child.on('close', (code) => { clearTimeout(timer); resolve({ pass: code === 0 && out.includes(needle), code }) })
     child.on('error', () => { clearTimeout(timer); resolve({ pass: false, code: -1 }) })
   })

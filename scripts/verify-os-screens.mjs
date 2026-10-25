@@ -22,7 +22,7 @@ const MOBILE = process.argv.includes("--mobile");
 const ROUTES = [
   "/", "/pulse", "/goals", "/agents", "/automations", "/context", "/explore", "/blueprints",
   "/outputs", "/gadgets", "/models", "/providers", "/connections", "/gatekeepers", "/workspaces",
-  "/profile", "/database", "/analytics", "/activity", "/logs", "/domains", "/queues", "/secrets",
+  "/profile", "/settings", "/database", "/analytics", "/activity", "/logs", "/domains", "/queues", "/secrets",
   "/storage", "/compute", "/metrics", "/permissions", "/provenance", "/workflows", "/ai-gateway",
   "/vectorize", "/durable-objects", "/email", "/notifications", "/environments", "/approvals",
   "/tasks", "/tools", "/presence", "/analytics-engine", "/hyperdrive", "/realtime", "/sandboxes",

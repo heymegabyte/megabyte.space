@@ -151,6 +151,7 @@ const ROUTES = [
   ['/gatekeepers', /gatekeeper|connect|integration/i],
   ['/connections', /connection|integration|provider/i],
   ['/profile', /profile|account|display name/i],
+  ['/settings', /setting|preference|account|theme|appearance|notification/i], // fire-2026-10-24: /settings (settings.tsx) shipped with the Settings+Profile screens (fork 9af3a71d) but was a11y-unaudited — caught by check-a11y-coverage; renders 2261 chars, 0 console errors.
   ['/admin', /access to this page|admin/i], // fire-151: ba-e2e (non-admin) sees the 'You don't have access' DENIED state — a real non-admin surface worth auditing; the admin CATALOG needs an admin session (verify-admin-platform). Signal matches the denied state so the audit settles honestly, not by timeout. Caught + gate-enforced by check-a11y-coverage.
 ]
 for (const [path, signal] of ROUTES.filter(([p]) => !ONLY || p.includes(ONLY))) {

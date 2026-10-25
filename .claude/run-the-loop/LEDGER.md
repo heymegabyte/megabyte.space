@@ -4108,3 +4108,10 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Ledger catch-up for this session's prior shipped slices: `2a4f34ec` (wire all 12 integration gatekeepers into Home > Add resource — picker lists 13 vendors, `verify-add-resource`) and `49b6200a` (honest model-picker "Loading models" state + `verify-home-models` gate; surfaced then resolved the R2 + Dynamic-Workers billing freeze that froze backend deploys ~2 weeks + downed the memorial video).
 - Loop improvement: `check-gate-coverage` no longer false-flags `*.test.mjs` unit tests as orphaned gates.
 - Known verifier flakiness (NOT a feature break): `verify-resources-panel` opened the chat-only gadget the chat-submit test left first in ba-e2e's /gadgets, so the right-pane grid did not reveal; the Resources launchpad renders 60 cards in the DOM + passed historically. Follow-up: open an app-bearing gadget.
+
+
+## fire-314 — Resources launchpad verified rendering; verifier made deterministic (2026-10-24)
+
+- Resources launchpad (in-editor resource browser) CONFIRMED working: renders 60 cards, Models/Connections/Storage/Compute visible, 0 console errors. Root-caused the prior flake: GadgetEditor gates the right pane behind `showFullEditor` (requires `hasAnyApps`), so a chat-only gadget keeps it collapsed 0-wide BY DESIGN — not a bug.
+- Slice `196556ad`: `verify-resources-panel` now iterates /gadgets (up to 10) and asserts against the first APP-BEARING gadget (grid boundingBox width>0), robust to the chat-only gadgets verify-chat-submit leaves first. Was flaky-false (gridVisible=false on a chat-only gadget); now 6/6 PASS.
+- Core chat re-confirmed this fire: `verify-chat-submit` — GPT-4o default, submit -> workspace -> streamed reply (+200 chars), 8/8 models, 0 errors. All original CF OS feature verifiers green.

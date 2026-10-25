@@ -4130,3 +4130,20 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Unchanged fork bb88b90e fetched from declared remote. Official upstream advertised bd10b0ec only; no candidate range review or adoption credited.
 - Deployment not attempted: receipt still 80b7209e versus committed bb88b90e; actual live version unverified. No authenticated journey, storage reconciliation, full app build or visual pass; modifier scores unchanged. Migration acceptance remains open.
 - Loop improvement: restored replacement-ref bypass protection lost to publication conflict. Next: verify outer publication; inventory live Worker versions; review complete intervening official upstream range. GitHub owns cadence; no watchdog or schedules changed.
+
+## fire-317 — complete upstream inventory and adapter acceptance (2026-10-25)
+
+- Research commit cbc9d1ed: uncapped official 54d4685d..bd10b0ec range, 75 commits,
+  778 paths. Targeted primary + independent review; no full-audit claim.
+- Recovery: prior baa0faf5/bae955e2 are ancestors of fetched origin/main; both retained
+  worktrees clean. No duplicate salvage or retained-tree mutation.
+- Verification: 48/48 provenance/bookkeeping tests; declared-source fetch gate passes
+  unchanged 8ccbb45d; git diff --check clean. No candidate build/runtime acceptance.
+- New frontier: Vitest 5/plugin compatibility, metadata, migrations, Web Search build
+  path/gateway, interrupted-action denial reconciliation. See MIGRATION §14 and run artifacts.
+- Loop improvement: command now separates complete inventory from reviewed coverage and
+  requires dependency/binding/migration/ambient-preinstall rehearsal coverage.
+- No deployment, prod journey, storage reconciliation or visual inspection; matrix unchanged.
+  Receipt 80b7209e remains stale/unreconciled, not a live-version observation.
+- Publication belongs to outer runner. Next: isolated candidate rehearsal and live Worker
+  inventory; migration acceptance remains open.

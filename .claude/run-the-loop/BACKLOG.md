@@ -45,6 +45,14 @@
 > this is discovery only. Next upstream review must cover the complete range since the
 > last reviewed candidate, including intervening releases, before compatibility/adoption.
 
+## Migration next-wave — fire-317
+
+- [ ] Rehearse official `bd10b0ec` using the complete 75-commit inventory since
+  `54d4685d`: frozen installs in both workspaces, Vitest 5/plugin compatibility,
+  generated version metadata/AI bindings, GitHubHookDriver migration, and explicit
+  Web Search capability/billing decision. Accept only with candidate build/test and
+  isolated-runtime proof; targeted source review is not adoption. Details: MIGRATION §14.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

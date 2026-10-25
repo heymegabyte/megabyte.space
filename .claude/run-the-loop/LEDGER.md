@@ -4115,3 +4115,10 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Resources launchpad (in-editor resource browser) CONFIRMED working: renders 60 cards, Models/Connections/Storage/Compute visible, 0 console errors. Root-caused the prior flake: GadgetEditor gates the right pane behind `showFullEditor` (requires `hasAnyApps`), so a chat-only gadget keeps it collapsed 0-wide BY DESIGN — not a bug.
 - Slice `196556ad`: `verify-resources-panel` now iterates /gadgets (up to 10) and asserts against the first APP-BEARING gadget (grid boundingBox width>0), robust to the chat-only gadgets verify-chat-submit leaves first. Was flaky-false (gridVisible=false on a chat-only gadget); now 6/6 PASS.
 - Core chat re-confirmed this fire: `verify-chat-submit` — GPT-4o default, submit -> workspace -> streamed reply (+200 chars), 8/8 models, 0 errors. All original CF OS feature verifiers green.
+
+
+## fire-315 — a11y-coverage drift fixed: /settings now audited (2026-10-24)
+
+- Convergence green-sweep found ONE remaining failure (the 4 prior-fire fixes all held): `check-a11y-coverage` flagged `/settings` (settings.tsx, shipped with Settings+Profile screens fork 9af3a71d) as a11y-UNAUDITED — a real OS screen not in verify-a11y's list.
+- Slice `812b8694`: added `/settings` to `verify-a11y` (audit list) + `verify-os-screens` (load-test list). Confirmed the screen is WORKING: renders 2261 chars, 0 console errors; axe-clean (0 serious/critical across 5 surfaces); verify-os-screens 60/60; check-a11y-coverage GREEN (69/69 routes).
+- All original CF OS feature verifiers now green: chat (model-select -> query -> streamed reply), 60/60 screens, resources launchpad (60 cards), ~46 per-surface verifiers, apex 13/13, bookkeeping. Note: a full verify-a11y run can crash on browser exhaustion when many browser verifiers run back-to-back in one fire (bare waitForTimeout -> 'browser closed') — environmental, not a surface defect; green-sweep runs it fresh.

@@ -1189,3 +1189,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 ## Fire-312 verification follow-up
 
 - [ ] Add a combined unusual-source/unusual-destination real-Git copy fixture to prove both NUL fields simultaneously; retain explicit C framing, exact endpoints and following-record assertions. Current source-only and destination-only cases pass independently.
+
+
+## Fire-319 recovery and wrapper verification
+
+- [x] Recover fire-318 unpublished evidence and reconcile exact service-binding fixtures:
+  focused 26/26, complete root scripts 135/135 and scripts typecheck green.
+- [ ] Before another integration inventory change, reconcile generator, router HTTP
+  contract and Workshop RPC fixture together; verify the picker against a protected
+  candidate runtime. Local config tests alone do not prove deployed vendor availability.

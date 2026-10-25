@@ -36,7 +36,7 @@ const ALLOWLIST = {
 };
 
 const gates = readdirSync(SCRIPTS)
-  .filter((f) => /^check-.*\.mjs$/.test(f))
+  .filter((f) => /^check-.*\.mjs$/.test(f) && !f.endsWith(".test.mjs")) // .test.mjs are unit tests, not gates
   .sort();
 
 // A gate counts as WIRED if its basename appears in any runner's source (a green-sweep CHECKS tuple or

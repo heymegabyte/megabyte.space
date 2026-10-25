@@ -283,3 +283,20 @@ adds two concrete adapter checks: Web Search lacks the `build:configurator` task
 extras loop assumes, and its Gateway vars belong on its own Worker. Router metadata
 requires installer injection too. Preserve legacy Better Auth on the demo; remove its
 hooks from the fresh wrapper intentionally under ADR 0002, with negative auth tests.
+
+## 15. Bounded candidate rehearsal — fire-318 (2026-10-25)
+
+Official `bd10b0ec` frozen install passes in a separate archived scratch workspace.
+Web Search typecheck + 7 Node tests pass; GitHub configurator build + 48 Node /
+189 workerd tests pass; configurator UI 32 Node tests pass. This is local candidate
+tooling evidence, not full wrapper compatibility, browser/runtime migration or adoption.
+See [research and independent review](../.ai/runs/heymegabyte--megabyte.space-40200009420-1/codex-research.md)
+and [exact command results](../.ai/runs/heymegabyte--megabyte.space-40200009420-1/rehearsal-evidence.json).
+
+The root script suite exposes existing fixture drift: 133/135 pass; two deployment
+service-array expectations omit the existing 12 integration bindings. Reconcile the
+complete intended contract before crediting a green wrapper gate. Candidate Web Search
+requires explicit build metadata (`build`, no configurator), Worker-local Gateway vars,
+and preserved AI/SQLite bindings. Full candidate builds, browser tests, generated wrapper
+configs, ambient provisioning/revocation and live-version inventory remain open.
+No pin, production config, receipt, resources or visual scores changed.

@@ -1,0 +1,54 @@
+{
+  "candidate": "bd10b0ece6842b8f486b3467eab6cc3b9c920920",
+  "officialRemote": "https://github.com/cloudflare/cloudflare-os.git",
+  "method": "git archive of directly fetched official main, extracted into ignored loop-health/candidate; committed gitlink unchanged",
+  "candidateLockSha256": "c40566c1d08bceb4dbe03fec6468d74115f6c56d69b8688300ca197bd29a0979",
+  "checks": [
+    {
+      "command": "npx -y pnpm@11.17.0 --dir loop-health/candidate install --frozen-lockfile",
+      "status": "passed",
+      "evidence": "714 packages resolved; completed in 22.3 seconds; no lock edits"
+    },
+    {
+      "command": "npx -y pnpm@11.17.0 --dir loop-health/candidate --filter @gadgets/gatekeeper-websearch build",
+      "status": "passed",
+      "evidence": "tsc exited 0"
+    },
+    {
+      "command": "npx -y pnpm@11.17.0 --dir loop-health/candidate --filter @gadgets/gatekeeper-websearch test:run",
+      "status": "passed",
+      "evidence": "Vitest 5.0.5: 7 tests / 1 file"
+    },
+    {
+      "command": "npx -y pnpm@11.17.0 --dir loop-health/candidate --filter @gadgets/github-gatekeeper test:run",
+      "status": "passed",
+      "evidence": "configurator build, Node 48 tests / 3 files, workerd 189 tests / 9 files; process exited 0"
+    },
+    {
+      "command": "npx -y pnpm@11.17.0 --dir loop-health/candidate --filter @gadgets/configurator-ui exec vitest run",
+      "status": "passed",
+      "evidence": "32 tests / 7 files; Node suite only, browser suite not run"
+    },
+    {
+      "command": "node --test 'scripts/**/*.test.ts' 'scripts/**/*.test.mjs'",
+      "status": "failed",
+      "evidence": "135 tests: 133 passed, 2 failed; scripts/deploy.test.ts:189 and :266 expect service arrays without existing 12 integration bindings"
+    },
+    {
+      "command": "npx -y pnpm@11.17.0 run types:scripts",
+      "status": "passed",
+      "evidence": "tsc exited 0"
+    },
+    {
+      "command": "node scripts/check-submodule-resolvable.mjs",
+      "status": "passed",
+      "evidence": "unchanged 8ccbb45d fetched from declared fork URL"
+    }
+  ],
+  "limits": [
+    "Standalone candidate scratch tests only; starter workspace still uses committed fork, not candidate",
+    "No full candidate build, generated wrapper dry-run, browser/native-client journey, migration rehearsal, live provider request or production acceptance",
+    "Workerd negative-path exception output observed despite green suite; do not describe as zero-error production evidence",
+    "Root script suite is red before any tracked edits"
+  ]
+}

@@ -40,6 +40,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   verify the declared remote before moving a reviewed pin. Never use parent-repository
   Git fallback as fork evidence; require its `.git`
   marker before retained-source checks. Record capped API comparisons as incomplete diffs.
+  For candidate rehearsals, record the exact source SHA and frozen-lock checksum, keep
+  scratch installs separate from the committed gitlink, and distinguish Node/workerd
+  fixture tests from browser, native-client and live-provider acceptance.
   Record complete-range inventories separately from reviewed coverage: commit/path counts
   never imply a full security audit. Include changed dependency manifests, generated
   Worker bindings/migrations and ambient preinstalls in candidate rehearsal acceptance.

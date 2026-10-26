@@ -167,7 +167,7 @@ if (dirty.length) {
       const bits = [rec.fire, rec.note].filter(Boolean).join(" — ");
       if (bits) who = ` [stranded by ${bits}]`;
     } catch {}
-    process.stderr.write(`ℹ️  deploy-record-only strand (fire-224/225 class)${who}: the SOLE dirty file is the deploy ledger — a fire deployed + ran record-deploy but died before committing it. If 'node scripts/check-deploy-state.mjs' reads OK, prod already reflects HEAD → just COMMIT the record (NO rebuild/redeploy), per prod-ahead-of-git-salvage.\n`);
+    process.stderr.write(`ℹ️  deploy-record-only strand (fire-224/225 class)${who}: the SOLE dirty file is the deploy ledger. A receipt match does not prove production reflects HEAD. Correlate live per-Worker source/version evidence before committing this record or deciding whether deployment is needed.\n`);
   }
 } else {
   process.stderr.write(`✅ working tree clean on watched surfaces — the fire committed everything it touched.\n`);

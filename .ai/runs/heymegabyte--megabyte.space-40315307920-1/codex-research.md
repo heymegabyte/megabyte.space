@@ -26,3 +26,9 @@ was handled using repository provider rules and fleet runtime, without credentia
 
 Next: immutable per-Worker wrapper/fork source correlation; maintain migration acceptance
 as open until its own production and identity gates have evidence.
+
+Official Claude subscription review via cr found two downstream salvage instructions
+still equated receipt match with live production. Corrected check-fire-committed output
+and the loop's salvage branch in the same iteration. Review was source-only; its inability
+to run tests is not credited as execution evidence. Human OK label retained for compatibility,
+with explicit local-receipt wording in the message.

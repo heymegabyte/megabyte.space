@@ -28,7 +28,7 @@ const SCRIPTS = join(ROOT, "scripts");
 // pass/fail sweep gates. Each MUST carry a reason — a bare name cannot escape.
 const ALLOWLIST = {
   "check-deploy-state.mjs":
-    "orient advisory (exit 0 always — the prod-ahead-of-HEAD WARN); run at §0, never a pass/fail sweep gate",
+    "orient advisory (exit 0 always — the deployment-receipt mismatch WARN); run at §0, never a pass/fail sweep gate",
   "check-depth-candidates.mjs":
     "discovery classifier (the DEPTH-target menu for the next fire) — informational, not pass/fail",
   "check-fire-committed.mjs":

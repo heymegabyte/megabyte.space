@@ -96,6 +96,62 @@ async function fetchApprovals(env: Env): Promise<{ armed: boolean; approvals: Ap
   }
 }
 
+// Paperclip CASES: open org issues labeled P0/P1 — the prioritized "needs-you" queue (Paperclip's
+// cases span issues, not just PRs). Separate 60s-cached search; client-filters for P0/P1 (reliable,
+// no label-OR-syntax dependency); fail-soft to [].
+interface Case {
+  repo: string;
+  number: number;
+  title: string;
+  author: string;
+  url: string;
+  ageDays: number;
+  priority: "P0" | "P1";
+  labels: string[];
+}
+
+async function fetchCases(env: Env): Promise<Case[]> {
+  if (env.INBOX_ARMED !== "1" || !env.GITHUB_TOKEN) return [];
+  const org = env.GH_ORG || "heymegabyte";
+  const cacheKey = new Request(`https://inbox.cache/cases?org=${org}`);
+  const cache = caches.default;
+  const cached = await cache.match(cacheKey);
+  if (cached) return await cached.json();
+  try {
+    const r = await fetch(
+      `https://api.github.com/search/issues?q=is:issue+is:open+org:${org}&sort=created&order=desc&per_page=100`,
+      { headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": UA } },
+    );
+    if (!r.ok) return [];
+    const data = (await r.json()) as { items?: any[] };
+    const now = Date.now();
+    const cases: Case[] = [];
+    for (const i of data.items || []) {
+      const labels = (i.labels || []).map((l: any) => (typeof l === "string" ? l : l.name)).filter(Boolean);
+      const priority: "P0" | "P1" | null = labels.includes("P0") ? "P0" : labels.includes("P1") ? "P1" : null;
+      if (!priority) continue;
+      cases.push({
+        repo: (i.repository_url || "").split("/").pop() || "?",
+        number: i.number,
+        title: i.title || "",
+        author: i.user?.login || "?",
+        url: i.html_url || "",
+        ageDays: i.created_at ? Math.floor((now - Date.parse(i.created_at)) / 86400000) : 0,
+        priority,
+        labels,
+      });
+    }
+    cases.sort((a, b) => (a.priority === b.priority ? b.ageDays - a.ageDays : a.priority === "P0" ? -1 : 1));
+    await cache.put(
+      cacheKey,
+      new Response(JSON.stringify(cases), { headers: { "content-type": "application/json", "cache-control": "max-age=60" } }),
+    );
+    return cases;
+  } catch {
+    return [];
+  }
+}
+
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
@@ -126,7 +182,21 @@ ${items
     .join("\n");
 }
 
-function page(body: string, count: number, armed: boolean, stamp: string, gov: { ready: number; drafts: number; stalled: number }): string {
+function renderCases(cases: Case[]): string {
+  if (!cases.length) return "";
+  return `<section class="cases"><h2>⬆ Priority cases <span class="n">${cases.length}</span></h2>
+${cases
+  .map(
+    (c) => `<a class="card" href="${esc(c.url)}" target="_blank" rel="noopener">
+  <div class="row1"><span class="num">${esc(c.repo)} #${c.number}</span><span class="badge ${c.priority === "P0" ? "p0" : "p1"}">${c.priority}</span></div>
+  <div class="title">${esc(c.title)}</div>
+  <div class="meta"><span class="author">@${esc(c.author)}</span><span class="label">${c.ageDays}d old</span><span class="cta">Open →</span></div>
+</a>`,
+  )
+  .join("\n")}</section>`;
+}
+
+function page(body: string, count: number, armed: boolean, stamp: string, gov: { ready: number; drafts: number; stalled: number; cases: number }): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 ${armed ? '<meta http-equiv="refresh" content="90"/>' : ""}
@@ -169,11 +239,17 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:16px 24p
 .chip.ok{color:#7CFFB2;background:rgba(124,255,178,.08);border-color:rgba(124,255,178,.22)}
 .chip.warn{color:#ffb86b;background:rgba(255,184,107,.1);border-color:rgba(255,184,107,.26)}
 .escalate{color:#ffb86b;font-size:13px;margin:12px 0 0;font-weight:550}
+.chip.p0{color:#ff6b6b;background:rgba(255,107,107,.12);border-color:rgba(255,107,107,.26)}
+.cases{margin:22px 0 0}
+.cases h2{font-size:13px;font-weight:600;letter-spacing:.02em;color:#ffb86b;margin:0 0 10px;display:flex;align-items:center;gap:8px;font-family:ui-monospace,monospace}
+.cases h2 .n{background:rgba(255,184,107,.14);color:#ffb86b;border-radius:20px;padding:1px 9px;font-size:11px}
+.badge.p0{color:#ff6b6b;background:rgba(255,107,107,.13)}
+.badge.p1{color:#ffb86b;background:rgba(255,184,107,.1)}
 </style></head><body><div class="bg" aria-hidden="true"></div>
 ${armed
     ? `<header><p class="eyebrow">Megabyte OS · Autonomous Business OS</p><h1>Approval Inbox</h1>
 <p class="sub">${count} item${count === 1 ? "" : "s"} await your review — the autonomous fleet's open work across the estate. <span class="foot">updated ${stamp}</span></p>
-<div class="gov"><span class="chip">✦ ${count} awaiting</span><span class="chip ok">✓ ${gov.ready} ready</span><span class="chip muted">◷ ${gov.drafts} draft${gov.drafts === 1 ? "" : "s"}</span>${gov.stalled ? `<span class="chip warn">⚠ ${gov.stalled} stalled &gt;14d</span>` : ""}</div>
+<div class="gov"><span class="chip">✦ ${count} awaiting</span>${gov.cases ? `<span class="chip p0">⬆ ${gov.cases} priority case${gov.cases === 1 ? "" : "s"}</span>` : ""}<span class="chip ok">✓ ${gov.ready} ready</span><span class="chip muted">◷ ${gov.drafts} draft${gov.drafts === 1 ? "" : "s"}</span>${gov.stalled ? `<span class="chip warn">⚠ ${gov.stalled} stalled &gt;14d</span>` : ""}</div>
 ${gov.stalled ? `<p class="escalate">⚠ ${gov.stalled} approval${gov.stalled === 1 ? "" : "s"} stalled beyond 14 days — escalate or clear.</p>` : ""}</header>
 <main>${body}</main>`
     : `<main class="placeholder"><div class="mark">✦</div><h1>Approval Inbox</h1>
@@ -194,10 +270,11 @@ export default {
     if (req.method !== "GET") return new Response("Method Not Allowed", { status: 405, headers: CORS });
 
     const { armed, approvals, error } = await fetchApprovals(env);
+    const cases = await fetchCases(env); // Paperclip CASES: prioritized P0/P1 issues (fail-soft []).
 
     if (url.pathname === "/api/approvals") {
       return Response.json(
-        { armed, count: approvals.length, approvals, ...(error ? { error } : {}) },
+        { armed, count: approvals.length, approvals, cases, ...(error ? { error } : {}) },
         { headers: { ...CORS, ...SEC, "cache-control": "no-store" } },
       );
     }
@@ -208,8 +285,9 @@ export default {
       ready: approvals.filter((a) => !a.draft).length,
       drafts: approvals.filter((a) => a.draft).length,
       stalled: approvals.filter((a) => a.ageDays > 14).length,
+      cases: cases.length,
     };
-    const html = page(renderCards(approvals), approvals.length, armed, stamp, gov);
+    const html = page(renderCases(cases) + renderCards(approvals), approvals.length, armed, stamp, gov);
     return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", ...CORS, ...SEC, "cache-control": "no-store" } });
   },
 };

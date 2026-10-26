@@ -18,8 +18,8 @@ sequencing · priority triage.
 | # | Slice (Paperclip feature → OS) | Status |
 |---|---|---|
 | 1 | **Governance summary + watchdog escalation** on the Approval Inbox — a "needs-you" dashboard (awaiting · ready · drafts · stalled>14d chips) + an escalation banner when items stall. | ✅ SHIPPED (`a738785f`) — verified: "30 awaiting · 29 ready · 1 draft" + stalled chip + escalate banner; CSP intact. |
-| 2 | **Cases = issues, not just PRs** — include org issues labeled `needs-approval`/`needs-decision`/`blocked` as approval cards (Paperclip cases span issues). Extend the search query + render issue cards. | ⏸ queued (clean — bounded fetch+render extension). |
-| 3 | **Priority triage sort** — sort/badge cards by a priority label (`p0`/`urgent`/…), Paperclip's triage ordering. Cheap, label-based (data already fetched). | ⏸ queued (clean). |
+| 2 | **Cases = issues, not just PRs** (Paperclip cases span issues). | ✅ SHIPPED (`449b9a33`) — a "Priority Cases" section (open org issues labeled **P0/P1** — the REAL governance signal; `needs-approval`/`blocked` don't exist in the org) renders ABOVE the PR queue + a gov priority chip. Verified: 3 cases (agent-skills #4 P0, #5/#6 P1). |
+| 3 | **Priority triage sort** — Paperclip's P0-first ordering. | ✅ SHIPPED — folded into #2: cases sort P0-before-P1 then oldest-first. Recon finding: the 30 PRs carry NO priority labels (only dependencies/javascript/github_actions), so a PR priority-sort would be a verifiable no-op — the priority signal lives in ISSUES (why #2 is where the value is). |
 | 4 | **Blocked-by surfacing** — a `blocked`-label section + the blocker reference (Paperclip's `blockedByIssueIds`). Partially derivable from labels. | ⏸ queued (clean). |
 | 5 | **Verify gate (CI + review state)** — per-PR `statusCheckRollup` + `reviewDecision` ("ready to approve" vs "checks failing / review required") — Paperclip's core done-criteria. Needs a GraphQL rewrite of the fetch (one call for all PRs incl. checks+review). | dedicated. |
 | 6 | **Assignee / reviewer (org chart)** — show each case's assignee + requested reviewers (who owns it). GraphQL / per-PR detail. | dedicated. |
@@ -31,4 +31,4 @@ sequencing · priority triage.
 - The inbox is Access-gated (confirmed via CF Browser Run 2026-10-26) + CSP-hardened + rate-limited is N/A
   (it's a read surface; no LLM/abuse path). Slices 2–4 are clean single-worker edits using the existing
   GitHub search; 5–9 need a richer data source (GraphQL / cost / routines feed) → dedicated sessions.
-- Fire log: slice #1 shipped 2026-10-26 (`a738785f`).
+- Fire log: slice #1 shipped 2026-10-26 (`a738785f`); slices #2+#3 shipped 2026-10-26 (`449b9a33` — Priority Cases, P0/P1 issues, P0-first).

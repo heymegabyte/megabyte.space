@@ -190,11 +190,14 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
     if (req.method === "GET") {
-      // Human visitors get an info page; MCP SSE-stream probes get 405 (no server-initiated stream).
-      if ((req.headers.get("accept") || "").includes("text/html")) {
-        return new Response(INFO_HTML, { headers: { "content-type": "text/html; charset=utf-8", ...CORS } });
+      // Only the MCP SSE-stream probe (Accept: text/event-stream) gets 405 — this server is
+      // request/response only, no server-initiated stream. EVERY other GET (browsers, uptime
+      // monitors, bare curl) gets the info page (200) so the endpoint is human-friendly + monitorable.
+      const accept = req.headers.get("accept") || "";
+      if (accept.includes("text/event-stream") && !accept.includes("text/html")) {
+        return new Response("Method Not Allowed (no SSE stream; POST JSON-RPC for MCP)", { status: 405, headers: CORS });
       }
-      return new Response("Method Not Allowed (POST JSON-RPC for MCP)", { status: 405, headers: CORS });
+      return new Response(INFO_HTML, { headers: { "content-type": "text/html; charset=utf-8", ...CORS } });
     }
 
     if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: CORS });

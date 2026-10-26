@@ -10,6 +10,11 @@
   // so it carries ZERO apex-deploy risk. Deploy with: cd mcp-server && npx wrangler deploy
   // workers_dev gives it a public URL (megabyte-os-mcp.<subdomain>.workers.dev) for MCP clients to
   // connect to; a brandable mcp.megabyte.space custom domain is a follow-up.
+  // Brandable production endpoint agents connect to. A specific proxied DNS record for
+  // mcp.megabyte.space overrides the account's *.megabyte.space wildcard (specific beats wildcard);
+  // wrangler provisions the DNS + TLS on the active zone. workers_dev stays true (a routes/custom_domain
+  // block otherwise auto-disables the workers.dev URL — keep it as a fallback).
+  "routes": [{ "pattern": "mcp.megabyte.space", "custom_domain": true }],
   "workers_dev": true,
   "preview_urls": false,
 

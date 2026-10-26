@@ -126,7 +126,7 @@ ${items
     .join("\n");
 }
 
-function page(body: string, count: number, armed: boolean, stamp: string): string {
+function page(body: string, count: number, armed: boolean, stamp: string, gov: { ready: number; drafts: number; stalled: number }): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 ${armed ? '<meta http-equiv="refresh" content="90"/>' : ""}
@@ -164,10 +164,17 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:16px 24p
 .placeholder{position:relative;z-index:1;max-width:620px;margin:14vh auto;padding:0 24px;text-align:center}
 .placeholder .mark{font-size:40px;filter:drop-shadow(0 0 16px rgba(0,229,255,.4))}
 .foot{color:rgba(255,255,255,.32);font-size:11.5px;margin-top:10px;font-family:ui-monospace,monospace}
+.gov{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+.chip{font-family:ui-monospace,"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.04em;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--sub);border:1px solid var(--line)}
+.chip.ok{color:#7CFFB2;background:rgba(124,255,178,.08);border-color:rgba(124,255,178,.22)}
+.chip.warn{color:#ffb86b;background:rgba(255,184,107,.1);border-color:rgba(255,184,107,.26)}
+.escalate{color:#ffb86b;font-size:13px;margin:12px 0 0;font-weight:550}
 </style></head><body><div class="bg" aria-hidden="true"></div>
 ${armed
     ? `<header><p class="eyebrow">Megabyte OS · Autonomous Business OS</p><h1>Approval Inbox</h1>
-<p class="sub">${count} item${count === 1 ? "" : "s"} await your review — the autonomous fleet's open work across the estate. <span class="foot">updated ${stamp}</span></p></header>
+<p class="sub">${count} item${count === 1 ? "" : "s"} await your review — the autonomous fleet's open work across the estate. <span class="foot">updated ${stamp}</span></p>
+<div class="gov"><span class="chip">✦ ${count} awaiting</span><span class="chip ok">✓ ${gov.ready} ready</span><span class="chip muted">◷ ${gov.drafts} draft${gov.drafts === 1 ? "" : "s"}</span>${gov.stalled ? `<span class="chip warn">⚠ ${gov.stalled} stalled &gt;14d</span>` : ""}</div>
+${gov.stalled ? `<p class="escalate">⚠ ${gov.stalled} approval${gov.stalled === 1 ? "" : "s"} stalled beyond 14 days — escalate or clear.</p>` : ""}</header>
 <main>${body}</main>`
     : `<main class="placeholder"><div class="mark">✦</div><h1>Approval Inbox</h1>
 <p class="sub">This human-oversight surface is <strong>arming behind authentication</strong>. It will show the estate's pending approvals once its access gate is verified. No data is exposed until then.</p>
@@ -196,7 +203,13 @@ export default {
     }
 
     const stamp = new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC";
-    const html = page(renderCards(approvals), approvals.length, armed, stamp);
+    // Paperclip-style governance summary (watchdog escalation) — derived from already-fetched data.
+    const gov = {
+      ready: approvals.filter((a) => !a.draft).length,
+      drafts: approvals.filter((a) => a.draft).length,
+      stalled: approvals.filter((a) => a.ageDays > 14).length,
+    };
+    const html = page(renderCards(approvals), approvals.length, armed, stamp, gov);
     return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", ...CORS, ...SEC, "cache-control": "no-store" } });
   },
 };

@@ -4194,3 +4194,24 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - No deployment/product change, authenticated long journey, native-client acceptance,
   storage reconciliation or visual review. Matrix and deploy receipt unchanged.
   ADR 0002 migration acceptance remains open; GitHub owns next iteration/publication.
+
+
+## fire-321 — read-only live Worker inventory (2026-10-26)
+
+- Slice `8d94f3f8`: sanitized deployment history and latest-returned version detail for
+  six core + twelve integration + one auth Worker, 19 successful lists/details. Core and
+  integrations have October 25 deployment records; auth October 3. No SHA annotation,
+  no deployed-fork identification. Receipt and gitlink deliberately unchanged.
+- Verified fire-320 result is on origin/main; latest failed retained tree clean, no work
+  to recover. Declared fork 0eeb9053 initializes/fetches; official HEAD stays bd10b0ec.
+- Frozen root install, 137/137 root scripts, scripts typecheck and whitespace pass.
+  No full fork build needed for documentation-only research; no pnpm check credited.
+- Independent Claude subscription review via cr agrees on provenance limits. Convergence
+  corrects review's five-core count to six and distinguishes recorded allocation from
+  runtime probing. No API/PAYG inference or local AI Gateway used.
+- Loop improvement: MIGRATION §18 now explains that receipt mismatch cannot prove prod
+  behind HEAD, nor matching fork establish wrapper/live identity. Next wave: guard wording
+  regressions and immutable per-Worker build/version correlation. No forced receipt repair.
+- No production mutation/deployment, authenticated journey, native-client, storage or
+  visual acceptance. Modifier matrix unchanged; ADR 0002 approval/acceptance remains open.
+  Local commit only; GitHub outer runner owns publication and next scheduling.

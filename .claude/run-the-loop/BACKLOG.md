@@ -1209,3 +1209,16 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Before another integration inventory change, reconcile generator, router HTTP
   contract and Workshop RPC fixture together; verify the picker against a protected
   candidate runtime. Local config tests alone do not prove deployed vendor availability.
+
+
+## Fire-321 deployment provenance follow-up
+
+- [x] Inventory six core, twelve integration and separate auth Worker deployment/version
+  records read-only; 19/19 lists + latest-returned detail requests succeed. Newer deployments
+  confirmed, exact deployed fork unknown; see MIGRATION §18. Old receipt retained.
+- [ ] Correct `check-deploy-state` causal wording with regression tests: stale receipt
+  disagreement must not assert HEAD is ahead of live production; matching fork cannot
+  prove wrapper/config or live-version equality. Preserve advisory exit semantics.
+- [ ] Correlate observed per-Worker version IDs with immutable source/build evidence before
+  changing .last-deploy.json. Plan future source tags and version-bound receipts at the
+  next authorized deploy; do not mutate production merely to repair bookkeeping.

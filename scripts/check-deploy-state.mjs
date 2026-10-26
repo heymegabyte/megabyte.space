@@ -1,43 +1,12 @@
 #!/usr/bin/env node
 /**
- * check-deploy-state — "is prod AHEAD of HEAD?" salvage guard (fire-221).
- *
- * THE CLASS IT RETIRES: a fire commits its slice + bumps the cloudflare-os fork gitlink + pushes,
- * then DIES before `pnpm deploy` runs. `check-fire-committed.mjs` is GIT-STATE ONLY — it reads
- * CLEAN in that case (everything IS committed), so the next lead cannot mechanically tell
- * "committed AND deployed" from "committed but NOT deployed to prod." fire-220 hit exactly this:
- * HEAD was committed + pushed but the deploy may not have run; the salvage needed a manual prod
- * probe. This gate makes that mechanical at orient.
- *
- * THE SIGNAL — a deploy ledger (`.claude/run-the-loop/.last-deploy.json`, written by
- * `record-deploy.mjs` right after a successful `pnpm deploy`). Prod exposes no deployed-SHA signal
- * (the apex serves the router's inlined login gate — no asset refs, no `define`'d SHA, no version
- * header; the authed SPA's hashed assets don't reliably map to a fork SHA and rebase churn would
- * confound it), so the deploy step recording what it shipped is the cheapest RELIABLE probe.
- *
- * THE COMPARISON — the FORK gitlink is the strong signal (that is literally the code prod runs):
- * if HEAD's fork gitlink != the ledger's `forkSha`, HEAD is ahead of what is deployed → DRIFT.
- * Outer-SHA divergence (HEAD has moved past the recorded deploy's `outerSha`) is a WEAK/advisory
- * signal — a docs-only or bookkeeping commit moves outer without changing what ships — so it is
- * reported but never the sole DRIFT trigger. No ledger at all ⇒ INFORMATIONAL: can't prove, tells
- * the lead to probe prod.
- *
- * SECOND SIGNAL (fire-239) — UNPUSHED DEPLOY: `check-fire-committed` verifies the FORK submodule is
- * pushed, but nothing verified the OUTER deployed commit reached origin/main. fire-238 deployed outer
- * `9b01ae54` then DIED before `git push` — prod ran a commit sitting only in `origin/main..HEAD`,
- * lost had the machine died. `pushAdvisory` (pure) + an impure origin/main ancestry check now WARN
- * (advisory, exit 0 even under --ci) when the last-deployed outer commit is absent from the remote.
- *
- * GREEN-BY-DEFAULT, never a permanently-red gate (project memory
- * `permanently-red-gate-causes-starvation`): on DRIFT it WARNs (exit 0) with a crisp
- * probe-prod-first message; a clean match prints an OK line. `--ci` is available for a caller that
- * wants exit 1 on real drift, but the loop runs it advisory. `--json` emits the structured verdict.
- *
- * Usage:
- *   node scripts/check-deploy-state.mjs            # human, advisory (exit 0 always)
- *   node scripts/check-deploy-state.mjs --json     # machine-readable verdict
- *   node scripts/check-deploy-state.mjs --ci        # exit 1 on confirmed drift (fork mismatch)
- *   node scripts/check-deploy-state.mjs --selftest  # run the embedded branch tests
+ * Compare committed source with the local deployment receipt; never probe production.
+ * A mismatch is receipt drift, not proof that HEAD is ahead of production. A matching
+ * fork does not establish wrapper identity, per-Worker versions or runtime health.
+ * Keep legacy status values and --ci behavior for existing callers: --ci exits 1 on
+ * receipt fork mismatch; default mode remains advisory. --json exposes both sources.
+ * Use live per-Worker version/source evidence before deciding whether to deploy.
+ * Usage: node scripts/check-deploy-state.mjs [--json] [--ci] [--selftest]
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -49,8 +18,8 @@ const SUBMODULE = "cloudflare-os";
 /**
  * PURE comparison — no git, no fs. Given HEAD's SHAs + the ledger (or null), decide the verdict.
  * Verdict statuses:
- *   "ok"       — fork gitlink matches the ledger; prod reflects HEAD's deployable code.
- *   "drift"    — fork gitlink differs from the ledger; HEAD is AHEAD of what's deployed.
+ *   "ok"       — fork gitlink matches the local receipt; live source remains unverified.
+ *   "drift"    — fork gitlink differs from the local receipt; no ordering is inferred.
  *   "no-ledger"— no deploy ledger yet; deploy-state is unprovable from git alone.
  *   "unknown"  — HEAD fork SHA couldn't be resolved (shouldn't happen in-repo).
  *
@@ -88,39 +57,31 @@ export function compareDeployState(head, ledger) {
 
   if (!forkMatches) {
     return { status: "drift", forkMatches, outerMoved, ...base,
-      message: `DRIFT: HEAD's fork gitlink ${headFork.slice(0, 8)} != last-deployed ${ledFork.slice(0, 8)} ` +
-        `(ledger ${ledIso ?? "?"}). HEAD is AHEAD of prod — a prior fire likely committed+pushed but ` +
-        `did NOT \`pnpm deploy\`. Do NOT trust the clean git tree: PROBE PROD (run the slice's ` +
-        `verifier against megabyte.space), then either deploy the gitlink or salvage per §0.` };
+      message: `DRIFT: HEAD's fork gitlink ${headFork.slice(0, 8)} != receipt ${ledFork.slice(0, 8)} ` +
+        `(ledger ${ledIso ?? "?"}). Receipt mismatch does not establish which source is live. ` +
+        `PROBE PROD and correlate per-Worker versions with source before deciding whether to deploy; ` +
+        `do not rewrite the receipt or redeploy merely to silence this warning.` };
   }
-  // fork matches — prod reflects HEAD's deployable code. Outer drift is advisory noise only.
+  // A fork match says nothing about wrapper changes or the current live deployment.
   return { status: "ok", forkMatches, outerMoved, ...base,
-    message: outerMoved
-      ? `OK: fork gitlink ${headFork.slice(0, 8)} matches last-deployed (ledger ${ledIso ?? "?"}). ` +
-        `Outer HEAD moved past the recorded deploy's outer SHA, but that is non-deployable churn ` +
-        `(docs/bookkeeping) — prod reflects the current fork.`
-      : `OK: fork gitlink ${headFork.slice(0, 8)} matches last-deployed (ledger ${ledIso ?? "?"}). ` +
-        `Prod reflects HEAD's deployable code.` };
+    message: `OK: fork gitlink ${headFork.slice(0, 8)} matches the local receipt (ledger ${ledIso ?? "?"}). ` +
+      (outerMoved ? `Outer HEAD differs; wrapper/runtime changes may require deployment. ` : "") +
+      `Live source identity and runtime health remain unverified; a fork match alone is insufficient.` };
+
 }
 
 /**
- * PURE: given the last-deployed OUTER commit SHA + whether it is reachable from origin/main, produce
- * the unpushed-deploy advisory (or null when there's nothing to warn about). THE STRAND IT CATCHES:
- * a fire deploys an outer commit but DIES before `git push origin main` — fire-238 deployed HEAD
- * `9b01ae54` yet it sat only in `origin/main..HEAD`, so prod ran code absent from the remote (lost if
- * the machine died). `check-fire-committed` verifies the FORK submodule is pushed; NOTHING verified
- * the OUTER deployed commit reached origin. Advisory only (never gates) — green-by-default.
- *
- * @param {string|null|undefined} ledgerOuterSha  the `.last-deploy.json` outerSha (what prod ran)
- * @param {boolean} reachableFromOrigin           is that commit an ancestor of origin/main?
- * @returns {string|null}  the advisory message, or null when nothing to warn
+ * Warn when the receipt's outer commit is absent from fetched origin/main.
+ * This is local ancestry evidence only; it does not identify the live source.
+ * @param {string|null|undefined} ledgerOuterSha
+ * @param {boolean} reachableFromOrigin
+ * @returns {string|null}
  */
 export function pushAdvisory(ledgerOuterSha, reachableFromOrigin) {
   if (!ledgerOuterSha || reachableFromOrigin) return null;
-  return `last-deployed OUTER commit ${ledgerOuterSha.slice(0, 8)} is NOT reachable from origin/main — ` +
-    `prod runs a commit absent from the remote (the fire-238 unpushed-deploy strand; the FORK-push ` +
-    `guard in check-fire-committed does NOT cover the outer repo). \`git push origin main\` before ` +
-    `releasing the lease, or salvage the strand per §0.`;
+  return `receipt OUTER commit ${ledgerOuterSha.slice(0, 8)} is NOT reachable from local origin/main tracking ref — ` +
+    `possible unpushed-deploy strand. The tracking ref may be stale; inspect retained commits and publication evidence; ` +
+    `this does not prove production runs that commit. In fleet runs the outer runner owns publication.`;
 }
 
 /**
@@ -143,8 +104,8 @@ function readHead() {
     try { return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim(); }
     catch { return null; }
   };
-  // The COMMITTED gitlink (`HEAD:cloudflare-os`) is the fork SHA that ships — compare apples to
-  // apples with record-deploy's stamp. The submodule's floating working HEAD can be a dirty
+  // Compare the COMMITTED gitlink (`HEAD:cloudflare-os`) with the receipt, rather than
+  // inferring live identity. The submodule's floating working HEAD can be a dirty
   // checkout ahead of the gitlink (a separate concern GUARD 4 of check-fire-committed owns).
   return { forkSha: g(["rev-parse", "HEAD:" + SUBMODULE]), outerSha: g(["rev-parse", "HEAD"]) };
 }
@@ -205,7 +166,7 @@ function main() {
     console.log(`[check-deploy-state ${tag}] ${verdict.message}`);
     if (pushMsg) console.log(`[check-deploy-state WARN] ${pushMsg}`);
   }
-  // GREEN-by-default: advisory exit 0 unless --ci asked for a hard fail on confirmed drift (the push
+  // GREEN-by-default: advisory exit 0 unless --ci asked for a hard fail on receipt fork mismatch (the push
   // advisory stays advisory even under --ci — green-by-default, never a permanently-red gate).
   process.exit(ci && verdict.status === "drift" ? 1 : 0);
 }

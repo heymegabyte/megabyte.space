@@ -25,13 +25,14 @@ test("fork matches but outer HEAD moved ⇒ ok, advisory outerMoved=true", () =>
     { forkSha: FORK_A, outerSha: OUTER_B },
     { forkSha: FORK_A, outerSha: OUTER_A, iso: "t" },
   );
-  assert.equal(v.status, "ok", "non-deployable outer churn is not drift");
+  assert.equal(v.status, "ok", "fork status stays compatible when outer differs");
   assert.equal(v.forkMatches, true);
   assert.equal(v.outerMoved, true);
-  assert.match(v.message, /non-deployable churn/);
+  assert.match(v.message, /wrapper\/runtime changes may require deployment/);
+  assert.match(v.message, /Live source identity and runtime health remain unverified/);
 });
 
-test("fork gitlink differs from the ledger ⇒ drift (HEAD ahead of prod)", () => {
+test("fork gitlink differs from the ledger ⇒ receipt drift without live ordering", () => {
   const v = compareDeployState(
     { forkSha: FORK_B, outerSha: OUTER_A },
     { forkSha: FORK_A, outerSha: OUTER_A, iso: "t" },
@@ -40,8 +41,8 @@ test("fork gitlink differs from the ledger ⇒ drift (HEAD ahead of prod)", () =
   assert.equal(v.forkMatches, false);
   assert.match(v.message, /DRIFT/);
   assert.match(v.message, /PROBE PROD/);
-  // the exact fork-ahead class fire-220 hit
-  assert.match(v.message, /did NOT `pnpm deploy`/);
+  assert.match(v.message, /Receipt mismatch does not establish which source is live/);
+  assert.match(v.message, /do not rewrite the receipt or redeploy/);
 });
 
 test("no ledger at all ⇒ no-ledger (unprovable, tells lead to probe)", () => {
@@ -97,4 +98,22 @@ test("pushAdvisory: deployed commit NOT on origin/main ⇒ warning names the sha
 test("pushAdvisory: no ledger outer sha ⇒ null (null or undefined)", () => {
   assert.equal(pushAdvisory(null, false), null);
   assert.equal(pushAdvisory(undefined, false), null);
+});
+
+// Matching or mismatching local SHAs cannot prove a live deployment's identity.
+test("all receipt comparisons preserve production evidence limits", () => {
+  for (const forkSha of [FORK_A, FORK_B]) {
+    for (const outerSha of [OUTER_A, OUTER_B]) {
+      const { message } = compareDeployState({ forkSha, outerSha },
+        { forkSha: FORK_A, outerSha: OUTER_A, iso: "t" });
+      assert.doesNotMatch(message, /HEAD is AHEAD of prod|Prod reflects|prod reflects|did NOT `pnpm deploy`|non-deployable churn/);
+      assert.match(message, /unverified|does not establish/);
+    }
+  }
+  const warning = pushAdvisory(OUTER_A, false)!;
+  assert.match(warning, /does not prove production runs that commit/);
+  assert.match(warning, /outer runner owns publication/);
+  assert.match(warning, /local origin\/main tracking ref/);
+  assert.match(warning, /tracking ref may be stale/);
+  assert.doesNotMatch(warning, /`git push origin main`/);
 });

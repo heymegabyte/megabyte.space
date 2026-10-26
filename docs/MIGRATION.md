@@ -357,3 +357,18 @@ Fresh frozen root install, 137/137 root script tests, scripts typecheck and exac
 fork fetchability pass. Fork `0eeb9053` and upstream `bd10b0ec` unchanged. No production
 mutation, pin adoption, full fork build, candidate runtime, authenticated journey, native
 client, data reconciliation or visual acceptance credited; migration gates remain open.
+
+
+## 19. Receipt guard evidence boundary (fire-322, 2026-10-26)
+
+`node scripts/check-deploy-state.mjs --json` retains its existing statuses and fields:
+`ok` means the receipt fork matches the committed gitlink; `drift` means they differ.
+Neither establishes live source identity. Outer changes can include deployable wrapper
+or configuration changes, even when the fork matches. `--ci` still exits 1 on receipt
+fork mismatch; default mode remains advisory. The publication warning compares against
+the fetched local `origin/main`, which may be stale; the fleet runner owns publication.
+Regression coverage: `node --test scripts/check-deploy-state.test.ts`.
+No receipt, Worker version, configuration, submodule pin or visual acceptance changed.
+
+Next evidence task: correlate immutable per-Worker version metadata with both wrapper
+and fork source, without inferring a whole-estate deployment from one matching Worker.

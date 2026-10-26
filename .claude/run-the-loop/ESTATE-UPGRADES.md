@@ -12,7 +12,7 @@ fire (same as the prior ledger). Audit evidence in commit history + the agent fi
 | 2 | 9 | Security | **CSP + Permissions-Policy + COOP/COEP/CORP on every surface.** Apex + workers shipped only HSTS/nosniff/XFO/referrer. | ◑ PARTIAL — MCP server shipped + verified (CSP, Permissions-Policy, COOP, CORP; protocol intact). NEXT: a CAREFUL CSP on the apex SPA (test login/SSO/API — a wrong CSP locks out the force-login front door) + inbox/agent workers. |
 | 3 | 9 | Perf | **SSR/prerender the first viewport** (TanStack Start/hydrateRoot) to fix the ~7s apex LCP — currently gated on parsing the 1.2MB eager `index` chunk. | ⏸ queued (dedicated session). |
 | 4 | 9 | AI / North Star | **Goals→Outcomes loop**: a "tell it an outcome → it plans, executes, verifies, adapts until achieved" surface — the Autonomous-Business-OS core. | ⏸ queued (dedicated; the North Star). |
-| 5 | 8 | GEO / brand | **OG/Twitter/JSON-LD/canonical/description on the public surfaces.** All three (login gate, mcp, inbox) had only a `<title>`. | ◑ PARTIAL — MCP server shipped + verified. NEXT: the apex login-gate `<head>` (brand front door; router-only deploy) + a branded 1200×630 OG image. |
+| 5 | 8 | GEO / brand | **OG/Twitter/JSON-LD/canonical/description on the public surfaces.** All three (login gate, mcp, inbox) had only a `<title>`. | ✅ SHIPPED — **apex login gate** (router `e89c7af7`, verified: meta/OG/Twitter/JSON-LD/canonical present, login contract intact) **+ MCP server**. (inbox is Access-gated → GEO moot.) NEXT: a branded 1200×630 OG image for `summary_large_image` cards. |
 | 6 | 8 | Reliability | **Gradual deploy + auto-rollback**: `deploy.ts` → `wrangler versions upload` → 10%→100% with error-rate rollback (today a bare instant-100% `wrangler deploy`). | ⏸ queued. |
 | 7 | 8 | AI / North Star | **Wire the approval-inbox to REAL OS agent actions** (not just GitHub PRs) — close the propose→approve→execute loop (#7 depth). | ⏸ queued (dedicated). |
 | 8 | 8 | Data | **D1 Sessions API read-replication** on `megabyte-auth` — free, cuts global auth-check latency (EWR-primary today). | ⏸ queued (code change). |
@@ -24,9 +24,11 @@ fire (same as the prior ledger). Audit evidence in commit history + the agent fi
 | 14 | 6 | DX / observability | **CI gate running the `control-plane` tests** (fleet/cost/preview) on push + a Workers-Analytics-Engine error-rate alert → auto-issue. | ⏸ queued (shippable-next). |
 | 15 | 6 | Data / perf | **R2 versioning + lifecycle on app buckets** (blueprints/avatars) + `immutable` asset cache + lazy-load monaco(2.6MB)/three(458KB). | ◑ PARTIAL — backup-bucket lifecycle shipped; app-bucket versioning + asset-cache + lazy-vendor queued. |
 
-## Shipped this cycle (fire 2026-10-26)
+## Shipped this cycle (2026-10-26)
 - **#1** auth-D1→R2 offsite backup (verified round-trip) + reusable script + 90d retention.
-- **#2/#5 (MCP surface)** CSP + Permissions-Policy + COOP/CORP + GEO `<head>` (OG/Twitter/JSON-LD/canonical) on `mcp.megabyte.space`, verified (protocol intact).
+- **#2 (MCP surface)** CSP + Permissions-Policy + COOP/CORP on `mcp.megabyte.space`, verified (protocol intact).
+- **#5 GEO** OG/Twitter/JSON-LD/canonical/description on BOTH the MCP server AND the apex login gate (`e89c7af7`, verified — login contract intact).
+- **#15 (partial)** 90d R2 lifecycle on the backup bucket.
 
 ## Notes
 - The rate-limited audit agents (4/5) capped research depth on clusters B-E; those were completed lead-side (live-surface audits + estate knowledge). A deeper research pass can refine 6-15.

@@ -16,6 +16,9 @@ interface Env {
   // CF-native per-colo rate limiter (unsafe binding) — protects the public JSON-RPC surface from
   // abuse / cost amplification (each tools/call fans out to the OS origin). Fail-soft if unbound.
   MCP_RATELIMIT?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+  // CF version-metadata binding — the deployed Worker version {id, tag, timestamp}, injected at deploy
+  // (never hardcoded → never rots). Surfaced at GET /health so monitoring can assert the live version.
+  CF_VERSION?: { id: string; tag: string; timestamp: string };
 }
 
 const SERVER = { name: "megabyte-os", version: "0.1.0" };
@@ -219,6 +222,13 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
     if (req.method === "GET") {
+      // Version-stamped health probe — monitoring (Uptime Kuma) can assert the LIVE deployed version.
+      if (new URL(req.url).pathname === "/health") {
+        return Response.json(
+          { ok: true, service: SERVER.name, version: env.CF_VERSION ?? null, protocol: DEFAULT_PROTOCOL, ts: new Date().toISOString() },
+          { headers: { ...CORS, ...SEC, "cache-control": "no-store" } },
+        );
+      }
       // Only the MCP SSE-stream probe (Accept: text/event-stream) gets 405 — this server is
       // request/response only, no server-initiated stream. EVERY other GET (browsers, uptime
       // monitors, bare curl) gets the info page (200) so the endpoint is human-friendly + monitorable.

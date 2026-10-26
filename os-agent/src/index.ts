@@ -21,6 +21,8 @@ interface Env {
   // CF-native per-colo rate limiter — bounds Workers-AI spend on the public, unauthed POST path (a
   // caller can rotate session-ids past the per-session turn cap). Fail-soft if unbound.
   AGENT_RATELIMIT?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+  // CF version-metadata binding — the deployed Worker version, injected at deploy. Surfaced at /health.
+  CF_VERSION?: { id: string; tag: string; timestamp: string };
 }
 
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
@@ -131,6 +133,12 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     const url = new URL(request.url);
+    // Version-stamped health probe — monitoring can assert the LIVE deployed version.
+    if (url.pathname === "/health")
+      return Response.json(
+        { ok: true, service: "megabyte-os-agent", version: env.CF_VERSION ?? null, model: MODEL, ts: new Date().toISOString() },
+        { headers: { ...CORS, "cache-control": "no-store" } },
+      );
     const m = url.pathname.match(/^\/agents\/os-agent\/([^/]+)\/?$/);
     if (m) {
       const agent = await getAgentByName(env.OSAgent, decodeURIComponent(m[1]));

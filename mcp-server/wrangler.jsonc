@@ -23,6 +23,9 @@
     "logs": { "invocation_logs": false }
   },
 
+  // CF version-metadata binding — surfaces the deployed version {id,tag,timestamp} at GET /health.
+  "version_metadata": { "binding": "CF_VERSION" },
+
   // CF-native per-colo rate limiter protecting the public JSON-RPC POST surface (60 req/min/IP).
   // Simpler than a DO (no migration, no class) and the documented primitive. Bound as env.MCP_RATELIMIT;
   // the worker fail-soft-skips the check if this is ever absent.

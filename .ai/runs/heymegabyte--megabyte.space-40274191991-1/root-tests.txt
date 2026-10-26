@@ -1,0 +1,6 @@
+node --test scripts/**/*.test.ts scripts/**/*.test.mjs
+137 tests; 137 passed; 0 failed; 0 skipped.
+node scripts/check-scripts-types.mjs
+SCRIPTS-TYPES GREEN.
+corepack pnpm install --frozen-lockfile
+pnpm 11.17.0; frozen root install passed.

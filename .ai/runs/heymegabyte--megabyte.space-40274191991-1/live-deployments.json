@@ -1,0 +1,2209 @@
+{
+  "observedAt": "2026-10-26T05:27:41.529546+00:00",
+  "mode": "read-only",
+  "accountId": "84fa0d1b16ff8086dd958c468ce7fd59",
+  "workers": [
+    {
+      "name": "megabyte-os",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "f176b5bb-be54-453c-a819-cfed49c32656",
+          "created_on": "2026-10-25T22:08:14.020256Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b83778c5-fe04-4d2f-b32a-9f42b88c1a83",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c2c45349-4230-43f7-9b8e-96cee18c0f8e",
+          "created_on": "2026-10-25T07:47:28.750405Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "128dadf1-167a-40dd-868a-01c355b19749",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "2bb72bd9-0893-496e-acfa-846a47d4d975",
+          "created_on": "2026-10-25T06:55:51.220623Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "2562a0e5-a497-4f86-9e23-d93d9cbb3bc1",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "7c4955eb-4df5-4f12-ae4a-66a498f67065",
+          "created_on": "2026-10-25T02:15:57.757519Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d57aad67-c387-435c-9650-9f296613f645",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "5d79a9c6-c666-4eab-a68b-8b8cfa790e3d",
+          "created_on": "2026-10-24T17:52:26.730301Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "360c6413-73d2-4f77-8c35-72418543e242",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "1339b6f2-bd79-40d6-985f-e1a62156a386",
+          "created_on": "2026-10-24T17:47:16.34643Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3d4506fd-e941-425d-8fa8-110d03e4c014",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "9c8d5e8e-9e12-4063-bfdf-9e27df2ffae2",
+          "created_on": "2026-10-24T17:37:48.586761Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1318aad4-6988-4894-968b-3dcd4ad51ac2",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e50d8dfe-9fa8-43dd-8f68-a7ec1fa8130f",
+          "created_on": "2026-10-24T14:57:29.326481Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "951606b9-b115-43aa-8c18-132299dd4e1a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "fdd61754-a4e7-420a-9f1f-ee93e79388dd",
+          "created_on": "2026-10-11T02:45:45.791476Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3fd7e0a6-bf6d-4ce6-9cf1-863766f30c0a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3107650c-95ed-41cc-a011-6cc05a2f63ac",
+          "created_on": "2026-10-11T00:33:34.962522Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "92ca8da2-3a17-491e-afaa-7cc141125760",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "f176b5bb-be54-453c-a819-cfed49c32656",
+        "created_on": "2026-10-25T22:08:14.020256Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "b83778c5-fe04-4d2f-b32a-9f42b88c1a83",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "b83778c5-fe04-4d2f-b32a-9f42b88c1a83",
+          "success": true,
+          "created_on": "2026-10-25T22:08:12.736735Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-backend",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "a7ac8dbb-2862-4674-97ab-7e736fbb6d18",
+          "created_on": "2026-10-25T22:08:06.147923Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "bf55a8dc-1a02-458c-8460-4cc734683d7b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "93fc929f-ccce-4002-9f7b-4b2109b0cd18",
+          "created_on": "2026-10-25T07:47:18.292605Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "04b860fe-122f-462a-9f11-aee9da655c15",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3f893b63-2daf-4fcb-b9a3-1b7d1bcbe299",
+          "created_on": "2026-10-25T06:55:44.586027Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b3c799ae-7fc5-4c71-9fe7-90c9662172c8",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6152d417-9da1-4bff-9281-f94431d570fb",
+          "created_on": "2026-10-25T02:15:52.642695Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "c3dcf1d6-913d-4368-af27-4c8fff977ca8",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "87a7c1f1-3377-4b6a-8721-c99b919cf60a",
+          "created_on": "2026-10-24T17:52:21.069889Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1be1a543-5d70-41ac-a003-a0a8acb3224f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "23a1c36b-1cbb-4cc5-b3dc-2003532541cf",
+          "created_on": "2026-10-24T17:47:11.990782Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1141a6fc-de1a-43e0-a821-a5bd448cfbd2",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "42bb29e1-f635-4820-ae31-b1e8e32831e0",
+          "created_on": "2026-10-24T17:37:43.247673Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ef75c77d-23f5-4ffb-8eef-82c7e32a3b2a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "02fae798-46a7-450d-9315-93e283ecd393",
+          "created_on": "2026-10-11T02:45:38.320993Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1f16f36e-202d-4832-92d3-7fe24991b4ae",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "9734316d-32bc-4e12-b0d9-566ff155ea0f",
+          "created_on": "2026-10-11T00:33:27.132039Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "87fef982-c4a5-4c63-8ca4-913a9e196606",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "40d0f243-7207-4b45-acde-897b1314454e",
+          "created_on": "2026-10-10T05:38:15.974796Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "053419e2-fe64-4435-9b42-ce769f772b2f",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "a7ac8dbb-2862-4674-97ab-7e736fbb6d18",
+        "created_on": "2026-10-25T22:08:06.147923Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "bf55a8dc-1a02-458c-8460-4cc734683d7b",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "bf55a8dc-1a02-458c-8460-4cc734683d7b",
+          "success": true,
+          "created_on": "2026-10-25T22:08:05.096961Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-context",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "0dde5c2a-efcd-40b5-8e64-3d28a1f228c7",
+          "created_on": "2026-10-25T22:06:34.925863Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ddd7851f-f558-46c8-8362-a8ee94ed663d",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "ec891ee3-9e6c-4233-a8c9-7709fc12ec75",
+          "created_on": "2026-10-25T07:45:40.54703Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "c3d9cf3e-11d4-4e68-8972-1578df5c54de",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "01f9531c-c7d0-46d2-a27d-3929b7a3f242",
+          "created_on": "2026-10-25T06:54:07.185595Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "be78c2f3-b908-4886-9207-87b151eaad6b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "62c6eed1-262c-416a-a3a7-1cccefce8749",
+          "created_on": "2026-10-25T02:14:22.136979Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "02dc631d-6c29-45df-b809-38698c5e7a09",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e7b7c044-0349-4df7-8296-989359cf3442",
+          "created_on": "2026-10-24T17:51:00.67316Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d1249421-b046-4066-bd13-1f2fe1259bc2",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "b9d2f092-38b0-4977-9fa3-397d6cb39e59",
+          "created_on": "2026-10-24T17:46:47.288059Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "bdd4faa3-109c-4e79-af41-fbfab94f9456",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "77e32a5a-3a7e-4590-be22-6051c0cf9950",
+          "created_on": "2026-10-24T17:37:23.793893Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "a6812a7a-855f-4c9c-91a4-b72bedc84385",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "54227c24-23f1-4dfc-8128-8f79643f5381",
+          "created_on": "2026-10-24T15:23:07.335253Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e02d5ab9-5a69-49f3-9670-a2af4e5389c0",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c75ac09a-ebbe-4ae1-8551-4f2bd43fe4b8",
+          "created_on": "2026-10-24T14:54:49.351846Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "2f4781c7-80ba-40e2-ad50-a93f6b5e106c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "532c0100-5fce-4e3c-a92a-d99040a613cb",
+          "created_on": "2026-10-11T02:45:21.654917Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9e120213-151e-4167-b303-d3ac333968da",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "0dde5c2a-efcd-40b5-8e64-3d28a1f228c7",
+        "created_on": "2026-10-25T22:06:34.925863Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "ddd7851f-f558-46c8-8362-a8ee94ed663d",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "ddd7851f-f558-46c8-8362-a8ee94ed663d",
+          "success": true,
+          "created_on": "2026-10-25T22:06:34.105484Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-scheduler",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "84c813ab-8c8c-4d9a-82da-e3fb31c33b24",
+          "created_on": "2026-10-25T22:06:40.660924Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "eca1b854-2c8c-4b38-bb15-0da9aed1981f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e4c531da-9df4-44bc-8948-d986be1b7418",
+          "created_on": "2026-10-25T07:45:46.79314Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3b2ba9d9-12da-4a16-92a0-dc0d8d7ea32c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "23060094-0c04-46d1-9a43-53ef1ee5ccf5",
+          "created_on": "2026-10-25T06:54:17.45491Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ac5ba347-629e-40a1-aabd-691d3ad80642",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "4a358362-25f5-4bbe-a732-492f84f2c222",
+          "created_on": "2026-10-25T02:14:27.217462Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3560f94f-f995-439f-b1e5-4393cbc01f3a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c2a04b0b-7b39-45bd-8f70-46b27d0c5083",
+          "created_on": "2026-10-24T17:51:06.809229Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e0a0413b-6266-4b08-8ef1-dd87d2e456cc",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "4f7ecb4d-cbb9-4f7e-8bcb-00095b627e0f",
+          "created_on": "2026-10-24T17:46:52.436094Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "f2c1f623-62aa-459e-8292-2352c5e8832c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c8c25750-45f9-4da8-be2f-4ded4c3b3112",
+          "created_on": "2026-10-24T17:37:29.136475Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "313de719-e115-4418-b7fe-ac15bf6f320e",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3bc804a8-c9da-4296-afa8-712cb55820ce",
+          "created_on": "2026-10-24T15:23:12.928193Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "fa0e21ce-9b26-476c-a0f4-672f74e01b56",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "be50eb02-15e2-435c-9e4c-4410d3ff45b9",
+          "created_on": "2026-10-24T14:54:56.729228Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "8998e4f5-7c85-4a78-9ef2-68b9b313863f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "472e2863-da99-4616-8c90-40533f07f0b7",
+          "created_on": "2026-10-11T02:45:26.186645Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "587746b7-36b6-45c0-9c24-9d901768d91b",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "84c813ab-8c8c-4d9a-82da-e3fb31c33b24",
+        "created_on": "2026-10-25T22:06:40.660924Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "eca1b854-2c8c-4b38-bb15-0da9aed1981f",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "eca1b854-2c8c-4b38-bb15-0da9aed1981f",
+          "success": true,
+          "created_on": "2026-10-25T22:06:40.218125Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-custom",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "8751da73-55c1-4f4f-8867-65145bbce87f",
+          "created_on": "2026-10-25T22:06:46.408796Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "04c1551b-43f0-4bb3-81df-01949c115e72",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "7afb25ca-807a-4fc5-88d2-b659537afca8",
+          "created_on": "2026-10-25T07:45:56.243203Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "82e7aace-32e1-468a-a40a-a9c80bcce94b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6c07cd72-9e94-4d51-bef6-90b2ba545124",
+          "created_on": "2026-10-25T06:54:24.243581Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "0f56b559-b7b1-42c2-9143-7486336022ea",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e123c424-5733-4eb8-8a75-53401972e349",
+          "created_on": "2026-10-25T02:14:31.834054Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "995a2a61-d8b6-43fc-8250-36237d1ceeee",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "884942c8-ae36-43bb-b82e-070724e98dea",
+          "created_on": "2026-10-24T17:51:11.888433Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "4869cf53-6d40-4296-8c24-3dde05d892b0",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6abead7c-99a3-4220-a287-e567a7bf342f",
+          "created_on": "2026-10-24T17:46:57.240486Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e6d1567b-de63-472c-8fa8-15fe430ca5d3",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "f01aa3dd-f08b-4e91-b849-f4e662d88dba",
+          "created_on": "2026-10-24T17:37:33.894372Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "c25bed7f-238c-4c32-bfcb-f1e9cef9d05f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "cd246bac-8c8b-4371-ad5b-c7e04924d64e",
+          "created_on": "2026-10-24T15:23:18.058674Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "53e2ba01-29db-4f40-8952-66e6a540fb1b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "539111c8-7866-43e4-bec8-c4d2731a9e53",
+          "created_on": "2026-10-24T14:55:05.796078Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "15396b4e-1a93-48eb-bc02-538ef1c624eb",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "18501266-9a9b-40e9-b0d1-af38c8a153ba",
+          "created_on": "2026-10-11T02:45:30.32436Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9fe465a2-9227-409f-af14-9a3fbf942982",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "8751da73-55c1-4f4f-8867-65145bbce87f",
+        "created_on": "2026-10-25T22:06:46.408796Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "04c1551b-43f0-4bb3-81df-01949c115e72",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "04c1551b-43f0-4bb3-81df-01949c115e72",
+          "success": true,
+          "created_on": "2026-10-25T22:06:45.979544Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-errors",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "f1d34621-5403-436a-a905-224dca21dc0d",
+          "created_on": "2026-10-25T22:06:26.03506Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "940636d0-3409-4291-adf2-0fd3306791d0",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "31bd7a7b-0df0-4a7a-bba5-d6fd6f0842a8",
+          "created_on": "2026-10-25T07:45:33.381052Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "29e1f6eb-5879-42a0-90ed-de52a317dcf3",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "78d105d7-d4de-4cb6-b0ef-6bc025b10862",
+          "created_on": "2026-10-25T06:54:00.447685Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "31100086-3995-46a5-b202-2eedbb44d293",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "11e62d30-4472-44ea-8959-cdcf61670737",
+          "created_on": "2026-10-25T02:14:15.438348Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1fbbff09-60ea-41d3-a897-1f218c3bada7",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6560f66e-48da-43b2-9ed5-b7ed0b5744e2",
+          "created_on": "2026-10-24T17:50:54.514291Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3fb16240-1a20-4c0d-b313-dba9efeb210f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "342c9552-d6b7-49ce-8a86-fb449e5fd986",
+          "created_on": "2026-10-24T17:46:40.650748Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "269cad00-2e22-4bd9-be60-1bfb1f85c255",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "46192523-4903-4bd3-82d6-934a5fb8fa4b",
+          "created_on": "2026-10-24T17:37:16.431991Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "05d9edc9-8be9-4022-998c-353c9b6ba484",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "5845dbb5-eb1e-484f-9502-37ad84f415c0",
+          "created_on": "2026-10-24T15:23:00.222735Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "aa3da85a-670c-489a-8852-3ea67a051e92",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "940efedb-1ca0-4007-988e-5467ee57b8dd",
+          "created_on": "2026-10-24T14:54:38.587198Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "275df8eb-6b3e-47fb-bd59-4c5b6a414505",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "66fe4fcc-edb4-4b13-a05a-a746bcf3ac29",
+          "created_on": "2026-10-11T02:45:15.004478Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9d4d9cc1-bbf1-4b82-9c38-24054e2cd333",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "f1d34621-5403-436a-a905-224dca21dc0d",
+        "created_on": "2026-10-25T22:06:26.03506Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "940636d0-3409-4291-adf2-0fd3306791d0",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "940636d0-3409-4291-adf2-0fd3306791d0",
+          "success": true,
+          "created_on": "2026-10-25T22:06:25.421968Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-auth",
+      "httpStatus": 200,
+      "success": true,
+      "deployments": [
+        {
+          "id": "3765fd91-6882-48a1-98eb-5e69fc82884e",
+          "created_on": "2026-10-03T20:35:15.659879Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "de23b686-a018-41ff-aa7a-44f4e52d4fca",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "a7a039f0-e68f-4fda-8b5f-c2e9ef6396ae",
+          "created_on": "2026-10-03T20:35:10.878035Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "515896c6-43dd-4493-a0ed-addc9465141a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "701d1c05-ef58-4738-945a-1c396bbc8ad6",
+          "created_on": "2026-10-03T20:35:09.20482Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "0f23b2bb-dbcd-48bb-ae60-9f9a46ca6515",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "cb3cb83e-3ed8-48c4-82e6-c315fb04b220",
+          "created_on": "2026-10-03T20:35:07.576837Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "40e75a5d-6474-425c-9b75-b1f6560abb27",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "88e0ccd5-30d7-41b6-b6bf-6ee3e21eba58",
+          "created_on": "2026-10-03T20:35:05.866878Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d48bf275-9de2-4fec-8784-02ceb20c7e52",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "cc1343ac-0a2c-447f-8004-c01dac4361ae",
+          "created_on": "2026-10-03T03:57:55.937542Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "acc4d37b-6905-4017-995a-ea9aefbe5868",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3ab839d9-9fa4-4338-a8a9-25c29bb97753",
+          "created_on": "2026-10-03T03:08:05.733581Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "cd943d94-dba0-45a4-a680-936db6687b29",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "9622f09c-461f-4f79-ae77-3d6effbb56f9",
+          "created_on": "2026-10-03T02:05:32.635036Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "2449bbae-fa1a-4860-87b4-cd5494b088cb",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "7ab14312-2dd3-430b-8fc3-fb55078faf91",
+          "created_on": "2026-10-03T02:05:28.253919Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "a957ae65-8ddb-4767-b02f-a961f1e02a0c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "2516c26d-f51f-496d-b6b8-4ba528650ac8",
+          "created_on": "2026-10-03T02:05:26.666507Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "435608ba-de55-41c3-bf0f-e1f13dd2ccb0",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "errorCodes": [],
+      "latestReturnedDeployment": {
+        "id": "3765fd91-6882-48a1-98eb-5e69fc82884e",
+        "created_on": "2026-10-03T20:35:15.659879Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "de23b686-a018-41ff-aa7a-44f4e52d4fca",
+            "percentage": 100
+          }
+        ]
+      },
+      "historyComplete": false,
+      "versionDetails": [
+        {
+          "id": "de23b686-a018-41ff-aa7a-44f4e52d4fca",
+          "success": true,
+          "created_on": "2026-10-03T20:35:14.77622Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-github",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "06b497f8-542a-438e-9be1-425fe94f1d48",
+          "created_on": "2026-10-25T22:06:52.02861Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "166a1057-51af-48f5-82c1-12613e3cbacd",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "4c4fb1c6-a803-432f-a65b-9ff53d3ca342",
+          "created_on": "2026-10-25T07:46:04.596831Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "db3ea215-58ce-4c81-994f-248e80ff3c9b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "7365e123-1b2f-4f5a-8109-a2eb17a7bf6d",
+          "created_on": "2026-10-25T06:54:29.561111Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ccdbdc41-194a-43fb-81d3-b90ed2a2529d",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "86f22502-3517-4977-86a0-564946c43a41",
+          "created_on": "2026-10-25T02:14:38.934679Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e4bbab23-69c4-4b63-bd73-ea59614ffcfe",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c1395856-0157-41ec-8ce6-25e06fcb58b7",
+          "created_on": "2026-10-24T17:51:17.15352Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "f02910bd-6a68-4a43-baf6-5685028b44c4",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "d3e73805-b005-4fb0-bec0-2dd9a9049ff9",
+          "created_on": "2026-10-24T17:47:02.361904Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9cc0d527-e491-41cc-ae84-5bca405cc7df",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "06b497f8-542a-438e-9be1-425fe94f1d48",
+        "created_on": "2026-10-25T22:06:52.02861Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "166a1057-51af-48f5-82c1-12613e3cbacd",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "166a1057-51af-48f5-82c1-12613e3cbacd",
+          "success": true,
+          "created_on": "2026-10-25T22:06:51.544874Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-google",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "1438c2f6-c930-47cb-b8e4-f4c4c32aa9cb",
+          "created_on": "2026-10-25T22:06:59.140186Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ae9e2587-6d59-4c92-91c8-411942c0b9ad",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "38d58a02-2dc9-43c7-94e6-3c386285d568",
+          "created_on": "2026-10-25T07:46:10.968458Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "6e0d663c-bb92-4e46-bdbe-5d068ef1c93a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "56e2f8db-4604-4bb4-a2c8-f819adc1c8fd",
+          "created_on": "2026-10-25T06:54:36.260918Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "2b569410-d6e9-46ad-9ecc-a906d680a2bc",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "562b9060-ae72-4063-ab00-06c23d8c9666",
+          "created_on": "2026-10-25T02:14:45.274507Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e8239528-17fe-48bb-a981-217db9c5f588",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "a70190d9-5187-47c0-8741-eab1c057cd91",
+          "created_on": "2026-10-24T17:51:22.743245Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "33cf4de8-e679-4afa-a317-7bdeb04f62c2",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "1438c2f6-c930-47cb-b8e4-f4c4c32aa9cb",
+        "created_on": "2026-10-25T22:06:59.140186Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "ae9e2587-6d59-4c92-91c8-411942c0b9ad",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "ae9e2587-6d59-4c92-91c8-411942c0b9ad",
+          "success": true,
+          "created_on": "2026-10-25T22:06:58.363018Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-slack",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "62b9270b-8381-4ca2-b3b8-48c7375c98e7",
+          "created_on": "2026-10-25T22:07:05.671792Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "bf5d1cf6-41f0-4751-a29f-040cf34c8ecc",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "cb1520ab-15e7-4300-a120-ecc46b35401a",
+          "created_on": "2026-10-25T07:46:17.725791Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "59b0f5df-4575-4325-8cb7-4b7cf2541320",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "bcd0dcff-727a-4bbb-aa17-b6cba7b87185",
+          "created_on": "2026-10-25T06:54:41.290382Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "fb07b2a9-a9d7-4d5c-8fae-a7ef5ee30b22",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3252de39-197e-4324-96b4-d50b66d2b5f0",
+          "created_on": "2026-10-25T02:14:50.123859Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "6627e367-401e-40b1-9a94-9ddba83d155b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "3466f094-a0f2-4c5e-9b2d-0df1eda8056a",
+          "created_on": "2026-10-24T17:51:27.74164Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "5bf97beb-959d-428f-95ef-76ff3bbac6e6",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "62b9270b-8381-4ca2-b3b8-48c7375c98e7",
+        "created_on": "2026-10-25T22:07:05.671792Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "bf5d1cf6-41f0-4751-a29f-040cf34c8ecc",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "bf5d1cf6-41f0-4751-a29f-040cf34c8ecc",
+          "success": true,
+          "created_on": "2026-10-25T22:07:05.15823Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-notion",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "e60927ea-3a38-457a-a899-1fa13322065b",
+          "created_on": "2026-10-25T22:07:11.186357Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "449cbb06-2c47-416f-b906-38849d65d3b5",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "5c76df35-ecb5-4c58-b74e-73877405d96e",
+          "created_on": "2026-10-25T07:46:22.994535Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "54e8f209-d34a-4528-9723-ff774ce4ee48",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "24e1cf9f-b64a-45c4-872d-8e677ed7eddf",
+          "created_on": "2026-10-25T06:54:46.420617Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b847daae-eebf-4ee8-96e4-80feec1eb38a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e12b7e9d-1e45-4518-9bc2-1cfb086f07dc",
+          "created_on": "2026-10-25T02:14:54.982485Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ba5a1f28-6a62-4e6a-a7e0-6e1e3d1c6854",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "0f7abbfd-de96-47b7-b6ad-00e4d33e4857",
+          "created_on": "2026-10-24T17:51:32.339991Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "61b715c1-7de8-49d0-b00d-96e325151d02",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "e60927ea-3a38-457a-a899-1fa13322065b",
+        "created_on": "2026-10-25T22:07:11.186357Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "449cbb06-2c47-416f-b906-38849d65d3b5",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "449cbb06-2c47-416f-b906-38849d65d3b5",
+          "success": true,
+          "created_on": "2026-10-25T22:07:10.679742Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-linear",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "c897996e-bc52-4b67-a66d-8eedc1ec9853",
+          "created_on": "2026-10-25T22:07:16.486555Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3f43d505-9ea6-456b-a910-7d2e31f7e222",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "b9c0b91c-4e81-47cb-9131-7bc6a40a66bf",
+          "created_on": "2026-10-25T07:46:29.25534Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "35b7be39-5549-4649-b105-fa4e2d6bd403",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "2a1b017a-482e-4f55-942c-2425111434c4",
+          "created_on": "2026-10-25T06:54:51.722259Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9f55fd0f-a6e4-4a1e-881a-58027cbb7dcd",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "aa309f94-001e-48c5-8f39-23c9d7054258",
+          "created_on": "2026-10-25T02:14:59.969922Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "c5ebb8d9-5cdb-4eae-a724-9ba9caa76ebe",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e3441ea4-c707-40c1-9518-c9b76e002c8c",
+          "created_on": "2026-10-24T17:51:37.00715Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e93ae0b7-c6a5-4195-b88d-1babe39e22df",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "c897996e-bc52-4b67-a66d-8eedc1ec9853",
+        "created_on": "2026-10-25T22:07:16.486555Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "3f43d505-9ea6-456b-a910-7d2e31f7e222",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "3f43d505-9ea6-456b-a910-7d2e31f7e222",
+          "success": true,
+          "created_on": "2026-10-25T22:07:15.996854Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-spotify",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "565c5ba0-bc0e-4c24-b0f0-d3d7f4d746af",
+          "created_on": "2026-10-25T22:07:21.950447Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "01876b22-e3fe-413b-b5f9-3acc15410686",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "c2858452-cc9d-429f-8ff0-8718d4d357a1",
+          "created_on": "2026-10-25T07:46:34.536218Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "0bc68db2-1d8c-49ed-bb71-ba4fd586e28b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "98c580cd-c123-470d-b8c6-10ca744600eb",
+          "created_on": "2026-10-25T06:54:56.971795Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d59e5ea9-98d0-42ab-8672-7250b6568da5",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "5191ba5f-4c5d-4d9b-ba3d-8f13263dbb84",
+          "created_on": "2026-10-25T02:15:06.782671Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b7046ecd-747c-48f5-8740-e8737f4884ba",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e16137a2-2310-490b-834d-ff82437eb391",
+          "created_on": "2026-10-24T17:51:41.843279Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "06d4140c-6d31-44fb-9288-bf60ca50ee9b",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "565c5ba0-bc0e-4c24-b0f0-d3d7f4d746af",
+        "created_on": "2026-10-25T22:07:21.950447Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "01876b22-e3fe-413b-b5f9-3acc15410686",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "01876b22-e3fe-413b-b5f9-3acc15410686",
+          "success": true,
+          "created_on": "2026-10-25T22:07:21.146798Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-supabase",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "15baaab7-5701-4cbe-a6ef-c2ded8e0343f",
+          "created_on": "2026-10-25T22:07:27.392882Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "09141231-61de-43c2-8b65-c775a2fdacc9",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "b4790100-1edc-4e1d-b791-16a5ead486af",
+          "created_on": "2026-10-25T07:46:39.698863Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "ad1235a6-ee1f-4f7d-9aa0-4f089361641c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "1a924f0b-05d9-4613-93be-9c87083e85c8",
+          "created_on": "2026-10-25T06:55:06.658901Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "cbcfab0f-8c2e-4064-8a9d-6dc40f05073a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "569b4ee6-37c8-4498-8ac1-94df7894f2e3",
+          "created_on": "2026-10-25T02:15:12.63637Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "24d54b33-c08a-4bcd-aa1f-384e3800075a",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "74f2f591-5d7c-45e3-b12b-f75baad18bfd",
+          "created_on": "2026-10-24T17:51:46.683811Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "be4ae5ee-3b2d-41f1-bb0f-637390a08f9a",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "15baaab7-5701-4cbe-a6ef-c2ded8e0343f",
+        "created_on": "2026-10-25T22:07:27.392882Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "09141231-61de-43c2-8b65-c775a2fdacc9",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "09141231-61de-43c2-8b65-c775a2fdacc9",
+          "success": true,
+          "created_on": "2026-10-25T22:07:26.986474Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-homeassistant",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "8e6b2326-890d-49a9-8895-e9707c3c8471",
+          "created_on": "2026-10-25T22:07:33.022956Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "81b52c01-e664-4e50-b4d5-60cec28b2fff",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "af59cf5c-183c-4005-860f-fca18ad357fb",
+          "created_on": "2026-10-25T07:46:45.12785Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "14d0061a-060b-4c30-b437-36395e17c723",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "a5e1e7d8-b7e8-427c-9653-013e72680203",
+          "created_on": "2026-10-25T06:55:13.158058Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "2c70e847-db3b-4a5e-875f-a100bd976cff",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "df16ffa9-6672-4da2-be27-956bc2ad31a3",
+          "created_on": "2026-10-25T02:15:18.896619Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "23e93b3a-2a67-45f4-937b-68297de407b3",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6b120399-1287-441f-bf93-64dc1479978c",
+          "created_on": "2026-10-24T17:51:51.933081Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "85da5f45-75ec-4c0c-ad84-ecec4f201db7",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "8e6b2326-890d-49a9-8895-e9707c3c8471",
+        "created_on": "2026-10-25T22:07:33.022956Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "81b52c01-e664-4e50-b4d5-60cec28b2fff",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "81b52c01-e664-4e50-b4d5-60cec28b2fff",
+          "success": true,
+          "created_on": "2026-10-25T22:07:32.546205Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-confluence",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "35e23cf8-506e-4a09-a2df-39aef880d69b",
+          "created_on": "2026-10-25T22:07:38.371792Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "272dfe2f-8f22-48fb-b54b-ed0f24a8a31c",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "ace3a607-124d-4863-b468-9e27619b699e",
+          "created_on": "2026-10-25T07:46:51.459968Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "5e1f01f1-ce73-4a28-9a55-6410127fc668",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "f95c7072-3ed0-4e2e-9d6b-8584ab553afc",
+          "created_on": "2026-10-25T06:55:19.204121Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "1b104fdf-254f-47cd-ac79-e6ddcd843de2",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "e9363bc4-4497-45cc-abad-1153f69fee72",
+          "created_on": "2026-10-25T02:15:24.621918Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d1eddd1c-8a31-4878-babe-41091be72896",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "bab4dccb-8733-4307-b67c-cd140df88d0c",
+          "created_on": "2026-10-24T17:51:56.845357Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "30e488bd-1d52-41bc-9051-86d69b43d9e1",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "35e23cf8-506e-4a09-a2df-39aef880d69b",
+        "created_on": "2026-10-25T22:07:38.371792Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "272dfe2f-8f22-48fb-b54b-ed0f24a8a31c",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "272dfe2f-8f22-48fb-b54b-ed0f24a8a31c",
+          "success": true,
+          "created_on": "2026-10-25T22:07:37.895643Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-mcp",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "f2fb69f0-3911-4516-ae0d-f929eefa8913",
+          "created_on": "2026-10-25T22:07:44.259174Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "e626b39f-4410-488c-a913-4bde5106ff85",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "8c123069-3b2f-4434-ac2b-d15ad0eef3e3",
+          "created_on": "2026-10-25T07:46:57.239317Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "315906ad-79bc-413b-8f5c-0edd29641156",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "96e40933-2356-428e-97ee-14258cd0f681",
+          "created_on": "2026-10-25T06:55:25.058756Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "9f14d12f-9af5-465c-a638-8c5c6a3c9842",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6556e1c3-6b31-4b53-893d-235ca3e60325",
+          "created_on": "2026-10-25T02:15:30.614875Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "819036bf-7142-4601-8c04-c2ccd0b5a96b",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "2fe8e84f-c151-44ba-a0b9-2290517842ef",
+          "created_on": "2026-10-24T17:52:01.722133Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "7622c8ef-89ae-49fb-b10e-1cb4822461f8",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "f2fb69f0-3911-4516-ae0d-f929eefa8913",
+        "created_on": "2026-10-25T22:07:44.259174Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "e626b39f-4410-488c-a913-4bde5106ff85",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "e626b39f-4410-488c-a913-4bde5106ff85",
+          "success": true,
+          "created_on": "2026-10-25T22:07:43.739635Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-mcp-portal",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "d2eca320-739a-480d-8447-485a17b1fc30",
+          "created_on": "2026-10-25T22:07:50.575029Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "93634fa9-564c-434c-9d7c-4f75c7407a49",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "17d08cc1-af03-4931-aefd-2690190bf0d9",
+          "created_on": "2026-10-25T07:47:04.162226Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b769822d-4344-4adb-8b5b-c76ad3bd03b4",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "ba8263e7-4d5f-41d3-9f23-aa6da43bdb4c",
+          "created_on": "2026-10-25T06:55:31.147033Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d7d221fb-2c38-4f11-aa69-ec1f0f987b40",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "6d84db55-7bb1-4987-943b-3e679c39d05b",
+          "created_on": "2026-10-25T02:15:36.819316Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "098ef533-1628-4462-98e9-9bf7c6042101",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "7972764c-a024-4e74-bb9c-e19779401680",
+          "created_on": "2026-10-24T17:52:07.188658Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "4848122a-5e80-4546-8b86-e06f7fce4fb5",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "d2eca320-739a-480d-8447-485a17b1fc30",
+        "created_on": "2026-10-25T22:07:50.575029Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "93634fa9-564c-434c-9d7c-4f75c7407a49",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "93634fa9-564c-434c-9d7c-4f75c7407a49",
+          "success": true,
+          "created_on": "2026-10-25T22:07:49.987736Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    },
+    {
+      "name": "megabyte-os-zoominfo",
+      "historyComplete": false,
+      "httpStatus": 200,
+      "success": true,
+      "errorCodes": [],
+      "deployments": [
+        {
+          "id": "60376592-4207-4c80-8862-af2cd93a4847",
+          "created_on": "2026-10-25T22:07:55.898339Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "3ce82933-ed69-470c-94c6-1bd3da61a574",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "73c50feb-b7c2-4b83-88e9-c1dc2a2209e4",
+          "created_on": "2026-10-25T07:47:09.670303Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "d16d21d2-ddeb-4c9b-932d-756b7efe31d7",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "2913f8d2-3b42-488c-9c17-cbdeb2e2da53",
+          "created_on": "2026-10-25T06:55:36.030884Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "10c50179-805d-4988-84cd-13f06c56dd2f",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "62453218-6ded-41e5-b7ba-1d0e4ff86028",
+          "created_on": "2026-10-25T02:15:42.191873Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "a4e76966-00f0-47b4-a42b-1505d3ec4dfe",
+              "percentage": 100
+            }
+          ]
+        },
+        {
+          "id": "33d05ae9-3ee6-4c5e-93f3-63e1b460178a",
+          "created_on": "2026-10-24T17:52:11.722479Z",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "b2cd1634-6019-4e9e-b0fd-55d96e3025b3",
+              "percentage": 100
+            }
+          ]
+        }
+      ],
+      "latestReturnedDeployment": {
+        "id": "60376592-4207-4c80-8862-af2cd93a4847",
+        "created_on": "2026-10-25T22:07:55.898339Z",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "versions": [
+          {
+            "version_id": "3ce82933-ed69-470c-94c6-1bd3da61a574",
+            "percentage": 100
+          }
+        ]
+      },
+      "versionDetails": [
+        {
+          "id": "3ce82933-ed69-470c-94c6-1bd3da61a574",
+          "success": true,
+          "created_on": "2026-10-25T22:07:55.391886Z",
+          "source": "wrangler",
+          "annotationKeys": [
+            "workers/triggered_by"
+          ],
+          "gitShaAnnotations": {}
+        }
+      ]
+    }
+  ],
+  "credentialAvailable": true,
+  "completedAt": "2026-10-26T05:29:25.400046+00:00",
+  "coverage": "Six configured core workers, twelve EXTRA_GATEKEEPERS and separate Better Auth worker. Ten returned deployments per successful list; not complete history. No routes/bindings/storage inventory."
+}

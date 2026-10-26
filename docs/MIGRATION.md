@@ -326,3 +326,34 @@ See [research](../.ai/runs/heymegabyte--megabyte.space-40250570315-1/codex-resea
 Unchanged declared fork 0eeb9053 fetches; official HEAD remains bd10b0ec. The old
 80b7209e deployment receipt still differs from the pin; live versions remain unverified.
 No deployment, migration acceptance, browser journey or visual score is credited.
+
+
+## 18. Live deployment inventory — fire-321 (2026-10-26)
+
+Read-only Cloudflare deployment-list and latest-returned version-detail GETs succeeded
+for **19 Workers**: six configured core Workers, all twelve `EXTRA_GATEKEEPERS`, and
+separate `megabyte-auth`. The six core + twelve integration deployment records are dated
+2026-10-25; auth is dated 2026-10-03. Each latest returned record allocates 100% to one
+version. Router deployment `f176b5bb-be54-453c-a819-cfed49c32656` references version
+`b83778c5-fe04-4d2f-b32a-9f42b88c1a83`. These are point-in-time control-plane records,
+not authenticated runtime, route ownership, state integrity or live traffic acceptance.
+
+[Sanitized inventory](../.ai/runs/heymegabyte--megabyte.space-40274191991-1/live-deployments.json),
+[independent research](../.ai/runs/heymegabyte--megabyte.space-40274191991-1/codex-research.md)
+and [review convergence](../.ai/runs/heymegabyte--megabyte.space-40274191991-1/review-synthesis.md).
+Ten returned history entries per Worker are bounded, not complete deployment histories.
+Version details contain no Git SHA annotations. Newer deployments than the October 9
+receipt are confirmed; deployed fork identity is still unknown. Keep the old receipt
+unchanged until immutable source correlation is established.
+
+**Operator guard clarification (loop improvement):** `check-deploy-state` compares git
+with a local receipt only. A mismatch proves receipt disagreement, not that production
+is behind HEAD or that a deploy was skipped. A match does not prove current live source,
+wrapper/config equality or deployment success. Do not redeploy or stamp current HEAD
+solely to silence this warning. Before modifying the receipt, correlate per-Worker
+version IDs with immutable build/source evidence; retain uncertainty if unavailable.
+
+Fresh frozen root install, 137/137 root script tests, scripts typecheck and exact declared
+fork fetchability pass. Fork `0eeb9053` and upstream `bd10b0ec` unchanged. No production
+mutation, pin adoption, full fork build, candidate runtime, authenticated journey, native
+client, data reconciliation or visual acceptance credited; migration gates remain open.

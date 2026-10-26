@@ -4176,3 +4176,21 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Next: live Worker inventory, candidate-wrapper build/provisioning and protected
   vendor acceptance. GitHub owns cadence, outer runner owns publication. Clean gate
   and lease release follow this atomic bookkeeping commit; no watchdog armed.
+
+## fire-320 — recover retained commit-guard tests (2026-10-25)
+
+- Slice `d8ea442b`: recovered the actual uncommitted patch from failed run 40228684435,
+  leaving the retained tree intact. Added two real Git copy-record cases with unusual
+  source AND destination paths; exact-entry checks prevent unrelated dirty-source passes.
+- Inspected GitHub Actions failures, receipts, worktrees and main ancestry. Latest failed
+  tree clean; recovered prior evidence commit 7faa7d71 is already on origin/main.
+- Fresh verification: 17/17 focused tests, 137/137 root script tests, scripts typecheck,
+  frozen root install and whitespace check green. Initial missing dependency resolved
+  by install; corepack used pinned pnpm because Volta's shim had no pnpm executable.
+- Read-only adversarial review found no blocking issue; fixtures do not prove real
+  submodule publication. Loop improvement is the recovered framing coverage.
+- Unchanged fork 0eeb9053 fetches from declared remote; official HEAD remains bd10b0ec.
+  Receipt 80b7209e still differs; actual live Worker SHA unknown. Queued read-only inventory.
+- No deployment/product change, authenticated long journey, native-client acceptance,
+  storage reconciliation or visual review. Matrix and deploy receipt unchanged.
+  ADR 0002 migration acceptance remains open; GitHub owns next iteration/publication.

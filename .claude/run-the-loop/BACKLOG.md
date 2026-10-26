@@ -55,12 +55,23 @@
 
 ## Migration next-wave — fire-318
 
-- [ ] Reconcile `scripts/deploy.test.ts:189,257` complete service-array fixtures with
+- [x] Reconcile `scripts/deploy.test.ts:189,257` complete service-array fixtures with
   the existing 12 integration bindings; accept only with the full root script suite green
-  while preserving Access, AUTH and vendor-binding assertions. Observed 133/135 this fire.
+  while preserving Access, AUTH and vendor-binding assertions. Fixed in `76354e82` (fire-319);
+  freshly verified fire-320: root suite 137/137 after frozen install.
 - Candidate `bd10b0ec` partial rehearsal now recorded in MIGRATION §15: frozen install,
   Web Search build/7 tests, GitHub configurator/48 Node/189 workerd tests and configurator
   UI 32 Node tests pass. Full wrapper/browser/provisioning acceptance remains unticked.
+
+## Migration next-wave — fire-320
+
+- [ ] Read-only live Worker version inventory: compare the current fork `0eeb9053`
+  and deployed version metadata with the stale `80b7209e` receipt. Preserve the receipt
+  until evidence identifies actual versions; do not infer live drift from receipt age
+  or redeploy the legacy estate merely to silence the detector. Feed inventory into
+  ADR 0002 Phase 1 snapshot and rollback evidence.
+- Verification recovery `d8ea442b`: both-unusual-path Git copy fixtures restored from
+  failed run 40228684435; 17 focused / 137 root tests green, scripts typecheck green.
 
 ## Format
 

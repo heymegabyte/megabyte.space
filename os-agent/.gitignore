@@ -1,0 +1,4 @@
+node_modules/
+.wrangler/
+*.prod.jsonc
+worker-configuration.d.ts

@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "megabyte-os-agent",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Standalone agent pilot (idea #6) — zero apex risk. Public: exposes only PUBLIC OS info (like the
+  // MCP server). A per-session turn cap (durable state) guards the Workers-AI cost; broader rate
+  // limiting is a follow-up.
+  "workers_dev": true,
+  "preview_urls": false,
+
+  // Workers AI for the agent's LLM responses (keyless, in-account).
+  "ai": { "binding": "AI" },
+
+  // The OSAgent is a SQLite-backed Durable Object (the Agents SDK `Agent` base class). The
+  // FlagsResearcher sub-agent is a child-only class discovered via ctx.exports — no binding needed.
+  "durable_objects": {
+    "bindings": [{ "name": "OSAgent", "class_name": "OSAgent" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["OSAgent"] }],
+
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } }
+}

@@ -21,5 +21,18 @@
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["OSAgent"] }],
 
-  "observability": { "enabled": true, "logs": { "invocation_logs": false } }
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+
+  // CF-native per-colo rate limiter bounding Workers-AI spend on the public POST path (20/min/IP).
+  // Simpler than a DO; bound as env.AGENT_RATELIMIT; the worker fail-soft-skips if it's ever absent.
+  "unsafe": {
+    "bindings": [
+      {
+        "name": "AGENT_RATELIMIT",
+        "type": "ratelimit",
+        "namespace_id": "2002",
+        "simple": { "limit": 20, "period": 60 }
+      }
+    ]
+  }
 }

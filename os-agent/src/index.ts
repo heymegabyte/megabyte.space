@@ -18,6 +18,9 @@ import { Agent, getAgentByName } from "agents";
 interface Env {
   AI: { run(model: string, input: unknown): Promise<any> };
   OSAgent: DurableObjectNamespace;
+  // CF-native per-colo rate limiter — bounds Workers-AI spend on the public, unauthed POST path (a
+  // caller can rotate session-ids past the per-session turn cap). Fail-soft if unbound.
+  AGENT_RATELIMIT?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 }
 
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
@@ -134,6 +137,18 @@ export default {
       if (request.method === "GET")
         return Response.json(await agent.info(), { headers: { ...CORS, "cache-control": "no-store" } });
       if (request.method === "POST") {
+        // Rate-limit the cost-bearing LLM path per IP (CF-native). Public + unauthed, and a caller can
+        // rotate session-ids to bypass the per-session turn cap, so an IP limit bounds total Workers-AI
+        // spend from one source. Fail-soft if the binding is absent.
+        if (env.AGENT_RATELIMIT) {
+          const ip = request.headers.get("cf-connecting-ip") || "anon";
+          const { success } = await env.AGENT_RATELIMIT.limit({ key: ip });
+          if (!success)
+            return Response.json(
+              { error: "Rate limit exceeded — max 20 requests/min per IP. Retry shortly." },
+              { status: 429, headers: { ...CORS, "retry-after": "60", "cache-control": "no-store" } },
+            );
+        }
         let body: { message?: string } = {};
         try {
           body = (await request.json()) as { message?: string };

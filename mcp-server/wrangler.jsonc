@@ -16,7 +16,7 @@
   // block otherwise auto-disables the workers.dev URL — keep it as a fallback).
   "routes": [{ "pattern": "mcp.megabyte.space", "custom_domain": true }],
   "workers_dev": true,
-  "preview_urls": false,
+  "preview_urls": true,
 
   "observability": {
     "enabled": true,

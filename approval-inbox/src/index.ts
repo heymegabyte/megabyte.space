@@ -22,10 +22,21 @@ const CORS = {
   "access-control-allow-methods": "GET, OPTIONS",
   "access-control-allow-headers": "content-type",
 };
+// Full security-header set (idea #2). Inbox gating CONFIRMED Access-gated 2026-10-26 via CF Browser
+// Run (a true non-WARP unauthed client got the Access "Sign in" page, NOT the data — this WARP Mac
+// is NOT a valid gating test). CSP is defense-in-depth: the page is static HTML (inline <style>, no
+// <script>, no images/fonts), so default-src 'none' + style-src 'unsafe-inline' holds. Applied to the
+// HTML page AND the /api/approvals JSON.
 const SEC = {
+  "strict-transport-security": "max-age=31536000; includeSubDomains",
   "x-content-type-options": "nosniff",
   "referrer-policy": "strict-origin-when-cross-origin",
   "x-frame-options": "DENY",
+  "permissions-policy": "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  "cross-origin-opener-policy": "same-origin",
+  "cross-origin-resource-policy": "same-origin",
+  "content-security-policy":
+    "default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; frame-ancestors 'none'",
 };
 
 const UA =

@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // NOTE: "megabyte-os-mcp" is TAKEN by the OS's mcp GATEKEEPER (OS-as-MCP-client, has a
+  // McpGatekeeperImpl DO) — this is the OS-as-MCP-SERVER, so it gets a distinct name.
+  "name": "megabyte-os-mcp-server",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+
+  // Standalone worker — deliberately NOT part of the OS deploy pipeline (deployment.jsonc / deploy.ts),
+  // so it carries ZERO apex-deploy risk. Deploy with: cd mcp-server && npx wrangler deploy
+  // workers_dev gives it a public URL (megabyte-os-mcp.<subdomain>.workers.dev) for MCP clients to
+  // connect to; a brandable mcp.megabyte.space custom domain is a follow-up.
+  "workers_dev": true,
+  "preview_urls": false,
+
+  "observability": {
+    "enabled": true,
+    "logs": { "invocation_logs": false }
+  }
+}

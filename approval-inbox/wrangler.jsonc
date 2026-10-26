@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "megabyte-approval-inbox",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+
+  // Brandable gated surface. SECURITY: `*.megabyte.space` custom domains are PUBLIC by default
+  // (custom-domain-workers-are-public memory), and this shows PRIVATE-repo PR data — so it serves
+  // real data ONLY when INBOX_ARMED="1", flipped ON only AFTER an explicit CF Access app for
+  // inbox.megabyte.space is verified (Browser Run unauthed → Access login). Deployed un-armed first.
+  // workers_dev MUST stay false: the CF Access app only gates inbox.megabyte.space, so a
+  // *.workers.dev URL would serve the armed private data UNGATED (a second public door). The
+  // Access-gated custom domain is the ONLY route.
+  "routes": [{ "pattern": "inbox.megabyte.space", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false,
+
+  "vars": {
+    "GH_ORG": "heymegabyte",
+    // ARMED (fire-13) — the CF Access app for inbox.megabyte.space (id 45bdd9ce) was verified to gate
+    // unauthed requests (Browser Run → Access login) BEFORE this was flipped on, so private PR data is
+    // only ever served behind the confirmed gate. Set to "0" to revert to the data-free placeholder.
+    "INBOX_ARMED": "1"
+  },
+
+  "observability": {
+    "enabled": true,
+    "logs": { "invocation_logs": false }
+  }
+}

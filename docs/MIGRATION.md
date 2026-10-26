@@ -312,3 +312,17 @@ HTTP binding and Workshop RPC entrypoint with exact array equality. Focused test
 full root script suite 135/135 and scripts typecheck pass; declared fork 8ccbb45d fetches.
 This clears the fixture debt in §15, not candidate-wrapper or migration acceptance.
 No runtime/configuration/deployment change, authenticated journey or visual pass credited.
+
+
+## 17. Retained verification recovery — fire-320 (2026-10-25)
+
+Recovered two uncommitted Git-copy framing cases from failed run 40228684435 after
+inspecting actual files and main ancestry. Both paths now contain Unicode/tab/newline
+characters in parent and fork fixtures. Focused tests 17/17, root script suite 137/137
+and scripts typecheck pass following a frozen root install. Independent review found
+no blocking issue; nested-Git fixtures do not establish real submodule publication.
+See [research](../.ai/runs/heymegabyte--megabyte.space-40250570315-1/codex-research.md).
+
+Unchanged declared fork 0eeb9053 fetches; official HEAD remains bd10b0ec. The old
+80b7209e deployment receipt still differs from the pin; live versions remain unverified.
+No deployment, migration acceptance, browser journey or visual score is credited.

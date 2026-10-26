@@ -143,7 +143,7 @@ for (const scenario of ["rename-out", "rename-in", "unusual-path", "fork-rename"
 }
 
 
-for (const scenario of ["copy-in", "fork-copy", "copy-in-unusual", "fork-copy-unusual", "copy-in-unusual-source", "fork-copy-unusual-source"] as const) {
+for (const scenario of ["copy-in", "fork-copy", "copy-in-unusual", "fork-copy-unusual", "copy-in-unusual-source", "fork-copy-unusual-source", "copy-in-unusual-both", "fork-copy-unusual-both"] as const) {
   test(`real Git copy blocks CI without unrelated failures: ${scenario}`, () => {
     const root = mkdtempSync(join(tmpdir(), "fire-copy-"));
     try {
@@ -161,9 +161,9 @@ for (const scenario of ["copy-in", "fork-copy", "copy-in-unusual", "fork-copy-un
       gitAt(root, "add", ".gitignore");
       gitAt(root, "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "ignore fork");
       const inFork = scenario.startsWith("fork-copy");
-      const unusual = scenario.endsWith("-unusual");
+      const unusual = scenario.endsWith("-unusual") || scenario.endsWith("-unusual-both");
       const repo = inFork ? fork : root;
-      const source = scenario.endsWith("-unusual-source") ? "outside-雪\tline\nsource.txt" : "outside-source.txt";
+      const source = scenario.endsWith("-unusual-source") || scenario.endsWith("-unusual-both") ? "outside-雪\tline\nsource.txt" : "outside-source.txt";
       const destination = `${inFork ? "" : "docs/"}aaa-${unusual ? "雪\tline\n" : ""}copy.txt`;
       const following = inFork ? "zzz-following.txt" : "docs/zzz-following.txt";
       writeFileSync(join(repo, source), "before\n".repeat(100));

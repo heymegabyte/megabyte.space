@@ -13,6 +13,9 @@
 
 interface Env {
   OS_ORIGIN?: string; // defaults to https://megabyte.space
+  // CF-native per-colo rate limiter (unsafe binding) — protects the public JSON-RPC surface from
+  // abuse / cost amplification (each tools/call fans out to the OS origin). Fail-soft if unbound.
+  MCP_RATELIMIT?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 }
 
 const SERVER = { name: "megabyte-os", version: "0.1.0" };
@@ -227,6 +230,20 @@ export default {
     }
 
     if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: CORS });
+
+    // Rate-limit the public JSON-RPC surface per client IP (CF-native binding). Public + unauthed, and
+    // every tools/call fans out to the OS origin, so hammering is a real cost/abuse vector. Fail-soft:
+    // if the binding is ever absent the check is skipped rather than breaking the server.
+    if (env.MCP_RATELIMIT) {
+      const ip = req.headers.get("cf-connecting-ip") || "anon";
+      const { success } = await env.MCP_RATELIMIT.limit({ key: ip });
+      if (!success) {
+        return Response.json(err(null, -32000, "Rate limit exceeded — max 60 requests/min per IP. Retry shortly."), {
+          status: 429,
+          headers: { ...CORS, ...SEC, "retry-after": "60", "cache-control": "no-store" },
+        });
+      }
+    }
 
     let body: unknown;
     try {

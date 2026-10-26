@@ -18,10 +18,10 @@ fire (same as the prior ledger). Audit evidence in commit history + the agent fi
 | 8 | 8 | Data | **D1 Sessions API read-replication** on `megabyte-auth` — free, cuts global auth-check latency (EWR-primary today). | ⏸ queued (code change). |
 | 9 | 7 | Reliability | **`/health` version endpoint + post-deploy error-rate gate** (version-pinned; fail if >1%/5min). verify-prod has 13 asserts but no version/error-budget check. | ⏸ queued (shippable-next). |
 | 10 | 7 | Perf | **`defaultPreload:'intent'` + warm the OS shell from the login gate** — preload the SPA during sign-in (~40% nav/LCP win in TanStack case studies). | ⏸ queued (shippable-next). |
-| 11 | 7 | Security | **Rate-limit the public MCP + agent workers** (DO sliding-window) — both are public + unauthed → abuse/Workers-AI-cost exposure. | ⏸ queued. |
+| 11 | 7 | Security | **Rate-limit the public MCP + agent workers** (DO sliding-window) — both are public + unauthed → abuse/Workers-AI-cost exposure. | ◑ PARTIAL — **MCP server shipped + verified** (`be8c78bf`): CF-native rate-limit binding (`env.MCP_RATELIMIT`, 60/min/IP, fail-soft), live-proven (burst 70 → 60×200 + 10×429 with `retry-after: 60` + SEC headers + JSON-RPC `-32000`; normal POST + GET unaffected). Used the native `ratelimit` binding — simpler than a DO, no migration. NEXT: the `megabyte-os-agent` worker (confirm it's still public-routed first). |
 | 12 | 7 | Distribution | **MCP Apps `ui://` view** on the MCP server (SEP-1865) — the 2026 "ship the OS UI into the agents" surface. | ⏸ queued. |
 | 13 | 7 | Fleet | **reviewer≠author acceptance-contract gate** (#2's other half) + wire `cost.py` into `run-the-loop.yml` to emit the cost report each run. | ⏸ queued. |
-| 14 | 6 | DX / observability | **CI gate running the `control-plane` tests** (fleet/cost/preview) on push + a Workers-Analytics-Engine error-rate alert → auto-issue. | ⏸ queued (shippable-next). |
+| 14 | 6 | DX / observability | **CI gate running the `control-plane` tests** (fleet/cost/preview) on push + a Workers-Analytics-Engine error-rate alert → auto-issue. | ✅ SHIPPED — `.github/workflows/control-plane-tests.yml` on agent-skills (`c904845`), path-scoped to `control-plane/**`, runs the 3 authored modules (15 tests, verified green + actionlint-clean). Scoped green-on-arrival; full-suite (test_cli_adapter macOS-symlink ×4 + test_run_contract yaml-assert ×1) = dedicated Linux-CI triage. NEXT: Analytics-Engine error-rate alert. |
 | 15 | 6 | Data / perf | **R2 versioning + lifecycle on app buckets** (blueprints/avatars) + `immutable` asset cache + lazy-load monaco(2.6MB)/three(458KB). | ◑ PARTIAL — backup-bucket lifecycle shipped; app-bucket versioning + asset-cache + lazy-vendor queued. |
 
 ## Shipped this cycle (2026-10-26)
@@ -29,6 +29,8 @@ fire (same as the prior ledger). Audit evidence in commit history + the agent fi
 - **#2 (MCP surface)** CSP + Permissions-Policy + COOP/CORP on `mcp.megabyte.space`, verified (protocol intact).
 - **#5 GEO** OG/Twitter/JSON-LD/canonical/description on BOTH the MCP server AND the apex login gate (`e89c7af7`, verified — login contract intact).
 - **#15 (partial)** 90d R2 lifecycle on the backup bucket.
+- **#14** control-plane CI gate on agent-skills (`c904845`) — path-scoped `control-plane/**`, 3 authored fleet modules (15 tests) green + actionlint-clean, green-on-arrival (full-suite env-failures tracked for Linux-CI triage).
+- **#11 (MCP surface)** CF-native rate limit on `mcp.megabyte.space` (`be8c78bf`, `env.MCP_RATELIMIT` 60/min/IP) — live-proven 60×200 + 10×429 + `retry-after`; agent worker is the remaining half.
 
 ## Notes
 - The rate-limited audit agents (4/5) capped research depth on clusters B-E; those were completed lead-side (live-surface audits + estate knowledge). A deeper research pass can refine 6-15.

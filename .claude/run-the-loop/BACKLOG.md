@@ -73,6 +73,16 @@
 - Verification recovery `d8ea442b`: both-unusual-path Git copy fixtures restored from
   failed run 40228684435; 17 focused / 137 root tests green, scripts typecheck green.
 
+## Migration next-wave — fire-322
+
+- [x] Correct deployment receipt guard and salvage guidance so receipt equality never
+  establishes live source identity; preserve statuses and exit behavior. `a6658151`,
+  focused 11/11 and root scripts 138/138; source-only subscription review caught and
+  corrected downstream salvage wording in this iteration.
+- [ ] Add immutable per-Worker wrapper/fork source correlation to future deployment
+  evidence; accept only with exact built-source metadata and observed version IDs for
+  every affected Worker. A single matching Worker must not establish whole-estate health.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

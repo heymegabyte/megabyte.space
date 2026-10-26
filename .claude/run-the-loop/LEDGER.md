@@ -4215,3 +4215,25 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - No production mutation/deployment, authenticated journey, native-client, storage or
   visual acceptance. Modifier matrix unchanged; ADR 0002 approval/acceptance remains open.
   Local commit only; GitHub outer runner owns publication and next scheduling.
+
+## fire-322 — deployment receipt evidence boundary (2026-10-26)
+
+- Exactly one iteration. Slice a6658151 corrects unsupported live-source claims in
+  receipt comparison while preserving JSON/status/exit contracts. Follow-up source
+  review corrected downstream commit-guard and loop salvage guidance.
+- Frozen root install, 138/138 root script tests, 11/11 focused tests, embedded 10-case
+  selftest, scripts typecheck and whitespace checks pass. Actual advisory exits 0;
+  --ci mismatch exits 1 as before. No full fork build or pnpm check credited.
+- Read-only adversarial reviewer and official Claude subscription review via cr
+  converged on evidence limits. Subscription review executed no tests; local tests
+  supply execution evidence. No API/PAYG inference or local AI Gateway used.
+- Fetched main contains prior successful results bec0e157/2f8bc30b. Latest failed
+  retained tree clean; earlier retained copy-fixture patch already recovered in HEAD.
+  No retained mutation/replay. Declared fork 6d7283a5 initialized, unchanged.
+- Loop improvement: salvage instructions require live per-Worker source/version
+  correlation rather than treating receipt agreement as deployed proof. Next wave:
+  immutable wrapper/fork correlation across every affected Worker, not one sample.
+- No production deployment/mutation, auth/credential/scheduler change, browser journey,
+  native-client/storage acceptance or visual inspection. Receipt/matrix unchanged.
+  Migration acceptance remains open. Missing legacy provider-policy path recorded;
+  repository provider rules and fleet runtime followed. Outer runner owns publication.

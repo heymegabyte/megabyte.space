@@ -1,0 +1,33 @@
+# Estate Upgrades — Top 15 (fresh audit + research, 2026-10-26)
+
+A new improvement cycle after the ESTATE-15-IDEAS drain completed (15/15). Produced by a full
+audit + web research across every category (perf · reliability · data · security · auth · AI/North-Star ·
+MCP/distribution · UX · a11y · GEO · observability · fleet · DX). Ranked by importance (impact ×
+estate-criticality). Status: ✅ shipped · ◑ partial · ⏸ queued. Drain policy = one verified slice per
+fire (same as the prior ledger). Audit evidence in commit history + the agent findings.
+
+| # | Impact | Category | Idea | Status |
+|---|---|---|------|--------|
+| 1 | 9 | DR / data | **Offsite backup of the `megabyte-auth` D1** (all user/session data) → private R2. Was only 30-day in-account Time Travel. | ✅ SHIPPED — private `megabyte-auth-backup` bucket + first backup verified (2.3MB round-trip) + `scripts/backup-auth-d1.sh` + 90d R2 lifecycle. NEXT: a nightly cron driver (GH Action or HC-wrapped). |
+| 2 | 9 | Security | **CSP + Permissions-Policy + COOP/COEP/CORP on every surface.** Apex + workers shipped only HSTS/nosniff/XFO/referrer. | ◑ PARTIAL — MCP server shipped + verified (CSP, Permissions-Policy, COOP, CORP; protocol intact). NEXT: a CAREFUL CSP on the apex SPA (test login/SSO/API — a wrong CSP locks out the force-login front door) + inbox/agent workers. |
+| 3 | 9 | Perf | **SSR/prerender the first viewport** (TanStack Start/hydrateRoot) to fix the ~7s apex LCP — currently gated on parsing the 1.2MB eager `index` chunk. | ⏸ queued (dedicated session). |
+| 4 | 9 | AI / North Star | **Goals→Outcomes loop**: a "tell it an outcome → it plans, executes, verifies, adapts until achieved" surface — the Autonomous-Business-OS core. | ⏸ queued (dedicated; the North Star). |
+| 5 | 8 | GEO / brand | **OG/Twitter/JSON-LD/canonical/description on the public surfaces.** All three (login gate, mcp, inbox) had only a `<title>`. | ◑ PARTIAL — MCP server shipped + verified. NEXT: the apex login-gate `<head>` (brand front door; router-only deploy) + a branded 1200×630 OG image. |
+| 6 | 8 | Reliability | **Gradual deploy + auto-rollback**: `deploy.ts` → `wrangler versions upload` → 10%→100% with error-rate rollback (today a bare instant-100% `wrangler deploy`). | ⏸ queued. |
+| 7 | 8 | AI / North Star | **Wire the approval-inbox to REAL OS agent actions** (not just GitHub PRs) — close the propose→approve→execute loop (#7 depth). | ⏸ queued (dedicated). |
+| 8 | 8 | Data | **D1 Sessions API read-replication** on `megabyte-auth` — free, cuts global auth-check latency (EWR-primary today). | ⏸ queued (code change). |
+| 9 | 7 | Reliability | **`/health` version endpoint + post-deploy error-rate gate** (version-pinned; fail if >1%/5min). verify-prod has 13 asserts but no version/error-budget check. | ⏸ queued (shippable-next). |
+| 10 | 7 | Perf | **`defaultPreload:'intent'` + warm the OS shell from the login gate** — preload the SPA during sign-in (~40% nav/LCP win in TanStack case studies). | ⏸ queued (shippable-next). |
+| 11 | 7 | Security | **Rate-limit the public MCP + agent workers** (DO sliding-window) — both are public + unauthed → abuse/Workers-AI-cost exposure. | ⏸ queued. |
+| 12 | 7 | Distribution | **MCP Apps `ui://` view** on the MCP server (SEP-1865) — the 2026 "ship the OS UI into the agents" surface. | ⏸ queued. |
+| 13 | 7 | Fleet | **reviewer≠author acceptance-contract gate** (#2's other half) + wire `cost.py` into `run-the-loop.yml` to emit the cost report each run. | ⏸ queued. |
+| 14 | 6 | DX / observability | **CI gate running the `control-plane` tests** (fleet/cost/preview) on push + a Workers-Analytics-Engine error-rate alert → auto-issue. | ⏸ queued (shippable-next). |
+| 15 | 6 | Data / perf | **R2 versioning + lifecycle on app buckets** (blueprints/avatars) + `immutable` asset cache + lazy-load monaco(2.6MB)/three(458KB). | ◑ PARTIAL — backup-bucket lifecycle shipped; app-bucket versioning + asset-cache + lazy-vendor queued. |
+
+## Shipped this cycle (fire 2026-10-26)
+- **#1** auth-D1→R2 offsite backup (verified round-trip) + reusable script + 90d retention.
+- **#2/#5 (MCP surface)** CSP + Permissions-Policy + COOP/CORP + GEO `<head>` (OG/Twitter/JSON-LD/canonical) on `mcp.megabyte.space`, verified (protocol intact).
+
+## Notes
+- The rate-limited audit agents (4/5) capped research depth on clusters B-E; those were completed lead-side (live-surface audits + estate knowledge). A deeper research pass can refine 6-15.
+- Several "shippable-next" (9, 10, 14) are clean <2h wins for the next fires; 3/4/6/7/8/11/12/13 are dedicated builds.

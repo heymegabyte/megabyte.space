@@ -63,6 +63,12 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   is authorized and credentials are available, use `node scripts/deploy.ts` and then
   `node scripts/record-deploy.mjs` without `--commit`/`--push`; include that receipt in the
   local bookkeeping commit and verify production before claiming deployment success.
+- **Commit labels are not build evidence.** Before crediting source correlation, use
+  the execution contract in `docs/deployment-provenance.md`: immutable build inputs,
+  actual artifact/config identity, per-Worker version/allocation read-back and durable
+  partial results. A post-deploy HEAD stamp or tag alone is insufficient. Router-only
+  assets and separately deployed auth require their own scoped evidence. This rule
+  does not authorize a production redeploy or a historical receipt rewrite.
 - **GitHub owns cadence.** Do not create session cron, arm the launchd watchdog, or launch
   another loop. Claim/heartbeat the lease only in the assigned worktree; finish with
   `node scripts/loop-fire-lock.mjs release --run-id <incoming-run-id>` after the clean-tree

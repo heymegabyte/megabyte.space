@@ -372,3 +372,22 @@ No receipt, Worker version, configuration, submodule pin or visual acceptance ch
 
 Next evidence task: correlate immutable per-Worker version metadata with both wrapper
 and fork source, without inferring a whole-estate deployment from one matching Worker.
+
+
+## 20. Source-correlation execution contract (fire-326, 2026-10-27)
+
+[Deployment provenance specification](deployment-provenance.md) defines the future
+implementation and acceptance tests for immutable build evidence and per-Worker
+version/deployment correlation. This completes the specification slice only. No
+uploader, recorder, configuration, receipt or deployed Worker changed.
+
+Source inspection establishes that the current recorder reads HEAD/gitlink AFTER
+the uploader builds working-tree paths. Router-only uploads reuse existing frontend
+assets, and auth deploys separately from the up-to-18-Worker core/integration chain.
+A post-command SHA stamp or version tag alone cannot establish exact uploaded bytes.
+The contract requires isolated committed inputs, artifact/config digests, durable
+partial-rollout evidence and exact version/allocation read-back for each scoped Worker.
+
+Implementation, locked-CLI compatibility, isolated metadata round trip and production
+acceptance remain open. Existing receipt and all migration/visual acceptance gates
+remain unchanged; do not redeploy or retrofit historical source claims from this spec.

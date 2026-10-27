@@ -93,6 +93,7 @@ const TOOLS = [
       "Describe what Megabyte OS is: its purpose, surfaces, authentication, and the Cloudflare-native " +
       "stack it runs on. Use this to understand the product before calling other tools.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    _meta: { "openai/outputTemplate": "ui://megabyte-os/overview" },
   },
   {
     name: "list_integrations",
@@ -157,7 +158,7 @@ async function handleRpc(msg: Rpc, origin: string): Promise<object | null> {
       const protocolVersion = SUPPORTED_PROTOCOLS.has(requested) ? requested : DEFAULT_PROTOCOL;
       return ok(id, {
         protocolVersion,
-        capabilities: { tools: { listChanged: false } },
+        capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
         serverInfo: SERVER,
         instructions:
           "Megabyte OS exposed as MCP tools. Call about_megabyte_os first, then get_feature_flags " +
@@ -171,6 +172,14 @@ async function handleRpc(msg: Rpc, origin: string): Promise<object | null> {
       return ok(id, {});
     case "tools/list":
       return ok(id, { tools: TOOLS });
+    case "resources/list":
+      // MCP Apps (SEP-1865): the ui:// view an Apps-capable client (ChatGPT/Claude) renders inline.
+      return ok(id, { resources: RESOURCES });
+    case "resources/read": {
+      if (params?.uri === UI_TEMPLATE_URI)
+        return ok(id, { contents: [{ uri: UI_TEMPLATE_URI, mimeType: "text/html+skybridge", text: UI_OVERVIEW_HTML }] });
+      return isNotification ? null : err(id, -32602, `Unknown resource: ${params?.uri}`);
+    }
     case "tools/call": {
       const name = params?.name;
       if (!name || !TOOLS.some((t) => t.name === name)) {
@@ -178,7 +187,10 @@ async function handleRpc(msg: Rpc, origin: string): Promise<object | null> {
       }
       try {
         const { text, structured } = await runTool(name, origin);
-        return ok(id, { content: [{ type: "text", text }], structuredContent: structured, isError: false });
+        // MCP Apps: link the inline ui:// view. Graceful degradation — text + structuredContent remain
+        // the answer for the (many) clients that don't render the view.
+        const meta = name === "about_megabyte_os" ? { _meta: { "openai/outputTemplate": UI_TEMPLATE_URI } } : {};
+        return ok(id, { content: [{ type: "text", text }], structuredContent: structured, isError: false, ...meta });
       } catch (e) {
         // Tool-level errors go in the result (isError:true), not a protocol error, per MCP.
         return ok(id, {
@@ -214,6 +226,37 @@ p{color:rgba(255,255,255,.65);line-height:1.6;font-size:14.5px}a{color:#00E5FF}<
 VS Code) at this URL to use Megabyte OS as tools. It speaks JSON-RPC over <code>POST</code> (Streamable HTTP).</p>
 <p>Tools: <code>about_megabyte_os</code> · <code>get_feature_flags</code> · <code>list_integrations</code>.
 Read-only &amp; public. The OS itself is at <a href="https://megabyte.space">megabyte.space</a>.</p></main></body></html>`;
+
+// --- MCP Apps (SEP-1865): an inline ui:// overview card an Apps-capable client renders in a sandboxed
+// iframe. ENRICHMENT ONLY — every tool still returns text + structuredContent for non-rendering clients.
+const UI_TEMPLATE_URI = "ui://megabyte-os/overview";
+const RESOURCES = [
+  {
+    uri: UI_TEMPLATE_URI,
+    name: "Megabyte OS overview card",
+    description: "Interactive overview of Megabyte OS — surfaces, integrations, stack. Rendered inline by MCP-Apps-capable clients.",
+    mimeType: "text/html+skybridge",
+  },
+];
+const UI_OVERVIEW_HTML = `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<style>:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;background:#060610;color:#eaf6ff}
+.card{max-width:640px;margin:0 auto;padding:22px}
+.eyebrow{font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#00E5FF;margin:0 0 6px}
+h1{font-size:20px;margin:0 0 6px;letter-spacing:-.01em}
+.tag{color:rgba(255,255,255,.62);font-size:13.5px;line-height:1.5;margin:0 0 16px}
+.row{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 6px}
+.chip{font-size:11px;border-radius:20px;padding:3px 10px;background:rgba(0,229,255,.08);color:#9fe9ff;border:1px solid rgba(0,229,255,.18)}
+.lab{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:14px 0 7px}
+a{color:#00E5FF;text-decoration:none;font-weight:600;font-size:13px}</style></head><body><div class="card">
+<p class="eyebrow">Megabyte OS · Autonomous Business OS</p>
+<h1>${OS_INFO.name}</h1>
+<p class="tag">${OS_INFO.tagline}</p>
+<p class="lab">Surfaces</p><div class="row">${OS_INFO.surfaces.map((s) => `<span class="chip">${s}</span>`).join("")}</div>
+<p class="lab">Integrations</p><div class="row">${INTEGRATIONS.slice(0, 10).map((i) => `<span class="chip">${i.name}</span>`).join("")}</div>
+<p class="lab">Stack</p><div class="row">${OS_INFO.stack.map((s) => `<span class="chip">${s}</span>`).join("")}</div>
+<p style="margin-top:16px"><a href="${OS_INFO.url}">Open Megabyte OS →</a></p>
+</div></body></html>`;
 
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {

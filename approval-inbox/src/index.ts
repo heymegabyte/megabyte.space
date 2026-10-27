@@ -182,17 +182,30 @@ ${items
     .join("\n");
 }
 
+// Paperclip WATCHDOG: a priority case stalled beyond its SLA (P0 > 7d, P1 > 30d) is a governance
+// alarm — the oversight surface should SCREAM (a P0 open for months is the failure #1 only flagged
+// for PRs>14d; this extends the watchdog to the high-priority cases where stalling matters most).
+function caseStale(c: Case): boolean {
+  return (c.priority === "P0" && c.ageDays > 7) || (c.priority === "P1" && c.ageDays > 30);
+}
+
 function renderCases(cases: Case[]): string {
   if (!cases.length) return "";
+  const stale = cases.filter(caseStale); // cases are P0-first, oldest-first → stale[0] = most egregious
+  const banner = stale.length
+    ? `<p class="escalate crit">⚠ ${stale.length} priority case${stale.length === 1 ? "" : "s"} stalled beyond SLA — oldest: ${esc(stale[0].priority)} ${esc(stale[0].repo)} #${stale[0].number}, open ${stale[0].ageDays} days. Escalate or close.</p>`
+    : "";
   return `<section class="cases"><h2>⬆ Priority cases <span class="n">${cases.length}</span></h2>
+${banner}
 ${cases
-  .map(
-    (c) => `<a class="card" href="${esc(c.url)}" target="_blank" rel="noopener">
-  <div class="row1"><span class="num">${esc(c.repo)} #${c.number}</span><span class="badge ${c.priority === "P0" ? "p0" : "p1"}">${c.priority}</span></div>
+  .map((c) => {
+    const st = caseStale(c);
+    return `<a class="card${st ? " critcard" : ""}" href="${esc(c.url)}" target="_blank" rel="noopener">
+  <div class="row1"><span class="num">${esc(c.repo)} #${c.number}</span><span class="badge ${c.priority === "P0" ? "p0" : "p1"}">${c.priority}</span>${st ? `<span class="badge stale">⚠ ${c.ageDays}d STALE</span>` : ""}</div>
   <div class="title">${esc(c.title)}</div>
   <div class="meta"><span class="author">@${esc(c.author)}</span><span class="label">${c.ageDays}d old</span><span class="cta">Open →</span></div>
-</a>`,
-  )
+</a>`;
+  })
   .join("\n")}</section>`;
 }
 
@@ -245,6 +258,8 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:16px 24p
 .cases h2 .n{background:rgba(255,184,107,.14);color:#ffb86b;border-radius:20px;padding:1px 9px;font-size:11px}
 .badge.p0{color:#ff6b6b;background:rgba(255,107,107,.13)}
 .badge.p1{color:#ffb86b;background:rgba(255,184,107,.1)}
+.escalate.crit{color:#ff6b6b;font-weight:600}
+.card.critcard{border-color:rgba(255,107,107,.4);background:linear-gradient(180deg,rgba(255,107,107,.07),rgba(255,107,107,.02))}
 </style></head><body><div class="bg" aria-hidden="true"></div>
 ${armed
     ? `<header><p class="eyebrow">Megabyte OS · Autonomous Business OS</p><h1>Approval Inbox</h1>

@@ -29,3 +29,8 @@ visual acceptance, restore exercise or migration completion is claimed.
 
 Next wave: approved live remote-object verification and an isolated restore drill;
 record object identity/checksum and restore results without exposing authentication SQL.
+
+Final verification: frozen offline root install with lifecycle scripts disabled passes;
+root script suite 144/144 and pinned-pnpm scripts typecheck pass. Initial suite failed
+loading jsonc-parser before installation completed; final rerun resolves that gap.
+Pinned Wrangler 4.124.0 help confirms --remote on both object put and get.

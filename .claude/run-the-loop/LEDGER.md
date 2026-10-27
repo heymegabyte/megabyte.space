@@ -4248,7 +4248,9 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Fresh focused tests 6/6, bash syntax and diff whitespace pass. Independent reviewer
   found no blocker; added its requested failure/undersized/count coverage. Root suite
   attempt: 118 pass, one file fails loading jsonc-parser during incomplete install;
-  direct pnpm typecheck blocked by empty Volta shim. Full install retry pending at record.
+  direct pnpm typecheck blocked by empty Volta shim. Retry completed frozen/offline
+  with lifecycle scripts disabled; final root script suite **144/144** and pinned-pnpm
+  scripts typecheck pass. Pinned Wrangler help confirms both R2 --remote options.
 - Loop improvement: backup regression gate prevents local-storage and byte-count-only
   false success. Next wave: approved remote verification + isolated restore drill.
 - Declared fork e89c7af7 fetches, unchanged. Receipt still 80b7209e; no live-source claim.

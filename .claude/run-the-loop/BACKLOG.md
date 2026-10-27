@@ -1240,3 +1240,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Verify an approved live remote backup object and perform a restore into an
   isolated database; document checksum, bucket privacy and restore outcome without
   logging authentication SQL. Local mocked round-trip is not disaster-recovery proof.
+
+## Verification next-wave — fire-325
+
+- [x] Bound `verify-vitals.mjs` to static script/configuration evidence and reject
+  incidental text, malformed config and network/HTTP failures (`9ad741e8`); 16 focused
+  tests and live static guard 4/4 pass. This does not establish field metric ingestion.
+- [ ] Extend vitals acceptance with a real-browser beacon request/delivery check and
+  separately inspect dashboard CWV samples. Include browser blocking/inert-markup
+  negative cases; preserve a distinct static-only CLI result. Do not close the existing
+  performance/field-CWV goal from beacon markup alone.

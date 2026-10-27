@@ -4256,3 +4256,23 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Declared fork e89c7af7 fetches, unchanged. Receipt still 80b7209e; no live-source claim.
   No deployment, scheduler/credential mutation, browser journey or visual score change.
   Main publication remains the outer runner's responsibility.
+
+## fire-325 — static vitals evidence guard (2026-10-27)
+
+- Exactly one fleet iteration. `9ad741e8` hardens static beacon verification with
+  bounded requests, HTML/status checks, script-local JSON/token validation, and explicit
+  separation from browser execution or field metric ingestion. Versioned live URL
+  covered without logging its configuration. No deployed application changes.
+- TDD: initial missing export fails; final focused tests 16/16 and full root script
+  suite 160/160 pass. Frozen root install with lifecycle scripts disabled, scripts
+  typecheck, whitespace gate pass. Live anonymous static check 4/4 green.
+- Native adversarial reviewer found missing/malformed-token false positives; fixed
+  with regression cases. Independent findings saved under this run's .ai/runs artifact.
+- Recovery: fetched main contains prior successful 5a361f43; retained failed backup
+  test superseded by existing committed coverage. No retained tree mutated. Declared
+  fork e89c7af7 initialized and unchanged. Stale receipt preserved; no live-source claim.
+- Loop improvement: static evidence cannot masquerade as observed RUM ingestion.
+  Next-wave acceptance: browser delivery/blocking and dashboard CWV samples separately.
+- No deploy, production mutation, full fork build/pnpm check, authenticated journey,
+  data reconciliation or visual acceptance credited. Modifier matrix unchanged.
+  Outer runner owns publication; GitHub owns cadence. Migration acceptance stays open.

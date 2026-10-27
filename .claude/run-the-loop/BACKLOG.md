@@ -1232,3 +1232,11 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Correlate observed per-Worker version IDs with immutable source/build evidence before
   changing .last-deploy.json. Plan future source tags and version-bound receipts at the
   next authorized deploy; do not mutate production merely to repair bookkeeping.
+
+## Fire-324 backup recovery
+
+- [x] `26ebfcbf`: recover prior failed run's backup tests; enforce remote R2, private
+  scratch cleanup and exact content comparison. Six isolated fixture tests pass.
+- [ ] Verify an approved live remote backup object and perform a restore into an
+  isolated database; document checksum, bucket privacy and restore outcome without
+  logging authentication SQL. Local mocked round-trip is not disaster-recovery proof.

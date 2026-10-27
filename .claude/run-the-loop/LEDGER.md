@@ -4237,3 +4237,20 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   native-client/storage acceptance or visual inspection. Receipt/matrix unchanged.
   Migration acceptance remains open. Missing legacy provider-policy path recorded;
   repository provider rules and fleet runtime followed. Outer runner owns publication.
+
+## fire-324 — 2026-10-27 — retained auth-backup regression recovery
+
+- `26ebfcbf`: recovered untracked test from failed 40408427190 without touching its
+  retained worktree. Both prior failed base/result commits are already on origin/main.
+- Reproduced missing remote R2 flags and false success on same-size corruption.
+  Fixed pinned tool invocation, private temporary SQL/cleanup, content comparison,
+  and fail-closed secret retrieval; requires existing bucket, no implicit provisioning.
+- Fresh focused tests 6/6, bash syntax and diff whitespace pass. Independent reviewer
+  found no blocker; added its requested failure/undersized/count coverage. Root suite
+  attempt: 118 pass, one file fails loading jsonc-parser during incomplete install;
+  direct pnpm typecheck blocked by empty Volta shim. Full install retry pending at record.
+- Loop improvement: backup regression gate prevents local-storage and byte-count-only
+  false success. Next wave: approved remote verification + isolated restore drill.
+- Declared fork e89c7af7 fetches, unchanged. Receipt still 80b7209e; no live-source claim.
+  No deployment, scheduler/credential mutation, browser journey or visual score change.
+  Main publication remains the outer runner's responsibility.

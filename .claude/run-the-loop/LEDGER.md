@@ -4276,3 +4276,32 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - No deploy, production mutation, full fork build/pnpm check, authenticated journey,
   data reconciliation or visual acceptance credited. Modifier matrix unchanged.
   Outer runner owns publication; GitHub owns cadence. Migration acceptance stays open.
+
+## fire-326 — deployment provenance execution contract (2026-10-27)
+
+- Exactly one fleet iteration. `320792fe` grounds the source/build/version gap and
+  supplies `docs/deployment-provenance.md`, with scope for full, router-only and
+  independent auth deploys. Specification only; no uploader/recorder behavior changed.
+- Current recorder reads HEAD/gitlink after filesystem builds; router-only can reuse
+  stale dist. Contract requires immutable inputs, explicit evidence levels, generated
+  config/artifact identity, durable partial outcomes and exact per-Worker read-back.
+  Complete metadata coverage is explicitly distinct from byte/source attestation.
+- Read-only native source reviewer and official Claude subscription review via cr
+  converged. Incorporated storage-failure recovery, evidence-level/retention limits,
+  matching router sources, compatibility/route preflight and per-workspace CLI pins.
+  Subscription review performed no tests; its unchecked concerns were source-checked
+  or recorded as future acceptance, never adopted as observed platform facts.
+- Fresh checks: existing receipt tests 22/22; 27 local doc links resolve; declared
+  fork e89c7af7 fetches from its configured remote; diff whitespace clean. No locked
+  installs, full script suite/typecheck/pnpm check, candidate build or CLI round trip
+  credited for this documentation-only iteration.
+- Recovery: origin/main contains recent successful 8239c41e/5a361f43 and failed-run
+  base/result 46489935/0f3be636. Earlier failed retained backup test is superseded by
+  fire-324 committed coverage; retained trees untouched. Fork initialized, unchanged.
+- Loop improvement: fleet command requires scoped build/version evidence rather than
+  post-command commit labels. Next wave: offline implementation and isolated rehearsal
+  of the new contract; whole-estate correlation and ADR 0002 acceptance remain open.
+- No deployment/production mutation, receipt rewrite, credential/scheduler change,
+  auth journey, storage reconciliation or visual pass; modifier matrix unchanged.
+  Legacy provider-policy path absent; canonical shared policy read. GitHub outer
+  runner owns publication and cadence. Local clean commits are the handoff.

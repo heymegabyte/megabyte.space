@@ -83,6 +83,17 @@
   evidence; accept only with exact built-source metadata and observed version IDs for
   every affected Worker. A single matching Worker must not establish whole-estate health.
 
+## Migration next-wave — fire-326
+
+- [x] Ground and specify immutable source/build/version correlation at the exact
+  full-deploy, router-only, auth and recorder seams. Contract:
+  `docs/deployment-provenance.md`; source review only, no runtime acceptance.
+- [ ] Implement the source snapshot/manifest and durable per-Worker journal offline
+  first, following that contract. Accept with dirty/stale-input and interrupted-rollout
+  regressions, exact scope coverage, root tests/typecheck and wrapper check; then
+  separately rehearse metadata round trip on approved isolated identities. Existing
+  fire-322 whole-estate correlation acceptance remains open.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

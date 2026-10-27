@@ -53,39 +53,56 @@ interface Approval {
   ageDays: number;
   labels: string[];
   comments: number;
+  checks: "SUCCESS" | "FAILURE" | "PENDING" | "ERROR" | "EXPECTED" | null; // statusCheckRollup.state
+  review: "APPROVED" | "CHANGES_REQUESTED" | "REVIEW_REQUIRED" | null; // reviewDecision (verify gate)
+  assignees: string[]; // org chart: who owns it
 }
 
 async function fetchApprovals(env: Env): Promise<{ armed: boolean; approvals: Approval[]; error?: string }> {
   if (env.INBOX_ARMED !== "1" || !env.GITHUB_TOKEN) return { armed: false, approvals: [] };
   const org = env.GH_ORG || "heymegabyte";
-  // Cache the GitHub response 60s (Cache API) to protect the 30/min search rate limit + latency.
-  const cacheKey = new Request(`https://inbox.cache/approvals?org=${org}`);
+  // Cache 60s (Cache API). New GraphQL cache key — never serves a stale REST-shaped record.
+  const cacheKey = new Request(`https://inbox.cache/approvals-gql?org=${org}`);
   const cache = caches.default;
   const cached = await cache.match(cacheKey);
   if (cached) return await cached.json();
 
+  // GraphQL: ONE call gets the PR list + its VERIFY GATE (statusCheckRollup = CI + reviewDecision) +
+  // assignees (org chart) — Paperclip's done-criteria. The REST search can't return checks/review.
+  const query = `query { search(query: "is:pr is:open org:${org}", type: ISSUE, first: 50) { nodes { ... on PullRequest {
+    number title url isDraft createdAt author { login } repository { name }
+    labels(first: 10) { nodes { name } } comments { totalCount }
+    reviewDecision commits(last: 1) { nodes { commit { statusCheckRollup { state } } } }
+    assignees(first: 3) { nodes { login } } } } } }`;
+
   try {
-    const r = await fetch(
-      `https://api.github.com/search/issues?q=is:pr+is:open+org:${org}&sort=created&order=asc&per_page=50`,
-      { headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "User-Agent": UA } },
-    );
+    const r = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "Content-Type": "application/json", "User-Agent": UA },
+      body: JSON.stringify({ query }),
+    });
     if (!r.ok) return { armed: true, approvals: [], error: `GitHub ${r.status}` };
-    const data = (await r.json()) as { items?: any[] };
+    const data = (await r.json()) as { data?: { search?: { nodes?: any[] } }; errors?: any[] };
+    if (data.errors?.length) return { armed: true, approvals: [], error: `GraphQL: ${data.errors[0]?.message || "error"}` };
     const now = Date.now();
-    const approvals: Approval[] = (data.items || []).map((i) => ({
-      repo: (i.repository_url || "").split("/").pop() || "?",
-      number: i.number,
-      title: i.title || "",
-      author: i.user?.login || "?",
-      url: i.html_url || "",
-      draft: !!i.draft,
-      createdAt: i.created_at || "",
-      ageDays: i.created_at ? Math.floor((now - Date.parse(i.created_at)) / 86400000) : 0,
-      labels: (i.labels || []).map((l: any) => (typeof l === "string" ? l : l.name)).filter(Boolean),
-      comments: i.comments || 0,
-    }));
+    const approvals: Approval[] = (data.data?.search?.nodes || [])
+      .filter((n: any) => n && typeof n.number === "number")
+      .map((n: any) => ({
+        repo: n.repository?.name || "?",
+        number: n.number,
+        title: n.title || "",
+        author: n.author?.login || "?",
+        url: n.url || "",
+        draft: !!n.isDraft,
+        createdAt: n.createdAt || "",
+        ageDays: n.createdAt ? Math.floor((now - Date.parse(n.createdAt)) / 86400000) : 0,
+        labels: (n.labels?.nodes || []).map((l: any) => l?.name).filter(Boolean),
+        comments: n.comments?.totalCount || 0,
+        checks: n.commits?.nodes?.[0]?.commit?.statusCheckRollup?.state ?? null,
+        review: n.reviewDecision ?? null,
+        assignees: (n.assignees?.nodes || []).map((a: any) => a?.login).filter(Boolean),
+      }));
     const result = { armed: true, approvals };
-    // Cache 60s.
     await cache.put(
       cacheKey,
       new Response(JSON.stringify(result), { headers: { "content-type": "application/json", "cache-control": "max-age=60" } }),
@@ -161,6 +178,19 @@ function confidenceBadge(a: Approval): string {
   return `<span class="badge ready">READY${a.ageDays ? ` · ${a.ageDays}d` : ""}</span>`;
 }
 
+// Paperclip VERIFY GATE: the CI (statusCheckRollup) + review (reviewDecision) state — "is this
+// actually ready to approve, or blocked on failing checks / changes requested?" (the done-criteria).
+function gateRow(a: Approval): string {
+  const bits: string[] = [];
+  if (a.checks === "SUCCESS") bits.push(`<span class="gate ok">✓ CI</span>`);
+  else if (a.checks === "FAILURE" || a.checks === "ERROR") bits.push(`<span class="gate bad">✗ CI</span>`);
+  else if (a.checks === "PENDING" || a.checks === "EXPECTED") bits.push(`<span class="gate pend">◷ CI</span>`);
+  if (a.review === "APPROVED") bits.push(`<span class="gate ok">✓ approved</span>`);
+  else if (a.review === "CHANGES_REQUESTED") bits.push(`<span class="gate bad">✗ changes</span>`);
+  else if (a.review === "REVIEW_REQUIRED") bits.push(`<span class="gate pend">◷ review</span>`);
+  return bits.join("");
+}
+
 function renderCards(approvals: Approval[]): string {
   if (!approvals.length) return `<p class="empty">Nothing awaiting you. The queue is clear. ✦</p>`;
   const byRepo = new Map<string, Approval[]>();
@@ -172,9 +202,9 @@ function renderCards(approvals: Approval[]): string {
 ${items
   .map(
     (a) => `<a class="card" href="${esc(a.url)}" target="_blank" rel="noopener">
-  <div class="row1"><span class="num">#${a.number}</span>${confidenceBadge(a)}${a.comments ? `<span class="cmt">💬 ${a.comments}</span>` : ""}</div>
+  <div class="row1"><span class="num">#${a.number}</span>${confidenceBadge(a)}${gateRow(a)}${a.comments ? `<span class="cmt">💬 ${a.comments}</span>` : ""}</div>
   <div class="title">${esc(a.title)}</div>
-  <div class="meta"><span class="author">@${esc(a.author)}</span>${a.labels.slice(0, 3).map((l) => `<span class="label">${esc(l)}</span>`).join("")}<span class="cta">Review →</span></div>
+  <div class="meta"><span class="author">@${esc(a.author)}</span>${a.assignees.length ? `<span class="asg">→ @${esc(a.assignees[0])}</span>` : ""}${a.labels.slice(0, 3).map((l) => `<span class="label">${esc(l)}</span>`).join("")}<span class="cta">Review →</span></div>
 </a>`,
   )
   .join("\n")}</section>`,
@@ -209,7 +239,7 @@ ${cases
   .join("\n")}</section>`;
 }
 
-function page(body: string, count: number, armed: boolean, stamp: string, gov: { ready: number; drafts: number; stalled: number; cases: number }): string {
+function page(body: string, count: number, armed: boolean, stamp: string, gov: { readyToMerge: number; failingCI: number; drafts: number; stalled: number; cases: number }): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 ${armed ? '<meta http-equiv="refresh" content="90"/>' : ""}
@@ -260,11 +290,17 @@ main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:16px 24p
 .badge.p1{color:#ffb86b;background:rgba(255,184,107,.1)}
 .escalate.crit{color:#ff6b6b;font-weight:600}
 .card.critcard{border-color:rgba(255,107,107,.4);background:linear-gradient(180deg,rgba(255,107,107,.07),rgba(255,107,107,.02))}
+.chip.bad{color:#ff6b6b;background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.24)}
+.gate{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.04em;border-radius:6px;padding:2px 7px;font-weight:600}
+.gate.ok{color:#7CFFB2;background:rgba(124,255,178,.1)}
+.gate.bad{color:#ff6b6b;background:rgba(255,107,107,.11)}
+.gate.pend{color:#ffb86b;background:rgba(255,184,107,.1)}
+.asg{font-size:11px;color:var(--cyan);background:rgba(0,229,255,.08);border-radius:6px;padding:1px 7px}
 </style></head><body><div class="bg" aria-hidden="true"></div>
 ${armed
     ? `<header><p class="eyebrow">Megabyte OS · Autonomous Business OS</p><h1>Approval Inbox</h1>
 <p class="sub">${count} item${count === 1 ? "" : "s"} await your review — the autonomous fleet's open work across the estate. <span class="foot">updated ${stamp}</span></p>
-<div class="gov"><span class="chip">✦ ${count} awaiting</span>${gov.cases ? `<span class="chip p0">⬆ ${gov.cases} priority case${gov.cases === 1 ? "" : "s"}</span>` : ""}<span class="chip ok">✓ ${gov.ready} ready</span><span class="chip muted">◷ ${gov.drafts} draft${gov.drafts === 1 ? "" : "s"}</span>${gov.stalled ? `<span class="chip warn">⚠ ${gov.stalled} stalled &gt;14d</span>` : ""}</div>
+<div class="gov"><span class="chip">✦ ${count} awaiting</span>${gov.cases ? `<span class="chip p0">⬆ ${gov.cases} priority case${gov.cases === 1 ? "" : "s"}</span>` : ""}<span class="chip ok">✓ ${gov.readyToMerge} ready to merge</span>${gov.failingCI ? `<span class="chip bad">✗ ${gov.failingCI} failing CI</span>` : ""}<span class="chip muted">◷ ${gov.drafts} draft${gov.drafts === 1 ? "" : "s"}</span>${gov.stalled ? `<span class="chip warn">⚠ ${gov.stalled} stalled &gt;14d</span>` : ""}</div>
 ${gov.stalled ? `<p class="escalate">⚠ ${gov.stalled} approval${gov.stalled === 1 ? "" : "s"} stalled beyond 14 days — escalate or clear.</p>` : ""}</header>
 <main>${body}</main>`
     : `<main class="placeholder"><div class="mark">✦</div><h1>Approval Inbox</h1>
@@ -297,7 +333,8 @@ export default {
     const stamp = new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC";
     // Paperclip-style governance summary (watchdog escalation) — derived from already-fetched data.
     const gov = {
-      ready: approvals.filter((a) => !a.draft).length,
+      readyToMerge: approvals.filter((a) => a.checks === "SUCCESS" && a.review !== "CHANGES_REQUESTED").length,
+      failingCI: approvals.filter((a) => a.checks === "FAILURE" || a.checks === "ERROR").length,
       drafts: approvals.filter((a) => a.draft).length,
       stalled: approvals.filter((a) => a.ageDays > 14).length,
       cases: cases.length,

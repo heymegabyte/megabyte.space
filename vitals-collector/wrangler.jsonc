@@ -1,0 +1,28 @@
+{
+  // megabyte-os-vitals — the estate's QUERYABLE field-CWV (RUM) sink. CF Web Analytics gives
+  // dashboard-only RUM; this accepts web-vitals beacons (POST /) and serves p75 per metric (GET /)
+  // so the loop can self-measure LCP/INP/CLS without the CF dashboard. Standalone (zero apex risk),
+  // like the mcp-server + os-agent workers. Deploy: cd vitals-collector && npx -y wrangler deploy
+  "name": "megabyte-os-vitals",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-23",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Brandable endpoint beacons POST to; a specific proxied DNS record overrides the *.megabyte.space
+  // wildcard. workers_dev stays true (a routes block otherwise auto-disables the workers.dev URL).
+  "routes": [{ "pattern": "vitals.megabyte.space", "custom_domain": true }],
+  "workers_dev": true,
+
+  // SQLite-backed DO singleton: stores bounded samples, computes p75 on read.
+  "durable_objects": { "bindings": [{ "name": "VITALS", "class_name": "VitalsStore" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["VitalsStore"] }],
+
+  // Public surface → CF-native per-colo rate limiter (120 beacons/min/IP; fail-soft if absent).
+  "unsafe": {
+    "bindings": [
+      { "name": "VITALS_RATELIMIT", "type": "ratelimit", "namespace_id": "2003", "simple": { "limit": 120, "period": 60 } }
+    ]
+  },
+
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } }
+}

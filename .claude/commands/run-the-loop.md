@@ -80,6 +80,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep
   acceptance items open and visual scores unchanged unless freshly verified. Record a
   non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
+- **Finish verification before reporting it.** Start frozen installs and the full wrapper
+  check early enough to collect their exit status within the fleet deadline. Dependency
+  consumers start only after both installs finish. A prior receipt saying `running` is
+  unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
+  Final reports name terminal check outcomes; interrupted checks remain incomplete.
 
 ## 0 — Orient (cheap; NEVER read giant ledgers in the main thread)
 - **GitHub fleet runs:** obey the incoming workspace/publication contract. In a fresh isolated worktree, initialize the PINNED submodule before fork checks (`git submodule update --init cloudflare-os`) and install locked dependencies in BOTH workspaces before build gates (`pnpm install --frozen-lockfile` and `pnpm --dir cloudflare-os install --frozen-lockfile`). The starter workspace includes only two fork packages; its install alone cannot provide the frontend/configurator build dependencies. An uninitialized fork is missing verification context, never proof of an unpushed fork commit. GitHub owns scheduling; do not arm session cron or the legacy watchdog. Commit locally and leave main publication to the outer runner when instructed.

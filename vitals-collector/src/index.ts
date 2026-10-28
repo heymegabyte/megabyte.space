@@ -33,6 +33,12 @@ const SEC = {
   "content-security-policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
 };
 
+// Served beacon snippet — any surface adds `<script src="https://vitals.megabyte.space/beacon.js" defer>`
+// and it reports LCP/CLS/TTFB/FCP here on page-hide. Self-contained, dependency-free, fail-soft (RUM is
+// best-effort — never affects the host app). This keeps the beacon logic cohesive with its sink + makes
+// wiring a consumer (e.g. the OS frontend) a ONE-LINE script tag, not a bundled module.
+const BEACON_JS = `(function(){if(typeof PerformanceObserver==='undefined')return;var EP='https://vitals.megabyte.space/',lcp=0,cls=0,sent=false;function send(m,v){try{navigator.sendBeacon&&navigator.sendBeacon(EP,new Blob([JSON.stringify({metric:m,value:Math.round(v*1000)/1000,path:location.pathname})],{type:'text/plain'}))}catch(e){}}try{new PerformanceObserver(function(l){var es=l.getEntries(),last=es[es.length-1];if(last)lcp=last.renderTime||last.loadTime||last.startTime||lcp}).observe({type:'largest-contentful-paint',buffered:true})}catch(e){}try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){if(!e.hadRecentInput)cls+=e.value})}).observe({type:'layout-shift',buffered:true})}catch(e){}try{var nav=performance.getEntriesByType('navigation')[0];if(nav&&nav.responseStart)send('TTFB',nav.responseStart);new PerformanceObserver(function(l){l.getEntries().forEach(function(e){if(e.name==='first-contentful-paint')send('FCP',e.startTime)})}).observe({type:'paint',buffered:true})}catch(e){}function flush(){if(sent)return;sent=true;if(lcp>0)send('LCP',lcp);send('CLS',cls)}addEventListener('visibilitychange',function(){document.visibilityState==='hidden'&&flush()});addEventListener('pagehide',flush)})();`;
+
 export class VitalsStore extends DurableObject<Env> {
   sql: SqlStorage;
   constructor(ctx: DurableObjectState, env: Env) {
@@ -83,6 +89,10 @@ export default {
     const url = new URL(req.url);
 
     if (req.method === "GET") {
+      if (url.pathname === "/beacon.js")
+        return new Response(BEACON_JS, {
+          headers: { ...CORS, ...SEC, "content-type": "application/javascript; charset=utf-8", "cache-control": "public, max-age=3600" },
+        });
       const summary = await stub.summary(url.searchParams.has("includeProbe"));
       return Response.json(summary, { headers: { ...CORS, ...SEC, "cache-control": "max-age=30" } });
     }

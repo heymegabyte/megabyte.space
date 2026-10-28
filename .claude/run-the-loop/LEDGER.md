@@ -4324,3 +4324,9 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   No deployment, resource/DNS/auth mutation, live source correlation, authenticated
   journey, native-client, storage reconciliation or visual acceptance. Matrix unchanged.
   Bare pnpm launcher exited 126; pinned npx launcher succeeded. Outer runner publishes.
+
+- Terminal wrapper outcome for run 40762721539: `pnpm check` was deliberately stopped
+  (exit 143) before the recurring native-runtime interruption window. Submodule
+  provenance, interconnect, scripts types, 189 root tests and four selected package
+  suites (23/25/2/2 tests) passed; Context build completed, repeated build still active
+  at cancellation. Worker dry-runs were not reached. Full wrapper acceptance is OPEN.

@@ -94,6 +94,16 @@
   separately rehearse metadata round trip on approved isolated identities. Existing
   fire-322 whole-estate correlation acceptance remains open.
 
+## Migration next-wave — fire-327 recovery
+
+- [x] Recover unpublished offline metadata assessor (`420ba7f9`) and terminal-evidence
+  loop rule (`5203f011`); fresh focused tests 29/29 and root scripts 189/189 pass.
+  This validates metadata coverage only; fire-326 source/journal acceptance stays open.
+- [ ] Collector concurrency acceptance: invalidate observations if any planned Worker's
+  deployment changes during collection, re-read the complete scope, and retain partial
+  observations on interruption. Accept with interleaved-change/restart regressions and
+  an approved isolated round trip; do not infer freshness from per-entry timestamps.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

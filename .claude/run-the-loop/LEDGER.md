@@ -4305,3 +4305,22 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   auth journey, storage reconciliation or visual pass; modifier matrix unchanged.
   Legacy provider-policy path absent; canonical shared policy read. GitHub outer
   runner owns publication and cadence. Local clean commits are the handoff.
+
+## fire-327 — verified recovery of unpublished metadata assessor (2026-10-28)
+
+- Incoming base and fetched origin/main: 835464fe. Three prior failed Actions runs
+  and retained trees inspected read-only; no retained tree mutated or removed.
+  Recovered 22d1d93e as 420ba7f9 and 7a79cf7a as 5203f011. Prior bookkeeping was
+  excluded because its evidence/SHAs describe a different run. Fresh assessment: 6e2b6ca3.
+- Focused assessor 29/29 and complete root scripts 189/189 pass freshly. Both frozen
+  workspace installs exited 0; scripts typecheck green. Full wrapper terminal outcome
+  will be recorded below and in this run's structured report; not inferred from progress.
+- Separate read-only adversarial reviewer independently passed 29/29 and found no
+  scoped defect. Assessor is metadata-only, not source attestation or deploy integration.
+- Loop improvement: recovered terminal-evidence lifecycle rule, starting full wrapper
+  gate early and requiring completed installs before consumer checks. Next unmet unit:
+  sealed snapshots/durable journal and interleaved collector invalidation/re-read.
+- Unchanged fork e89c7af7; historical receipt 80b7209e mismatch remains advisory.
+  No deployment, resource/DNS/auth mutation, live source correlation, authenticated
+  journey, native-client, storage reconciliation or visual acceptance. Matrix unchanged.
+  Bare pnpm launcher exited 126; pinned npx launcher succeeded. Outer runner publishes.

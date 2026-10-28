@@ -391,3 +391,18 @@ partial-rollout evidence and exact version/allocation read-back for each scoped 
 Implementation, locked-CLI compatibility, isolated metadata round trip and production
 acceptance remain open. Existing receipt and all migration/visual acceptance gates
 remain unchanged; do not redeploy or retrofit historical source claims from this spec.
+
+
+## 21. Offline rollout metadata recovery — fire-327 (2026-10-28 UTC)
+
+Recovered the newer uncommitted assessor/tests from failed run 40595709802 after
+comparing them with run 40559567708 and checking fetched main ancestry. The helper
+validates supplied invocation/account/manifest identity, exact planned Worker scope,
+confirmed version outcomes and observed 100% allocations. It caps complete results
+at metadata-only; it does not authenticate observations or establish source identity.
+The independent review found no blocker within this trusted-collector boundary.
+
+This advances the offline contract tests in [the specification](deployment-provenance.md),
+not the source snapshot, durable journal, remote collector or migration acceptance.
+The collector remains responsible for invalidating stale observations after concurrent
+changes. No deployment, historical receipt, submodule pin or visual score changed.

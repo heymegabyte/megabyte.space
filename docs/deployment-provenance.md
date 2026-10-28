@@ -1,7 +1,8 @@
 # Deployment source correlation — execution specification
 
 Status: proposed implementation contract, fire-326 (2026-10-27). No deployment
-behavior has changed. Governing mission: [ADR 0002](decisions/0002-fresh-cloudflare-os-relaunch.md).
+behavior has changed. Fire-327 adds an offline validator only (below).
+Governing mission: [ADR 0002](decisions/0002-fresh-cloudflare-os-relaunch.md).
 The [operator procedure](../.agents/skills/cloudflare-os-operator/SKILL.md) continues
 to govern production approval, storage compatibility and rollback.
 
@@ -169,3 +170,22 @@ Cloudflare documentation checked 2026-10-27:
 
 These establish platform mechanisms. Locked-CLI compatibility and live round-trip
 behavior remain untested in this iteration.
+
+## Offline metadata validator — fire-327
+
+`scripts/rollout-evidence.mjs` exports `assessRollout(plan, entries)` without network,
+filesystem or deployment side effects. It requires exact planned Worker coverage,
+invocation/account/manifest agreement, successful upload outcomes, exact-version
+read-back and a single observed 100% allocation. Missing/unknown/duplicate results,
+metadata mismatch and split/zero traffic fail closed. Observation times must be
+round-tripping UTC ISO timestamps with seconds or milliseconds (a trailing `Z`).
+Auth/router-only plans remain independent scopes. Run `node --test scripts/rollout-evidence.test.mjs`.
+
+A complete result means supplied metadata coverage only. Its evidence level is
+capped at `metadata-only`, even if a caller supplies stronger labels. Inputs must
+come from a trusted collector; this helper neither authenticates API responses nor
+checks snapshot/build artifacts. Observations describe their recorded time only;
+the collector must invalidate/re-read affected entries after concurrent changes.
+Disk durability, interrupted upload reconciliation, paginated remote discovery,
+source/byte attestation and deploy/recorder integration remain unimplemented.
+Historical receipts and production behavior are unchanged.

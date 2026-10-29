@@ -4330,3 +4330,29 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   provenance, interconnect, scripts types, 189 root tests and four selected package
   suites (23/25/2/2 tests) passed; Context build completed, repeated build still active
   at cancellation. Worker dry-runs were not reached. Full wrapper acceptance is OPEN.
+
+## fire-328 — retained verification guidance recovery (2026-10-29 UTC)
+
+- Assigned base `39373277`, fork `87619d5a` unchanged. Fetched main contains prior
+  successful `83290604` and failed `7536bcae` results; no duplicate cherry-pick.
+  Retained worktrees inspected read-only; redundant backlog strand left untouched.
+- `dd4cda33` recovers failed run 40655654286's heap-exhaustion handling rule,
+  strengthened to inspect inherited cgroup budget before any process-local retry.
+  Historical wrapper log confirms the failure; no claim a larger heap fixes it.
+- `89968981` records official main discovery `024caa73`; ref listing only, no
+  complete-range review, candidate acceptance or pin adoption. Independent offline
+  validator review found no scoped defects and passed 29/29 tests.
+- Both fresh frozen installs exited 0 with lockfiles unchanged. Fresh root script
+  suite: 189/189, exit 0. Scripts typecheck: GREEN, exit 0. Diff whitespace check
+  passed. A premature pre-install test run failed dependency resolution and an early
+  wrapper attempt was stopped; neither is acceptance evidence.
+- Fresh bounded full wrapper check exited 124 after 300 seconds at frontend tsc.
+  Declared-pin fetch, interconnect, scripts types, root 189 tests and prior package
+  stages ran; full check/dry-runs remain incomplete. No whole-wrapper acceptance.
+- Loop improvement: recovered memory-aware retry guidance. New measured-resource
+  check-evidence task and upstream-ref reconciliation added to backlog, existing
+  journal/concurrency/source-correlation tasks remain open.
+- No deploy, receipt rewrite, production mutation, browser/native journey, data
+  reconciliation or visual inspection. Matrix scores unchanged. Historical receipt
+  fork differs from current pin; that comparison does not establish live source.
+  Publication belongs to outer runner; fleet lease released after clean-tree gate.

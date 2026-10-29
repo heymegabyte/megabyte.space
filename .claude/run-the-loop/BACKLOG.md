@@ -104,6 +104,25 @@
   observations on interruption. Accept with interleaved-change/restart regressions and
   an approved isolated round trip; do not infer freshness from per-entry timestamps.
 
+## Verification recovery — fire-328
+
+- [x] Recover the retained heap-exhaustion retry guidance with cgroup-budget awareness
+  (`dd4cda33`); historical wrapper log confirms the diagnosed failure. This is an
+  operator-rule recovery, not a successful build or migration acceptance claim.
+- [ ] Capture per-stage wrapper duration and peak process/cgroup memory in non-secret
+  local check evidence before choosing a larger heap or deadline. Accept only with
+  terminal exit status and measured frontend-stage data; preserve the first failure
+  and do not change shared host services. This complements the existing full-wrapper
+  gate rather than replacing it with isolated package checks.
+
+## Upstream discovery — fire-328
+
+- [ ] Reconcile newly advertised official main `024caa73b98c91eb3267f5af092ec5abbda9e842`
+  with the existing `bd10b0ec` rehearsal frontier before selecting the next candidate.
+  Ref discovery only; require declared-source fetch, complete intervening-range
+  inventory/review and frozen candidate gates. No fork pin adoption is authorized
+  by the remote ref listing.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

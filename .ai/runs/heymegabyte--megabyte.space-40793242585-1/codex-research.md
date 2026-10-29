@@ -28,3 +28,11 @@ receipt rewrite, production mutation or visual score is justified by these check
 This fire's improvement is recovery of a diagnosed verification failure's handling
 rule. The guidance does not prescribe a larger heap on an overloaded host and does
 not claim that a retry or full wrapper build passed.
+
+## Upstream discovery
+
+Read-only `git ls-remote https://github.com/cloudflare/cloudflare-os.git HEAD
+refs/heads/main` returned `024caa73b98c91eb3267f5af092ec5abbda9e842` for both
+refs during this fire. This is ref discovery only: no release inventory, complete
+range review, candidate fetch/rehearsal or compatibility/adoption is credited.
+The declared fork gitlink stays `87619d5ae7556224b155c8e35e3fd6961edc0c20`.

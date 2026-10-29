@@ -10,6 +10,7 @@
  * Exit 0 = all green. Exit 1 = ≥1 check failed (named in the summary).
  */
 const TARGETS = [
+  ["apex", "https://megabyte.space/health"],
   ["mcp", "https://mcp.megabyte.space/health"],
   ["os-agent", "https://megabyte-os-agent.manhattan.workers.dev/health"],
 ];

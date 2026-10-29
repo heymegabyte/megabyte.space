@@ -290,11 +290,14 @@ let sessionCookie = "";
   } else {
     const csp = res.headers.get("content-security-policy") || "";
     const hsts = res.headers.get("strict-transport-security") || "";
-    if (!csp) console.log("   ⚠️  WARN: apex CSP ABSENT — tracked follow-up (OS-specific CSP; BACKLOG WS-8/security).");
+    // CSP is ENFORCED on the apex OS SPA + login gate (ESTATE #2, 2026-10-29) — hard-assert it's present
+    // with its strict anti-clickjacking/anti-object directives, so a drop/weaken fails the gate.
+    // (verify-apex-csp covers the full policy + the 0-violation authed-browser check.)
+    const cspOk = /frame-ancestors 'none'/.test(csp) && /object-src 'none'/.test(csp) && /base-uri 'self'/.test(csp);
     record(
-      "apex serves HSTS (CSP tracked as follow-up)",
-      hsts.length > 0,
-      `hsts=${hsts ? "present" : "ABSENT"} csp=${csp ? "present" : "ABSENT(warn)"}`,
+      "apex serves HSTS + enforced CSP (frame-ancestors/object-src/base-uri 'none')",
+      hsts.length > 0 && cspOk,
+      `hsts=${hsts ? "present" : "ABSENT"} csp=${csp ? (cspOk ? "enforced+strict" : "present-but-WEAK") : "ABSENT"}`,
     );
   }
 }

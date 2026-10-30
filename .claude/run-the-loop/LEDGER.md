@@ -4356,3 +4356,24 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   reconciliation or visual inspection. Matrix scores unchanged. Historical receipt
   fork differs from current pin; that comparison does not establish live source.
   Publication belongs to outer runner; fleet lease released after clean-tree gate.
+
+## fire-335 — retained journal recovery acceptance (2026-10-30)
+
+- Documentation slice `2810710b`: exact unpublished recovery candidate chain and
+  filesystem-fault acceptance matrix; independent source review artifact under
+  `.ai/runs/heymegabyte--megabyte.space-41091854541-1/`.
+- Fetched main is assigned base `39472432`; retained `0b611f88` is not its ancestor.
+  Inspected prior failed receipts and clean retained fire-333/fire-334 trees read-only.
+  No retained implementation or historical bookkeeping transplanted.
+- Fresh existing metadata validator 29/29, exit 0; whitespace check passes.
+  Independent adversarial documentation review found no blocking finding and
+  confirmed candidate/ancestry/fault-boundary claims against actual source.
+- Declared submodule initialization timed out (35s, exit 124); bounded GitHub Actions
+  history API timed out (20s, exit 124). Neither proves remote absence; no auth changes.
+  Full installs/root suite/typecheck/wrapper not attempted for documentation-only work.
+- Loop improvement: require exact last completed filesystem operation in fault
+  evidence; pre-operation failures cannot close partial/post-operation acceptance.
+  New next-wave acceptance covers partial write, post-link, close and cleanup errors.
+- No deploy, production mutation, pin/receipt rewrite, migration-phase advancement,
+  browser/native journey, data reconciliation or visual pass. Matrix unchanged.
+  Outer runner owns publication. Lease release follows committed clean-tree gate.

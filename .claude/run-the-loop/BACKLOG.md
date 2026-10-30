@@ -1290,3 +1290,15 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   separately inspect dashboard CWV samples. Include browser blocking/inert-markup
   negative cases; preserve a distinct static-only CLI result. Do not close the existing
   performance/field-CWV goal from beacon markup alone.
+
+
+## Fire-335 retained journal acceptance
+
+- [x] Document exact unpublished candidate chain and distinguish pre-operation,
+  partial-write and post-operation exception acceptance in
+  `docs/deployment-provenance.md`; source review only, no runtime recovery credit.
+- [ ] After source bootstrap succeeds, compare/recover retained collector/journal
+  candidates without changing the assigned pin; add actual partial-write,
+  post-link, close and cleanup failure fixtures before upload integration.
+  Run both frozen installs and terminal full gates; do not transplant old
+  bookkeeping or infer publication/durability from historical focused tests.

@@ -102,6 +102,7 @@ const ROUTES = [
   ['/booking', /booking|appointment|upcoming|sample data/i], // WS-DEMO: Booking week view (fire-154)
   ['/releases', /releases|deploy|rollback|version|sample data/i], // WS-DEMO: Releases deploy/rollback (fire-155)
   ['/browser-runs', /browser|run|needs input|steps|sample data/i], // WS-DEMO: Browser Runs agentic sessions (fire-156)
+  ['/machines', /machine|grant|folder|execution|network|sample data/i], // WS-DEMO: Machines — scoped local-machine bridge (absorbed gatekeeper-localhost, Apache-2.0); Coder characteristics, CF-native
   ['/billing', /billing|usage|spend|cost|sample/i], // WS-DEMO: Billing (live usage + sample costs) (fire-157)
   ['/budgets', /budgets|spend cap|monthly cap|sample data/i], // WS-DEMO: Budgets cost-governance (fire-259)
   ['/experiments', /experiments|variant|conversion|winner|sample/i], // WS-DEMO: Experiments A/B (fire-158)

@@ -82,7 +82,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
 - **Finish verification before reporting it.** Start frozen installs and the full wrapper
   check early enough to collect their exit status within the fleet deadline. Dependency
-  consumers start only after both installs finish. A prior receipt saying `running` is
+  consumers start only after both installs finish. Before the fork install, verify its
+  own `.git` marker,
+  exact pinned HEAD and `packages/router/package.json`; an empty submodule directory
+  can make pnpm discover/install the parent workspace, which is not fork bootstrap.
+  A prior receipt saying `running` is
   unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
   Final reports name terminal check outcomes; interrupted checks remain incomplete.
   If a frontend build reports JavaScript heap exhaustion, inspect Node's heap limit,

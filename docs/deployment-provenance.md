@@ -245,3 +245,20 @@ provider metadata round trip, upload integration and migration acceptance open.
 **Loop improvement:** distinguish pre-operation exceptions, partial operations and
 post-operation exceptions in future fault reports. Name the last real filesystem
 operation that completed; an injected method name alone overstates coverage.
+
+
+## Source bootstrap observation — fire-336
+
+At assigned/fetched main `1a737f3a`, gitlink `026dceeb` remains uninitialized after
+bounded initialization. One direct exact-SHA fetch from the unchanged declared fork
+returned `upload-pack: not our ref`; this establishes a failed retrieval, not permanent
+absence or a permission diagnosis. Preserve the gitlink and remote while resolving
+source availability. Do not substitute another fork or a moving branch tip.
+
+An attempted install from the empty submodule discovered the parent workspace.
+Neither 90-second install invocation returned success, so neither receives bootstrap
+credit. Verify the submodule's own `.git` marker, exact pinned HEAD and router package
+before installing; then require terminal frozen-install success in each workspace.
+The retained collector/journal chain above remains unpublished and unrecovered.
+Focused provenance/metadata fixtures pass 50/50; no full wrapper, production, browser,
+native-client, durability or migration acceptance follows from those fixtures.

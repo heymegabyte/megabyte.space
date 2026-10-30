@@ -189,3 +189,59 @@ the collector must invalidate/re-read affected entries after concurrent changes.
 Disk durability, interrupted upload reconciliation, paginated remote discovery,
 source/byte attestation and deploy/recorder integration remain unimplemented.
 Historical receipts and production behavior are unchanged.
+
+
+## Retained journal recovery acceptance — fire-335
+
+The failed fire-334 result `0b611f883690f56470657248f5df7bab7180f59e`
+is not an ancestor of the fetched `origin/main` (`39472432`, checked 2026-10-30).
+Its clean retained worktree contains offline collector/journal implementation and
+fixtures; these are **unpublished candidates**, not installed deployment behavior.
+Do not reimplement them or infer publication from a prior test report.
+
+Recover into a future assigned workspace only after comparing current main and
+establishing its source/bootstrap context. The retained candidate chain is:
+
+| Commit | Candidate scope |
+|---|---|
+| `768f987a` | Offline collector, journal and initial tests/specification |
+| `b657253e`, `863abdcc` | Bounded remote diagnostics and recovery guidance |
+| `4f07994e` | Sync-failure and SIGKILL fixtures |
+| `a31b2352` | Pre-write/pre-link failure and successful-write mutation fixtures |
+| `0b611f88` | Historical fire bookkeeping; do not transplant as fresh evidence |
+
+Inspect each diff before recovery: these are dependency-ordered candidates, not an
+instruction to cherry-pick a whole failed result. Preserve the assigned gitlink.
+The current checkout does not contain `rollout-journal.mjs` or the collector.
+The existing `rollout-evidence` validator is a separate, already committed layer.
+
+### Required fault cases before upload integration
+
+The retained child harness throws **before** `writeFile` and **before** `link`.
+Its directory-sync failures occur after a real link. Neither proves a partial
+write or a link that commits and then reports an error. Add the following cases
+using a real parent reader and isolated child fault adapters:
+
+| Injection boundary | Required recovered state and caller behavior |
+|---|---|
+| Write an actual prefix of serialized JSON, then throw before link | Numbered committed prefix unchanged; pending fragment ignored; a fresh append can succeed; no upload invoked |
+| Perform real link, then throw before directory sync | Numbered intent may already be readable; append rejects; stop and reconcile; duplicate intent must be rejected; readability is not durability |
+| Fail temporary-file close after write/sync | Determine whether link was reached from the actual files; preserve original failure context; never authorize an upload from a rejected append |
+| Fail pending-file unlink after successful link/directory sync | Intent remains readable and pending; append rejects despite committed bytes; caller must reconcile rather than retry the upload |
+| Corrupt or truncate an already numbered record | Reader rejects malformed/hash-invalid history; never silently skip it or reconstruct a successful outcome |
+
+For each case assert the exact numbered records, outcome, pending files and
+terminal child exit/signal. A rejected append is ambiguous when its link may have
+succeeded: do not equate rejection with permission to retry. Do not automatically
+delete pending files while another append might own them. The directory remains
+private/trusted and no fixture establishes hostile-filesystem resistance.
+
+These are acceptance requirements, not freshly executed tests. Even successful
+process fixtures cannot prove hardware power-loss durability. After recovery,
+collect terminal focused, complete root suite, scripts typecheck and full wrapper
+results following both frozen installs. Keep source sealing, remote adapters,
+provider metadata round trip, upload integration and migration acceptance open.
+
+**Loop improvement:** distinguish pre-operation exceptions, partial operations and
+post-operation exceptions in future fault reports. Name the last real filesystem
+operation that completed; an injected method name alone overstates coverage.

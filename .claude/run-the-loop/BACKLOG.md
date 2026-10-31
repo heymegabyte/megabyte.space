@@ -1308,8 +1308,18 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 - [x] Recover unpublished bootstrap documentation c419bf6f as fa944da0 after actual
   origin/main ancestry and retained-file review; fresh focused checks 75/75.
-- [ ] Add a deterministic fork-workspace preflight before install/build consumers:
+- [x] Recovered in fire-340 as 63158282, fresh focused 72/72 and final preflight 9/9. Add a deterministic fork-workspace preflight before install/build consumers:
   require the fork's own Git top-level, exact committed gitlink HEAD and router package.
   Include a dangling `.git` marker fixture where Git falls back to the parent; marker
   presence alone is insufficient. Keep missing-source failure distinct from clean-tree
   status and do not substitute another remote or advance the pin to pass bootstrap.
+
+
+## Fire-340 source acceptance follow-up
+
+- [ ] Complete exact declared fork bootstrap and both frozen installs before full
+  wrapper/build consumers. Invoke `node scripts/check-fork-workspace.mjs && ...`
+  for fork install; pin-looking submodule status can coexist with parent fallback.
+  Current fixture acceptance is green; actual source acceptance is incomplete.
+- [ ] After bootstrap, run the full wrapper/type/build gates for recovered 63158282;
+  preserve remote/pin and retained journal candidates until their own acceptance.

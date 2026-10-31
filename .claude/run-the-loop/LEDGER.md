@@ -4395,3 +4395,18 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   native/browser journey, data reconciliation or visual pass. Matrix unchanged.
   Clean-tree guard warns fork checks are skipped; source acceptance remains open.
   Outer runner owns publication; lease released only after committed clean-tree check.
+
+## fire-340 — 2026-10-31 — recover fork identity prerequisite
+
+- Fetched origin/main b0283222; actual retained de966246/4af725b9 are unpublished.
+  Recovered reviewed 3c6d5857 as 63158282 without old bookkeeping or retained-tree edits.
+- Fresh focused Node-native tests 72/72; final fork preflight fixtures 9/9.
+  Independent adversarial review also passed 9/9 and found no blocking defect.
+- Root frozen install timed out after linking (124). Exact declared fork bootstrap
+  timed out; actual preflight rejects missing own marker/router. No full gate credit.
+- A mistakenly sequenced fork install discovered parent workspace after preflight
+  rejection; stopped, no fork-install credit. Loop improvement ba81d6d9 requires &&
+  and distinguishes fixture acceptance from incomplete source acceptance.
+- GitHub history/direct remote requests timed out; no credential/remote diagnosis.
+  No config/pin/receipt changes, deployment, migration advancement, browser/native
+  acceptance or visual score. Outer runner owns publication. Retain source follow-up.

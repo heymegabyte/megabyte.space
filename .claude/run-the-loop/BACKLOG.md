@@ -1302,3 +1302,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   post-link, close and cleanup failure fixtures before upload integration.
   Run both frozen installs and terminal full gates; do not transplant old
   bookkeeping or infer publication/durability from historical focused tests.
+
+
+## Fire-337 bootstrap recovery follow-up
+
+- [x] Recover unpublished bootstrap documentation c419bf6f as fa944da0 after actual
+  origin/main ancestry and retained-file review; fresh focused checks 75/75.
+- [ ] Add a deterministic fork-workspace preflight before install/build consumers:
+  require the fork's own Git top-level, exact committed gitlink HEAD and router package.
+  Include a dangling `.git` marker fixture where Git falls back to the parent; marker
+  presence alone is insufficient. Keep missing-source failure distinct from clean-tree
+  status and do not substitute another remote or advance the pin to pass bootstrap.

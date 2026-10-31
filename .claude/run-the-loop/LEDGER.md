@@ -4377,3 +4377,21 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - No deploy, production mutation, pin/receipt rewrite, migration-phase advancement,
   browser/native journey, data reconciliation or visual pass. Matrix unchanged.
   Outer runner owns publication. Lease release follows committed clean-tree gate.
+
+## fire-337 — recover verified bootstrap guidance (2026-10-31 UTC)
+
+- Recovered unpublished documentation c419bf6f as fa944da0 after fetching origin/main
+  (1a737f3a), checking ancestry, worktree list, clean retained files and prior failed
+  receipt. Prior bookkeeping was not replayed; runtime candidates remain untouched.
+- Fresh focused tests: 75/75, exit 0 across provenance, metadata, bookkeeping and
+  lease fixtures. Independent adversarial review found no actionable issue in the
+  recovered documentation; research artifact records this run's bounded observations.
+- Fresh submodule init timed out at 70s, exit 124; declared-source verifier at 50s,
+  exit 124. GitHub history query yielded no usable live result within 25s. These
+  observations establish incomplete retrieval, not absence or permission diagnosis.
+- Loop improvement recovered: verify exact fork identity before installing to avoid
+  parent-workspace discovery. New follow-up covers dangling marker/parent fallback.
+- No full installs, wrapper check, deployment, migration advancement, receipt rewrite,
+  native/browser journey, data reconciliation or visual pass. Matrix unchanged.
+  Clean-tree guard warns fork checks are skipped; source acceptance remains open.
+  Outer runner owns publication; lease released only after committed clean-tree check.

@@ -75,6 +75,7 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   gate. Do not use `handoff`: it writes the legacy watchdog trigger. The worktree-local lease
   does not lock another worktree; the fleet repository lock serializes fleet runs, while
   independently running sessions still require conflict review at publication.
+- **Separate fixture acceptance from source acceptance.** Expected rejection of an empty fork is a passing regression assertion, while the actual missing source leaves full gates incomplete. Chain the real preflight and fork install with `&&`; a semicolon can let pnpm discover the parent workspace after rejection. Submodule status alone is not local identity evidence.
 - **Missing credentials limit evidence.** Complete useful decision-independent work and
   report blocked deployment, authenticated long journeys, storage reconciliation and visual
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep

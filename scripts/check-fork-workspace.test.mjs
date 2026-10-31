@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, copyFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-for (const scenario of ['valid', 'empty', 'dangling-marker', 'parent-marker', 'parent-common-dir', 'wrong-head', 'missing-router', 'staged-pin']) {
+for (const scenario of ['valid', 'dirty-pinned', 'missing-gitlink', 'empty', 'dangling-marker', 'parent-marker', 'parent-common-dir', 'wrong-head', 'missing-router', 'staged-pin']) {
   test(`fork workspace preflight: ${scenario}`, () => {
     const root = mkdtempSync(join(tmpdir(), 'fork-workspace-'));
     const fork = join(root, 'cloudflare-os');
@@ -23,6 +23,14 @@ for (const scenario of ['valid', 'empty', 'dangling-marker', 'parent-marker', 'p
       const pin = git(fork, 'rev-parse', 'HEAD');
       git(root, 'update-index', '--add', '--cacheinfo', `160000,${pin},cloudflare-os`);
       commit(root);
+      if (scenario === 'dirty-pinned') {
+        writeFileSync(join(fork, 'packages/router/package.json'), '{"name":"modified-router"}');
+        writeFileSync(join(fork, 'untracked.txt'), 'identity acceptance does not imply cleanliness');
+      }
+      if (scenario === 'missing-gitlink') {
+        git(root, 'update-index', '--force-remove', 'cloudflare-os');
+        commit(root);
+      }
       if (scenario === 'empty' || scenario === 'dangling-marker' || scenario === 'parent-marker' || scenario === 'parent-common-dir') {
         rmSync(join(fork, '.git'), { recursive: true, force: true });
         if (scenario === 'dangling-marker') writeFileSync(join(fork, '.git'), 'gitdir: missing\n');
@@ -37,10 +45,13 @@ for (const scenario of ['valid', 'empty', 'dangling-marker', 'parent-marker', 'p
       }
       if (scenario === 'missing-router') rmSync(join(fork, 'packages/router/package.json'));
       const run = spawnSync(process.execPath, ['scripts/check-fork-workspace.mjs'], { cwd: root, encoding: 'utf8' });
-      assert.equal(run.status, scenario === 'valid' ? 0 : 1, run.stderr || run.stdout);
+      const accepted = scenario === 'valid' || scenario === 'dirty-pinned';
+      assert.equal(run.status, accepted ? 0 : 1, run.stderr || run.stdout);
       const result = JSON.parse(run.stdout);
-      assert.equal(result.ok, scenario === 'valid');
-      assert.equal(result.expectedHead, pin, 'the committed gitlink, not staged pin, is authoritative');
+      assert.equal(result.ok, accepted);
+      assert.equal(result.expectedHead, scenario === 'missing-gitlink' ? null : pin, 'the committed gitlink, not staged pin, is authoritative');
+      if (scenario === 'dirty-pinned') assert.equal(result.actualHead, pin);
+      if (scenario === 'missing-gitlink') assert.match(result.error, /committed .* gitlink is missing/);
       if (scenario === 'parent-marker') assert.match(result.error, /top.level/);
       if (scenario === 'parent-common-dir') assert.match(result.error, /parent Git directory/);
     } finally { rmSync(root, { recursive: true, force: true }); }

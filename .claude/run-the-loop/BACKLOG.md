@@ -1323,3 +1323,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   Current fixture acceptance is green; actual source acceptance is incomplete.
 - [ ] After bootstrap, run the full wrapper/type/build gates for recovered 63158282;
   preserve remote/pin and retained journal candidates until their own acceptance.
+
+
+## Fire-341 prerequisite scope acceptance
+
+- [x] Add fresh identity-only acceptance for dirty source at the committed pin and
+  rejection of a missing committed gitlink despite an initialized local fork; 11/11.
+- [ ] When exact source bootstrap is available, demonstrate the separate identity
+  and clean-tree gates against the actual checkout before build consumers; neither
+  fixture success nor a retained pin-looking status establishes real source acceptance.
+  Existing frozen-install/full-wrapper and journal recovery follow-ups remain open.

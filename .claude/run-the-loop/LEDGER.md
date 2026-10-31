@@ -4410,3 +4410,22 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - GitHub history/direct remote requests timed out; no credential/remote diagnosis.
   No config/pin/receipt changes, deployment, migration advancement, browser/native
   acceptance or visual score. Outer runner owns publication. Retain source follow-up.
+
+## fire-341 — 2026-10-31 — bound fork prerequisite scope
+
+- Fetched origin/main f5f4e2bc; prior successful result is published. Failed
+  4af725b9 is not an ancestor; its implementation is already recovered as
+  63158282. Reviewed retained commits/files read-only; no duplicate recovery.
+- Committed 186a527b: identity-only dirty-pin and missing-committed-gitlink
+  fixtures. Fresh focused acceptance 11/11; independent review also 11/11, no
+  blocker. Pre-change broader fixture suite 72/72. Loop improvement: explicit
+  scope coverage prevents identity checks from being credited as clean-tree gates.
+- Declared submodule init timed out (55s, 124); actual identity check exits 1
+  for absent own Git marker. Volta pnpm unavailable (126); pinned npx frozen
+  install timed out (60s, 124) after linking. No completed frozen install or full
+  wrapper/type/build acceptance. Bounded live GitHub history queries timed out.
+- Receipt mismatch is advisory, not live source identity. No pin/config/remote,
+  credentials or production changes; migration remains pending. No browser/native
+  journey, storage reconciliation or vision credit; matrix/receipt unchanged.
+  Next: exact source bootstrap, both installs and full gates; retained journal
+  candidates remain deferred. Outer runner owns publication; release after clean gate.

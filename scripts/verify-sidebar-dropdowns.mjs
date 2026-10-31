@@ -61,6 +61,12 @@ try {
   ok("Build header is a disclosure button", (await header("build").count()) > 0 && (await header("build").getAttribute("aria-expanded")) !== null);
   ok("Library header is a disclosure button", (await header("library").count()) > 0 && (await header("library").getAttribute("aria-expanded")) !== null);
 
+  // The 34-row "Build" was split into 6 right-sized sibling dropdowns — assert the 5 new ones exist
+  // + default open (so every CF-primitive group is independently collapsible).
+  for (const id of ["data", "compute", "delivery", "observe", "govern"]) {
+    ok(`'${id}' section is a collapsible dropdown (default open)`, (await header(id).count()) > 0 && (await expanded(id)));
+  }
+
   // 2. default OPEN + representative rows visible.
   ok("all three default OPEN (aria-expanded=true)", (await expanded("operate")) && (await expanded("build")) && (await expanded("library")));
   ok('Operate row "Goals" visible', await rowVisible("operate", "Goals"));

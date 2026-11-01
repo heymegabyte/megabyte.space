@@ -299,3 +299,23 @@ A waiting Git transport with a `gh` descendant locates a pending helper stage, b
 does not prove expired credentials, missing repository access or a network cause.
 Stop only descendants confirmed to belong to the current invocation. Preserve
 official authentication and the declared source URL/pin.
+
+
+### Session-bus differential probe — fire-344
+
+This run's ordinary bounded `gh` and submodule requests timed out. Removing
+`DBUS_SESSION_BUS_ADDRESS` also timed out. A process-local diagnostic override using
+`DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent` instead returned promptly:
+`gh api user` returned HTTP 401, the fork repository lookup returned HTTP 404,
+and Git initialized the declared fork at `240899ec34e822a0afa695e3c7b48a41c2db9c4c`.
+The separate exact-SHA fetch gate subsequently passed from the committed remote.
+
+This is a diagnostic environment override, not a fleet configuration or credential
+repair. It makes that process's session bus unavailable, so a credential that is
+only in the keyring may become unavailable too. A 401 under this override does not
+prove that the normal official session is expired; Git and `gh` may resolve
+credentials differently. Do not copy, print, replace or extract stored credentials.
+Do not set the override globally or infer the keyring's root cause from this one
+comparison. Preserve the declared remote and pin and record each command's outcome
+separately. Local initialization alone still does not establish clean source,
+locked dependency installation, full builds or production acceptance.

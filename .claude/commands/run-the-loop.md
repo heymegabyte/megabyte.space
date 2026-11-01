@@ -81,6 +81,14 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep
   acceptance items open and visual scores unchanged unless freshly verified. Record a
   non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
+- **Bound remote orientation.** Put explicit time limits on GitHub history and submodule
+  network operations. If unavailable, inspect retained receipts/objects read-only and
+  report remote history or exact-pin bootstrap as incomplete; never substitute an
+  older fork to make checks green. An anonymous 404 or disabled-prompt credential
+  error does not distinguish a private repository from an absent one; report that
+  access as unverified rather than claiming the declared repository was deleted.
+  Stop this run's stalled queries before closing. See the bootstrap diagnostic
+  evidence table in `docs/deployment-provenance.md`.
 - **Finish verification before reporting it.** Start frozen installs and the full wrapper
   check early enough to collect their exit status within the fleet deadline. Dependency
   consumers start only after both installs finish. Before the fork install, verify its

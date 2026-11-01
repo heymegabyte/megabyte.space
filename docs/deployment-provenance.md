@@ -262,3 +262,28 @@ before installing; then require terminal frozen-install success in each workspac
 The retained collector/journal chain above remains unpublished and unrecovered.
 Focused provenance/metadata fixtures pass 50/50; no full wrapper, production, browser,
 native-client, durability or migration acceptance follows from those fixtures.
+
+
+## Bootstrap diagnostic evidence boundaries — fire-342
+
+Use bounded probes before dependency consumers. On the Ubuntu fleet, for example,
+run `timeout --kill-after=5s 50s env GIT_TERMINAL_PROMPT=0 git submodule update --init cloudflare-os`
+and record its terminal status. Exit 124 means the time budget expired; it does not
+identify authentication, network, repository visibility or pin availability as the
+cause. Exit 137 after the kill grace period also leaves retrieval incomplete. Stop only this iteration's remaining query processes before closing; never
+kill another run's processes or alter global credential helpers to diagnose a stall.
+
+| Observed result | Supported conclusion | Acceptance still open |
+|---|---|---|
+| Anonymous GitHub repository lookup returns HTTP 404 | Anonymous access did not resolve the repository; private visibility, insufficient access and absence remain ambiguous | Authenticated declared-source exact-pin retrieval |
+| Git with credentials disabled requests a username | That anonymous Git request needs authentication | Existing official authentication readiness and repository access; do not replace credentials |
+| Bounded `gh` request exits 124 | No terminal CLI result within the budget | History/access query; public history may be read separately if available |
+| Public Actions API returns completed success | The workflow reported success at the recorded input SHA | Result-commit publication: inspect receipts and actual `origin/main` ancestry |
+| Exact-SHA fetch from declared remote completes with `not our ref` | This retrieval failed | Future availability and permission diagnosis; preserve remote/pin |
+| Local fork preflight rejects missing own `.git` marker | This workspace lacks the required independent fork identity | Bootstrap, both frozen installs and full wrapper/build acceptance |
+| Local fork preflight succeeds | Own Git repository, committed pinned HEAD and router package were found | Remote provenance, clean tree, dependencies, builds and runtime acceptance |
+
+Do not log credential-helper output, tokens or raw authentication transcripts.
+HTTP reachability is a separate observation: a successful `github.com` request does
+not establish that `gh` authentication or private fork access works. Keep the remote,
+gitlink and retained recovery candidates unchanged while source acceptance is open.

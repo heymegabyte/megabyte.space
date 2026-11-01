@@ -319,3 +319,13 @@ Do not set the override globally or infer the keyring's root cause from this one
 comparison. Preserve the declared remote and pin and record each command's outcome
 separately. Local initialization alone still does not establish clean source,
 locked dependency installation, full builds or production acceptance.
+
+
+### Serialize bootstrap diagnostics — fire-345
+
+Wait for the original bounded bootstrap and its owned descendants to terminate
+before another initialization/fetch/checkout attempt in the same submodule. A
+concurrent clone cleanup can remove a marker or objects after a successful fetch,
+so a fetch success alone is not local checkout acceptance. Re-run the own-workspace
+preflight after sequential initialization. This does not change declared-source
+provenance requirements or authorize cleanup of another run's processes/worktree.

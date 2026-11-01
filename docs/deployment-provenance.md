@@ -287,3 +287,15 @@ Do not log credential-helper output, tokens or raw authentication transcripts.
 HTTP reachability is a separate observation: a successful `github.com` request does
 not establish that `gh` authentication or private fork access works. Keep the remote,
 gitlink and retained recovery candidates unchanged while source acceptance is open.
+
+
+### Process evidence for a stalled query — fire-343
+
+Before terminating a stalled invocation, a minimal process-tree snapshot can record
+PID, parent PID, executable basename, process state, elapsed time and wait channel.
+Exclude arguments, environment and credential-helper output. Restrict conclusions
+to that invocation's descendants; unrelated fleet jobs can run the same executables.
+A waiting Git transport with a `gh` descendant locates a pending helper stage, but
+does not prove expired credentials, missing repository access or a network cause.
+Stop only descendants confirmed to belong to the current invocation. Preserve
+official authentication and the declared source URL/pin.

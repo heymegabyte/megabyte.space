@@ -89,6 +89,14 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   access as unverified rather than claiming the declared repository was deleted.
   Stop this run's stalled queries before closing. See the bootstrap diagnostic
   evidence table in `docs/deployment-provenance.md`.
+- **Keep nested package-manager execution pinned.** A successful direct
+  `node <pinned-pnpm-entry> install` does not prove that nested scripts can resolve
+  `pnpm` on PATH. Before the full wrapper check, verify the pinned launcher AND
+  its child-shell lookup. If needed, use a run-local PATH shim that invokes the
+  same version; preserve global toolchain/auth configuration. A launcher failure
+  leaves the downstream gates unrun, rather than proving a source/build defect.
+  Run the fork preflight before direct root build/test entry points too; only
+  `check` currently includes it automatically.
 - **Finish verification before reporting it.** Start frozen installs and the full wrapper
   check early enough to collect their exit status within the fleet deadline. Dependency
   consumers start only after both installs finish. Before the fork install, verify its

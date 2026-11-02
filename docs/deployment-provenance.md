@@ -346,3 +346,16 @@ shim returned exit 126. Use the checkout-pinned on-demand version as documented 
 CLAUDE.md, and verify the version before a direct cached invocation. A newer cached
 pnpm can attempt its own package-manager bootstrap; its failure is not evidence
 about the pinned install. Keep diagnostic retries bounded and record them separately.
+
+
+### Nested launcher evidence — fire-348
+
+Both exact-pin frozen offline installs completed using pnpm 11.17.0 in this run
+(root 2m 50.7s; fork 2m 35.4s). The subsequent direct pinned-JS `check` invocation
+passed local identity and declared-remote retrieval, then exited 1 at the nested
+`pnpm run check:interconnect`: its shell could not resolve `pnpm`. This is a
+launcher failure, not a failed interconnect assertion. A retry uses a private
+run-local PATH shim pointing to the same pinned JS entry; no global shim,
+credentials, deployment config or fork source was changed. Its terminal outcome
+is recorded in the fire report separately. Successful installation alone does
+not verify nested launcher availability.

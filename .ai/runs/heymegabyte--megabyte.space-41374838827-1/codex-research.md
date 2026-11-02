@@ -21,3 +21,8 @@ version-verified 11.17.0 offline diagnostic is recorded in the final report.
 Independent read-only reviewer found no actionable issue in recovered guidance;
 historical diagnostic claims were reviewed as recorded assertions, not replayed.
 No UI visited, no matrix changes, no production mutation or publication.
+
+Final offline diagnostic: direct cached pnpm version was verified as 11.17.0;
+root frozen offline install completed with terminal exit 0 in 87.1s. This clears
+only root dependency installation; fork install remains incomplete. No root cause
+for the prior timeouts follows from this single differential result.

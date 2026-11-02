@@ -359,3 +359,17 @@ run-local PATH shim pointing to the same pinned JS entry; no global shim,
 credentials, deployment config or fork source was changed. Its terminal outcome
 is recorded in the fire report separately. Successful installation alone does
 not verify nested launcher availability.
+
+### Reconcile terminal logs and effective memory limits — fire-349
+
+The retained fire-348 report left its wrapper retry incomplete, but its final
+`check-retry.log` records frontend V8 heap exhaustion and a failed wrapper command.
+Reconcile that terminal evidence before repeating the check; do not inherit an
+unfinished report as either green or a still-running process.
+
+Inspect the invocation's own cgroup and every limiting ancestor before a heap
+retry. Fire-349 observed an 846 MiB Node heap, a 2 GiB invocation cgroup and a
+10 GiB fleet ancestor. The smaller descendant limit still applies; free host
+memory does not authorize a heap sized to the ancestor. Leave headroom for native
+allocations, child processes and the agent itself. Use only a bounded process-local
+retry when measured headroom permits; do not change host services to pass a build.

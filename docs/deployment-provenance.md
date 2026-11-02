@@ -329,3 +329,20 @@ concurrent clone cleanup can remove a marker or objects after a successful fetch
 so a fetch success alone is not local checkout acceptance. Re-run the own-workspace
 preflight after sequential initialization. This does not change declared-source
 provenance requirements or authorize cleanup of another run's processes/worktree.
+
+
+### Package progress is not installation completion — fire-347
+
+On the Ubuntu fleet, both pinned `pnpm@11.17.0` frozen installs reached an
+`added …, done` progress line but exceeded a 150-second process budget (exit 124).
+Neither workspace had its `node_modules/.modules.yaml` or executable links at that
+observation. This locates incomplete installation after package-addition progress;
+it does not identify a registry, lifecycle-script, filesystem or resource cause.
+Do not run dependency consumers or credit bootstrap from the progress line. Require
+the install process's successful terminal exit for BOTH workspaces first.
+
+A `pnpm` executable found on PATH may be an unconfigured Volta shim: this run's
+shim returned exit 126. Use the checkout-pinned on-demand version as documented in
+CLAUDE.md, and verify the version before a direct cached invocation. A newer cached
+pnpm can attempt its own package-manager bootstrap; its failure is not evidence
+about the pinned install. Keep diagnostic retries bounded and record them separately.

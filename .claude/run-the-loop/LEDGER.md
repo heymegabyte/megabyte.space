@@ -4429,3 +4429,24 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   journey, storage reconciliation or vision credit; matrix/receipt unchanged.
   Next: exact source bootstrap, both installs and full gates; retained journal
   candidates remain deferred. Outer runner owns publication; release after clean gate.
+
+## fire-351 — retained documentation recovery and terminal evidence (2026-11-03)
+
+- Fetched main remains bb2e1770; Actions 41562457005/41512626351 failed. Reviewed
+  actual retained commits and dirty files read-only. Recovered documentation-only
+  chain as 21de140c..d679c6eb; excluded old bookkeeping and acceptance ticks.
+- c8d056d2 adds early report checkpoints; independent adversarial review found no
+  blocker. Historical wording now names its fire. Loop improvement preserves
+  observed results across backend interruption without crediting active checks.
+- Exact unchanged fork 240899ec initialized; own identity and declared-remote fetch
+  passed. Frozen offline pnpm 11.17.0 installs exited 0: root 1m17.9s, fork 1m13s.
+  Focused fixtures 49/49 and post-install scripts 200/200 passed.
+- Full wrapper exited 124 at its 150-second bound during Context build:app, after
+  identity/remote/interconnect/type gates and nested tests passed. 5,043 modules
+  transformed; SIGTERM is not source-failure evidence. Full builds/dry-runs remain
+  incomplete. Invocation limit 2 GiB, Node heap 846 MiB; no heap/host changes.
+- No production deployment, pin/config/remote/credential/receipt change, browser
+  journey, native-client/storage/migration or visual credit. Matrix unchanged.
+  Next: terminal full wrapper/build evidence, then separate retained journal
+  failure fixtures; confirm publication ancestry before repeating recovery.
+  Commit locally only; outer runner owns publication. Release after clean gate.

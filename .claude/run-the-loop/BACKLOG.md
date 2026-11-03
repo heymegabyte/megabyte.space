@@ -1317,10 +1317,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 
 ## Fire-340 source acceptance follow-up
 
-- [ ] Complete exact declared fork bootstrap and both frozen installs before full
+- [x] Fire-351: exact declared fork bootstrap and both frozen installs completed before full
   wrapper/build consumers. Invoke `node scripts/check-fork-workspace.mjs && ...`
   for fork install; pin-looking submodule status can coexist with parent fallback.
-  Current fixture acceptance is green; actual source acceptance is incomplete.
+  Fresh local identity and declared-remote retrieval passed at unchanged 240899ec.
+  Both pinned offline frozen installs exited 0; post-install script fixtures passed 200/200.
+  Full wrapper and runtime acceptance remain separate below.
 - [ ] After bootstrap, run the full wrapper/type/build gates for recovered 63158282;
   preserve remote/pin and retained journal candidates until their own acceptance.
 
@@ -1333,3 +1335,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   and clean-tree gates against the actual checkout before build consumers; neither
   fixture success nor a retained pin-looking status establishes real source acceptance.
   Existing frozen-install/full-wrapper and journal recovery follow-ups remain open.
+
+
+## Fire-351 terminal evidence follow-up
+
+- [x] Recovered unpublished documentation chain through 21477422 as
+  21de140c..d679c6eb; independent review found no blocker. Added report
+  checkpointing in c8d056d2 to retain evidence across backend interruptions.
+- [ ] Confirm this run's actual publication from main ancestry before recovering
+  the documentation again. Keep journal failure-fixture, migration, authenticated
+  browser/native-client, storage and visual acceptance separate from script results.

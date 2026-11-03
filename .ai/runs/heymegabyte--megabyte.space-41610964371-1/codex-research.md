@@ -34,3 +34,12 @@ report-checkpoint rule with no blocker. The improvement creates an initial
 non-secret report after orientation and updates terminal outcomes before closing;
 incomplete remains incomplete if interrupted. No deployment, authenticated
 journey, native-client, storage, visual or migration acceptance is claimed.
+
+## Terminal wrapper outcome
+
+The bounded `pnpm check` exited 124 after 150 seconds. Local identity, declared
+remote, interconnect and script typechecking passed; nested script tests passed
+200/200 and four workspace test tasks passed (23 + 25 + 2 + 2 tests). It reached
+Context `build:app` and transformed 5,043 modules before timeout SIGTERM. This
+proves neither a source defect nor full build/Worker dry-run acceptance. No heap
+retry was attempted. Keep full wrapper, journal recovery and runtime gates open.

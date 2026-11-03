@@ -109,6 +109,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   A prior receipt saying `running` is
   unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
   Final reports name terminal check outcomes; interrupted checks remain incomplete.
+  Budget the full wrapper from prior terminal timings and reached build stages;
+  do not repeat a short timeout that only reaches the first build. Reserve time
+  for terminal evidence, bookkeeping and clean-tree release before the fleet deadline.
   If a frontend build reports JavaScript heap exhaustion, inspect Node's heap limit,
   available host memory and the inherited cgroup memory budget before a bounded
   process-local heap retry. Host free memory alone does not establish fleet headroom.

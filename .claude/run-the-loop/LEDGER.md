@@ -4450,3 +4450,19 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   Next: terminal full wrapper/build evidence, then separate retained journal
   failure fixtures; confirm publication ancestry before repeating recovery.
   Commit locally only; outer runner owns publication. Release after clean gate.
+
+
+## fire-353 — retained terminal evidence reconciliation (2026-11-03)
+
+- Main ancestry confirms 54f7ab22 published; prior failed run 41682661910 has no
+  newer result commit. Inspected retained dirty files read-only; recovered only
+  its three-line timeout-budget guidance, not historical pending acceptance.
+- Retained check.log ends in frontend heap exhaustion / pnpm exit 1. That terminal
+  failure supersedes its running checkpoint; it is not a fresh test result.
+- Fresh unchanged fork bootstrap, own Git identity and declared-remote fetch pass.
+  Fork/lease fixtures 11/11 pass. No installs/full wrapper invoked this fire.
+- Invocation limit 2 GiB, observed usage about 1.46 GiB, default Node heap 846 MiB;
+  parent 10-GiB limit cannot establish invocation headroom. No heap/host changes.
+- Next: measured-headroom bounded full gates after both installs; journal fixtures
+  remain separate. No deploy, pin/config/receipt, migration, browser/native-client,
+  storage or visual acceptance. Outer runner owns publication; clean release only.

@@ -1345,3 +1345,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Confirm this run's actual publication from main ancestry before recovering
   the documentation again. Keep journal failure-fixture, migration, authenticated
   browser/native-client, storage and visual acceptance separate from script results.
+
+
+## Fire-353 terminal reconciliation follow-up
+
+- Prior run 41682661910's terminal log records frontend Node heap exhaustion,
+  despite its report checkpoint saying running. Full wrapper acceptance stays open.
+- [ ] Measure invocation AND parent memory headroom before a bounded full-wrapper
+  retry; complete both frozen installs first. A parent 10-GiB limit does not lift
+  the observed 2-GiB invocation limit. Record terminal evidence before closure.

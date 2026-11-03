@@ -303,7 +303,7 @@ official authentication and the declared source URL/pin.
 
 ### Session-bus differential probe — fire-344
 
-This run's ordinary bounded `gh` and submodule requests timed out. Removing
+Fire-344's ordinary bounded `gh` and submodule requests timed out. Removing
 `DBUS_SESSION_BUS_ADDRESS` also timed out. A process-local diagnostic override using
 `DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent` instead returned promptly:
 `gh api user` returned HTTP 401, the fork repository lookup returned HTTP 404,
@@ -341,7 +341,7 @@ it does not identify a registry, lifecycle-script, filesystem or resource cause.
 Do not run dependency consumers or credit bootstrap from the progress line. Require
 the install process's successful terminal exit for BOTH workspaces first.
 
-A `pnpm` executable found on PATH may be an unconfigured Volta shim: this run's
+A `pnpm` executable found on PATH may be an unconfigured Volta shim: fire-347's
 shim returned exit 126. Use the checkout-pinned on-demand version as documented in
 CLAUDE.md, and verify the version before a direct cached invocation. A newer cached
 pnpm can attempt its own package-manager bootstrap; its failure is not evidence
@@ -350,7 +350,7 @@ about the pinned install. Keep diagnostic retries bounded and record them separa
 
 ### Nested launcher evidence — fire-348
 
-Both exact-pin frozen offline installs completed using pnpm 11.17.0 in this run
+Fire-348 completed both exact-pin frozen offline installs using pnpm 11.17.0
 (root 2m 50.7s; fork 2m 35.4s). The subsequent direct pinned-JS `check` invocation
 passed local identity and declared-remote retrieval, then exited 1 at the nested
 `pnpm run check:interconnect`: its shell could not resolve `pnpm`. This is a

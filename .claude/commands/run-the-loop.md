@@ -81,6 +81,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep
   acceptance items open and visual scores unchanged unless freshly verified. Record a
   non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
+  Create an initial report after orientation and update it after terminal checks and before
+  closing. Mark active checks incomplete; a checkpoint preserves observed evidence if the
+  backend is interrupted, but never turns a running check into successful acceptance.
 - **Bound remote orientation.** Put explicit time limits on GitHub history and submodule
   network operations. If unavailable, inspect retained receipts/objects read-only and
   report remote history or exact-pin bootstrap as incomplete; never substitute an

@@ -4476,7 +4476,8 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   Fixed with ordered AggregateError members and original cause; additional
   directory-sync/close fault proves linked pending intent rejects duplicate retry.
 - Final focused journal/evidence/fork/lease fixtures 62/62; syntax and diff checks
-  pass. Independent reviewer reproduced original failures; final review requested.
+  pass. Independent reviewer reproduced original failures and found no final blocker.
+  ae50a33e tightens exact primary/cleanup ordering; final journal suite 22/22.
   Real child fault tests cover partial writes, post-link exceptions, close/unlink
   and SIGKILL. No power-loss durability or real uploader integration credited.
 - Bounded init 55s and declared-remote query 15s timed out. Own-fork preflight

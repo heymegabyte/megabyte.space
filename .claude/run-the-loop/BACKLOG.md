@@ -1378,3 +1378,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] When reviewing the retained collector, audit persisted metadata validators for
   coercion/serialization mismatches and require valid-input reopen assertions.
   This does not close full wrapper, collector or uploader integration acceptance.
+
+
+## Fire-357 per-layer recovery acceptance
+
+- [x] Reconcile obsolete provenance notes with actual committed journal paths and
+  retained collector status. Fresh focused journal/evidence/fork/lease fixtures 63/63.
+- [ ] After exact-source bootstrap and both frozen installs, review/recover the
+  separate collector. For actual uploader integration, prove a successful intent
+  causes exactly one provider call AND a real link followed by directory-sync/close
+  failure causes zero calls, preserves both causes and requires reconciliation.
+  Local upload-counter fixture acceptance does not close this production boundary.

@@ -4505,3 +4505,25 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - No production/config/receipt/credential/scheduler mutation, migration acceptance,
   browser/native-client/storage or visual credit. Outer runner owns publication.
   Next: exact-source bootstrap/full gates and separate collector/uploader boundaries.
+
+
+## fire-357 — reconcile per-layer provenance recovery (2026-11-04)
+
+- Assigned clean base cde8f268 is on fetched origin/main; journal ee0938a4 and
+  b3071bbf are published. Retained collector 768f987a is not its ancestor.
+  Inspected prior failed receipts and retained files read-only; no transplant.
+- Reconciled historical absent/unrecovered wording with current journal source,
+  separate collector candidate and unintegrated production uploader/recorder.
+  Added an acceptance map and positive provider-call control for future uploader
+  refusal tests, preventing a disconnected adapter from passing vacuously.
+- Fresh journal/evidence/fork/lease fixture suite: 63/63; diff whitespace check passes.
+- Exact declared fork initialization timed out at 35s; own-Git preflight rejects
+  missing marker. Actions history queries timed out; local receipts remain fallback
+  evidence. Both installs/full wrapper unrun. Pin 240899ec and remote preserved.
+- Documentation only: no deploy/config/receipt, credential, scheduler, migration,
+  browser/native-client/storage or visual acceptance. Loop improvement: track
+  actual per-layer paths and publication rather than crediting whole candidate chains.
+  Outer runner owns publication; release only after committed clean-tree gate.
+- Independent Claude subscription review via cr found no blocker or false acceptance
+  claim; addressed collector locator and extra heading blank line. Existing receipt
+  drift remains advisory and does not identify deployed source; receipt unchanged.

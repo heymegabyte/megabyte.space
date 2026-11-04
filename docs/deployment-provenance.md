@@ -212,8 +212,10 @@ establishing its source/bootstrap context. The retained candidate chain is:
 
 Inspect each diff before recovery: these are dependency-ordered candidates, not an
 instruction to cherry-pick a whole failed result. Preserve the assigned gitlink.
-The current checkout does not contain `rollout-journal.mjs` or the collector.
-The existing `rollout-evidence` validator is a separate, already committed layer.
+At fire-335, that checkout contained neither `rollout-journal.mjs` nor the collector.
+The journal was subsequently recovered and repaired in fires 355–356; see the
+[current acceptance map](#current-offline-provenance-acceptance--fire-357). The collector
+remains a retained candidate. The `rollout-evidence` validator is a separate committed layer.
 
 ### Required fault cases before upload integration
 
@@ -259,7 +261,8 @@ An attempted install from the empty submodule discovered the parent workspace.
 Neither 90-second install invocation returned success, so neither receives bootstrap
 credit. Verify the submodule's own `.git` marker, exact pinned HEAD and router package
 before installing; then require terminal frozen-install success in each workspace.
-The retained collector/journal chain above remains unpublished and unrecovered.
+At fire-336, the retained collector/journal chain above remained unpublished and
+unrecovered. Later journal recovery does not publish the separate collector candidate.
 Focused provenance/metadata fixtures pass 50/50; no full wrapper, production, browser,
 native-client, durability or migration acceptance follows from those fixtures.
 
@@ -400,3 +403,32 @@ open this fire; bounded source retrieval timed out. Keep the existing pin/remote
 historical receipt, migration gates and visual scores unchanged. Next: recover and
 review the separate collector against this journal API only after source bootstrap;
 require real uploader refusal after ambiguous append outcomes before integration.
+
+## Current offline provenance acceptance — fire-357
+
+This map reconciles historical recovery notes with assigned base `cde8f268`.
+Fetched `origin/main` contains that base and journal recovery `ee0938a4`; retained
+collector commit `768f987a` is not its ancestor. Historical chain membership alone
+does not establish publication of every candidate file. Check actual paths as well.
+
+| Layer | Current source and accepted boundary | Remaining acceptance |
+|---|---|---|
+| Offline assessor | `scripts/rollout-evidence.mjs` validates supplied metadata and caps completion at metadata-only | Trusted remote collection and immutable byte/source attestation |
+| Offline journal | `scripts/rollout-journal.mjs` and two fixture files recovered in fire-355; primitive digest guard added in fire-356 | Full wrapper gates after exact-source bootstrap and both frozen installs; uploader integration |
+| Retained collector | `collect-rollout-evidence.mjs` is absent from this checkout; candidate source is `768f987a:scripts/collect-rollout-evidence.mjs` | Compare/review/recover only after exact-source bootstrap; audit serialization and valid-input reopen behavior |
+| Production uploader/recorder | No journal import in `scripts/deploy.ts` or `scripts/record-deploy.mjs` | Durable intent before provider mutation; refusal after ambiguous append rejection; exact per-Worker read-back |
+
+The journal crash fixture's `upload()` counter is a local caller stand-in. Its zero
+count proves that this fixture stops after rejection; it does **not** establish that
+the production uploader stops. Keep uploader acceptance open even when all journal
+fault tests pass. A future uploader-boundary fixture must drive the actual uploader
+entry point with an injected provider adapter and the real journal, perform the real
+intent link, then fail directory sync/close. Assert zero provider calls, propagated
+ordered persistence/cleanup causes, readable pending intent and refusal of duplicate
+intent on reopen. Include the successful append → exactly one provider call path
+so a disconnected adapter cannot make the negative case pass vacuously.
+
+Loop improvement: recovery bookkeeping must identify **each layer and its actual
+paths**, rather than calling a dependency-ordered chain wholly recovered or wholly
+unrecovered. Keep historical observations dated and link them to this current map;
+never reinterpret an old test result as fresh acceptance.

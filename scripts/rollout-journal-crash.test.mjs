@@ -99,7 +99,12 @@ async function runChild(t, directory, phase, mode) {
       assert.match(message.message, /injected persistence failure/);
       assert.equal(message.uploads, 0, 'caller must stop after a rejected intent append');
       if (['write-and-close', 'link-and-unlink', 'sync-and-close'].includes(phase)) {
-        assert.equal(message.failures.length, 2);
+        const expected = {
+          'write-and-close': ['before-write', 'file-close'],
+          'link-and-unlink': ['before-link', 'pending-unlink'],
+          'sync-and-close': ['directory-sync', 'directory-close'],
+        }[phase];
+        assert.deepEqual(message.failures, expected.map(name => 'injected persistence failure at ' + name));
         assert.equal(message.cause, message.failures[0]);
         for (const failure of message.failures) assert.ok(message.message.includes(failure));
       }

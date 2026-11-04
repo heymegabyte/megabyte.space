@@ -1368,3 +1368,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   Add an uploader-boundary fixture that refuses provider calls after ambiguous
   append rejection, including a real link followed by directory-sync/close failure.
   Existing journal recovery follow-ups remain partially open for collector/full gates.
+
+
+## Fire-356 journal serialization follow-up
+
+- [x] Reject coercible digest objects before journal persistence; failing regression
+  reproduced, then 63/63 focused tests pass. Independent review found no blocker.
+  Recovery remains readable after rejection and accepts a subsequent valid plan.
+- [ ] When reviewing the retained collector, audit persisted metadata validators for
+  coercion/serialization mismatches and require valid-input reopen assertions.
+  This does not close full wrapper, collector or uploader integration acceptance.

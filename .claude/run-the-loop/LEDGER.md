@@ -4489,3 +4489,19 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   hide the persistence operation needed for reconciliation. Next ready unit:
   source bootstrap/full gates, then separate collector and uploader-stop fixtures.
   Outer runner owns publication; release only after clean-tree gate.
+
+
+## fire-356 — journal digest serialization guard (2026-11-04)
+
+- Fetched origin/main contains b3071bbf; prior failed journal files inspected read-only,
+  already recovered in published history. No duplicate recovery or retained-tree edits.
+- Independent review found regex coercion allowed a digest object to persist as {}.
+  Regression reproduced 7 pass / 1 fail. Primitive-string guard repairs validation;
+  final focused journal/evidence/fork/lease suite 63/63, independent journal 8/8.
+- Loop improvement requires persisted metadata validation to cover serialization and
+  reopening, with malformed input rejected before committed evidence is written.
+- Actions query 15s and exact-pin bootstrap 55s timed out. Own-fork preflight rejects
+  missing Git marker; installs/full gates unrun. No substitute source or pin change.
+- No production/config/receipt/credential/scheduler mutation, migration acceptance,
+  browser/native-client/storage or visual credit. Outer runner owns publication.
+  Next: exact-source bootstrap/full gates and separate collector/uploader boundaries.

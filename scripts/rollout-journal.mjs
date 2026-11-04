@@ -31,7 +31,7 @@ function validate(events) {
     if (sequence === 0) {
       plan = event.plan;
       if (event.kind !== 'plan' || !plan || !text(plan.invocationId) || !text(plan.accountId) ||
-          !/^[a-f0-9]{64}$/.test(plan.manifestDigest) || !Array.isArray(plan.workers) ||
+          typeof plan.manifestDigest !== 'string' || !/^[a-f0-9]{64}$/.test(plan.manifestDigest) || !Array.isArray(plan.workers) ||
           !plan.workers.length || !Array.from(plan.workers).every(text) || new Set(plan.workers).size !== plan.workers.length)
         throw new Error('invalid journal plan');
     } else {

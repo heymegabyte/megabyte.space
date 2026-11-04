@@ -73,3 +73,13 @@ test('caller mutation during write cannot change the validated plan', async t =>
     assert.ok(journal.events.length === 0 || journal.plan.workers.every(w => !w.includes(' ')));
   } finally { clearInterval(timer); }
 });
+
+test('coercible digest objects reject before persisting an unreadable plan', async t => {
+  const d = await mkdtemp(join(tmpdir(), 'rollout-digest-'));
+  t.after(() => rm(d, { recursive: true, force: true }));
+  const manifestDigest = { toString() { return 'a'.repeat(64); } };
+  await assert.rejects(appendJournal(d, { plan: { ...plan, manifestDigest } }), /invalid journal plan/);
+  assert.equal((await readJournal(d)).events.length, 0);
+  await appendJournal(d, { plan });
+  assert.deepEqual((await readJournal(d)).plan, plan);
+});

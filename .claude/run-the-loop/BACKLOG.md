@@ -1354,3 +1354,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Measure invocation AND parent memory headroom before a bounded full-wrapper
   retry; complete both frozen installs first. A parent 10-GiB limit does not lift
   the observed 2-GiB invocation limit. Record terminal evidence before closure.
+
+
+## Fire-355 offline journal recovery
+
+- [x] Recover the actual three uncommitted journal files from failed run
+  41762081473, reproduce compound-error failures, preserve original persistence
+  and cleanup causes, and verify real partial-write/post-link/close/unlink faults.
+  Source commit ee0938a4; fresh focused suite 62/62. This is offline acceptance,
+  not the separate collector, complete wrapper or production acceptance.
+- [ ] After exact-source bootstrap and both frozen installs, run full root/type/build
+  gates for ee0938a4 and compare the retained collector with the recovered journal.
+  Add an uploader-boundary fixture that refuses provider calls after ambiguous
+  append rejection, including a real link followed by directory-sync/close failure.
+  Existing journal recovery follow-ups remain partially open for collector/full gates.

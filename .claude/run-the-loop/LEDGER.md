@@ -4466,3 +4466,25 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Next: measured-headroom bounded full gates after both installs; journal fixtures
   remain separate. No deploy, pin/config/receipt, migration, browser/native-client,
   storage or visual acceptance. Outer runner owns publication; clean release only.
+
+## fire-355 — offline journal recovery and compound failure repair (2026-11-04)
+
+- Fetched main confirms c88fc1a8 published. Retained failed run 41762081473 has
+  three untracked journal files, recovered as ee0938a4 without old bookkeeping
+  or separate collector. Prior report is a checkpoint, not terminal acceptance.
+- Initial fresh journal suite: 19 pass / 2 fail; cleanup masked primary errors.
+  Fixed with ordered AggregateError members and original cause; additional
+  directory-sync/close fault proves linked pending intent rejects duplicate retry.
+- Final focused journal/evidence/fork/lease fixtures 62/62; syntax and diff checks
+  pass. Independent reviewer reproduced original failures; final review requested.
+  Real child fault tests cover partial writes, post-link exceptions, close/unlink
+  and SIGKILL. No power-loss durability or real uploader integration credited.
+- Bounded init 55s and declared-remote query 15s timed out. Own-fork preflight
+  rejects missing Git marker. Actions history queries timed out; retained failure
+  receipt inspected. No source substitution, pin, deployment/config/receipt,
+  credentials, auth, production or scheduler mutation. No installs/full wrapper,
+  browser/native-client, storage reconciliation, migration or visual acceptance.
+- Loop improvement: compound-error tests require ordered causes, so cleanup cannot
+  hide the persistence operation needed for reconciliation. Next ready unit:
+  source bootstrap/full gates, then separate collector and uploader-stop fixtures.
+  Outer runner owns publication; release only after clean-tree gate.

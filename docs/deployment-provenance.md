@@ -373,3 +373,30 @@ retry. Fire-349 observed an 846 MiB Node heap, a 2 GiB invocation cgroup and a
 memory does not authorize a heap sized to the ancestor. Leave headroom for native
 allocations, child processes and the agent itself. Use only a bounded process-local
 retry when measured headroom permits; do not change host services to pass a build.
+
+
+## Offline journal recovery — fire-355
+
+Recovered the actual uncommitted journal helper and fixtures from failed run
+41762081473. The collector candidate remains unrecovered. The helper is standalone:
+no uploader, recorder or production command imports it. Its records never credit
+rollout completion. Numbered files are exclusive links in a private trusted directory;
+readability after a failed append requires reconciliation before any upload retry.
+
+Fresh fault execution reproduced cleanup masking the original persistence failure.
+The recovered helper now preserves both errors with AggregateError and the original
+cause, including directory sync/close failures after linking. Fault adapters exercise
+real prefix writes, real link-before-error, close-after-write, pending unlink, and
+SIGKILL; the unmodified parent reader checks exact committed/pending files. These
+fixtures prove local recovery behavior, not hardware durability or production upload
+ordering. Hash chains do not authenticate hostile rewriting or suffix deletion.
+
+Loop improvement: when testing compound persistence failures, inspect the ordered
+AggregateError members and original cause as well as the caller rejection. A cleanup
+failure must not erase the operation needed to determine reconciliation scope.
+
+Both frozen installs, full script/type/build gates and exact-source bootstrap remain
+open this fire; bounded source retrieval timed out. Keep the existing pin/remote,
+historical receipt, migration gates and visual scores unchanged. Next: recover and
+review the separate collector against this journal API only after source bootstrap;
+require real uploader refusal after ambiguous append outcomes before integration.

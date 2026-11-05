@@ -215,7 +215,9 @@ instruction to cherry-pick a whole failed result. Preserve the assigned gitlink.
 At fire-335, that checkout contained neither `rollout-journal.mjs` nor the collector.
 The journal was subsequently recovered and repaired in fires 355–356; see the
 [current acceptance map](#current-offline-provenance-acceptance--fire-357). The collector
-remains a retained candidate. The `rollout-evidence` validator is a separate committed layer.
+was still a retained candidate at fire-357 and was recovered in fire-358; see the
+[current acceptance map](#current-offline-provenance-acceptance--fire-357). The
+`rollout-evidence` validator is a separate committed layer.
 
 ### Required fault cases before upload integration
 
@@ -381,7 +383,9 @@ retry when measured headroom permits; do not change host services to pass a buil
 ## Offline journal recovery — fire-355
 
 Recovered the actual uncommitted journal helper and fixtures from failed run
-41762081473. The collector candidate remains unrecovered. The helper is standalone:
+41762081473. At fire-355 the collector candidate was still unrecovered; fire-358
+subsequently recovered it (see the [current acceptance map](#current-offline-provenance-acceptance--fire-357)).
+The journal helper is standalone:
 no uploader, recorder or production command imports it. Its records never credit
 rollout completion. Numbered files are exclusive links in a private trusted directory;
 readability after a failed append requires reconciliation before any upload retry.
@@ -453,3 +457,31 @@ Prior run 41963669270's terminal wrapper log shows frontend Node heap exhaustion
 its checkpoint saying running is not acceptance. Current invocation has a 2-GiB
 cgroup cap and observed usage about 1.5 GiB; no full-build retry is credited.
 No deployment, receipt, pin, migration or visual acceptance changed.
+
+
+## Integration review — fire-359 (2026-11-05)
+
+Current source inspection confirms that the recovered helpers remain independent.
+`collectRolloutEvidence` supplies `checkpoint` with whole snapshots containing
+`plan`, `complete:false`, `first`, `confirmation` and `errors`. `appendJournal`
+accepts a plan followed by per-Worker intent/outcome events; it cannot directly
+persist that checkpoint schema. Assigning the journal helper as a checkpoint
+callback is not an integration and does not provide durable collector completion.
+
+`deployWorker` in `scripts/deploy.ts` invokes Wrangler without a journal intent
+boundary. `scripts/record-deploy.mjs` reads Git identity after the command and writes
+a local receipt without collector or journal validation. Existing offline fault
+tests therefore do not establish provider-call refusal in the production uploader.
+The positive and ambiguous-intent uploader acceptance cases in the current map
+remain open; this review changes no runtime behavior or integration contract.
+
+Two matching metadata sweeps describe observations at their recorded times. They
+do not establish an atomic estate snapshot, continued freshness, detection of
+between-read ABA changes, authenticated remote evidence or immutable upload bytes.
+Fresh focused assessor/collector/journal/crash fixtures pass 80/80. Exact local
+fork identity passes at `240899ec`; dependencies, full wrapper build, remote
+round trip, migration and runtime acceptance were not exercised in this review.
+
+Loop improvement: identify callback payloads and production call sites before
+crediting integration from independently passing helpers. Preserve dated historical
+recovery statements while directing operators to the current per-layer map.

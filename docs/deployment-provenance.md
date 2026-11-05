@@ -415,7 +415,7 @@ does not establish publication of every candidate file. Check actual paths as we
 |---|---|---|
 | Offline assessor | `scripts/rollout-evidence.mjs` validates supplied metadata and caps completion at metadata-only | Trusted remote collection and immutable byte/source attestation |
 | Offline journal | `scripts/rollout-journal.mjs` and two fixture files recovered in fire-355; primitive digest guard added in fire-356 | Full wrapper gates after exact-source bootstrap and both frozen installs; uploader integration |
-| Retained collector | `collect-rollout-evidence.mjs` is absent from this checkout; candidate source is `768f987a:scripts/collect-rollout-evidence.mjs` | Compare/review/recover only after exact-source bootstrap; audit serialization and valid-input reopen behavior |
+| Offline collector | `scripts/collect-rollout-evidence.mjs` and tests recovered in fire-358 from retained run 41963669270; 28/28 fixtures including JSON checkpoint reopen | Remote authenticated adapter, crash-durable storage, journal/uploader integration and full wrapper acceptance |
 | Production uploader/recorder | No journal import in `scripts/deploy.ts` or `scripts/record-deploy.mjs` | Durable intent before provider mutation; refusal after ambiguous append rejection; exact per-Worker read-back |
 
 The journal crash fixture's `upload()` counter is a local caller stand-in. Its zero
@@ -432,3 +432,24 @@ Loop improvement: recovery bookkeeping must identify **each layer and its actual
 paths**, rather than calling a dependency-ordered chain wholly recovered or wholly
 unrecovered. Keep historical observations dated and link them to this current map;
 never reinterpret an old test result as fresh acceptance.
+
+
+## Offline collector recovery — fire-358 (2026-11-05)
+
+Recovered the actual retained helper/tests after initializing declared fork
+`240899ec` and passing own-Git preflight. Both independent review and assigned-tree
+fixtures found no blocker within the trusted-adapter offline contract: 28/28 tests
+pass, including valid JSON reopen, fresh restart reads, changing getters, detached
+metadata, interrupted prefixes and checkpoint rejection. Existing focused
+assessor/journal/crash/fork/lease fixtures pass 63/63.
+
+Every checkpoint intentionally remains `complete:false`; successful completion
+exists only in the returned result and is capped at metadata-only. The JSON file
+fixture proves serialization/read-back, not crash durability or atomic replacement.
+Two matching sweeps do not establish atomic estate state, ABA detection, remote
+authentication or source/upload bytes. The separate journal is not integrated.
+
+Prior run 41963669270's terminal wrapper log shows frontend Node heap exhaustion;
+its checkpoint saying running is not acceptance. Current invocation has a 2-GiB
+cgroup cap and observed usage about 1.5 GiB; no full-build retry is credited.
+No deployment, receipt, pin, migration or visual acceptance changed.

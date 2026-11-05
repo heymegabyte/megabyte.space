@@ -80,6 +80,10 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   reject coercible non-string digests before regex checks. Regression acceptance
   includes reopening persisted valid input and rejecting malformed input before
   committed evidence exists; successful append alone cannot prove recoverability.
+- **Separate persisted checkpoints from completion.** A collector may deliberately
+  persist only partial snapshots even when its in-memory return is complete.
+  Reopen the actual stored representation before crediting durable completion;
+  JSON write/read alone does not establish crash durability or atomic replacement.
 - **Missing credentials limit evidence.** Complete useful decision-independent work and
   report blocked deployment, authenticated long journeys, storage reconciliation and visual
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep

@@ -1389,3 +1389,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   causes exactly one provider call AND a real link followed by directory-sync/close
   failure causes zero calls, preserves both causes and requires reconciliation.
   Local upload-counter fixture acceptance does not close this production boundary.
+
+
+## Fire-358 offline collector recovery
+
+- [x] Initialize exact declared fork and review/recover retained offline collector
+  source/tests from failed run 41963669270; 28/28 fixtures pass, including JSON
+  checkpoint reopen. Independent review found no blocker within the offline contract.
+- [ ] Connect a trusted authenticated remote reader and crash-durable storage only
+  under separately reviewed acceptance. Persisted snapshots stay partial; do not
+  treat returned completion as a durable receipt. Preserve the actual uploader
+  success/ambiguous-intent boundary fixtures and full wrapper gates as open work.
+- [ ] Retry full wrapper only with measured invocation and ancestor memory headroom.
+  Prior terminal heap exhaustion overrides its stale running checkpoint; current
+  invocation still has a 2-GiB cap. No migration or runtime acceptance is credited.

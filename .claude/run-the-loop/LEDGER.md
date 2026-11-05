@@ -4527,3 +4527,29 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
 - Independent Claude subscription review via cr found no blocker or false acceptance
   claim; addressed collector locator and extra heading blank line. Existing receipt
   drift remains advisory and does not identify deployed source; receipt unchanged.
+
+
+## fire-358 — recover offline metadata collector (2026-11-05)
+
+- Assigned base 1913e439 is on fetched origin/main. Inspected retained failure
+  41963669270 read-only; terminal wrapper log proves frontend heap exhaustion,
+  overriding its stale running checkpoint. GitHub API history requests timed out.
+- Initialized declared fork at exact 240899ec; own-Git preflight passes. Root/fork
+  frozen offline installs pass with pnpm 11.17.0 (3m49.3s / 54.3s). Upstream HEAD
+  read-back is 95fea915; no candidate adoption, whole-diff review or pin change.
+- Bounded DeepSeek recovery timed out without mutations. Copied only actual
+  retained collector source/tests verbatim, confirmed SHA-256 equality; independent
+  read-only review found no blocker. Lead and reviewer each ran 28/28 collector
+  tests. Full root scripts 251/251, focused fixtures 63/63, scripts types and
+  interconnect checks pass. Dead-component check reports 8 unknown-origin
+  components because upstream was not fetched; not a full upstream audit.
+- Invocation memory.max 2 GiB (observed usage about 1.5 GiB); parent fleet limit
+  10 GiB does not remove that cap. Full wrapper/frontend build remains open.
+- No deploy/config/receipt/credential/scheduler, migration, authenticated journey,
+  native client, storage reconciliation or visual acceptance changed. Offline
+  collector does not connect to journal/provider/uploader. Returned completion
+  remains metadata-only; all persisted snapshots intentionally stay partial.
+- Loop improvement: explicitly separate persisted checkpoint and returned completion
+  acceptance. Added next-wave remote reader/storage and uploader integration gates.
+  See .ai/runs/heymegabyte--megabyte.space-42020651185-1/ for research/review.
+  Outer runner owns publication; lease release follows committed clean-tree check.

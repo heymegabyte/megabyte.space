@@ -1403,3 +1403,15 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Retry full wrapper only with measured invocation and ancestor memory headroom.
   Prior terminal heap exhaustion overrides its stale running checkpoint; current
   invocation still has a 2-GiB cap. No migration or runtime acceptance is credited.
+
+
+## Fire-359 integration boundary review
+
+- [x] Review recovered collector against journal and actual uploader/recorder call
+  sites. Snapshot callbacks and plan/intent/outcome appends are different APIs;
+  neither helper is integrated into the production uploader. Fresh focused suite
+  80/80; source review and evidence in this run's research artifact.
+- [ ] Before crediting durable collector integration, demonstrate the actual chosen
+  checkpoint adapter's stored schema and reopened partial/completion semantics.
+  Preserve existing trusted remote-reader, positive/ambiguous-intent uploader and
+  full-wrapper gates; independently passing helper fixtures do not close them.

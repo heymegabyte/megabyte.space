@@ -4553,3 +4553,27 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   acceptance. Added next-wave remote reader/storage and uploader integration gates.
   See .ai/runs/heymegabyte--megabyte.space-42020651185-1/ for research/review.
   Outer runner owns publication; lease release follows committed clean-tree check.
+
+
+## fire-359 — review offline integration boundaries (2026-11-05)
+
+- Assigned b9d32289 is on freshly fetched origin/main. GitHub history confirms
+  prior success 42020651185 and failure 41963669270; actual collector recovery
+  is already published. Inspected local prior receipts and worktree inventory;
+  no duplicate transplant or other-worktree mutation.
+- Source review committed as 2052be7f: collector snapshot checkpoints differ
+  from journal event appends; production deploy/recorder imports neither helper.
+  Corrected historical unrecovered wording while retaining dated evidence.
+- Fresh collector/assessor/journal/crash fixtures 80/80; syntax and diff checks pass.
+  Sequential bounded declared fork initialization and own-Git preflight pass at
+  exact 240899ec. No installs/full wrapper/types or runtime acceptance credited.
+- DeepSeek documentation delegation timed out without mutations at 75 seconds.
+  Subscription review via cr exec timed out at 110 seconds without final verdict;
+  independent review remains incomplete. Lead review accepted documentation only.
+- Loop improvement: inspect actual callback payloads and production call sites
+  before crediting integration. Next-wave stored-checkpoint schema/reopen evidence
+  is recorded alongside existing remote-reader, uploader and full-build gates.
+- No deploy/config/receipt/pin/credential/scheduler, browser/native-client, migration
+  or visual acceptance changes. No journey or vision pass claimed. Receipt drift
+  remains advisory. Outer runner owns fast-forward publication; local release
+  follows clean-tree check. Research and review artifacts are in this run's folder.

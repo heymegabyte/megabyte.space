@@ -4628,3 +4628,35 @@ new candidate acceptance. Existing recovered collector is already published; no
 retained work was duplicated or discarded. Next: candidate-specific protected rehearsal
 and explicit wrapper/default policy decisions; durable collector/uploader gates remain
 open. Commit locally only; outer runner owns publication. No cron/watchdog changes.
+
+## fire-362 — candidate admin audit evidence limits (2026-11-06)
+
+Exactly one bounded GitHub fleet iteration. Research/loop guidance committed as
+`31fdd380`; publication left to the outer runner. Fetched main contains prior
+result 15d1c1d0; inspected recent Actions history, worktrees and failed receipts.
+Retained failed-run collector is byte-identical to recovered committed source;
+left all other worktrees untouched. Exact fork 240899ec initialized/preflighted;
+official 2726e932 fetched directly without changing gitlink.
+
+Frontier judgment: reviewed candidate admin audit writes, retention, config rollback,
+capability authorization and v4 wiring. Mechanical coverage inventory used mandated
+OpenCode/DeepSeek, exit 0. Independent read-only official Codex subscription review
+through cr, exit 0, confirms adoption evidence limits. Research and review artifacts
+live under `.ai/runs/heymegabyte--megabyte.space-42241928648-1/`. Rows record attempts
+after mirror rollback; workspace rows are fixture-only coverage; held-capability
+revocation and runtime v4/state compatibility remain unobserved. These are contract
+limits and acceptance risks, not proof of a violated public API.
+
+Fresh checks: offline provenance fixtures 81/81; fork/lease fixtures 24/24;
+bookkeeping fixtures 12/12; exact-fork preflight and diff whitespace checks pass.
+Deploy-state detector warns 240899ec versus receipt 80b7209e; historical receipt
+preserved because disagreement is not live source correlation. No frozen install,
+full wrapper, candidate suite, authenticated/native/browser journey, storage
+reconciliation, remote collector/uploader or production migration was executed.
+No production deployment, credentials, scheduler, pin, receipt or visual scores
+changed; modifier matrix unchanged because no UI was visited/verified.
+
+Loop improvement: require production producer evidence for audit record kinds and
+separate attempted rows, committed settings and observed runtime effects. Next-wave
+acceptance added to BACKLOG and MIGRATION §23. Next: candidate-specific failure,
+retention/batch/concurrency, held-capability and isolated v3→v4 acceptance.

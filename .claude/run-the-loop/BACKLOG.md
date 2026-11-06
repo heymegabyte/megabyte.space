@@ -123,6 +123,19 @@
   inventory/review and frozen candidate gates. No fork pin adoption is authorized
   by the remote ref listing.
 
+## Migration next-wave — fire-362
+
+- [x] Review official `2726e932` admin audit/retention/v4 source and existing test
+  coverage independently (`31fdd380`); source limits recorded in MIGRATION §23.
+  Local provenance 81/81, fork/lease 24/24 and bookkeeping 12/12 pass; these do
+  not execute the candidate's audit suites or establish migration acceptance.
+- [ ] Candidate audit failure acceptance: inject audit-insert rejection and KV-mirror
+  rollback, refresh committed settings and log separately, and verify the UI does
+  not imply an attempt proves application. Exercise raised-floor and >1000-expired
+  row behavior, held-admin-capability expiry/revocation, and isolated v3→v4 state
+  preservation. Do not credit workspace access auditing from SQL fixture rows.
+  This refines fire-361 candidate audit acceptance, not a second adoption lane.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

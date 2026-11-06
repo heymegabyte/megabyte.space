@@ -1452,3 +1452,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   inputs. Microsoft remains unavailable in this wrapper unless separately reviewed.
   Preserve full fork-to-candidate diff, prior native/migration, both frozen installs,
   generated-config and full-wrapper gates; this incremental inventory closes none.
+
+
+## Fire-363 candidate configuration evidence
+
+- [x] Review exact official candidate v4 migration, ctx.exports class export and
+  wrapper clone/overwrite boundaries; record source reasoning and test coverage
+  gaps without claiming generated-config/runtime acceptance.
+- [ ] For the selected candidate, execute generateConfigs with its exact bases,
+  reopen serialized output, compare full Workshop migration history and preserved
+  Browser/loader/version/compatibility settings, and separately compare replaced
+  arrays against release wiring. Current tests load legacy checkout bases and
+  only Scheduler migration preservation is explicitly asserted. Validate bundle
+  exports/dry run before isolated fresh-namespace and v3-to-v4 persistence tests.
+  Do not add a redundant DO binding to repair an intentional ctx.exports design.

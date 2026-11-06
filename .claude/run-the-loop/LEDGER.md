@@ -4660,3 +4660,32 @@ Loop improvement: require production producer evidence for audit record kinds an
 separate attempted rows, committed settings and observed runtime effects. Next-wave
 acceptance added to BACKLOG and MIGRATION §23. Next: candidate-specific failure,
 retention/batch/concurrency, held-capability and isolated v3→v4 acceptance.
+
+## fire-363 — candidate generated-config preservation review (2026-11-06)
+
+Exactly one bounded fleet iteration. Research and migration guidance committed
+as b46b532a; publication belongs to the outer runner. Fetched main contains prior
+result d8829d9a. Inspected Actions history, retained worktrees and failed receipts;
+retained collector on disk is byte-identical to committed source, requiring no salvage.
+Exact declared fork 240899ec initialized/preflighted; official 2726e932 fetched directly
+without moving the gitlink. No other worktree changed.
+
+Frontier judgment: candidate Workshop v4 history and Browser/loader/version/compatibility
+fields survive source-level clone reasoning; ctx.exports audit class intentionally
+needs no explicit DO binding. Generation still reads the checked-out fork, and
+vars/services/storage arrays are replaced. Candidate generation/serialization,
+validated bundle exports and isolated namespace migration remain separate gates.
+Read-only OpenCode/DeepSeek inventory and independent official Codex subscription
+review through cr completed exit 0; research artifacts record agreement and limits.
+
+Fresh offline fixtures 81/81; fork/lease/bookkeeping 36/36; fork identity and diff
+whitespace checks pass. Receipt detector warns 240899ec versus historical 80b7209e;
+no live drift inference or receipt rewrite. No frozen installs, candidate generation,
+full wrapper, browser/native journey, storage reconciliation, migration or production
+operation ran. The 2-GiB cgroup and prior heap exhaustion remain full-wrapper planning
+constraints. No UI visited: modifier matrix and visual scores unchanged.
+
+Loop improvement and next-wave backlog: require separate evidence for source-predicted
+preservation, reopened generated config, validated export and observed namespace
+migration. Compare replaced arrays against official release wiring. Preserve remaining
+candidate audit/policy/retention and all migration approval/runtime gates.

@@ -4598,3 +4598,33 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   rejection as well as success, and cannot infer completion from array lengths
   or empty stored errors. Backlog records that next unit. No journey or vision
   pass claimed. Outer runner owns publication; clean-tree gate precedes release.
+
+## fire-361 — official upstream compatibility refresh (2026-11-06)
+
+Research commit `5fd6971f`; assigned base `459e8580` is contained in fetched origin/main.
+Direct official fetch verifies bd10b0ec → 2726e932 ancestry: 88 commits / 995 paths,
+complete inventory with targeted independent source review, not a complete audit.
+Mechanical inventory delegated to OpenCode/DeepSeek; independent subscription Codex
+review through cr; final convergence and full-list/count comparison completed.
+
+New candidate acceptance: observer/subresource concurrency and revocation/scope;
+restricted/auto-approval negative cases; AdminAuditDurableObject v4 migration,
+retention and failed-write behavior; seeded/saved model settings/default/billing;
+unread and unavailable/enrolled push. Current Workshop vars replacement lacks an
+explicit path for the candidate policy/notification vars. Microsoft remains outside
+the fixed extras list, without adding integration scope. See MIGRATION §22 and
+`.ai/runs/heymegabyte--megabyte.space-42179968935-1/review-synthesis.md`.
+
+Fresh checks: own-Git preflight exact 240899ec; offline provenance 81/81; fork/lease
+24/24; uncapped commit/path inventory and counts match Git; diff whitespace clean.
+Prior failed run's terminal wrapper heap failure supersedes its stale running receipt;
+current cgroup still caps this invocation at 2 GiB. No full wrapper retry, candidate
+install/build/test, deployment, remote round trip, browser/native journey, data or
+vision acceptance. Pin/config/receipt unchanged; visual matrix untouched.
+
+Loop improvement: separate incremental official-to-official inventory from the active
+fork and full migration diff; empty release listing and old rehearsal do not credit
+new candidate acceptance. Existing recovered collector is already published; no
+retained work was duplicated or discarded. Next: candidate-specific protected rehearsal
+and explicit wrapper/default policy decisions; durable collector/uploader gates remain
+open. Commit locally only; outer runner owns publication. No cron/watchdog changes.

@@ -1426,3 +1426,16 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   writes; prove its crash/atomicity contract separately. Preserve trusted remote
   reader, positive/ambiguous uploader and full-wrapper acceptance gates. Never
   infer stored completion from full sweep arrays or an empty errors array.
+
+## Fire-361 official upstream refresh
+
+- [x] Inventory official `bd10b0ec..2726e932`: 88 commits / 995 changed paths;
+  targeted independent compatibility review recorded in this run's research.
+  Exact legacy pin `240899ec` stays unchanged; existing fixtures 81/81 + 24/24.
+- [ ] Before adopting this candidate, execute observer/subresource concurrency and
+  restricted/auto-approval negative cases; audit v4 migration/retention/write-failure
+  checks; model seed/saved-state/default/billing checks; and unread/push unavailable
+  and enrollment cases. Review Workshop vars replacement against candidate policy
+  inputs. Microsoft remains unavailable in this wrapper unless separately reviewed.
+  Preserve full fork-to-candidate diff, prior native/migration, both frozen installs,
+  generated-config and full-wrapper gates; this incremental inventory closes none.

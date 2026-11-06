@@ -406,3 +406,32 @@ This advances the offline contract tests in [the specification](deployment-prove
 not the source snapshot, durable journal, remote collector or migration acceptance.
 The collector remains responsible for invalidating stale observations after concurrent
 changes. No deployment, historical receipt, submodule pin or visual score changed.
+
+## 22. Official upstream refresh — fire-361 (2026-11-06)
+
+Official `2726e932` was fetched directly and proven a descendant of last inventoried
+official `bd10b0ec`. The complete incremental range contains **88 commits / 995 changed
+paths**. [Inventory and research](../.ai/runs/heymegabyte--megabyte.space-42179968935-1/codex-research.md)
+and [independent review](../.ai/runs/heymegabyte--megabyte.space-42179968935-1/adversarial-review.md)
+identify candidate acceptance seams, not a complete audit or adoption decision.
+
+Require coordinated observer/subresource and auto-approval negative tests; audit
+migration `v4` / `AdminAuditDurableObject` validation; fresh-versus-saved model
+settings/default/billing checks; and unread/push unavailable/enrollment behavior.
+The current wrapper replaces Workshop vars, so candidate `ADMIN_CONFIG_SEED`,
+audit retention floor and notification installation vars have no explicit wrapper
+configuration path. Review deliberate defaults/forwarding before adoption. Microsoft
+is absent from the fixed extras list; do not silently provision it. Legacy Better Auth,
+Worker identities and provider configuration remain inappropriate for the fresh app.
+
+Declared fork `240899ec` remains unchanged and passes local identity preflight.
+Existing offline provenance fixtures pass 81/81 and fork/lease fixtures pass 24/24;
+these are not candidate tests. The prior failed full-wrapper log ends in heap
+exhaustion; this invocation still has a 2-GiB cgroup cap, so no full-wrapper retry
+or candidate install/build was credited. No deployment, receipt, production data,
+migration, authenticated/native journey or visual acceptance changed.
+
+**Loop improvement:** inventory the last official-to-official range separately from
+the active fork pin and the full fork-to-candidate migration diff. Preserve their
+different coverage. An empty GitHub releases response does not establish no upstream
+changes, and old rehearsal evidence must never be transferred to a newer candidate.

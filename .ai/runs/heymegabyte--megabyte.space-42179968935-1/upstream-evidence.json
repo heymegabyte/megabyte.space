@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "inventory": {
+    "repository": "cloudflare-os",
+    "repository_path": "cloudflare-os",
+    "scope": "read-only inventory of the upstream range; not a full compatibility audit",
+    "configuredForkRemote": "https://github.com/heymegabyte/cloudflare-os.git",
+    "officialFetchRemote": "https://github.com/cloudflare/cloudflare-os.git",
+    "targetCommitterDate": "2026-11-05T18:05:18-08:00",
+    "observedOn": "2026-11-06",
+    "githubReleasesResponseCount": 0
+  },
+  "range": {
+    "base": {
+      "commit": "bd10b0ece6842b8f486b3467eab6cc3b9c920920",
+      "subject": "Slides: better editor, more faithful PowerPoint export, and natural zoom (#883)",
+      "committer_date": "2026-10-24T20:49:50-07:00"
+    },
+    "target": {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "subject": "Migrate X to subresource-based observer verification (#1011)",
+      "committer_date": "2026-11-05T18:05:18-08:00"
+    },
+    "notation": "bd10b0ece6842b8f486b3467eab6cc3b9c920920..2726e932a3fbfcfffa04ee093a881604009f2034",
+    "first_commit_date": "2026-10-26T06:47:32-05:00",
+    "last_commit_date": "2026-11-05T18:05:18-08:00",
+    "commit_count": 88,
+    "changed_path_count": 995,
+    "status_counts": {
+      "M": 561,
+      "A": 414,
+      "D": 16,
+      "R": 4
+    },
+    "insertions": 170920,
+    "deletions": 17101
+  },
+  "verification": {
+    "objects_present_locally": true,
+    "repository_is_shallow": false,
+    "base_is_ancestor_of_target": true,
+    "merge_base": "bd10b0ece6842b8f486b3467eab6cc3b9c920920",
+    "full_uncapped_range_used": true,
+    "checkout_performed": false
+  },
+  "submodule_context": {
+    "pinned_head": "240899ec34e822a0afa695e3c7b48a41c2db9c4c",
+    "pinned_describe": "pre-fresh-os-relaunch-20261009-19-g240899ec",
+    "pinned_head_ancestor_of_target": false,
+    "target_ancestor_of_pinned_head": false,
+    "merge_base_pinned_head_target": "6478a1448a11524e2f7c2575ad66fab0bc47c433",
+    "commits_in_target_not_pinned": 387,
+    "commits_in_pinned_not_target": 226
+  },
+  "path_inventory": {
+    "dependency_manifest_paths": [
+      "package.json",
+      "packages/api-cli/package.json",
+      "packages/api-schema/package.json",
+      "packages/configurator-ui/package.json",
+      "packages/gatekeeper-confluence/package.json",
+      "packages/gatekeeper-context/package.json",
+      "packages/gatekeeper-email/package.json",
+      "packages/gatekeeper-google/package.json",
+      "packages/gatekeeper-homeassistant/package.json",
+      "packages/gatekeeper-kit/package.json",
+      "packages/gatekeeper-linear/package.json",
+      "packages/gatekeeper-mcp-portal/package.json",
+      "packages/gatekeeper-microsoft/package.json",
+      "packages/gatekeeper-scheduler/package.json",
+      "packages/gatekeeper-slack/package.json",
+      "packages/gatekeeper-spotify/package.json",
+      "packages/gatekeeper-supabase/package.json",
+      "packages/gatekeeper-websearch/package.json",
+      "packages/gatekeeper-zoominfo/package.json",
+      "packages/integration-tests/package.json",
+      "packages/mcp-shared/package.json",
+      "packages/ui/package.json",
+      "packages/workshop-backend/package.json",
+      "packages/workshop-frontend/package.json",
+      "pnpm-workspace.yaml",
+      "scripts/package.json"
+    ],
+    "dependency_lockfile_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "wrangler_config_paths": [
+      "packages/gatekeeper-microsoft/wrangler.jsonc",
+      "packages/workshop-backend/wrangler.jsonc"
+    ],
+    "wrangler_durable_object_migration_paths": [
+      "packages/gatekeeper-microsoft/wrangler.jsonc",
+      "packages/workshop-backend/wrangler.jsonc"
+    ],
+    "cloudflare_deploy_config_paths": [
+      "packages/gatekeeper-microsoft/cloudflare.config.ts",
+      "packages/gatekeeper-microsoft/deploy-inputs.json",
+      "packages/workshop-backend/cloudflare.config.ts"
+    ],
+    "storage_schema_and_migration_paths": [
+      "packages/gatekeeper-github/storage-schema.md",
+      "packages/gatekeeper-gitlab/storage-schema.md",
+      "packages/gatekeeper-microsoft/storage-schema.md",
+      "packages/gatekeeper-x/storage-schema.md",
+      "packages/workshop-backend/__tests__/git-migration-do.test.ts",
+      "packages/workshop-backend/__tests__/git-migration.test.ts",
+      "packages/workshop-backend/src/storage-schema/admin-settings-storage.ts",
+      "packages/workshop-backend/src/storage-schema/overseer-git-migration.ts",
+      "packages/workshop-backend/src/storage-schema/overseer-migrations.ts",
+      "packages/workshop-backend/src/storage-schema/overseer-storage.ts",
+      "packages/workshop-backend/src/storage-schema/user-storage.ts"
+    ],
+    "ci_config_paths": [
+      ".github/dependabot.yml",
+      ".github/workflows/bonk-pr.yml",
+      ".github/workflows/bonk.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/cla.yml",
+      ".github/workflows/github-contract.yml",
+      ".github/workflows/preview.yml",
+      ".github/workflows/workshop-evals-pr.yml",
+      ".github/workflows/workshop-evals.yml"
+    ],
+    "tooling_config_paths": [
+      "packages/api-cli/tsconfig.json",
+      "packages/api-cli/vite.config.ts",
+      "packages/api-schema/tsconfig.json",
+      "packages/api-schema/vite.config.ts",
+      "packages/api-schema/vitest.config.ts",
+      "packages/gatekeeper-confluence/vite.config.ts",
+      "packages/gatekeeper-confluence/vitest.config.ts",
+      "packages/gatekeeper-gitlab/vitest.worker.config.ts",
+      "packages/gatekeeper-google/vitest.docs-worker.config.ts",
+      "packages/gatekeeper-google/vitest.worker.config.ts",
+      "packages/gatekeeper-homeassistant/vite.config.ts",
+      "packages/gatekeeper-homeassistant/vitest.config.ts",
+      "packages/gatekeeper-linear/vite.config.ts",
+      "packages/gatekeeper-linear/vitest.config.ts",
+      "packages/gatekeeper-microsoft/tsconfig.json",
+      "packages/gatekeeper-microsoft/vite.config.ts",
+      "packages/gatekeeper-microsoft/vitest.config.ts",
+      "packages/gatekeeper-microsoft/vitest.contract.config.ts",
+      "packages/gatekeeper-microsoft/vitest.worker.config.ts",
+      "packages/gatekeeper-scheduler/vitest.config.ts",
+      "packages/gatekeeper-slack/tsconfig.json",
+      "packages/gatekeeper-slack/vite.config.ts",
+      "packages/gatekeeper-slack/vitest.worker.config.ts",
+      "packages/gatekeeper-spotify/vite.config.ts",
+      "packages/gatekeeper-spotify/vitest.config.ts",
+      "packages/gatekeeper-supabase/vite.config.ts",
+      "packages/gatekeeper-supabase/vitest.config.ts",
+      "packages/gatekeeper-websearch/vitest.config.ts",
+      "packages/gatekeeper-zoominfo/tsconfig.json",
+      "packages/gatekeeper-zoominfo/vite.config.ts",
+      "packages/gatekeeper-zoominfo/vitest.config.ts",
+      "packages/integration-tests/vite.config.ts",
+      "packages/workshop-backend/vitest.config.ts",
+      "packages/workshop-frontend/vitest.browser.config.ts",
+      "vite.config.ts"
+    ]
+  },
+  "artifacts": {
+    "commits": "upstream-commits.txt",
+    "paths": "upstream-paths.txt",
+    "notes": "inventory-notes.md"
+  }
+}

@@ -485,3 +485,19 @@ round trip, migration and runtime acceptance were not exercised in this review.
 Loop improvement: identify callback payloads and production call sites before
 crediting integration from independently passing helpers. Preserve dated historical
 recovery statements while directing operators to the current per-layer map.
+
+
+## Checkpoint rejection and reopened state — fire-360 (2026-11-06)
+
+A checkpoint callback may write its partial JSON snapshot and then reject. The
+collector adds its durability-unknown error only after that rejection; the stored
+snapshot need not contain the error returned in memory. Do not infer collector
+completion from full first/confirmation arrays or an empty stored errors array.
+The persisted `complete:false` remains authoritative for this offline format.
+A fresh invocation recollects the whole scope rather than resuming those arrays.
+
+The real-file post-write rejection fixture demonstrates JSON visibility and this
+returned-versus-reopened distinction. It does not choose a production adapter or
+prove crash durability, atomic replacement, remote authentication or uploader
+integration. Those acceptance gates remain open. Future adapter fault tests must
+reopen the actual stored representation after rejection as well as after success.

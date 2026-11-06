@@ -266,3 +266,74 @@ test('JSON checkpoint round-trips through a real temporary directory', async t =
   assert.equal(completedSaved.confirmation.length, 2);
   assert.deepEqual(completedSaved.confirmation.map(item => item.worker), ['backend', 'router']);
 });
+
+test('checkpoint writing JSON then throwing on the final snapshot is a visibility, not crash-durability, fixture', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'rollout-evidence-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const file = join(dir, 'checkpoint.json');
+  const exactPlan = {
+    invocationId: plan.invocationId, accountId: plan.accountId,
+    manifestDigest: plan.manifestDigest, workers: [...plan.workers],
+  };
+
+  let saves = 0;
+  let reads = 0;
+  const readsSeen = [];
+  const result = await collectRolloutEvidence(plan, {
+    read(worker, pass) {
+      reads++;
+      readsSeen.push([worker, pass]);
+      return entry(worker, pass);
+    },
+    async checkpoint(snapshot) {
+      saves++;
+      if (saves === 5) {
+        await writeFile(file, JSON.stringify(snapshot));
+        throw new Error('PRIVATE storage failure after write');
+      }
+      await writeFile(file, JSON.stringify(snapshot));
+    },
+  });
+
+  // The fifth save is the FINAL snapshot: after four reads for the two workers.
+  assert.equal(saves, 5);
+  assert.equal(reads, 4);
+  assert.deepEqual(readsSeen, [
+    ['backend', 'first'], ['router', 'first'], ['backend', 'confirmation'], ['router', 'confirmation'],
+  ]);
+  assert.equal(result.complete, false);
+  assert.equal(result.evidenceLevel, null);
+  assert.deepEqual(result.errors, ['checkpoint failed; durability unknown']);
+  assert.ok(!JSON.stringify(result).includes('PRIVATE'));
+
+  // The JSON on disk is the FINAL snapshot that was written before the throw.
+  // It reads as complete:false with the full first and confirmation arrays and,
+  // crucially, does NOT contain the in-memory durability error appended after.
+  const savedText = await readFile(file, 'utf8');
+  assert.ok(!savedText.includes('PRIVATE'));
+  const saved = JSON.parse(savedText);
+  assert.equal(saved.complete, false);
+  assert.deepEqual(saved.plan, exactPlan);
+  assert.deepEqual(saved.errors, []);
+  assert.equal(saved.first.length, 2);
+  assert.equal(saved.confirmation.length, 2);
+  assert.deepEqual(saved.first.map(item => item.worker), ['backend', 'router']);
+  assert.deepEqual(saved.confirmation.map(item => item.worker), ['backend', 'router']);
+  assert.ok(!saved.errors.includes('checkpoint failed; durability unknown'));
+
+  // No more reads occurred after the checkpoint failure.
+  assert.equal(reads, 4);
+
+  // A fresh invocation recollects the whole scope rather than trusting the file.
+  const restartReads = [];
+  const restarted = await collectRolloutEvidence(plan, {
+    read(worker, pass) { restartReads.push([worker, pass]); return entry(worker, pass); },
+    checkpoint: snapshot => writeFile(file, JSON.stringify(snapshot)),
+  });
+  assert.equal(restarted.complete, true);
+  assert.equal(restarted.evidenceLevel, 'metadata-only');
+  assert.deepEqual(restartReads, [
+    ['backend', 'first'], ['router', 'first'], ['backend', 'confirmation'], ['router', 'confirmation'],
+  ]);
+  assert.deepEqual(restarted.errors, []);
+});

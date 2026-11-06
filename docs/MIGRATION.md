@@ -435,3 +435,36 @@ migration, authenticated/native journey or visual acceptance changed.
 the active fork pin and the full fork-to-candidate migration diff. Preserve their
 different coverage. An empty GitHub releases response does not establish no upstream
 changes, and old rehearsal evidence must never be transferred to a newer candidate.
+
+
+## 23. Admin audit candidate boundaries — fire-362 (2026-11-06)
+
+Targeted [source research](../.ai/runs/heymegabyte--megabyte.space-42241928648-1/codex-research.md)
+and [independent subscription review](../.ai/runs/heymegabyte--megabyte.space-42241928648-1/adversarial-review.md)
+of official `2726e932` establish acceptance limits, not candidate runtime success.
+The log deliberately retains attempted settings changes after a KV mirror failure
+rolls back the setting. Its rows/counts cannot attest successful application.
+Workspace rows appear in direct-SQL fixtures and reserved schema, but the public
+record type and production append path cover settings only. Do not credit an
+admin workspace/content access trail from those fixtures.
+
+The retention floor is enforced in source and committed-config reads protect
+against in-flight retention rollback; physical pruning is traffic-driven and
+batched (1000 rows/call), not proof of an idle-log deletion deadline. Admin
+capabilities check authorization at minting; held-handle revocation requires
+separate acceptance. v4 adds the audit SQLite DO in both canonical config and
+Wrangler source, but generated wrapper configuration, v3 upgrade, persistence,
+namespace separation and rollback compatibility require isolated execution.
+
+Next: run the existing candidate audit/access/policy/frontend suites after frozen
+installs; inject audit-insert and KV-mirror failures, reconcile committed settings
+against attempted rows, exercise raised-floor/batch/concurrency boundaries, and
+verify retained-capability expiry/revocation under the intended policy. Review
+failure-state wording in a browser without changing upstream UI during this review.
+Existing local provenance fixtures passed 81/81 and fork/lease fixtures 24/24;
+these are not candidate tests. The pin, historical receipt and visual scores stay
+unchanged. No deployment or migration acceptance was advanced.
+
+**Loop improvement:** distinguish audit attempt, committed setting and observed
+runtime effect; require a production producer before treating a fixture-populated
+audit kind as shipped coverage.

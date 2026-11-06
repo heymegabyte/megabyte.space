@@ -84,6 +84,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   persist only partial snapshots even when its in-memory return is complete.
   Reopen the actual stored representation before crediting durable completion;
   JSON write/read alone does not establish crash durability or atomic replacement.
+- **Audit records need outcome and producer evidence.** An append-before-write
+  log can retain attempts after a setting rolls back; reconcile authoritative state
+  before crediting an applied change. A record kind inserted directly by SQL
+  fixtures is not proof that production emits it. Source schema, fixture execution,
+  persisted records and observed runtime effects establish different claims.
 - **Missing credentials limit evidence.** Complete useful decision-independent work and
   report blocked deployment, authenticated long journeys, storage reconciliation and visual
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep

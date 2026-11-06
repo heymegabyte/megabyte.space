@@ -468,3 +468,25 @@ unchanged. No deployment or migration acceptance was advanced.
 **Loop improvement:** distinguish audit attempt, committed setting and observed
 runtime effect; require a production producer before treating a fixture-populated
 audit kind as shipped coverage.
+
+
+## 24. Candidate generated-configuration preservation — fire-363 (2026-11-06)
+
+Targeted [source review](../.ai/runs/heymegabyte--megabyte.space-42293062320-1/codex-research.md)
+finds that the wrapper clones the Workshop base and does not overwrite migrations,
+Browser/loader/version bindings or compatibility flags. Candidate `2726e932` declares
+v4/AdminAuditDurableObject and exports the class from server.ts. Its DOs use
+ctx.exports; absence of an explicit durable_objects binding is intentional.
+This is source reasoning, not executed generated-config or namespace acceptance.
+
+Before adoption, generate from the exact candidate bases and reopen serialized output;
+compare the full migration history and preserved bindings, then validate built exports
+and project-pinned Wrangler dry run. Workshop vars/services/KV/R2 are replaced: compare
+those separately against candidate release wiring. Existing scheduler preservation
+fixtures and legacy-base tests do not establish candidate Workshop coverage.
+Fresh namespace creation, isolated v3-to-v4 persistence, state separation and rollback
+remain separate runtime gates. No pin, receipt, production or migration status changed.
+
+**Loop improvement:** distinguish preservation predicted from source, serialized
+configuration equality, validated bundle exports and observed namespace migration.
+A missing explicit DO binding is not a defect when the upstream uses ctx.exports.

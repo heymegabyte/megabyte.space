@@ -4577,3 +4577,24 @@ GitHub owns publication/cadence; local clean gate then lease release, no watchdo
   or visual acceptance changes. No journey or vision pass claimed. Receipt drift
   remains advisory. Outer runner owns fast-forward publication; local release
   follows clean-tree check. Research and review artifacts are in this run's folder.
+
+## fire-360 — reopen rejected offline checkpoints (2026-11-06)
+
+- Source commit 4a41cf4e adds a real JSON post-write rejection regression. The
+  returned durability error can be absent from reopened partial state even when
+  both sweeps are full; fresh invocation recollects the full scope. No collector
+  behavior, storage adapter or uploader integration changed.
+- DeepSeek authored the bounded test; independent subscription Codex review via
+  cr exec returned PASS, no blockers. Lead focused fixtures 81/81 and fork/lease
+  fixtures 24/24, syntax and whitespace checks pass.
+- Fetched origin/main contains assigned d3627417 and prior recovered collector.
+  Actions history and retained failed receipt/tree inspected read-only; no
+  duplicate salvage. Exact declared fork initialized/preflight passes at 240899ec.
+- Both installs/full wrapper were not run for this test/docs-only slice. Remote
+  authenticated reads, crash-durable checkpoint adapter, production uploader,
+  migration, browser/native-client, storage and visual acceptance remain open.
+  No deployment, receipt/config/pin, credentials or scheduler changes.
+- Loop improvement: future checkpoint adapter acceptance must reopen storage after
+  rejection as well as success, and cannot infer completion from array lengths
+  or empty stored errors. Backlog records that next unit. No journey or vision
+  pass claimed. Outer runner owns publication; clean-tree gate precedes release.

@@ -1415,3 +1415,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   checkpoint adapter's stored schema and reopened partial/completion semantics.
   Preserve existing trusted remote-reader, positive/ambiguous-intent uploader and
   full-wrapper gates; independently passing helper fixtures do not close them.
+
+
+## Fire-360 checkpoint rejection boundary
+
+- [x] Exercise final-checkpoint post-write rejection with real JSON reopen: stored
+  state remains partial and can lack the durability error returned in memory.
+  This fixture closes only the returned-versus-reopened offline coverage gap.
+- [ ] For the actual chosen durable adapter, reopen after success AND rejected
+  writes; prove its crash/atomicity contract separately. Preserve trusted remote
+  reader, positive/ambiguous uploader and full-wrapper acceptance gates. Never
+  infer stored completion from full sweep arrays or an empty errors array.

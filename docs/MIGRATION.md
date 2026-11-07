@@ -490,3 +490,21 @@ remain separate runtime gates. No pin, receipt, production or migration status c
 **Loop improvement:** distinguish preservation predicted from source, serialized
 configuration equality, validated bundle exports and observed namespace migration.
 A missing explicit DO binding is not a defect when the upstream uses ctx.exports.
+
+
+## 25. Executed Workshop configuration preservation — fire-364 (2026-11-07 UTC)
+
+The [offline regression and provenance](../.ai/runs/heymegabyte--megabyte.space-42320764130-1/codex-research.md)
+execute `generateConfigs` using the exact retained official `2726e932` Workshop base,
+write its output to temporary JSON, reopen it and assert complete v0–v4 migration
+history, required runtime fields and input nonmutation. Other Worker bases remain
+the pinned legacy fork: this is Workshop preservation, not all-candidate generation.
+Deliberate vars/services/KV/R2 replacements match legacy wrapper behavior; that does
+not approve legacy auth or release wiring for the fresh apex. Root scripts 253/253
+and scripts typechecking pass. Frozen root offline install required `--ignore-scripts`;
+fork install, full wrapper, candidate build/exports, Wrangler and namespace/data
+migration acceptance remain unverified. No pin, receipt or production state changed.
+
+**Loop improvement:** required-field and explicit ordered-history assertions prevent
+missing-on-both-sides preservation passes; mixed-base generation and intentional
+replacement equality must remain distinct from whole-release compatibility.

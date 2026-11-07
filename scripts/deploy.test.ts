@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { parse, type ParseError } from "jsonc-parser";
 import { aiGatewayPlan, buildCommands, generateConfigs, validateConfig } from "./deploy.ts";
@@ -114,6 +116,42 @@ function sharingDomain(generated: GeneratedConfigs): unknown {
   return generated.workshop.services!
     .find((service) => service.binding === "GATEKEEPER_CONTEXT")!.props!.sharingDomain;
 }
+
+// Official candidate snapshot only: this does not build its exports or apply migrations.
+test("candidate Workshop migration and runtime config survive generation and serialization", async () => {
+  const candidate = await baseConfig("../.ai/runs/heymegabyte--megabyte.space-42320764130-1/candidate-workshop.jsonc");
+  // The legacy wrapper type does not enumerate every field in a newer upstream base.
+  const candidateFields = candidate as unknown as Record<string, unknown>;
+  const original = structuredClone(candidate);
+  assert.deepEqual(candidate.migrations, [
+    { tag: "v0", new_sqlite_classes: ["UserDurableObject", "OverseerDurableObject"] },
+    { tag: "v1", new_sqlite_classes: ["AdminSettings"] },
+    { tag: "v2", new_sqlite_classes: ["PendingLogin"] },
+    { tag: "v3", new_sqlite_classes: ["UserDirectoryDurableObject"] },
+    { tag: "v4", new_sqlite_classes: ["AdminAuditDurableObject"] },
+  ]);
+  const bases = await baseConfigs();
+  const legacy = generateConfigs(validConfig, bases).workshop;
+  bases.workshop = candidate;
+  const generated = generateConfigs(validConfig, bases).workshop;
+  const scratch = await mkdtemp(join(tmpdir(), "candidate-workshop-"));
+  try {
+    const path = join(scratch, "workshop.json");
+    await writeFile(path, JSON.stringify(generated, null, 2));
+    const reopened = JSON.parse(await readFile(path, "utf8"));
+    for (const key of ["migrations", "browser", "worker_loaders", "version_metadata",
+      "compatibility_date", "compatibility_flags", "main", "build"] as const) {
+      assert.ok(Object.hasOwn(candidate, key), `candidate lacks ${key}`);
+      assert.deepEqual(reopened[key], candidateFields[key], `${key} preservation`);
+    }
+    for (const key of ["vars", "services", "kv_namespaces", "r2_buckets"] as const) {
+      assert.deepEqual(reopened[key], legacy[key], `${key} intentional replacement`);
+    }
+    assert.deepEqual(candidate, original, "generation must not mutate candidate input");
+  } finally {
+    await rm(scratch, { recursive: true, force: true });
+  }
+});
 
 test("rejects deployment placeholders", () => {
   assert.throws(

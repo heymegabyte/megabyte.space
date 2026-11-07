@@ -4728,3 +4728,28 @@ candidate audit/policy/retention and all migration approval/runtime gates.
   install/build/export/Wrangler and full-wrapper acceptance remain unverified.
 - Next: all-candidate config wiring review and isolated namespace/migration gates;
   outer runner must reconcile publication against shared main independently.
+
+## fire-366 — candidate core serialization and release wiring boundary (2026-11-07)
+
+Exactly one GitHub fleet iteration. Code/research commit `bc5249cb` executes exact
+2726e932 Router/Workshop/Context/Scheduler bases together and reopens serialized
+output; wrapper-owned custom/reporter bases remain. Deployment tests 28/28, root
+scripts 254/254 and script typechecking pass. Frozen pnpm 11.17.0 root offline
+install with ignored scripts exits 0; exact declared fork preflight passes.
+
+Recovery: bounded Actions/origin fetch and prior failed/success receipts inspected;
+retained failed original commits were already recovered in base 7d3088eb, so no
+duplicate cherry-pick. Pin 240899ec unchanged. Independent cr Codex read-only
+review exits 0; DeepSeek delegation times out without edits, parent finishes test.
+
+Source findings: candidate Router cannot implement legacy Better Auth by injected
+vars alone; release-service ambient bindings and policy vars extend base files,
+including omitted Web Search. MIGRATION §26 and this run's research separate
+configuration preservation from auth, data, bundle and migration acceptance.
+
+Loop improvement: review release-service injected wiring separately from exact
+base equality. Next wave: intended fresh/legacy auth and ambient capability review,
+candidate exports/pinned Wrangler, approved isolated state migration. No production,
+receipt, resources, scheduler, credentials or visual scores changed. Browser/native,
+full fork install/full wrapper and candidate runtime acceptance remain unverified.
+Publication belongs to outer runner; clean-tree gate and release follow bookkeeping.

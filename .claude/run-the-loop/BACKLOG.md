@@ -1476,3 +1476,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   only Scheduler migration preservation is explicitly asserted. Validate bundle
   exports/dry run before isolated fresh-namespace and v3-to-v4 persistence tests.
   Do not add a redundant DO binding to repair an intentional ctx.exports design.
+
+
+## Fire-366 candidate core configuration boundary
+
+- [x] Execute exact `2726e932` Router/Workshop/Context/Scheduler bases together,
+  serialize/reopen all configs, and assert required runtime fields/nonmutation.
+  Wrapper-owned custom/reporter bases remain; root scripts 254/254 and types pass.
+  This advances the fire-363 offline core-base portion only, not adoption.
+- [ ] Before candidate adoption, reconcile the Router's absent legacy Better Auth
+  implementation with approved fresh Access/native auth and preserved legacy demo;
+  validate executable routing and resource continuity separately. Review release
+  service-injected vars/ambient bindings (including omitted Web Search) beyond the
+  base files. Candidate bundle/dry-run, isolated state and all existing migration
+  gates remain open; MIGRATION §26 records evidence and review limits.

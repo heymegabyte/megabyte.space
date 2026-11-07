@@ -4708,3 +4708,23 @@ candidate audit/policy/retention and all migration approval/runtime gates.
 - No deployment, production changes, pin/receipt move, authenticated/native journey
   or visual visit. Matrix unchanged; migration/runtime acceptance remains open.
 - Publication left to outer runner; no push, scheduler or credential changes.
+
+## fire-365 — recover verified unpublished fire-364 work (2026-11-07 UTC)
+
+- GitHub run 42320764130 failed with reported resultCommit c8037141; retained
+  clean worktree actually contains 4f16714e + 3263c25d. Fresh origin/main fetch
+  remained c8037141 and does not contain that work. Recovery preserves assigned
+  snapshot and leaves shared publication/conflict handling to the outer runner.
+- Recovered exact slice as cf8d8d7b + 9abf6782, without mutating prior worktrees.
+  Current research: `.ai/runs/heymegabyte--megabyte.space-42349372905-1/codex-research.md`.
+- Fresh checks: pinned fork workspace preflight passed at 240899ec; frozen root
+  offline install with pnpm 11.17.0 --ignore-scripts passed; root script tests
+  253/253 passed; scripts typecheck passed; git diff --check passed.
+- Loop improvement recovered: explicit ordered migration/required-field regression
+  prevents missing-on-both-sides configuration preservation passes. Publication is
+  not inferred from a successful report; actual retained commits were recovered.
+- No deployment, authenticated journey, Browser Harness, screenshot/vision score,
+  state migration, source pin or credential/scheduler changes. Candidate full
+  install/build/export/Wrangler and full-wrapper acceptance remain unverified.
+- Next: all-candidate config wiring review and isolated namespace/migration gates;
+  outer runner must reconcile publication against shared main independently.

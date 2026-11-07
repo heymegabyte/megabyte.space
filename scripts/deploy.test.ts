@@ -117,6 +117,59 @@ function sharingDomain(generated: GeneratedConfigs): unknown {
     .find((service) => service.binding === "GATEKEEPER_CONTEXT")!.props!.sharingDomain;
 }
 
+// All upstream core bases at one candidate, with wrapper-owned custom/reporter bases.
+// Serialized config preservation does not validate bundle exports or release-service wiring.
+test("candidate core configs survive generation and serialization", async () => {
+  const bases = await baseConfigs();
+  const required = {
+    router: ["main", "compatibility_date", "assets"],
+    workshop: ["main", "build", "compatibility_date", "compatibility_flags", "migrations",
+      "browser", "worker_loaders", "version_metadata"],
+    context: ["main", "build", "compatibility_date", "compatibility_flags", "migrations"],
+    scheduler: ["main", "build", "compatibility_date", "compatibility_flags", "migrations", "rules"],
+  } as const;
+  for (const worker of ["router", "workshop", "context", "scheduler"] as const) {
+    bases[worker] = await baseConfig(
+      `../.ai/runs/heymegabyte--megabyte.space-42379154221-1/candidate-${worker}.jsonc`);
+    for (const key of required[worker]) {
+      assert.ok(Object.hasOwn(bases[worker], key), `${worker} candidate lacks ${key}`);
+    }
+  }
+  const original = structuredClone(bases);
+  const scratch = await mkdtemp(join(tmpdir(), "candidate-core-"));
+  try {
+    const path = join(scratch, "configs.json");
+    await writeFile(path, JSON.stringify(generateConfigs(validConfig, bases)));
+    const reopened = JSON.parse(await readFile(path, "utf8"));
+    for (const worker of ["router", "workshop", "context", "scheduler"] as const) {
+      const source = bases[worker] as unknown as Record<string, unknown>;
+      for (const key of required[worker]) {
+        assert.deepEqual(reopened[worker][key], source[key], `${worker}.${key} preservation`);
+      }
+    }
+    assert.deepEqual(reopened.context.migrations, [{ tag: "v0", new_sqlite_classes: [
+      "ContextCollectionDurableObject", "UserLibraryDurableObject", "LibraryRegistryDurableObject",
+      "ContextGatekeeper",
+    ] }]);
+    assert.deepEqual(reopened.scheduler.migrations, [{ tag: "v1", new_sqlite_classes: [
+      "ScheduleDriver", "SchedulerGatekeeper",
+    ] }]);
+    // Deliberate wrapper replacements are recorded separately from preserved runtime fields.
+    assert.deepEqual(reopened.context.kv_namespaces,
+      [{ binding: "CONTEXT_COLLECTIONS", id: "context-kv-id" }]);
+    assert.deepEqual(reopened.context.artifacts,
+      [{ binding: "ARTIFACTS", namespace: "acme-context-collections" }]);
+    assert.equal(reopened.router.vars.BA_GATE, "1", "legacy gate remains; not fresh-apex approval");
+    assert.ok(reopened.router.services.some((service: { binding: string }) => service.binding === "AUTH"));
+    assert.equal(reopened.workshop.services.some(
+      (service: { binding: string }) => service.binding === "GATEKEEPER_WEBSEARCH"), false,
+    "candidate preinstall is absent from legacy wrapper; not release compatibility");
+    assert.deepEqual(bases, original, "generation must not mutate any candidate or owned base");
+  } finally {
+    await rm(scratch, { recursive: true, force: true });
+  }
+});
+
 // Official candidate snapshot only: this does not build its exports or apply migrations.
 test("candidate Workshop migration and runtime config survive generation and serialization", async () => {
   const candidate = await baseConfig("../.ai/runs/heymegabyte--megabyte.space-42320764130-1/candidate-workshop.jsonc");

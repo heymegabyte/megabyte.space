@@ -508,3 +508,32 @@ migration acceptance remain unverified. No pin, receipt or production state chan
 **Loop improvement:** required-field and explicit ordered-history assertions prevent
 missing-on-both-sides preservation passes; mixed-base generation and intentional
 replacement equality must remain distinct from whole-release compatibility.
+
+
+## 26. Candidate core configuration and identity boundary — fire-366 (2026-11-07)
+
+The [regression and research](../.ai/runs/heymegabyte--megabyte.space-42379154221-1/codex-research.md)
+now execute generation with exact official `2726e932` Router, Workshop, Context and
+Scheduler bases together. Output is serialized and reopened; required runtime fields,
+Router assets, migration histories, Scheduler Text rules and all input nonmutation
+are checked. Wrapper-owned custom/reporter bases remain. Deployment tests 28/28,
+root script suite 254/254 and script typechecking pass. This advances offline core
+configuration preservation only; candidate bundles and whole-release compatibility
+remain unverified.
+
+Independent source review confirms the candidate Router does not consume legacy
+`AUTH`/`BA_GATE`/`BETTER_AUTH`: `/api/auth/*` goes to Workshop and the asset policy
+lacks legacy navigation-wide interception. Config injection cannot preserve the
+fork's Better Auth behavior. Keep the legacy demo on its functioning fork; review
+approved fresh Access/native wiring separately before any pin move. Candidate
+release wiring also adds Workers AI and installed Gatekeepers outside base files,
+including preinstalled Web Search, which this wrapper omits. Optional Artifacts and
+replacement KV/R2 arrays establish neither data continuity nor namespace isolation.
+
+No pin, production, historical receipt or migration/runtime acceptance changed.
+Next: review intended release-injected settings/capabilities, validate candidate
+exports and pinned Wrangler dry run, then approved isolated state acceptance.
+
+**Loop improvement:** review release-service injection separately from exact base
+serialization; neither base equality nor injected legacy auth variables proves
+identity behavior or complete ambient capability wiring.

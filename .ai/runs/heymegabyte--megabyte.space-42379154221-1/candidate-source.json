@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+  "source": "retained exact Git object; current remote fetchability unverified",
+  "sha256": {
+    "packages/router/wrangler.jsonc": "ea6fc20dcfeb9e04bf8bcb6cd6c7950bfe3d9684e6e504adb1120d3c6501b96f",
+    "packages/workshop-backend/wrangler.jsonc": "8edcd80ff4502ac5ce4a86777d03c041a03f3f568f1281c310a4420b84959376",
+    "packages/gatekeeper-context/wrangler.jsonc": "3359a3557a3d4d055c0c3ff3434ec94790043afd04ef27b17b543313583fd935",
+    "packages/gatekeeper-scheduler/wrangler.jsonc": "d3f30c4a837fdc443d505e9e38b966261579f246d93657045440b56c90a9512f"
+  }
+}

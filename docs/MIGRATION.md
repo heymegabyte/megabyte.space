@@ -537,3 +537,24 @@ exports and pinned Wrangler dry run, then approved isolated state acceptance.
 **Loop improvement:** review release-service injection separately from exact base
 serialization; neither base equality nor injected legacy auth variables proves
 identity behavior or complete ambient capability wiring.
+
+
+## 27. Recovered candidate auth helper characterization — fire-367 (2026-11-07)
+
+Recovered exact candidate `2726e932` auth helper and six assertions from failed
+run 42402339263, verified bytes against its retained upstream Git object, and
+registered tests under standard root script discovery. Focused tests 6/6, root
+scripts 260/260 and scripts typecheck pass. See this run's
+[research](../.ai/runs/heymegabyte--megabyte.space-42420228809-1/codex-research.md).
+
+`DISABLE_PASSWORD_AUTH=true` requires a nonempty allowlist in the helper, but
+that parser cannot attest installed/auth-capable providers. Access variables do
+not change its return value: actual candidate login/createAccount reject Access
+mode before consulting it (source review only). Helper tests prove neither
+password bypass nor executable Access/native/provider acceptance. ASCII-only
+admin matching and malformed-binding rejection are executed offline.
+
+**Loop improvement:** recovered helper tests now run in the normal suite; review
+caller guards separately before interpreting isolated helper output as auth policy.
+No pin, auth configuration, deployment, receipt or migration status changed.
+All bundle/dry-run, approved isolated state and live identity gates remain open.

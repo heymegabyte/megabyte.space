@@ -4689,3 +4689,22 @@ Loop improvement and next-wave backlog: require separate evidence for source-pre
 preservation, reopened generated config, validated export and observed namespace
 migration. Compare replaced arrays against official release wiring. Preserve remaining
 candidate audit/policy/retention and all migration approval/runtime gates.
+
+## fire-364 — executed candidate Workshop preservation (2026-11-07 UTC)
+
+- Slice `4f16714e`: exact retained official 2726e932 Workshop snapshot, full ordered
+  migration history/required-field assertions and generate→JSON write→reopen equality.
+  Other bases remain legacy; no whole-candidate or runtime compatibility claim.
+- Fresh root scripts 253/253, scripts typecheck green; provenance 81/81 and loop
+  fixtures 36/36. Frozen root offline --ignore-scripts retry exited 0; initial install
+  terminated after stalling. Two DeepSeek attempts timed out without edits;
+  independent cr/Codex subscription review exited 0.
+- Loop improvement: missing-on-both-sides guards and explicit mixed-base versus
+  release-wiring evidence distinction. Next: all-candidate bases/replacement review,
+  built exports/Wrangler, then approved isolated namespace migration.
+- Prior successful result c8037141 is an ancestor of fetched origin/main; retained
+  failed collector equals current committed source, no salvage needed. Exact fork
+  240899ec locally clean. Current candidate fetch incomplete; fixture retained-source only.
+- No deployment, production changes, pin/receipt move, authenticated/native journey
+  or visual visit. Matrix unchanged; migration/runtime acceptance remains open.
+- Publication left to outer runner; no push, scheduler or credential changes.

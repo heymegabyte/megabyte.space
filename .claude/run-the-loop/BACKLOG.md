@@ -136,6 +136,16 @@
   preservation. Do not credit workspace access auditing from SQL fixture rows.
   This refines fire-361 candidate audit acceptance, not a second adoption lane.
 
+## Migration next-wave — fire-364
+
+- [x] Execute serialized Workshop preservation regression (`4f16714e`) against retained official
+  `2726e932`: complete v0–v4 history, required fields, unchanged input and separate
+  legacy replacement assertions. Root scripts 253/253 and scripts typecheck pass;
+  source/rehearsal limits are in MIGRATION §25. This does not close adoption gates.
+- [ ] Rehearse all-candidate base generation separately from the mixed-base Workshop
+  regression; compare replacements against official release wiring before bundle
+  exports/Wrangler validation and isolated namespace/data migration acceptance.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

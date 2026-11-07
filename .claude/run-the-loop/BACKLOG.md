@@ -1490,3 +1490,15 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   service-injected vars/ambient bindings (including omitted Web Search) beyond the
   base files. Candidate bundle/dry-run, isolated state and all existing migration
   gates remain open; MIGRATION §26 records evidence and review limits.
+
+
+## Fire-367 recovered auth helper boundary
+
+- [x] Recover prior failed run's exact candidate auth helper and six tests; verify
+  source hash against retained Git object and register standard script discovery.
+  Fresh root scripts 260/260 and scripts typecheck pass; no runtime acceptance.
+- [ ] Before candidate identity acceptance, exercise Access allow/deny and native
+  enrollment separately on approved isolated identities, including listed-but-
+  unavailable providers. Review caller guards: helper password-enabled output
+  does not bypass candidate server's earlier CF_ACCESS_AUD rejection. Preserve
+  full wrapper/build/dry-run, release capability and state migration gates.

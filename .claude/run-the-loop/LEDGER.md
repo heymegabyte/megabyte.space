@@ -4753,3 +4753,30 @@ candidate exports/pinned Wrangler, approved isolated state migration. No product
 receipt, resources, scheduler, credentials or visual scores changed. Browser/native,
 full fork install/full wrapper and candidate runtime acceptance remain unverified.
 Publication belongs to outer runner; clean-tree gate and release follow bookkeeping.
+
+## fire-367 — recover candidate auth helper tests (2026-11-07)
+
+Exactly one fleet iteration. Recovery commit ac01aaf9 and subsequent review fix
+register six exact-candidate helper tests in standard root discovery. Prior failed
+run 42402339263 had untracked fixtures and no new result commit; recovered actual
+files after SHA-256 comparison against candidate 2726e932 retained Git object.
+No retained worktree was modified. Bounded origin/main fetch and Actions history
+succeeded; earlier published bc5249cb ancestry verified. Outer runner owns publish.
+
+Fresh final checks: focused 6/6, root scripts 260/260, scripts typecheck exit 0,
+fork workspace preflight at unchanged 240899ec, frozen pnpm 11.17.0 offline root
+install --ignore-scripts exit 0, diff whitespace clean. Fork lifecycle/install,
+full wrapper/candidate build/Wrangler and namespace/runtime acceptance not run.
+DeepSeek bounded recovery timed out without edits; parent recovered exact files.
+First cr review timed out; stdin-closed retry exited 0. Review follow-up pins
+recorded hash/path, narrows Access test wording and expands parser/admin negatives.
+
+Loop improvement: recovered tests are part of root discovery, with explicit
+helper-versus-caller policy boundary. Candidate login/createAccount source rejects
+Access before helper lookup; isolated helper output is not password bypass proof.
+MIGRATION §27 and research record findings; next wave is approved isolated Access
+allow/deny, native enrollment and unavailable-provider cases. Existing full release
+wiring/state migration gates remain open. No deployment, production resources,
+credentials, scheduler, pin, receipt or visual score changed. Browser/native
+journeys and visual inspection deferred; no Browser Harness. Clean gate and lease
+release follow atomic bookkeeping; shared publication is not claimed.

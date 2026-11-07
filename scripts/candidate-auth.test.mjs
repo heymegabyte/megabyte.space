@@ -2,17 +2,23 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { getAuthGatekeeperAllowlist, isDeploymentAdmin, isPasswordAuthEnabled } from '../.ai/runs/heymegabyte--megabyte.space-42420228809-1/candidate-auth-config.ts';
+import { getAuthGatekeeperAllowlist, hasAuthGatekeepers, isDeploymentAdmin, isPasswordAuthEnabled } from '../.ai/runs/heymegabyte--megabyte.space-42420228809-1/candidate-auth-config.ts';
 
 // Exact upstream helper execution only: no Worker, provider or deployed-identity acceptance.
-test('candidate snapshot has recorded immutable source identity', async () => {
+test('candidate snapshot matches independently recorded source digest', async () => {
   const provenance = JSON.parse(await readFile(new URL('../.ai/runs/heymegabyte--megabyte.space-42420228809-1/candidate-source.json', import.meta.url)));
   const source = await readFile(new URL('../.ai/runs/heymegabyte--megabyte.space-42420228809-1/candidate-auth-config.ts', import.meta.url));
   assert.equal(createHash('sha256').update(source).digest('hex'), provenance.sha256);
+  assert.equal(provenance.sourcePath, 'packages/workshop-backend/src/auth/config.ts');
+  assert.equal(provenance.sha256, '7506aed2be31fdc00d35a07e6d201efd22a9f83c9f4e3460dfce2e1150926651');
   assert.equal(provenance.sourceCommit, '2726e932a3fbfcfffa04ee093a881604009f2034');
 });
 test('password-disable alone retains password login; allowlist selects disabled mode', () => {
   assert.equal(isPasswordAuthEnabled({}), true);
+  assert.equal(isPasswordAuthEnabled({ AUTH_GATEKEEPERS: 'google' }), true);
+  assert.equal(hasAuthGatekeepers({ AUTH_GATEKEEPERS: ' , ' }), false);
+  assert.equal(hasAuthGatekeepers({ AUTH_GATEKEEPERS: 'google' }), true);
+  assert.deepEqual(getAuthGatekeeperAllowlist({}), []);
   assert.equal(isPasswordAuthEnabled({ DISABLE_PASSWORD_AUTH: 'true' }), true);
   assert.equal(isPasswordAuthEnabled({ DISABLE_PASSWORD_AUTH: 'true', AUTH_GATEKEEPERS: ' , ' }), true);
   assert.equal(isPasswordAuthEnabled({ DISABLE_PASSWORD_AUTH: 'true', AUTH_GATEKEEPERS: 'google' }), false);
@@ -24,10 +30,12 @@ test('allowlist parser does not attest vendor binding availability', () => {
   assert.equal(isPasswordAuthEnabled(env), false);
   assert.equal(Object.hasOwn(env, 'GATEKEEPER_GOOGLE'), false);
 });
-test('Access selection is separate from password helper and admin membership', () => {
+test('Access-shaped fields do not select policy inside these helpers', () => {
   const env = { CF_ACCESS_AUD: 'fixture-audience', CF_ACCESS_ISS: 'https://fixture.invalid' };
   assert.equal(isPasswordAuthEnabled(env), true);
   assert.equal(isDeploymentAdmin(env, 'admin@example.com'), false);
+  assert.equal(isDeploymentAdmin({ ...env, ADMINS: ['admin@example.com'] }, 'admin@example.com'), true);
+  assert.equal(isPasswordAuthEnabled({ ...env, DISABLE_PASSWORD_AUTH: 'true', AUTH_GATEKEEPERS: 'google' }), false);
 });
 test('admins accept arrays and serialized arrays with ASCII-only case folding', () => {
   assert.equal(isDeploymentAdmin({ ADMINS: ['Admin@Example.com'] }, 'ADMIN@example.COM'), true);
@@ -37,6 +45,11 @@ test('admins accept arrays and serialized arrays with ASCII-only case folding', 
   assert.equal(isDeploymentAdmin({ ADMINS: ['admin@example.com'] }, ' admin@example.com'), false);
 });
 test('malformed admin bindings throw rather than grant membership', () => {
+  assert.equal(isDeploymentAdmin({ ADMINS: [] }, 'admin'), false);
+  assert.equal(isDeploymentAdmin({ ADMINS: ['other'] }, 'admin'), false);
+  for (const ADMINS of ['null', '42', 'true']) {
+    assert.throws(() => isDeploymentAdmin({ ADMINS }, 'admin'), TypeError);
+  }
   assert.throws(() => isDeploymentAdmin({ ADMINS: 'not-json' }, 'admin'), SyntaxError);
   assert.throws(() => isDeploymentAdmin({ ADMINS: '{"admin":true}' }, 'admin'), TypeError);
 });

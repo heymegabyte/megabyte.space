@@ -11,7 +11,7 @@ Bounded origin/main fetch and Actions history succeeded. Previous run 4240233926
 failed with unchanged base; its actual retained worktree has three untracked auth
 fixtures, no new commit. Inspected these read-only and recovered the exact helper
 and source manifest. Moved its six tests into scripts/candidate-auth.test.mjs so
-normal root script discovery executes them; only import/file URLs changed.
+normal root script discovery executes them; initial recovery changed only import/file URLs; review follow-up below expands assertions.
 Retained source worktree 42293062320/cloudflare-os has its own Git top-level.
 `git show 2726e932:packages/workshop-backend/src/auth/config.ts` and recovered bytes
 both hash to 7506aed2be31fdc00d35a07e6d201efd22a9f83c9f4e3460dfce2e1150926651.
@@ -49,7 +49,11 @@ namespace/state migration, browser/native journey or visual acceptance ran.
 
 DeepSeek bounded recovery delegation timed out without edits; parent recovered the
 small exact files directly. First cr Codex review timed out waiting on input;
-retry evidence is reported separately after completion. No paid API fallback.
+retry exited 0 with three characterization gaps. Tightened the snapshot digest/path
+assertions, renamed Access-shaped helper test, and added parser/admin negative cases.
+Reviewer could not resolve the candidate in the current fork; the independent
+retained-object hash comparison above supplies that external provenance observation.
+The test checks recorded bytes, not independent online provenance on every run. No paid API fallback.
 
 Loop improvement: put recovered helper assertions in standard root discovery and
 separate pure-helper output from earlier Access guards in actual call sites.

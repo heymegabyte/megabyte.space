@@ -4780,3 +4780,25 @@ wiring/state migration gates remain open. No deployment, production resources,
 credentials, scheduler, pin, receipt or visual score changed. Browser/native
 journeys and visual inspection deferred; no Browser Harness. Clean gate and lease
 release follow atomic bookkeeping; shared publication is not claimed.
+
+## fire-368 — recover candidate ambient authority review (2026-11-08)
+
+Recovered source-only Web Search review from failed runs 42435582301 and
+42461293723 without altering retained worktrees. Source artifact and migration
+checklist committed in `1b54c7f5`. Exact candidate 2726e932: six Git-object hashes
+recomputed; independent adversarial review confirmed claims and clarified Router
+default versus backend GatekeeperVendor entrypoints. Origin/main still contains
+c362a374; retained notes were unpublished. Pinned fork 240899ec initialized and
+preflight passed. Loop lifecycle/bookkeeping/clean-tree tests: 42/42; diff check
+passed. Initial mistaken .mjs test paths were corrected to the actual .ts files.
+Direct approved DeepSeek review timed out after 25 seconds with no output.
+
+Loop improvement: distinguish manifest intent, installed bindings, per-Worker AI
+and gateway configuration, recorded query attempts and actual provider success.
+MIGRATION §28 and backlog carry separate acceptance requirements. No production
+change, pin move, historical receipt rewrite, UI visit or visual score update.
+Full wrapper/build/dry-run, candidate tests, browser/native journeys, provider
+cost/privacy verification and isolated data acceptance remain unverified. No
+credentials were requested or changed. Next: approved isolated candidate evaluation
+with exact Worker config and actual provisioning/outcome evidence. GitHub owns
+cadence and publication; no cron/watchdog or push performed.

@@ -1502,3 +1502,16 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   unavailable providers. Review caller guards: helper password-enabled output
   does not bypass candidate server's earlier CF_ACCESS_AUD rejection. Preserve
   full wrapper/build/dry-run, release capability and state migration gates.
+
+
+## Fire-368 ambient capability authority boundary
+
+- [x] Trace exact `2726e932` Web Search manifest, Worker AI/gateway selection and
+  observation-before-send behavior; record file hashes and source-only limits.
+  MIGRATION §28; no runtime capability or migration acceptance credited.
+- [ ] For approved isolated Web Search evaluation, reconcile that Worker's gateway
+  separately from backend vars, preserve its AI/migration/Text config and Router default/backend GatekeeperVendor
+  entrypoints, and prove singleton provisioning. Verify approved current
+  cost/privacy policy, audit refusal-before-send and provider failure/success with
+  outcome evidence; an audit row is only an attempt. Keep Web Search excluded from
+  auth providers (`providesAuth=false`) and retain all existing migration gates.

@@ -558,3 +558,34 @@ admin matching and malformed-binding rejection are executed offline.
 caller guards separately before interpreting isolated helper output as auth policy.
 No pin, auth configuration, deployment, receipt or migration status changed.
 All bundle/dry-run, approved isolated state and live identity gates remain open.
+
+
+## 28. Ambient Web Search authority boundary — fire-368 (2026-11-08 UTC)
+
+Targeted [candidate source review](../.ai/runs/heymegabyte--megabyte.space-42494271453-1/codex-research.md)
+traces the exact `2726e932` manifest through the Web Search Worker. The manifest
+marks Context/Scheduler/Web Search preinstalled singletons; the wrapper omits
+Web Search. Its backend `WORKERS_AI` cannot establish another Worker's `AI`
+binding or gateway selection. Candidate search uses that Worker's `CF_AI_GATEWAY`
+or `default`, with explicit `ceramic` provider. A registry-only addition would
+still need gateway/provider authority review: generic extra-worker generation
+applies common settings, not backend gateway vars. No addition is authorized here.
+
+Before approved isolated evaluation, verify generated Worker identity, AI binding,
+v1 migration, Text rules, Router HTTP/backend vendor entrypoints and singleton
+provisioning. Approve the per-Worker gateway, cost and query privacy policy using
+current provider documentation. Candidate comments are not verified provider terms.
+Web Search advertises `providesAuth=false`; it cannot substitute for login providers.
+
+The search implementation awaits query observation before sending. A recorded
+query can survive a subsequent HTTP, binding or parsing failure. Pair audit evidence
+with actual result/failure evidence, including refusal-before-send; do not credit
+search success from an audit row. Upstream fixture tests were read, not executed
+this fire. See research for exact file hashes and evaluation cases.
+
+This advances targeted source review only. No pin, production, identity, historical
+receipt, visual score or migration acceptance changed. Candidate build/dry-run,
+actual release provisioning, isolated state and live identity gates remain open.
+
+**Loop improvement:** separate manifest intent, installed binding, per-Worker
+gateway configuration, recorded attempt and successful provider execution.

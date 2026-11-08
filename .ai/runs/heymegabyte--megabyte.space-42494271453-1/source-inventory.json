@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+  "provenance": "Read-only retained Git objects; not proof of current remote fetchability",
+  "files": [
+    {
+      "path": "scripts/release/manifest-lib.ts",
+      "sha256": "3faaf5461be06a9ea3fd7d8af140b7fd94439aa70508d081c861602d8ec46829"
+    },
+    {
+      "path": "scripts/release/manifest-lib.test.ts",
+      "sha256": "ef65d6791653d5adfaca88563948394166d327e73a735d447207cb01069235e6"
+    },
+    {
+      "path": "packages/gatekeeper-websearch/src/search.ts",
+      "sha256": "b91c70ab7dc8e0d4c29f16aba6c7c14e9f28544a65225d3678c4ab20f0284bea"
+    },
+    {
+      "path": "packages/gatekeeper-websearch/src/worker.ts",
+      "sha256": "ffcddcca093c12ad15e1a72cd391be76bcef13cec0c7d1224976f0194f281dc9"
+    },
+    {
+      "path": "packages/gatekeeper-websearch/wrangler.jsonc",
+      "sha256": "4f2ae23fe1c071694d26b0be094b3786d49594fdae141a929388ab071fe4dd65"
+    },
+    {
+      "path": "packages/gatekeeper-websearch/__tests__/search.test.ts",
+      "sha256": "fcaf1e73cfb4b4887daadb44515439caed18971edea8923573d96fdb9e4f1c02"
+    }
+  ]
+}

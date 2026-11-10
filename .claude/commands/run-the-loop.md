@@ -122,6 +122,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   A prior receipt saying `running` is
   unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
   Final reports name terminal check outcomes; interrupted checks remain incomplete.
+  A log ending at the final Router `--dry-run` is still not a terminal receipt:
+  `deploy.ts` awaits generated-config cleanup afterward, and that cleanup can fail.
+  Capture the wrapper process exit status (not `tee` or a log filter), then verify
+  generated configs were removed. Keep progress updates flowing while the check
+  runs so an inactivity timeout does not strand otherwise completed validation.
   Budget the full wrapper from prior terminal timings and reached build stages;
   do not repeat a short timeout that only reaches the first build. Reserve time
   for terminal evidence, bookkeeping and clean-tree release before the fleet deadline.

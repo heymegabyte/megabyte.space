@@ -4814,3 +4814,21 @@ recovery; prior incomplete reports remain incomplete. No deployment, pin move,
 receipt rewrite, UI journey or visual score change. Migration acceptance remains
 open and cutover approval-gated. Next: budget a full rehearsal through terminal
 exit and cleanup. Research: .ai/runs/heymegabyte--megabyte.space-42978008557-1/codex-research.md.
+
+## fire-370 — retained memory-pressure guidance recovery (2026-11-11)
+
+Recovered the failed run 43048112422 four-line loop clarification as 08ecc9b0,
+without modifying its retained tree. Loop improvement: inspect memory.high and
+memory.max, serialize interrupted pressure-heavy installs, preserve host limits.
+Fresh exact-pin fork preflight PASS; lifecycle fixtures 42/42 PASS, exit 0;
+diff whitespace check PASS. Assigned base is published in fetched origin/main.
+Prior wrapper output lacks terminal exit evidence and remains INCOMPLETE.
+Current cgroup exposes 1.5 GiB high / 2 GiB max with nonzero high events;
+these cumulative counts do not identify which process caused pressure.
+Bounded DeepSeek review timed out without output; no review pass is credited.
+Frozen install terminal outcomes are in the external agent-report.json.
+No deployment, pin move, historical receipt rewrite, UI journey or visual score
+change. Migration approval and full wrapper/candidate/runtime acceptance remain
+open. Refined existing measurement backlog acceptance with per-command event
+deltas rather than adding a duplicate item. GitHub owns cadence/publication.
+Research: .ai/runs/heymegabyte--megabyte.space-43109808896-1/codex-research.md.

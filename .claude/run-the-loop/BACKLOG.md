@@ -112,8 +112,11 @@
 - [ ] Capture per-stage wrapper duration and peak process/cgroup memory in non-secret
   local check evidence before choosing a larger heap or deadline. Accept only with
   terminal exit status and measured frontend-stage data; preserve the first failure
-  and do not change shared host services. This complements the existing full-wrapper
-  gate rather than replacing it with isolated package checks.
+  and do not change shared host services. Record process-cgroup paths and before/after
+  `memory.events` deltas: cumulative high counts alone cannot attribute pressure to
+  one command. This complements the existing full-wrapper gate rather than replacing
+  it with isolated package checks. Fire-370 recovered concurrent-install pressure
+  guidance in `08ecc9b0`; this measurement acceptance remains open.
 
 ## Upstream discovery — fire-328
 

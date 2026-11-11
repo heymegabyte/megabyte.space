@@ -1515,3 +1515,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   cost/privacy policy, audit refusal-before-send and provider failure/success with
   outcome evidence; an audit row is only an attempt. Keep Web Search excluded from
   auth providers (`providesAuth=false`) and retain all existing migration gates.
+
+
+## Fire-369 terminal wrapper recovery
+
+- [x] Recover unpublished b7a8ba49 documentation guidance; source confirms awaited
+  cleanup after Router dry-run. Fresh fork preflight and lifecycle tests 42/42 pass.
+- [ ] Collect terminal full-wrapper exit and confirm generated configs are removed;
+  previous dry-run log endings remain incomplete evidence. Preserve all migration
+  approval, candidate bundle, isolated state and live identity gates.

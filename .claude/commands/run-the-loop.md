@@ -134,6 +134,10 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   available host memory and the inherited cgroup memory budget before a bounded
   process-local heap retry. Host free memory alone does not establish fleet headroom.
   Do not change host services or repeatedly rerun the same memory-limited command.
+  Inspect `memory.high` as well as `memory.max`: sustained throttling can stall
+  installs below the hard limit. When concurrent frozen installs show memory
+  pressure, stop and record the interrupted attempt, then finish them serially
+  before starting dependency consumers. Preserve host/cgroup limits.
 
 ## 0 — Orient (cheap; NEVER read giant ledgers in the main thread)
 - **GitHub fleet runs:** obey the incoming workspace/publication contract. In a fresh isolated worktree, initialize the PINNED submodule before fork checks (`git submodule update --init cloudflare-os`) and run `node scripts/check-fork-workspace.mjs` before installing fork dependencies or consuming fork source. The preflight checks the committed gitlink, independent Git repository and router package; it does not establish fetchability or a clean tree. Install locked dependencies in BOTH workspaces before build gates (`pnpm install --frozen-lockfile` and `pnpm --dir cloudflare-os install --frozen-lockfile`). The starter workspace includes only two fork packages; its install alone cannot provide the frontend/configurator build dependencies. An uninitialized fork is missing verification context, never proof of an unpushed fork commit. GitHub owns scheduling; do not arm session cron or the legacy watchdog. Commit locally and leave main publication to the outer runner when instructed.

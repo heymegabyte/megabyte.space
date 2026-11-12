@@ -589,3 +589,27 @@ actual release provisioning, isolated state and live identity gates remain open.
 
 **Loop improvement:** separate manifest intent, installed binding, per-Worker
 gateway configuration, recorded attempt and successful provider execution.
+
+
+## 29. Recovered legacy wrapper terminal evidence — fire-372 (2026-11-12 UTC)
+
+Failed fleet run `43146093962` retained a terminal wrapper receipt after its
+earlier agent report had recorded the check as incomplete. The retained
+`wrapper-terminal.json` reports exit 0 for
+`NODE_OPTIONS=--max-old-space-size=1280 timeout 1500 pnpm check`, ending
+`2026-11-12T03:17:54.404628+00:00`, with no generated configs remaining.
+This is recovered historical legacy-wrapper evidence, not a fresh check in
+fire-372, candidate adoption, deployment or migration acceptance.
+
+The retained independent fork matches declared gitlink `240899ec`; root lock
+checksums match the assigned snapshot. Fresh recovery/bookkeeping tests pass
+23/23. A broader fresh test attempt could not import `jsonc-parser` because
+the assigned checkout has no installed dependencies. Complete exact-pin
+bootstrap and serial frozen installs before current-checkout dependency gates.
+
+**Loop improvement:** reconcile terminal subprocess receipts with stale
+checkpoint reports before repeating expensive checks. Fleet failure, a stale
+checkpoint and a successful terminal subprocess are separate observations.
+Keep the original receipt unchanged and label recovered evidence explicitly.
+See [assessment](../.ai/runs/heymegabyte--megabyte.space-43209248048-1/codex-research.md).
+Production approval and isolated/live acceptance remain open.

@@ -4832,3 +4832,17 @@ change. Migration approval and full wrapper/candidate/runtime acceptance remain
 open. Refined existing measurement backlog acceptance with per-command event
 deltas rather than adding a duplicate item. GitHub owns cadence/publication.
 Research: .ai/runs/heymegabyte--megabyte.space-43109808896-1/codex-research.md.
+
+## fire-372 — recover retained terminal evidence (2026-11-12)
+
+Committed `df47d429`: reconciled failed run 43146093962's stale incomplete
+agent report with its terminal wrapper receipt (exit 0, cleanup inventory empty).
+Verified assigned base ancestry in origin/main and retained clean exact fork pin.
+Fresh recovery/bookkeeping tests 23/23; broader deploy test import blocked by
+missing jsonc-parser in this uninstalled checkout. No fresh full-wrapper claim.
+Loop improvement: durable distinction between fleet outcome, checkpoint and
+terminal subprocess evidence (MIGRATION §29). No deployment, pin move, visual
+journey or score change. Production migration approval remains open. Next:
+exact-pin bootstrap/serial installs for dependency gates and approved migration.
+DeepSeek read-only review process exited 0 but supplied no usable final assessment;
+parent source review owns acceptance. No Browser Harness used.

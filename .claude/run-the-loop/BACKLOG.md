@@ -1527,3 +1527,13 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Collect terminal full-wrapper exit and confirm generated configs are removed;
   previous dry-run log endings remain incomplete evidence. Preserve all migration
   approval, candidate bundle, isolated state and live identity gates.
+
+
+## Migration next-wave — fire-372
+
+- Recovered prior run 43146093962 terminal wrapper exit 0 and empty cleanup
+  inventory in `df47d429`; stale initial report remains unchanged. This is
+  historical legacy-wrapper evidence only (MIGRATION §29).
+- [ ] On the next dependency-consuming slice, initialize exact gitlink and
+  finish both serial frozen installs before rerunning current-checkout gates;
+  record terminal outcomes separately from recovered historical checks.

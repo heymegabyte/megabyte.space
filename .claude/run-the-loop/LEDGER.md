@@ -4865,3 +4865,20 @@ sampled lower bounds before attributing resource pressure. No source/config,
 pin, deployment or visual change. Fork/bootstrap/full wrapper and authenticated
 journeys skipped for this documentation slice; production migration approval open.
 Publication belongs to the outer runner; current worktree remains isolated.
+
+## fire-376 — Current bootstrap evidence and terminal wrapper failure
+
+Committed `d10e3cbd`: exact declared fork 240899ec bootstrap/preflight passed;
+serial frozen root and fork installs exited 0 using Node pnpm 11.17.0, with
+nested launcher verified. Focused fixtures 53/53 and root script fixtures 260/260
+passed. Full pnpm check exited 1 in 261.3s: Workshop frontend build exhausted
+Node JavaScript heap. Terminal cleanup inventory empty; lockfiles unchanged;
+fork clean. No retry or host-limit changes. Full wrapper acceptance stays open.
+
+Inspected Actions history and prior failed receipt/worktree: no unpublished
+implementation; origin/main contains the assigned base. Original receipts retained.
+Loop improvement checkpoints EACH terminal install before subsequent stages.
+DeepSeek read-only review timed out at 30s; parent reviewed evidence and diff.
+No deployment, UI journey, visual score, pin, identity or approval change.
+Production migration and upstream candidate evaluation remain open. Local commits
+await outer-runner publication. See MIGRATION §31 and current research artifact.

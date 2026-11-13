@@ -1544,3 +1544,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   receipt and final sampler summary; correlate stage timestamps with sampled memory
   without treating shared-cgroup pressure as exclusive package attribution. Retained
   Router exit 0 alone is incomplete. See MIGRATION §30.
+
+
+## Migration next-wave — fire-376
+
+- [x] Current exact-fork bootstrap and both serial frozen installs completed;
+  root script fixtures 260/260 and focused fixtures 53/53. Evidence `d10e3cbd`.
+- [ ] Current wrapper acceptance remains open: `pnpm check` exited 1 after 261.3s
+  with Workshop frontend JavaScript heap exhaustion; generated-config inventory
+  empty. Before retrying, measure invocation/ancestor headroom and justify a
+  process-local heap budget or obtain an adequate invocation budget. Preserve
+  host limits. See MIGRATION §31; no migration/prod acceptance credited.

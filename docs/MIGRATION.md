@@ -630,3 +630,24 @@ This is documentation recovery, with fresh narrow loop regression checks recorde
 the run report, not a current wrapper rehearsal or migration acceptance.
 See [independent assessment](../.ai/runs/heymegabyte--megabyte.space-43337797577-1/codex-research.md).
 No pin, deployment, visual score or approval status changed.
+
+
+## 31. Current-checkout bootstrap and wrapper result — fire-376 (2026-11-13 UTC)
+
+Exact declared fork `240899ec34e822a0afa695e3c7b48a41c2db9c4c` initialized and
+passed workspace preflight. Serial frozen root/fork installs both exited 0 using
+Node-hosted pnpm 11.17.0; nested child-shell lookup used the same run-local launcher.
+Root script fixtures passed 260/260; focused loop/fork fixtures passed 53/53.
+
+The subsequent full `pnpm check` exited 1 after 261.3 seconds: Workshop frontend
+Vite build exhausted the default JavaScript heap (observed Node heap limit
+887095296 bytes). Terminal receipt records no remaining generated configs.
+Both lockfiles and the fork stayed unchanged. Full wrapper acceptance remains
+open. Invocation memory.max is 2 GiB and memory.high is 1.5 GiB, within a shared
+scope; parent fleet capacity does not increase these limits. No same-budget retry.
+
+Loop improvement: checkpoint each install's terminal result before the next stage.
+Prior run 43384231361's root-install log ends successfully, but its incomplete
+report is preserved and no prior wrapper success is inferred. See the
+[independent assessment](../.ai/runs/heymegabyte--megabyte.space-43453185793-1/codex-research.md).
+No deployment, pin, identity, approval or visual acceptance changed.

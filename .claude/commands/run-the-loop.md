@@ -122,6 +122,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   A prior receipt saying `running` is
   unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
   Final reports name terminal check outcomes; interrupted checks remain incomplete.
+  Update the report checkpoint immediately after EACH frozen install exits, before
+  starting the next stage; retain its launcher/version and exit status. A later
+  interruption must not erase completed bootstrap evidence or imply wrapper success.
   A log ending at the final Router `--dry-run` is still not a terminal receipt:
   `deploy.ts` awaits generated-config cleanup afterward, and that cleanup can fail.
   Capture the wrapper process exit status (not `tee` or a log filter), then verify

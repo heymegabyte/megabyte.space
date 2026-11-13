@@ -4846,3 +4846,22 @@ journey or score change. Production migration approval remains open. Next:
 exact-pin bootstrap/serial installs for dependency gates and approved migration.
 DeepSeek read-only review process exited 0 but supplied no usable final assessment;
 parent source review owns acceptance. No Browser Harness used.
+
+## fire-374 — Recover cgroup measurement interpretation guidance
+
+Recovered the five-line loop-command change retained by failed run 43286382011
+after independent review of its actual diff, research artifact and log files.
+GitHub history read succeeded; fetched origin/main contains assigned 7931a57a.
+No implementation was stranded. The retained Router child exited 0 but outer
+terminal/cleanup evidence and final sampler summary remain absent: no wrapper
+PASS or completed memory profile credited. MIGRATION §30 and the current
+research artifact record these boundaries; backlog adds terminal-profile acceptance.
+
+Fresh verification: loop lock, atomic bookkeeping and clean-tree regression tests
+42/42 PASS; git diff --check PASS. DeepSeek read-only review timed out (25s),
+with no usable output; parent independently reviewed the bounded recovery.
+Loop improvement: derive cgroup membership, separate RSS/accounting and label
+sampled lower bounds before attributing resource pressure. No source/config,
+pin, deployment or visual change. Fork/bootstrap/full wrapper and authenticated
+journeys skipped for this documentation slice; production migration approval open.
+Publication belongs to the outer runner; current worktree remains isolated.

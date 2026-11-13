@@ -1537,3 +1537,10 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] On the next dependency-consuming slice, initialize exact gitlink and
   finish both serial frozen installs before rerunning current-checkout gates;
   record terminal outcomes separately from recovered historical checks.
+
+## Migration next-wave — fire-374
+
+- [ ] Complete the fire-373 memory profile only with a terminal wrapper exit/cleanup
+  receipt and final sampler summary; correlate stage timestamps with sampled memory
+  without treating shared-cgroup pressure as exclusive package attribution. Retained
+  Router exit 0 alone is incomplete. See MIGRATION §30.

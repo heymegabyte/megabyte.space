@@ -613,3 +613,20 @@ checkpoint and a successful terminal subprocess are separate observations.
 Keep the original receipt unchanged and label recovered evidence explicitly.
 See [assessment](../.ai/runs/heymegabyte--megabyte.space-43209248048-1/codex-research.md).
 Production approval and isolated/live acceptance remain open.
+
+
+## 30. Memory measurement interpretation recovery — fire-374 (2026-11-13 UTC)
+
+Recovered the retained fire-373 cgroup guidance after inspecting its actual worktree
+and failed GitHub receipt. Resolve the cgroup path from process membership, inspect
+shared scope membership, keep descendant RSS separate from cgroup accounting, and
+label periodic peaks as sampled lower bounds. Shared counter deltas do not establish
+exclusive package attribution.
+
+The retained stage log records Router dry-run exit 0, but no outer terminal receipt
+or final sampler result exists in the inspected run directory. Full wrapper acceptance
+and the memory profile remain incomplete; no successful terminal outcome is inferred.
+This is documentation recovery, with fresh narrow loop regression checks recorded in
+the run report, not a current wrapper rehearsal or migration acceptance.
+See [independent assessment](../.ai/runs/heymegabyte--megabyte.space-43337797577-1/codex-research.md).
+No pin, deployment, visual score or approval status changed.

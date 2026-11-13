@@ -138,6 +138,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   installs below the hard limit. When concurrent frozen installs show memory
   pressure, stop and record the interrupted attempt, then finish them serially
   before starting dependency consumers. Preserve host/cgroup limits.
+  Derive the actual cgroup filesystem path from `/proc/self/cgroup` instead of
+  assuming `/sys/fs/cgroup/memory.max`; inspect scope membership before
+  attributing `memory.events` deltas to a command; shared-scope deltas do not
+  prove exclusive package pressure; label one-second RSS/current-memory peaks as
+  sampled lower bounds and keep descendant RSS separate from cgroup accounting.
 
 ## 0 — Orient (cheap; NEVER read giant ledgers in the main thread)
 - **GitHub fleet runs:** obey the incoming workspace/publication contract. In a fresh isolated worktree, initialize the PINNED submodule before fork checks (`git submodule update --init cloudflare-os`) and run `node scripts/check-fork-workspace.mjs` before installing fork dependencies or consuming fork source. The preflight checks the committed gitlink, independent Git repository and router package; it does not establish fetchability or a clean tree. Install locked dependencies in BOTH workspaces before build gates (`pnpm install --frozen-lockfile` and `pnpm --dir cloudflare-os install --frozen-lockfile`). The starter workspace includes only two fork packages; its install alone cannot provide the frontend/configurator build dependencies. An uninitialized fork is missing verification context, never proof of an unpushed fork commit. GitHub owns scheduling; do not arm session cron or the legacy watchdog. Commit locally and leave main publication to the outer runner when instructed.

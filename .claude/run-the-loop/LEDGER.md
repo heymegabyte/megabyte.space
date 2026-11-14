@@ -4896,3 +4896,18 @@ next stage. Full wrapper remains open; investigate measured memory headroom
 before retrying. No production, pin, identity, UI/visual, scheduler or credential
 change. ADR 0002 migration approval and isolated/live acceptance remain open.
 Exactly one evidence-recovery iteration; publication left to the outer runner.
+
+## fire-378 — unpublished recovery and completion evidence distinction (2026-11-14 UTC)
+
+Recovered four inspected unpublished commits as c7d1cc7d, a03fa89c, 26933a99
+and bd53666a. Fresh focused fixtures pass 53/53. Origin/main remained 9bb08984
+at bounded fetch. Prior Actions failures and retained terminal receipts inspected.
+
+Loop improvement 13a9c657 distinguishes historical failure observations from
+checks executed this iteration. Retained wrapper exit 1 / frontend heap exhaustion
+remains explicit in warnings/research, not represented as a current executed gate.
+Current fork remains uninitialized; current full-wrapper acceptance is incomplete.
+No pin, deployment, approval or visual score changed. No Browser Harness used.
+Outer runner owns publication; original receipts and other worktrees preserved.
+Next: measured memory headroom, justified heap budget, exact-pin serial bootstrap
+and terminal full-wrapper verification; migration approval remains open.

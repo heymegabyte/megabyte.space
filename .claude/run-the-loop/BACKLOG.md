@@ -1564,3 +1564,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   as ebf7cdfe/9977d5fd. See current independent assessment under .ai/runs.
 - Wrapper memory-budget investigation remains the existing open next action in
   fire-376; recovery adds no deployment or migration acceptance.
+
+
+## Migration next-wave — fire-378
+
+- [ ] Before the next exact-pin wrapper retry, measure invocation and ancestor memory
+  headroom and justify a bounded local heap budget; historical frontend heap failure
+  remains unresolved. Keep current checks separate from historical receipt outcomes.
+- Recovered unpublished fire-376/377 documentation and bookkeeping; fresh focused
+  fixtures pass 53/53. No current build, deployment or migration acceptance credited.

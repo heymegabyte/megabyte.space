@@ -1555,3 +1555,12 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   empty. Before retrying, measure invocation/ancestor headroom and justify a
   process-local heap budget or obtain an adequate invocation budget. Preserve
   host limits. See MIGRATION §31; no migration/prod acceptance credited.
+
+
+## Migration recovery — fire-377
+
+- [x] Recovered unpublished fire-376 documentation and terminal failure evidence;
+  fresh focused fixtures pass 53/53. Original commits d10e3cbd/67a72d77 recovered
+  as ebf7cdfe/9977d5fd. See current independent assessment under .ai/runs.
+- Wrapper memory-budget investigation remains the existing open next action in
+  fire-376; recovery adds no deployment or migration acceptance.

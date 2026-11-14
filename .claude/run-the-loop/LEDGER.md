@@ -4882,3 +4882,17 @@ DeepSeek read-only review timed out at 30s; parent reviewed evidence and diff.
 No deployment, UI journey, visual score, pin, identity or approval change.
 Production migration and upstream candidate evaluation remain open. Local commits
 await outer-runner publication. See MIGRATION §31 and current research artifact.
+
+## fire-377 — Recover unpublished terminal wrapper evidence
+
+Recovered d10e3cbd/67a72d77 as ebf7cdfe/9977d5fd after verifying actual retained
+logs, independent fork HEAD, lock checksums and origin/main ancestry. Previous
+run failure did not invalidate its terminal wrapper exit 1 (261.3s, frontend
+heap exhaustion, empty generated-config inventory). Historical fixtures 260/260
+are distinct from fresh focused regression fixtures 53/53 this fire.
+
+Loop improvement restored: checkpoint EACH install terminal result before the
+next stage. Full wrapper remains open; investigate measured memory headroom
+before retrying. No production, pin, identity, UI/visual, scheduler or credential
+change. ADR 0002 migration approval and isolated/live acceptance remain open.
+Exactly one evidence-recovery iteration; publication left to the outer runner.

@@ -651,3 +651,28 @@ Prior run 43384231361's root-install log ends successfully, but its incomplete
 report is preserved and no prior wrapper success is inferred. See the
 [independent assessment](../.ai/runs/heymegabyte--megabyte.space-43453185793-1/codex-research.md).
 No deployment, pin, identity, approval or visual acceptance changed.
+
+
+## 32. Invocation headroom assessment — fire-379 (2026-11-15 UTC)
+
+Exact declared fork `240899ec` now initializes and passes independent-workspace
+preflight. Failed runs `43635937453` and `43611678367` retained no changes to
+recover; main contains the preceding recovery commits. Fresh focused fixtures
+pass 53/53; full wrapper acceptance remains open.
+
+Actual invocation membership resolves to a 2 GiB hard limit and 1500 MiB
+`memory.high`, beneath a 10 GiB fleet hard limit. Node v24.22.2 reports an
+887095296-byte default heap limit; a metadata-only 1280 MiB old-space probe
+reports a 1442840576-byte heap limit. Neither proves build capacity. The snapshot
+contains runtime peers, resident file/cache, reclaimable slab and swap accounting.
+Do not treat all current usage as permanently resident, guaranteed reclaimable,
+or exclusively owned by the build. Per-process heap limits do not bound the
+aggregate pnpm/vp/build tree. Cumulative pressure counters establish no attribution.
+
+**Loop improvement:** before a larger-heap retry, distinguish configured ceilings,
+point-in-time accounting and measured workload peaks. Capture temporal scope and
+ancestor resident/swap/pressure samples alongside child RSS; reserve terminal
+cleanup/reporting time. A metadata-only heap probe is never a successful build.
+No full retry or host-limit change was made: safe larger-heap acceptance remains
+unestablished. See the [assessment](../.ai/runs/heymegabyte--megabyte.space-43655798370-1/codex-research.md).
+No deployment, source pin, visual score or migration approval changed.

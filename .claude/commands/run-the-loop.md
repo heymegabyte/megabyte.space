@@ -94,6 +94,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   inspection separately. Anonymous HTTP probes cannot substitute for these gates. Keep
   acceptance items open and visual scores unchanged unless freshly verified. Record a
   non-secret `agent-report.json` at the incoming log directory with observed checks and gaps.
+  Keep `tests` scoped to checks executed in this iteration. Record historical failing
+  checks in `warnings` with their original run and outcome, and link retained evidence;
+  recovery must not imply either a fresh failure or fresh build acceptance.
   Create an initial report after orientation and update it after terminal checks and before
   closing. Mark active checks incomplete; a checkpoint preserves observed evidence if the
   backend is interrupted, but never turns a running check into successful acceptance.

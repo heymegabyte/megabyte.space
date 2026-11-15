@@ -1,0 +1,55 @@
+{
+  "method": "git show from directly fetched official candidate and retained prior official objects; no gitlink change",
+  "files": [
+    {
+      "commit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+      "path": "packages/workshop-backend/src/storage-schema/overseer-migrations.ts",
+      "sha256": "40276ec597c2b35236853d1526edb4acfcc08eca77172cc748462255b8aacafa"
+    },
+    {
+      "commit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+      "path": "packages/workshop-backend/src/storage-schema/overseer-storage.ts",
+      "sha256": "7eb2b6736df28ad433c7246e66b8bf16c4212a0af411b03eba040ab1ee099fb5"
+    },
+    {
+      "commit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+      "path": "packages/workshop-backend/src/sharing.ts",
+      "sha256": "9667cf6c3dc822f24bf998cf17bd00c4a98ad5c9e5d5d6cd3c67771b104d7538"
+    },
+    {
+      "commit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+      "path": "packages/workshop-backend/src/overseer.ts",
+      "sha256": "ba9280850d9573316275196a99063a1a76f0a5e003a88e8cd8371306677af59e"
+    },
+    {
+      "commit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+      "path": "packages/workshop-backend/__tests__/sharing.test.ts",
+      "sha256": "0fc20b6d5f176d214294fa223b34e3055a09fcfff4e8515353553bc50ca3d6c5"
+    },
+    {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "path": "packages/workshop-backend/src/storage-schema/overseer-migrations.ts",
+      "sha256": "8a062a0b0fcb211ac203fefe06c2c0649dfcfc979fb3c676d4ee3508175e0427"
+    },
+    {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "path": "packages/workshop-backend/src/storage-schema/overseer-storage.ts",
+      "sha256": "9762d62dd2d38f16ef4988ce86a374f6360d729df461bd2fc03b4efd3072428f"
+    },
+    {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "path": "packages/workshop-backend/src/sharing.ts",
+      "sha256": "b0787fbaa7df33fecbc21751d600faa4ebf03d38987b38358854f0f487d3e385"
+    },
+    {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "path": "packages/workshop-backend/src/overseer.ts",
+      "sha256": "bc43b59ae114dad2192c0470153e25bd41da822d996bcf5053969f5eb38d11eb"
+    },
+    {
+      "commit": "2726e932a3fbfcfffa04ee093a881604009f2034",
+      "path": "packages/workshop-backend/__tests__/sharing.test.ts",
+      "sha256": "17f7f458c63197dd8f52760da0d93780434c40c69e7c69bdf596e63c86694f19"
+    }
+  ]
+}

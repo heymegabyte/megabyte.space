@@ -724,3 +724,26 @@ were inspected only. No pin, production or visual score changed.
 
 **Loop improvement:** distinguish vendor discovery, service wiring and per-vendor
 origin configuration; each needs its own evidence before crediting integration.
+
+
+## 35. Frozen sharing grants and rollback reader — fire-382 (2026-11-15 UTC)
+
+Targeted official `ea926546` review confirms v6→v7 freezes workspace-wide use
+links to permanent, non-pending gadget IDs. The candidate includes mock-storage
+fixtures for empty/single/multiple sets, aliases, inactive grants, later-gadget
+exclusion and transaction failure/retry; these were inspected, not executed.
+
+Prior official `2726e932` reads only singular gadgetId and interprets its absence
+as workspace-wide use, whereas the candidate may write plural gadgetIds. A
+multi-gadget migrated link can therefore be interpreted more broadly by that
+older reader. This source mismatch does not prove live downgrade execution;
+require isolated acceptance with the exact intended rollback binary and state.
+See [research and file digests](../.ai/runs/heymegabyte--megabyte.space-43777328184-1/codex-research.md).
+
+**Loop improvement:** failed-transaction rollback and binary downgrade are separate
+acceptance gates. Reopen migrated grants with the rollback reader and a later
+created gadget; include redeemed/new keys and inactive-sharer reactivation before
+crediting safe rollback. Helper-created aliases count as fixture coverage.
+Fresh fork/provenance/lease/bookkeeping fixtures pass 57/57. Full wrapper,
+candidate runtime, migration approval and visual acceptance remain open.
+No pin, production identity, credential or visual score changed.

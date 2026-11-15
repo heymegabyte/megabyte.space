@@ -676,3 +676,29 @@ cleanup/reporting time. A metadata-only heap probe is never a successful build.
 No full retry or host-limit change was made: safe larger-heap acceptance remains
 unestablished. See the [assessment](../.ai/runs/heymegabyte--megabyte.space-43655798370-1/codex-research.md).
 No deployment, source pin, visual score or migration approval changed.
+
+
+## 33. Official upstream resource identity refresh — fire-380 (2026-11-15 UTC)
+
+Direct official fetch proves `ea926546` descends from last inventoried `2726e932`.
+The complete incremental Git inventory contains 46 commits / 677 changed paths;
+[research and inventory](../.ai/runs/heymegabyte--megabyte.space-43722249898-1/codex-research.md)
+distinguish that coverage from targeted source review. No pin moved.
+
+Stable vendor-scoped resource IDs now span policy, grants and connection/creation
+selectors. Unresolved legacy restrictions block the vendor; compatibility adapters
+may accept exact current patterns even where persisted-ID resolution is strict.
+Acceptance must distinguish absent versus empty grants, renamed/unknown IDs,
+account versus vendor catalogs and held-capability revocation. The range also adds
+Overseer storage v7 freezing workspace-wide use grants to existing permanent gadgets;
+require isolated upgrade/rollback and later-gadget noninheritance checks.
+
+Lockfile/manifests, PagerDuty config and native test wiring changed. Prior candidate
+receipts do not establish this candidate's install/build/test acceptance. Fresh local
+fork/provenance/lease/bookkeeping fixtures pass 57/57; candidate suites were inspected
+only. Full range review, wrapper capacity, migration approvals and runtime acceptance
+remain open. No deployment or visual verification occurred.
+
+**Loop improvement:** resolve policy identity separately from explicit compatibility
+translation; exact-pattern fallback in one adapter does not authorize unknown-ID
+fallback elsewhere. Require both account-scoped and vendor-wide catalog cases.

@@ -1,0 +1,8 @@
+{
+  "packages/workshop-shared/src/gatekeeper.ts": "85bfdaead8b129cf47d0f80abd34758ed384ff3aef687f9a3e2a9e64e078da71",
+  "packages/workshop-backend/src/admin-config.ts": "8f1d8d58e96185d8c7d933c876275f3ee5973379a0766d837a2917bce734dd83",
+  "packages/workshop-backend/src/admin-settings.ts": "ea977214f921b2e1118517703a6e2215b61e162b07e34abebaaa48328487fe3a",
+  "packages/workshop-backend/src/user.ts": "9464a7ab24f98abcf1d971374622d9309711d9462889e7e9ffd041e0c62784c4",
+  "packages/workshop-backend/__tests__/resource-type-identity.test.ts": "1225d3acc9a34834178d2d578e3ba300affa5fb2ae9c2fe37d6457cfa65486fd",
+  "packages/workshop-backend/src/storage-schema/overseer-migrations.ts": "40276ec597c2b35236853d1526edb4acfcc08eca77172cc748462255b8aacafa"
+}

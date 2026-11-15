@@ -159,6 +159,19 @@
   gadget noninheritance. Inventory and inspected fixtures are not executed acceptance;
   this extends the existing candidate lane and authorizes no pin or production change.
 
+
+## Migration next-wave — fire-381
+
+- [x] Review candidate `ea926546` PagerDuty deployment and authority seams;
+  findings and source hashes in MIGRATION §34. Wrapper fixtures 57/57 pass;
+  this is source review, not candidate runtime acceptance or adoption.
+- [ ] Extend the existing candidate rehearsal with per-vendor BASE_URL and exact
+  OAuth callback-origin checks before any approved PagerDuty enablement. Require
+  full-candidate dependencies/configurator generation, generated bindings and DO
+  migration review, separate Node/workerd gates, delayed-action scope changes,
+  in-flight disconnect and hook-cleanup failure tests. Credential provisioning,
+  Worker/storage creation and any Access webhook exception remain separately gated.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

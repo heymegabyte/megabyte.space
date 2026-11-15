@@ -4944,3 +4944,21 @@ wrapper retry, deployment, live identity, browser/native journey or visual score
 change; migration approval and runtime gates stay open. OpenCode is absent from
 PATH; no delegated throughput execution occurred. Source-only research requires
 no product deployment. Publication belongs to the outer runner.
+
+## fire-381 — PagerDuty adoption boundary (2026-11-15 UTC)
+
+Research commit `26eb58b0` reviews official `ea926546` PagerDuty against the
+current wrapper: missing explicit wiring and per-Worker BASE_URL, v0 DO exports,
+OAuth write scopes, signed webhook, delayed action and disconnect boundaries.
+Research/source hashes: `.ai/runs/heymegabyte--megabyte.space-43754551155-1/`;
+MIGRATION §34 records limits. Direct DeepSeek/OpenCode review completed (exit 0);
+parent rejected old-HEAD dependency and configurator conclusions that did not
+apply to the full candidate/wrapper. Fresh fork preflight and 57/57 focused
+fork/provenance/lease/bookkeeping fixtures pass; 12 source hashes rechecked.
+Origin/main contains prior e70bcd73; failed 43684358849 has no retained changes.
+No candidate install/build/suite, browser journey, provider or deployment ran.
+No visual surface visited, matrix unchanged; fork stays 240899ec. Migration
+approvals and measured wrapper-capacity acceptance stay open. Next: full-candidate
+rehearsal with callback-origin, delayed-action, disconnect/cleanup failure checks.
+Loop improvement: fleet command now separates package discovery, explicit wrapper
+wiring and per-vendor origin evidence. Publication remains the outer runner's job.

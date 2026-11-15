@@ -1608,3 +1608,14 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   heap probe establish neither full build acceptance nor a necessary capacity size.
   Request adequate invocation capacity if measured need exceeds current limits;
   preserve scheduler configuration and production approval gates.
+
+
+## Migration next-wave — fire-382
+
+- [ ] Before approving a v7 sharing rollout, rehearse migrated multi-gadget links
+  with the exact intended rollback binary on isolated state. Prior official
+  2726e932 reads missing singular gadgetId as workspace-wide, while ea926546 can
+  write plural gadgetIds. Verify later gadgets remain excluded for old/new keys,
+  redeemed sessions and inactive sharers regaining build; require compatible
+  rollback/state restoration if the older reader widens grants. Transaction-retry
+  fixtures do not establish binary downgrade safety. Research: MIGRATION §35.

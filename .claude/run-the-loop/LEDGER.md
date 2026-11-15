@@ -4962,3 +4962,24 @@ approvals and measured wrapper-capacity acceptance stay open. Next: full-candida
 rehearsal with callback-origin, delayed-action, disconnect/cleanup failure checks.
 Loop improvement: fleet command now separates package discovery, explicit wrapper
 wiring and per-vendor origin evidence. Publication remains the outer runner's job.
+
+## fire-382 — Frozen grants and rollback-reader acceptance (2026-11-15 UTC)
+
+Source slice: `50f9b28e`. Official ea926546 remains a research candidate; the
+fork gitlink stays 240899ec. Compared candidate plural-gadget sharing records
+against official 2726e932's singular-only reader and recorded potential access
+widening on binary downgrade. No live exploit or successful downgrade claimed.
+Source hashes and independent research: `.ai/runs/heymegabyte--megabyte.space-43777328184-1/`.
+
+Recovery: fetched origin/main includes 734e5984 and e70bcd73; failed run
+43684358849 retained a clean tree, with no source to recover. Exactly one bounded
+iteration; read-only DeepSeek review completed and parent rejected unsupported
+fixture-gap claims. Fork preflight PASS; focused wrapper tests 57/57 PASS;
+diff whitespace and clean-tree gates PASS before bookkeeping.
+
+Loop improvement: distinguish transaction retry from old-binary interpretation
+and verify helper-created fixture state before declaring coverage absent.
+Next action: isolated exact-rollback-reader acceptance (MIGRATION §35), alongside
+existing candidate/wrapper capacity gates and phased migration approval.
+No deployment, pin move, authenticated journey, browser/native/provider test or
+visual review. Matrix unchanged. GitHub owns cadence; no watchdog/cron armed.

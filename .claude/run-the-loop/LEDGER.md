@@ -4925,3 +4925,22 @@ and terminal full-wrapper verification; migration approval remains open.
   before the existing bounded-retry task. No duplicate retry task created.
 - No deploy or migration approval credited; visual matrix unchanged (no UI visited).
 - GitHub owns cadence/publication; no cron/watchdog/push or host-limit changes.
+
+## fire-380 — official upstream resource identity discovery (2026-11-15 UTC)
+
+Research commit `26c936aa` records complete official `2726e932..ea926546`
+Git inventory (46 commits / 677 changed paths), exact source hashes and targeted
+resource-ID policy/grant review. MIGRATION §33 and the backlog extend existing
+candidate acceptance with catalog/compatibility cases and isolated v6→v7 grants.
+Loop improvement: distinguish strict persisted IDs from explicit legacy pattern
+adapters; require account and vendor catalog tests before crediting policy safety.
+
+Live GitHub history and the clean retained failed run 43684358849 revealed no
+unpublished work to recover; origin/main contains fda5bdef. Exact declared fork
+240899ec initialized and passes preflight. Fresh focused fixtures pass 57/57;
+inventory counts, six source hashes, documentation link, clean fork and diff
+whitespace checks pass. Candidate suites were inspected, not executed. No full
+wrapper retry, deployment, live identity, browser/native journey or visual score
+change; migration approval and runtime gates stay open. OpenCode is absent from
+PATH; no delegated throughput execution occurred. Source-only research requires
+no product deployment. Publication belongs to the outer runner.

@@ -149,6 +149,16 @@
   regression; compare replacements against official release wiring before bundle
   exports/Wrangler validation and isolated namespace/data migration acceptance.
 
+## Migration next-wave — fire-380
+
+- [ ] Review/rehearse official `ea926546` using the complete 46-commit / 677-path
+  incremental inventory since `2726e932` (MIGRATION §33). Require frozen installs
+  for the changed lock/manifests, PagerDuty/generated binding review, native test
+  wiring, stable resource-ID compatibility and unresolved-policy cases with account
+  versus vendor catalogs, plus isolated Overseer v6→v7 grant preservation and new
+  gadget noninheritance. Inventory and inspected fixtures are not executed acceptance;
+  this extends the existing candidate lane and authorizes no pin or production change.
+
 ## Format
 
 - One `### WS-<n> — <name>` block per workstream: **Mission** · **Cadence** · frontier items.

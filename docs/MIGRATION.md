@@ -653,7 +653,7 @@ report is preserved and no prior wrapper success is inferred. See the
 No deployment, pin, identity, approval or visual acceptance changed.
 
 
-## 32. Invocation headroom assessment — fire-379 (2026-11-15 UTC)
+## 32. Invocation headroom assessment — fire-379 (2026-11-14 UTC)
 
 Exact declared fork `240899ec` now initializes and passes independent-workspace
 preflight. Failed runs `43635937453` and `43611678367` retained no changes to

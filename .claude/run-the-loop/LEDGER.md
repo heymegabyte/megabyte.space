@@ -4911,3 +4911,17 @@ No pin, deployment, approval or visual score changed. No Browser Harness used.
 Outer runner owns publication; original receipts and other worktrees preserved.
 Next: measured memory headroom, justified heap budget, exact-pin serial bootstrap
 and terminal full-wrapper verification; migration approval remains open.
+
+## fire-379 — invocation headroom assessment
+
+- Verified origin/main contains bce7c457; two failed retained runs have no work to recover.
+- Initialized declared fork 240899ec; independent-workspace preflight passes.
+- Assessment f326e0c7 traces actual cgroup ancestors, per-process heap limits and
+  serial wrapper child lifetimes. Point samples do not justify a larger-heap build.
+- Fresh focused fixtures: 53/53 pass. Full wrapper not rerun; historical heap failure
+  remains unresolved. No production/browser/native-client/provider/visual acceptance.
+- Loop improvement: distinguish reclaimable accounting and per-process ceilings from
+  aggregate measured capacity; capture temporal resident/swap/pressure and child RSS
+  before the existing bounded-retry task. No duplicate retry task created.
+- No deploy or migration approval credited; visual matrix unchanged (no UI visited).
+- GitHub owns cadence/publication; no cron/watchdog/push or host-limit changes.

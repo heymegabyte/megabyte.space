@@ -1573,3 +1573,15 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   remains unresolved. Keep current checks separate from historical receipt outcomes.
 - Recovered unpublished fire-376/377 documentation and bookkeeping; fresh focused
   fixtures pass 53/53. No current build, deployment or migration acceptance credited.
+
+
+## Migration investigation — fire-379
+
+- [x] Measure actual invocation and ancestor memory limits and distinguish per-process
+  heap ceilings from aggregate pnpm/vp/build capacity. Exact fork preflight and fresh
+  focused fixtures 53/53 pass; assessment `f326e0c7`, MIGRATION §32.
+- Existing wrapper retry remains open: temporal resident/swap/pressure samples and
+  process-tree headroom must support the heap experiment. Snapshot and metadata-only
+  heap probe establish neither full build acceptance nor a necessary capacity size.
+  Request adequate invocation capacity if measured need exceeds current limits;
+  preserve scheduler configuration and production approval gates.

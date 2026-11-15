@@ -702,3 +702,25 @@ remain open. No deployment or visual verification occurred.
 **Loop improvement:** resolve policy identity separately from explicit compatibility
 translation; exact-pattern fallback in one adapter does not authorize unknown-ID
 fallback elsewhere. Require both account-scoped and vendor-wide catalog cases.
+
+
+## 34. PagerDuty adoption boundary — fire-381 (2026-11-15 UTC)
+
+Targeted review of official `ea926546` finds PagerDuty absent from the wrapper's
+explicit integration list, so candidate adoption alone does not wire it. A
+list-only addition would also omit its per-Worker BASE_URL, which defaults to
+localhost; Workshop PUBLIC_BASE_URL does not configure this integration Worker.
+[Research and source hashes](../.ai/runs/heymegabyte--megabyte.space-43754551155-1/codex-research.md)
+record the source seams, v0 DO classes, configurator/test prerequisites, OAuth
+write scopes and optional signed-webhook authority.
+
+Before any approved integration evaluation, require explicit callback-origin
+proof, generated config/build plus separate Node/workerd acceptance, delayed
+action scope checks, and disconnect during in-flight delivery/failed hook cleanup.
+Sequential disconnect fixtures do not establish held-capability revocation.
+Candidate setup text does not authorize Access exceptions or credential changes.
+Fresh wrapper provenance/lease/bookkeeping fixtures pass 57/57; candidate suites
+were inspected only. No pin, production or visual score changed.
+
+**Loop improvement:** distinguish vendor discovery, service wiring and per-vendor
+origin configuration; each needs its own evidence before crediting integration.

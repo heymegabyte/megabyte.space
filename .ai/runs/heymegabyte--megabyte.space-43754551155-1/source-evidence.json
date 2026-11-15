@@ -1,0 +1,54 @@
+{
+  "sourceCommit": "ea926546cc340da28acf0a0c4b10361acedf2ca6",
+  "method": "git show from directly fetched official repository; worktree pin unchanged",
+  "files": [
+    {
+      "path": "packages/gatekeeper-pagerduty/cloudflare.config.ts",
+      "sha256": "88067e665e04c769d8337ecaf1ba892b583e06c1b28a09987146c7517686a50b"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/wrangler.jsonc",
+      "sha256": "a81573e8a6773214f77582809484a4c346840c064f9e8c878d7ee28811521b13"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/package.json",
+      "sha256": "48dc391c8c43c35180e95ca88ca17aa575428dae1c6c80c37a1afe6837c337d8"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/deploy-inputs.json",
+      "sha256": "68b822d94e7c868e4da5e33bf11228266e9cc2f5819b14194995ed23b5fa81dc"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/vite.config.ts",
+      "sha256": "707f497f0d15c0be5f4958d06ce5d1abafb8657f351c3216055376b1eddc92a9"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/vitest.worker.config.ts",
+      "sha256": "9b84f71c6f75867a63251eb4f2f9dc8d7d9e4ef0d6eceba84537b4be64cc5794"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/src/pagerduty-env.ts",
+      "sha256": "5c8b607c3ed7c415fb2ec4eebec19e1d922fc541b22fc5a0f7e17b3370222839"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/src/pagerduty-hooks.ts",
+      "sha256": "d674315808835cc2667382a1f444a7498c94c974b23d6f888cd8e08feb8fdfce"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/src/pagerduty-credentials.ts",
+      "sha256": "08a449aaf3cdbb18ea5f361973a7b2449218f4ed1e050d45923852d7c8bf20c7"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/src/pagerduty.ts",
+      "sha256": "d716e12e81deb1103f6e9c66bc9aa4eeccf1afd8c2a1bda5e276ba8c47d64cc3"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/src/pagerduty-actions.ts",
+      "sha256": "3eae177fca5835778624b8d47d8b9cdfbcd78026a4a4f68a3d287093e463b196"
+    },
+    {
+      "path": "packages/gatekeeper-pagerduty/__tests__/workerd/hooks.test.ts",
+      "sha256": "10ad781760f2f131f60f70794a90c4c3e62b5f6a9f95f3e3a9f5ab60702bc7b4"
+    }
+  ]
+}

@@ -43,6 +43,10 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   For candidate rehearsals, record the exact source SHA and frozen-lock checksum, keep
   scratch installs separate from the committed gitlink, and distinguish Node/workerd
   fixture tests from browser, native-client and live-provider acceptance.
+  For new integration candidates, distinguish upstream package discovery from
+  this wrapper's explicit service/build/deploy list and per-Worker public-origin
+  configuration. Workshop PUBLIC_BASE_URL does not establish a vendor's BASE_URL;
+  require exact connection/callback-origin evidence before crediting readiness.
   Record complete-range inventories separately from reviewed coverage: commit/path counts
   never imply a full security audit. Include changed dependency manifests, generated
   Worker bindings/migrations and ambient preinstalls in candidate rehearsal acceptance.

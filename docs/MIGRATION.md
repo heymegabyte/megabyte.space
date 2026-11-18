@@ -747,3 +747,10 @@ crediting safe rollback. Helper-created aliases count as fixture coverage.
 Fresh fork/provenance/lease/bookkeeping fixtures pass 57/57. Full wrapper,
 candidate runtime, migration approval and visual acceptance remain open.
 No pin, production identity, credential or visual score changed.
+## 36. Upstream administrator inspection boundary — fire-383 (2026-11-18 UTC)
+
+The official upstream main fetched at `ad7f4eec0d8e6ee4612748a6d76c8571540ab1ed` descends from `ea926546cc340da28acf0a0c4b10361acedf2ca6`: the incremental inventory is 26 commits / 327 changed paths, not a complete audit. A targeted [review](../.ai/runs/heymegabyte--megabyte.space-44257090773-1/codex-research.md) examined new admin workspace/user inspection and its wrapper boundary.
+
+The candidate defaults a missing inspection cap to metadata; the current wrapper replaces Workshop variables without the candidate's inspection cap or retention floor. This is source evidence, not generated-config or live acceptance. Admin directory listings also remain unrecorded and visible when inspection is off; metadata can include user-authored content. Before adoption, decide the desired policy and prove generated variables across deployment paths, stale-KV and already-open-view behavior, audit failures, directory visibility and rollback. The candidate was not installed or tested and the pin was not moved.
+
+**Loop improvement:** inspect the wrapper's replacement of upstream environment variables against new security defaults; an off inspection switch does not imply an audited or hidden directory. Track configuration, persisted choices and already-issued capabilities as separate acceptance boundaries.

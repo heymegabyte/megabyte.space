@@ -4983,3 +4983,9 @@ Next action: isolated exact-rollback-reader acceptance (MIGRATION §35), alongsi
 existing candidate/wrapper capacity gates and phased migration approval.
 No deployment, pin move, authenticated journey, browser/native/provider test or
 visual review. Matrix unchanged. GitHub owns cadence; no watchdog/cron armed.
+
+## fire-383 — retained upstream inspection review recovered (2026-11-18)
+
+- Recovered unpublished review `a5dd583a` and its stranded backlog item from run 44257090773. The upstream candidate and inspection policy remain unapproved; no submodule pin or production change.
+- Fresh verification: submodule-resolvability and fork-workspace fixture suites passed 32 tests combined. Actual fork preflight reports no own `.git` marker; full wrapper and production acceptance remain unverified. The prior run's pending `pnpm check` is not a pass.
+- Loop improvement: the recovered review distinguishes generated configuration, persisted inspection choices, already-issued views, and unrecorded directory reads as separate adoption checks. No UI was visited; no visual score or journey is claimed.

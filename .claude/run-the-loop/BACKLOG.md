@@ -1619,3 +1619,6 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   redeemed sessions and inactive sharers regaining build; require compatible
   rollback/state restoration if the older reader widens grants. Transaction-retry
   fixtures do not establish binary downgrade safety. Research: MIGRATION §35.
+## Migration next-wave — fire-383
+
+- [ ] Review official `ad7f4eec` beyond the 26-commit / 327-path inventory; decide admin inspection and directory policy, carry explicit cap/retention settings through generated Workshop configuration, and rehearse stale KV, live-view revocation, audit failure, directory visibility and rollback before candidate adoption. See MIGRATION §36; no candidate runtime or full security review is claimed.

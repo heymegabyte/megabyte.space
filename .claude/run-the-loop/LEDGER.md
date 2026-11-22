@@ -4993,3 +4993,9 @@ visual review. Matrix unchanged. GitHub owns cadence; no watchdog/cron armed.
 ## fire-384-recovery — 2026-11-22
 
 Recovered unpublished research commit `f827af9c` as `715d8ce3` and the retained Google integration next-wave item. The review is source-only; provider, workerd and browser acceptance remain open. This iteration initialized the declared fork at the committed pin and passed fork preflight and targeted tests. Full wrapper checks and production deployment were not run. No visual score changed. Loop improvement: retain the quoted-resource and provider-error privacy acceptance boundaries documented in MIGRATION §37.
+
+## fire-385 — upstream administrator write review recovered (2026-11-22 UTC)
+
+Recovered the prior run's committed targeted review and its uncommitted next-wave item after its uncommitted-work failure. Official candidate `27888f04` is recorded as 19 commits and 235 paths beyond `bda4de88`; this is an inventory, not a full audit. The separate administrative write switch, audit-attempt versus effect distinction, and runtime acceptance boundaries are documented in `docs/MIGRATION.md` §38 and the linked research. Improvement: assess write authority independently of inspection and reconcile audit records with effects.
+
+Current iteration: exact pinned fork initialized and workspace preflight passed; 62 fork, provenance, lease, bookkeeping and backlog fixture tests passed. No candidate runtime, visual or production acceptance, deployment, or pin change is claimed. Prior run's wrapper check was left running, not established as passed. Next: decide administrative write policy and test generated settings and revocation/effects before adoption.

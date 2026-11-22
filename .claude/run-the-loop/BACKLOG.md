@@ -1626,3 +1626,4 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 ## Migration next-wave — fire-384
 
 - [ ] Review official `bda4de88` Google integration changes before adoption: validate quoted-message resource boundaries and link handling; test code-shaped provider error values for sensitive-data exposure, truncated errors, retries and reconnect behavior across fixtures, workerd and real provider sessions. Source inventory and limits: `.ai/runs/heymegabyte--megabyte.space-44417693650-1/codex-research.md`.
+- [ ] Review upstream administrative workspace writes before adoption: decide whether to enable the separate switch; verify generated settings, in-flight revocation, audit failures and actual effects in isolated runtime and client acceptance. Evidence: `.ai/runs/heymegabyte--megabyte.space-44920406971-1/codex-research.md`.

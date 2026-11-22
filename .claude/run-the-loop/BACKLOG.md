@@ -1622,3 +1622,7 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 ## Migration next-wave — fire-383
 
 - [ ] Review official `ad7f4eec` beyond the 26-commit / 327-path inventory; decide admin inspection and directory policy, carry explicit cap/retention settings through generated Workshop configuration, and rehearse stale KV, live-view revocation, audit failure, directory visibility and rollback before candidate adoption. See MIGRATION §36; no candidate runtime or full security review is claimed.
+
+## Migration next-wave — fire-384
+
+- [ ] Review official `bda4de88` Google integration changes before adoption: validate quoted-message resource boundaries and link handling; test code-shaped provider error values for sensitive-data exposure, truncated errors, retries and reconnect behavior across fixtures, workerd and real provider sessions. Source inventory and limits: `.ai/runs/heymegabyte--megabyte.space-44417693650-1/codex-research.md`.

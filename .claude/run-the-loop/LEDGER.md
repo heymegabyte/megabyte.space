@@ -4999,3 +4999,9 @@ Recovered unpublished research commit `f827af9c` as `715d8ce3` and the retained 
 Recovered the prior run's committed targeted review and its uncommitted next-wave item after its uncommitted-work failure. Official candidate `27888f04` is recorded as 19 commits and 235 paths beyond `bda4de88`; this is an inventory, not a full audit. The separate administrative write switch, audit-attempt versus effect distinction, and runtime acceptance boundaries are documented in `docs/MIGRATION.md` §38 and the linked research. Improvement: assess write authority independently of inspection and reconcile audit records with effects.
 
 Current iteration: exact pinned fork initialized and workspace preflight passed; 62 fork, provenance, lease, bookkeeping and backlog fixture tests passed. No candidate runtime, visual or production acceptance, deployment, or pin change is claimed. Prior run's wrapper check was left running, not established as passed. Next: decide administrative write policy and test generated settings and revocation/effects before adoption.
+
+## fire-386 — reconcile migration source readiness (2026-11-22 UTC)
+
+The declared fork initialized at unchanged gitlink `240899ec34e822a0afa695e3c7b48a41c2db9c4c` and passed independent workspace preflight. Official main advertised `27888f048a4278cce3a71c462924a5435dab614d`, unchanged from fire-385; no tags were returned by `git ls-remote --tags`. The failed run's retained backlog line is already present in current history. See the [research record](../../.ai/runs/heymegabyte--megabyte.space-44971340100-1/codex-research.md).
+
+Loop improvement: corrected the active WS-6 frontier's stale claim that fork access is blocked, preserving the historical observation and candidate acceptance requirements. No pin change, deployment, candidate runtime, browser journey or visual acceptance. Next: review candidate boundaries and perform the selected candidate's isolated checks before seeking migration approval.

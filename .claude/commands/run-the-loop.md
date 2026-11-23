@@ -148,8 +148,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   installs below the hard limit. When concurrent frozen installs show memory
   pressure, stop and record the interrupted attempt, then finish them serially
   before starting dependency consumers. Preserve host/cgroup limits.
-  Derive the actual cgroup filesystem path from `/proc/self/cgroup` instead of
-  assuming `/sys/fs/cgroup/memory.max`; inspect scope membership before
+  Derive the actual cgroup filesystem path from `/proc/self/cgroup` in the same
+  shell invocation that launches the build. Separate tool calls can land in
+  different scopes and report different limits. Inspect scope membership before
   attributing `memory.events` deltas to a command; shared-scope deltas do not
   prove exclusive package pressure; label one-second RSS/current-memory peaks as
   sampled lower bounds and keep descendant RSS separate from cgroup accounting.

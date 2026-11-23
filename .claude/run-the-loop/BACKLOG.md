@@ -709,7 +709,17 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Migration readiness — maintain the complete upstream diff inventory, finish auth/storage/
   binding/deprecation review, and run frozen installs + `pnpm check` against the selected candidate
   and wrapper before protected evaluation. No release/pilot acceptance until source and production
-  gates pass; see `docs/MIGRATION.md` §§ 9–38 for historical evidence and outstanding boundaries.
+  gates pass; see `docs/MIGRATION.md` §§ 9–39 for historical evidence and outstanding boundaries.
+  Latest inventory (fire-388): `27888f04..454584cd` is 2 commits / 35 paths — Drive folder
+  shortcut reads (access widening) and Google models over the Workers AI binding (removed
+  `HTTPS_ONLY_PROVIDERS`, `x-goog-api-key` nulling, `pi-ai` 1.6.0 bump). No tag refs advertised.
+- [ ] Candidate rehearsal for `454584cd` — accept: isolated shortcut-to-unreadable-target and
+  mid-capability-revocation cases; `x-goog-api-key` null on binding and HTTPS transports; the
+  `pi-ai`/`pi-agent-core` 1.6.0 lockfile + workspace-manifest diff reviewed; missing-token behavior
+  with the removed `needsApiToken` warning; all run against an exact-pin frozen install, with
+  workerd and real-provider acceptance recorded separately from fixtures.
+- [ ] Recover-before-rebuild check — accept: every interrupted run's retained artifacts are
+  classified as reusable evidence or acceptance claims before new work starts (fire-388 rule).
 - Mission: the pinned `cloudflare-os` submodule bumped deliberately to reviewed refs; overlay
   rebased clean; never blind bumps or in-tree edits.
 - Cadence: every-2-loops (lane 18)

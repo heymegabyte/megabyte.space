@@ -5005,3 +5005,24 @@ Current iteration: exact pinned fork initialized and workspace preflight passed;
 The declared fork initialized at unchanged gitlink `240899ec34e822a0afa695e3c7b48a41c2db9c4c` and passed independent workspace preflight. Official main advertised `27888f048a4278cce3a71c462924a5435dab614d`, unchanged from fire-385; no tags were returned by `git ls-remote --tags`. The failed run's retained backlog line is already present in current history. See the [research record](../../.ai/runs/heymegabyte--megabyte.space-44971340100-1/codex-research.md).
 
 Loop improvement: corrected the active WS-6 frontier's stale claim that fork access is blocked, preserving the historical observation and candidate acceptance requirements. No pin change, deployment, candidate runtime, browser journey or visual acceptance. Next: review candidate boundaries and perform the selected candidate's isolated checks before seeking migration approval.
+
+## fire-388 — upstream 454584cd increment inventory (2026-11-23 UTC)
+
+Recovered run `45102702098`'s unpublished research record and its one-hunk cgroup-scope loop
+clarification verbatim at their original paths, credited to that run; neither is treated as
+this fire's terminal evidence. Declared fork initialized at the unchanged gitlink
+`240899ec34e822a0afa695e3c7b48a41c2db9c4c`, workspace preflight `ok:true`, salvage detector
+clean (dirty 0 / forkDirty 0) before changes.
+
+Official main advertises `454584cd1cf322a281c02fbf284b897ebef7a700`; the complete
+`27888f04..454584cd` inventory is 2 commits / 35 changed paths (below the 300-path cap), and
+`refs/heads/main` + `refs/tags/` returned no tag refs. The two commits are Drive folder
+shortcut reads (access widening, refetch-and-validate per edge, writes unaffected) and Google
+models over the Workers AI binding (removed `HTTPS_ONLY_PROVIDERS`/`bindingFor`/`needsApiToken`,
+`x-goog-api-key` nulling + SDK header strip, `pi-ai`/`pi-agent-core` 1.6.0 bump). Recorded in
+`docs/MIGRATION.md` §39 with the acceptance boundaries that remain.
+
+Fresh focused fork/provenance/lease/bookkeeping/backlog fixtures re-run this iteration.
+No candidate install/build/suite/workerd/provider/browser/visual run; no deployment, pin,
+credential, scheduler or visual-score change. Migration approval stays open. GitHub owns
+cadence and publication.

@@ -766,3 +766,43 @@ Official main `bda4de88` descends from the last inventoried `ad7f4eec`; the incr
 Official main `27888f04` descends from `bda4de88`; the complete incremental Git inventory is 19 commits / 235 changed paths, not a complete audit. Targeted [research](../.ai/runs/heymegabyte--megabyte.space-44920406971-1/codex-research.md) found a separate, default-off environment switch for administrative agent stops and workspace restarts. If enabled, an admin can invoke these without a second approval; workspace members receive no attribution. Audit records precede effects and therefore establish attempts, not outcomes. The current wrapper has no explicit setting; generated candidate configuration and runtime behavior remain unverified. Candidate tests were inspected, not executed; no pin or production setting changed.
 
 **Loop improvement:** review write authority separately from inspection access, and reconcile audit attempts with authoritative effects, including interruptions and in-flight revocation. Require an explicit deployment decision and isolated runtime and client acceptance before adoption.
+
+## 39. Official upstream 454584cd increment — fire-388 (2026-11-23 UTC)
+
+Official main advertises `454584cd1cf322a281c02fbf284b897ebef7a700`; the complete
+incremental Git inventory from the previously inventoried `27888f04` is 2 commits /
+35 changed paths, not a complete audit. `git ls-remote` on heads+tags returned no tag
+refs, so no release tag was visible to that query. The declared fork remains
+uninitialized-in-gitlink terms at the unchanged pin `240899ec` and passed workspace
+preflight; no pin decision follows from this inventory. See the
+[research record](../.ai/runs/heymegabyte--megabyte.space-45172081230-1/codex-research.md).
+
+Two source boundaries need isolated checks before adoption:
+
+- **Drive folder shortcuts (#1262).** A folder connection may now follow a live shortcut
+  among its direct children to a file or folder living elsewhere. Reads refetch and
+  re-validate every saved edge plus each shortcut (root cannot be shortcut-reached; a
+  shortcut must target the next folder and be a direct child of the previous one), a
+  deleted or retargeted shortcut refuses the location, and writes do not follow shortcuts.
+  This is a deliberate read-access widening for shared team folders; acceptance needs a
+  shortcut to an unreadable target, revocation during an already-issued capability, and
+  loop/repeat behavior separately from the candidate's own fixtures.
+- **Google models over the Workers AI binding (#1250).** `HTTPS_ONLY_PROVIDERS`,
+  `bindingFor()` and the admin `needsApiToken` signal are removed; every gateway provider
+  uses `workers-binding.ai` when the binding transport is active, with only
+  `CF_AI_GATEWAY_USE_BINDING=false` as the HTTPS opt-out. AI Gateway does not strip auth
+  headers on binding requests, so gateway-routed Google handles set `x-goog-api-key: null`
+  and strip the header the SDK appends. Acceptance needs the `x-goog-api-key` stripping on
+  both transports, the `pi-ai`/`pi-agent-core` 1.6.0 dependency bump with its lockfile and
+  workspace-manifest changes, workerd-level binding transport, and the missing-token case
+  that the removed warning used to surface.
+
+Recovery: run `45102702098`'s unpublished research record and its one-hunk loop
+clarification on cgroup scope derivation are recovered verbatim and credited to that run.
+Candidate fixtures were read, not executed; no candidate install, build, suite, workerd,
+provider, browser or visual acceptance ran. No deployment, credential, scheduler or pin
+change; migration approvals remain open.
+
+**Loop improvement:** when a run is interrupted, separate recoverable artifacts (research
+records, doc corrections) from acceptance claims — recovering the former never advances the
+latter, and a recovered record's own limits travel with it.

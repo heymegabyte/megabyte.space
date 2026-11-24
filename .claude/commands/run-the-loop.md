@@ -102,7 +102,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   checks in `warnings` with their original run and outcome, and link retained evidence;
   recovery must not imply either a fresh failure or fresh build acceptance.
   Create an initial report after orientation and update it after terminal checks and before
-  closing. Mark active checks incomplete; a checkpoint preserves observed evidence if the
+  closing. Reopen the final report and check required fields before releasing the
+  lease. A clean worktree and successful agent exit do not supply that report.
+  Mark active checks incomplete; a checkpoint preserves observed evidence if the
   backend is interrupted, but never turns a running check into successful acceptance.
 - **Bound remote orientation.** Put explicit time limits on GitHub history and submodule
   network operations. If unavailable, inspect retained receipts/objects read-only and

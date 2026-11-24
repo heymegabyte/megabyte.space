@@ -806,3 +806,21 @@ change; migration approvals remain open.
 **Loop improvement:** when a run is interrupted, separate recoverable artifacts (research
 records, doc corrections) from acceptance claims — recovering the former never advances the
 latter, and a recovered record's own limits travel with it.
+
+## 40. Upstream increment `454584cd..aad703ec` (fire-389, source review)
+
+The official compare endpoint reports three commits and 54 changed paths.
+Official main advertised `aad703ec123e6b0c2d6ec01cc0d7bfe0f27d554c` with zero
+tag refs returned. This inventory and the following focused review establish
+candidate rehearsal scope. Runtime acceptance remains open.
+
+| Commit | Candidate acceptance |
+| --- | --- |
+| `7f20c133` | Context sync queries Artifacts using a bare branch name. Confirm a collection previously emptied by the full-ref lookup is repopulated on the next sync. Cover a same-named branch and tag, a genuinely empty branch, and an ambiguous or unresolved response before accepting deletion behavior. The upstream change leaves the empty-tip branch of the sync logic in place. |
+| `aad703ec` | Gadget focus adds a URL anchor and optional gadget-authored context to Workshop messages. Check workspace scoping, forwarded text handling, restoration after reload, and races between URL changes and frame replacement. Review external callers of `newChat()` and `sendChatMessage()` for the new options object. |
+| `ba1c6ba8` | Retry adds guidance to the model after resume exhaustion. Check the abandoned-turn retry and ordinary retry separately, including failures before a model request completes. Workspace reset diagnosis remains open. |
+
+Sources: [official comparison](https://github.com/cloudflare/cloudflare-os/compare/454584cd...aad703ec),
+[Context sync](https://github.com/cloudflare/cloudflare-os/commit/7f20c133),
+[gadget focus](https://github.com/cloudflare/cloudflare-os/commit/aad703ec),
+[Retry](https://github.com/cloudflare/cloudflare-os/commit/ba1c6ba8).

@@ -25,6 +25,21 @@ const bases = {
 };
 const generated = generateConfigs(config as any, bases as any);
 const routerDir = join(root, "cloudflare-os/packages/router");
+const frontendDir = join(root, "cloudflare-os/packages/workshop-frontend");
+
+// This deploy path owns the router's asset upload, so it must also produce the one supported
+// production asset variant. Without this flag useAuth falls back to the legacy Workshop token login
+// after Better Auth establishes a cookie, creating a second password-only login surface.
+const build = spawnSync("pnpm", ["exec", "vite", "build"], {
+  cwd: frontendDir,
+  stdio: "inherit",
+  env: { ...process.env, VITE_CF_ACCESS_MODE: "true" },
+});
+if (build.status !== 0) process.exit(build.status ?? 1);
+
+// Wrangler resolves generated configs relative to their own path inconsistently across releases;
+// pin the freshly-built asset directory so router-only deploys cannot lose the frontend bundle.
+generated.router.assets.directory = join(root, "cloudflare-os/packages/workshop-frontend/dist");
 const cfgPath = join(routerDir, "wrangler.prod.jsonc");
 await writeFile(cfgPath, JSON.stringify(generated.router, null, 2) + "\n");
 try {

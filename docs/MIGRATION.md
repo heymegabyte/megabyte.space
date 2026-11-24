@@ -830,3 +830,20 @@ Sources: [official comparison](https://github.com/cloudflare/cloudflare-os/compa
 Official main advanced from `aad703ec` by two commits across 14 paths. No tag refs were advertised. The targeted [source review](../.ai/runs/heymegabyte--megabyte.space-45367954267-1/codex-research.md) covers representative paths through gadget bindings, enabled hooks and historical reads, plus vendor account defaults with per-resource overrides. Frozen dependency inputs are unchanged across this incremental range.
 
 Before candidate adoption, reconcile the sharing composer with persisted view-only and live grants, including when removing a displayed path leaves another in-scope route. Verify path label exposure and lookup cost on shared graphs. Exercise one failed resource within a vendor group and check the per-connection choices and effective access after re-authentication. Candidate fixture execution and protected runtime acceptance remain open.
+
+
+## 42. Gatekeeper capability teardown at `266dffed` (fire-391)
+
+The official upstream increment from `2ca27fb0` contains four commits and 33
+changed paths. Targeted [source review](../.ai/runs/heymegabyte--megabyte.space-45480324267-1/codex-research.md)
+covers the Gatekeeper app rate limiter. Disposal rejects queued calls and calls
+waiting to enter the underlying capability, refuses new calls and clears the
+resume timer. Calls already received can still produce effects and settle.
+The resource configurator uses reject mode and does not retain this disposal
+callback. Its lifecycle requires separate acceptance.
+
+Before selecting this candidate, verify teardown through the real Gatekeeper
+app host, including outstanding calls and timer cleanup. Reconcile effects from
+already received calls at the backend and verify the configurator lifecycle
+separately. The browser and candidate fixtures remain unverified. The official
+fetch policy, chat epoch folding and ambient connector changes remain open review.

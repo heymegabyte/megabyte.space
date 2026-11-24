@@ -37,7 +37,10 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   retires that work for the apex. An unavailable declared submodule URL is a provenance blocker:
   a SHA returned by another repository's API does not prove Git fetchability or authorize a URL
   substitution. A ref-tip-only gate is not proof that an ancestor pin is unfetchable;
-  verify the declared remote before moving a reviewed pin. Never use parent-repository
+  verify the declared remote before moving a reviewed pin. For capability teardown,
+  verify queued calls, dispatched calls awaiting execution, and in-flight effects separately.
+  Locally closing a proxy leaves backend effects subject to the backend cancellation policy.
+  Never use parent-repository
   Git fallback as fork evidence; require its `.git`
   marker before retained-source checks. Record capped API comparisons as incomplete diffs.
   For candidate rehearsals, record the exact source SHA and frozen-lock checksum, keep

@@ -22,7 +22,7 @@
     "deploy": "node scripts/deploy.ts && node scripts/record-deploy.mjs --commit --push"
   },
   "devDependencies": {
-    "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz",
+    "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz",
     "@theme-tools/testing": "file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz",
     "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vitest-pool-workers": "catalog:",

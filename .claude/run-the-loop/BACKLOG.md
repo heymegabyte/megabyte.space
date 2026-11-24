@@ -709,10 +709,16 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Migration readiness — maintain the complete upstream diff inventory, finish auth/storage/
   binding/deprecation review, and run frozen installs + `pnpm check` against the selected candidate
   and wrapper before protected evaluation. No release/pilot acceptance until source and production
-  gates pass; see `docs/MIGRATION.md` §§ 9–39 for historical evidence and outstanding boundaries.
-  Latest inventory (fire-388): `27888f04..454584cd` is 2 commits / 35 paths — Drive folder
-  shortcut reads (access widening) and Google models over the Workers AI binding (removed
-  `HTTPS_ONLY_PROVIDERS`, `x-goog-api-key` nulling, `pi-ai` 1.6.0 bump). No tag refs advertised.
+  gates pass; see `docs/MIGRATION.md` §§ 9–42 for historical evidence and outstanding boundaries.
+  Latest inventory (fire-391): `2ca27fb0..266dffed` is four commits and 33 paths.
+  Source review covered Gatekeeper app capability disposal. Review unified fetch policy,
+  chat epoch folding and ambient connector eligibility before selecting this candidate.
+- [ ] Rehearse the Context sync fix in the `aad703ec` candidate. Verify recovery of an
+  emptied collection, same-named branch and tag resolution, and deletion behavior for
+  genuinely empty or unresolved branches. See migration §40 for the Workshop boundaries.
+- [ ] Rehearse Gatekeeper app teardown at `266dffed`. Check queued, dispatched and newly
+  submitted calls, timer cleanup, durable effects of already started calls and the
+  resource configurator lifecycle. See migration §42.
 - [ ] Candidate rehearsal for `454584cd` — accept: isolated shortcut-to-unreadable-target and
   mid-capability-revocation cases; `x-goog-api-key` null on binding and HTTPS transports; the
   `pi-ai`/`pi-agent-core` 1.6.0 lockfile + workspace-manifest diff reviewed; missing-token behavior

@@ -5026,3 +5026,22 @@ Fresh focused fork/provenance/lease/bookkeeping/backlog fixtures re-run this ite
 No candidate install/build/suite/workerd/provider/browser/visual run; no deployment, pin,
 credential, scheduler or visual-score change. Migration approval stays open. GitHub owns
 cadence and publication.
+
+## fire-391 — Recover upstream reviews and scope Gatekeeper teardown (2026-11-24 UTC)
+
+- Recovered prior unpublished results from the retained commit chain. The restored
+  tracked tree equaled `34910e51` before new edits. Restored the pending Context
+  sync rehearsal from the retained backlog diff. The previous run's frontend heap
+  failure is historical evidence; its checkpoint did not record wrapper success.
+- `f38de231` inventoried official upstream `2ca27fb0..266dffed` (four commits,
+  33 paths) and reviewed the Gatekeeper app rate limiter. Keep candidate fixtures,
+  host teardown, backend effects and resource configurator acceptance open.
+- Loop improvement: classify queued, dequeued and in-flight calls separately
+  when reviewing capability disposal.
+- Exact fork preflight and both frozen installs passed on pnpm 11.17.0. Focused
+  guard and bookkeeping suites passed 74/74.
+- ADR 0002 mutation approval remains pending. No candidate pin or deployment was
+  changed. Browser, storage and production acceptance remain open.
+- The wrapper dry run passed exact-pin fetch, interconnect, script typecheck and
+  260 Node tests. Its 150-second timeout exited 124 during Gatekeeper builds.
+  Full Worker dry runs remain unverified.

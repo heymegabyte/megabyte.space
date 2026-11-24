@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useRef, type CSSProperties } from "react";
+import { SiteNavbar, type ShellNavigationItem } from "@theme-tools/ui/platform-shell";
 
 // First-run overlay (WS-11): the WebGL homepage is an intro LAYER over the OS —
 // shown the first time, dismissed by "Enter the OS", skipped on return visits.
@@ -7,6 +8,13 @@ import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 const FIRST_RUN_OVERLAY = import.meta.env.VITE_FIRST_RUN_OVERLAY === "true";
 const ENTERED_KEY = "megabyteOS_entered";
 const OS_ENTRY = "/login";
+
+const PRIMARY_NAVIGATION: readonly ShellNavigationItem[] = [
+  { id: "features", label: "Features", href: "#features" },
+  { id: "how", label: "How it works", href: "#how" },
+  { id: "trust", label: "Trust", href: "#trust" },
+  { id: "blog", label: "Blog", href: "/blog" },
+];
 
 /** True once the visitor has pressed "Enter the OS" at least once. */
 function hasEntered(): boolean {
@@ -235,8 +243,11 @@ export default function App() {
         <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_20%,transparent_0%,#060610_78%)]" />
       </div>
 
-      <header className="glass fixed inset-x-0 top-0 z-50">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+      <div className="glass fixed inset-x-0 top-0 z-50">
+      <SiteNavbar
+        className="mx-auto flex h-16 max-w-6xl items-center px-5"
+        primaryItems={PRIMARY_NAVIGATION}
+        brand={
           <a href="/" className="font-display flex items-center gap-2.5 text-lg font-bold tracking-tight" aria-label="Megabyte OS home">
             <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden className="shrink-0">
               <rect x="1" y="1" width="30" height="30" rx="7" fill="none" stroke="#00E5FF" strokeWidth="2" />
@@ -246,11 +257,11 @@ export default function App() {
               Megabyte <span className="text-[--color-cyan]">OS</span>
             </span>
           </a>
-          <nav className="hidden items-center gap-7 text-sm text-white/70 sm:flex" aria-label="Primary">
-            <a className="transition hover:text-[--color-cyan]" href="#features">Features</a>
-            <a className="transition hover:text-[--color-cyan]" href="#how">How it works</a>
-            <a className="transition hover:text-[--color-cyan]" href="#trust">Trust</a>
-          </nav>
+        }
+        renderNavigationItem={(item) => (
+          <a className="transition hover:text-[--color-cyan]" href={item.href}>{item.label}</a>
+        )}
+        accountSlot={
           <a
             href="/login"
             onClick={markEntered}
@@ -258,8 +269,9 @@ export default function App() {
           >
             Log in
           </a>
-        </div>
-      </header>
+        }
+      />
+      </div>
 
       <main id="main" className="relative z-10">
         {/* Hero */}
@@ -436,6 +448,7 @@ export default function App() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[--color-cyan] motion-reduce:animate-none" aria-hidden />
               System status
             </a>
+            {" · "}<a className="transition hover:text-[--color-cyan]" href="/blog">Blog</a>
           </p>
           <p className="font-mono">
             built on{" "}

@@ -1,4 +1,5 @@
 packages:
+  - cloudflare-os/scripts
   - cloudflare-os/packages/workshop-shared
   - cloudflare-os/packages/error-reporting
   - packages/*
@@ -15,6 +16,7 @@ packages:
 # split installs in CI and on a fresh checkout do not. See
 # cloudflare-os/docs/integration-testing.md.
 catalog:
+  '@cloudflare/workers-types': ^5.20261113.1
   '@cloudflare/vitest-pool-workers': ^0.20.2
   capnweb: ^0.11.1
   # Exact: pinned in lockstep with capnweb (declared as a >=0.7.0 peer)
@@ -23,12 +25,14 @@ catalog:
   # rejects outright, so every package extending it has to be on 7.x. Nothing here uses the JS
   # compiler API, so the submodule's `typescript6` alias is not needed.
   typescript: 7.0.2
+  typescript6: npm:typescript@6.0.3
   # Exact, not ranged: the transform has to stay on esbuild. Oxc does not lower the Stage-3
   # decorators capnweb-validate's `@validateRpc()` relies on (cloudflare/workers-sdk#12626).
   vite: 7.3.6
   vite-plus: ^0.2.8
   vitest: ^4.1.10
-  wrangler: ^4.119.0
+  wrangler: ^4.166.0
+  zod: ^4.6.7
 
 overrides:
   # Vitest peers can resolve vite@latest, so the version is pinned rather than ranged. Points at the
@@ -43,9 +47,13 @@ allowBuilds:
   '@google/genai': true
   core-js-pure: true
   esbuild: true
+  msw: false
   protobufjs: true
   sharp: true
   workerd: true
 
 minimumReleaseAgeExclude:
   - '@cloudflare/workers-types@5.20260929.1'
+  - '@cloudflare/workers-utils@0.56.0'
+  - miniflare@5.20261119.0-beta
+  - wrangler@4.166.0

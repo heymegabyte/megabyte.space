@@ -10,6 +10,7 @@
 
 import { DurableObject } from "cloudflare:workers";
 import { isKnownRoute } from "./src/known-routes";
+import { SITE_URL, articleStructuredData, getBlogPageMetadata, type PageMetadata } from "./src/page-metadata";
 
 interface Env {
   ASSETS: Fetcher;
@@ -21,8 +22,6 @@ interface Env {
   AUTH: Fetcher;
   BETTER_AUTH?: string;
 }
-
-const OS_ORIGIN = "https://os.megabyte.space";
 
 // Field Core Web Vitals we accept from the client beacon. Anything else is dropped
 // at the boundary (no free-form metric names in the store).
@@ -71,6 +70,43 @@ function withSecurityHeaders(response: Response): Response {
   // long-lived cache, so LCP is unaffected — only the ~3 KB shell re-fetches.
   headers.set("Cache-Control", "no-store");
   return new Response(response.body, { status: response.status, headers });
+}
+
+/** Serve route-specific metadata in the original HTML, before client rendering. */
+function withPageMetadata(response: Response, metadata: PageMetadata): Response {
+  const structuredData = articleStructuredData(metadata);
+  const rewriter = new HTMLRewriter()
+    .on("title", { element(element) { element.setInnerContent(metadata.title); } })
+    .on('meta[name="description"]', { element(element) { element.setAttribute("content", metadata.description); } })
+    .on('meta[property="og:type"]', { element(element) { element.setAttribute("content", metadata.type); } })
+    .on('meta[property="og:url"]', { element(element) { element.setAttribute("content", `${SITE_URL}${metadata.path}`); } })
+    .on('meta[property="og:title"]', { element(element) { element.setAttribute("content", metadata.title); } })
+    .on('meta[property="og:description"]', { element(element) { element.setAttribute("content", metadata.description); } })
+    .on('meta[property="og:image"]', { element(element) { element.setAttribute("content", metadata.image); } })
+    .on('meta[property="og:image:alt"]', { element(element) { element.setAttribute("content", metadata.imageAlt); } })
+    .on('meta[name="twitter:title"]', { element(element) { element.setAttribute("content", metadata.title); } })
+    .on('meta[name="twitter:description"]', { element(element) { element.setAttribute("content", metadata.description); } })
+    .on('meta[name="twitter:image"]', { element(element) { element.setAttribute("content", metadata.image); } })
+    .on('link[rel="canonical"]', { element(element) { element.setAttribute("href", `${SITE_URL}${metadata.path}`); } });
+
+  rewriter.on("head", {
+    element(element) {
+      const tags = [
+        '<meta property="og:site_name" content="Megabyte Labs">',
+        `<meta name="twitter:image:alt" content="${metadata.imageAlt}">`,
+        ...(metadata.type === "article" ? [
+          metadata.published && `<meta property="article:published_time" content="${metadata.published}">`,
+          metadata.modified && `<meta property="article:modified_time" content="${metadata.modified}">`,
+          metadata.section && `<meta property="article:section" content="${metadata.section}">`,
+          metadata.author && `<meta property="article:author" content="${metadata.author}">`,
+          structuredData && `<script id="blog-posting-structured-data" type="application/ld+json">${JSON.stringify(structuredData).replaceAll("<", "\\u003c")}</script>`,
+        ] : []),
+      ].filter(Boolean).join("");
+      element.append(tags, { html: true });
+    },
+  });
+
+  return rewriter.transform(response);
 }
 
 // One named instance ("global") aggregates the whole apex. Counts only —
@@ -210,8 +246,8 @@ export default {
       return env.AUTH.fetch(request);
     }
 
-    if (url.pathname === "/login" || url.pathname === "/login/") {
-      return withSecurityHeaders(Response.redirect(`${OS_ORIGIN}/${url.search}`, 302));
+    if (url.pathname === "/signin" || url.pathname === "/signin/") {
+      return withSecurityHeaders(Response.redirect(new URL("/login", request.url).toString(), 301));
     }
 
     if (url.pathname === "/health") {
@@ -279,6 +315,7 @@ export default {
     if (isDoc && assetResponse.status === 200 && contentType.includes("text/html") && !isKnownRoute(url.pathname)) {
       return withSecurityHeaders(new Response(assetResponse.body, { status: 404, headers: assetResponse.headers }));
     }
-    return withSecurityHeaders(assetResponse);
+    const pageMetadata = isDoc && contentType.includes("text/html") ? getBlogPageMetadata(url.pathname) : undefined;
+    return withSecurityHeaders(pageMetadata ? withPageMetadata(assetResponse, pageMetadata) : assetResponse);
   },
 } satisfies ExportedHandler<Env>;

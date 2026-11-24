@@ -4,10 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node ../../scripts/gen-build-info.mjs && vite build && node ../../scripts/gen-sitemap.mjs && node ../../scripts/check-stale-copy.mjs",
+    "build": "node ../../scripts/gen-build-info.mjs && vite build && node ../../scripts/gen-sitemap.mjs && node ../../scripts/gen-blog-feed.mjs && node ../../scripts/check-stale-copy.mjs",
     "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
+    "@theme-tools/shared-utils": "file:../../vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz",
+    "@theme-tools/themes": "file:../../vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz",
+    "@theme-tools/ui": "file:../../vendor/theme-tools/theme-tools-ui-1.0.51.tgz",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.180.0",

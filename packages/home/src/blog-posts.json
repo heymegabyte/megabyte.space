@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "livekit-startup-sponsorship-telephony",
+    "path": "/blog/livekit-startup-sponsorship-telephony",
+    "title": "LiveKit is sponsoring Megabyte Labs as we push into telephony",
+    "description": "Megabyte Labs has received startup sponsorship from LiveKit as we begin exploring low-latency telephone experiences that bridge Twilio with realtime voice agents.",
+    "category": "Company news",
+    "author": "Megabyte Labs",
+    "published": "2026-11-13T12:00:00-05:00",
+    "modified": "2026-11-13T12:00:00-05:00",
+    "displayDate": "November 13, 2026",
+    "readingMinutes": 4
+  },
+  {
+    "slug": "daytona-e2b-sentry-startup-programs",
+    "path": "/blog/daytona-e2b-sentry-startup-programs",
+    "title": "Megabyte Labs joins the Daytona, E2B, and Sentry startup programs",
+    "description": "Megabyte Labs has been accepted into the startup programs at Daytona, E2B, and Sentry—three teams helping us build safer, faster, and more observable agent infrastructure.",
+    "category": "Company news",
+    "author": "Megabyte Labs",
+    "published": "2026-11-12T12:00:00-05:00",
+    "modified": "2026-11-12T12:00:00-05:00",
+    "displayDate": "November 12, 2026",
+    "readingMinutes": 3
+  }
+]

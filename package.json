@@ -18,6 +18,8 @@
     "deploy": "node scripts/deploy.ts && node scripts/record-deploy.mjs --commit --push"
   },
   "devDependencies": {
+    "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz",
+    "@theme-tools/testing": "file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz",
     "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vitest-pool-workers": "catalog:",
     "@playwright/test": "^1.63.0",

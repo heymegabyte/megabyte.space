@@ -248,8 +248,8 @@ importers:
         specifier: file:../../vendor/theme-tools/theme-tools-themes-1.0.8.tgz
         version: file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz)
       '@theme-tools/ui':
-        specifier: file:../../vendor/theme-tools/theme-tools-ui-1.0.59.tgz
-        version: file:vendor/theme-tools/theme-tools-ui-1.0.59.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        specifier: file:../../vendor/theme-tools/theme-tools-ui-1.0.60.tgz
+        version: file:vendor/theme-tools/theme-tools-ui-1.0.60.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: ^19.2.0
         version: 19.3.0
@@ -2020,9 +2020,9 @@ packages:
     peerDependencies:
       '@theme-tools/shared-utils': '>=1.0.13 <2'
 
-  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.59.tgz':
-    resolution: {integrity: sha512-5d5RURyjX4JNia6XSs+VelRgtqzIp9aUdUiLxeoyN25UEvoMuNIfRiU7km6JSassUXrB3sBVHkUcjWGahs169A==, tarball: file:vendor/theme-tools/theme-tools-ui-1.0.59.tgz}
-    version: 1.0.59
+  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.60.tgz':
+    resolution: {integrity: sha512-NjAGgECTzM8mZAXZ8Sb57WjmmzbDB2HVKcuPoEVWIM5FlMlp4TGoaQB3Rl7mdPsyWwB604hRFnHK5yhwbdjEpA==, tarball: file:vendor/theme-tools/theme-tools-ui-1.0.60.tgz}
+    version: 1.0.60
     peerDependencies:
       '@theme-tools/shared-utils': '>=1.0.13 <2'
       '@theme-tools/themes': '>=1.0.3 <2'
@@ -5133,7 +5133,7 @@ snapshots:
       '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz
       zod: 4.6.7
 
-  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.59.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.60.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
       lucide-react: 1.77.0(@types/react@19.3.0)(react@19.3.0)
       react: 19.3.0

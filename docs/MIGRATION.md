@@ -824,3 +824,9 @@ Sources: [official comparison](https://github.com/cloudflare/cloudflare-os/compa
 [Context sync](https://github.com/cloudflare/cloudflare-os/commit/7f20c133),
 [gadget focus](https://github.com/cloudflare/cloudflare-os/commit/aad703ec),
 [Retry](https://github.com/cloudflare/cloudflare-os/commit/ba1c6ba8).
+
+## 41. Observer-sharing review at `2ca27fb0` (fire-390)
+
+Official main advanced from `aad703ec` by two commits across 14 paths. No tag refs were advertised. The targeted [source review](../.ai/runs/heymegabyte--megabyte.space-45367954267-1/codex-research.md) covers representative paths through gadget bindings, enabled hooks and historical reads, plus vendor account defaults with per-resource overrides. Frozen dependency inputs are unchanged across this incremental range.
+
+Before candidate adoption, reconcile the sharing composer with persisted view-only and live grants, including when removing a displayed path leaves another in-scope route. Verify path label exposure and lookup cost on shared graphs. Exercise one failed resource within a vendor group and check the per-connection choices and effective access after re-authentication. Candidate fixture execution and protected runtime acceptance remain open.

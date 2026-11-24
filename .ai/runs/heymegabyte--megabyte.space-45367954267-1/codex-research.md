@@ -1,0 +1,11 @@
+# Cloudflare OS observer-sharing source review
+
+Official `refs/heads/main` fetched as `2ca27fb0ed82923a6e026066eafaa2843eb6700e`. Git verified that the recovered baseline `aad703ec123e6b0c2d6ec01cc0d7bfe0f27d554c` is an ancestor. The complete incremental inventory is two commits and 14 changed paths. The tag query returned zero refs. Neither pnpm lockfile nor workspace manifest changed in this range.
+
+- `c3eeabcef226cae364afc0e1c763bb6a48d78443` adds optional `ObserverBindingNeed.paths`. The Overseer derives representative routes from live bindings, enabled hooks and historical producers. It retains the workspace-wide flat shape and returns an empty requirements list for a view-only grant. The share composer can still display live requirements as explanatory context. Verify that a composed view-only invite has the expected persisted grant and opens with snapshot-only access. Test removing a displayed route when another route still reaches the same resource.
+- The path collector requests every historical producer, where the former lookup could stop at the first match for each connection. Profile a shared graph with many gadgets and connections, and verify that multiple routes still render one resource count. Check that gadget, spawner and hook labels appear only on the intended RPC surfaces. The shared API names both owner and admin views.
+- `2ca27fb0` groups account selection by vendor while retaining one account choice per connection. The vendor picker replaces resource overrides; the refusal path can reopen per-resource selection for the failed subset. Test a single failed resource within a partially successful vendor group, a cleared select with account ID zero present, and multiple resource types assigned to the same account through a re-authentication round trip. Reconcile the final submitted choices with the persisted effective observer access.
+
+Backend, frontend and integration fixture changes are present in the range. This review inspected source. The official candidate requires its own frozen install, fixture execution and protected runtime acceptance. The wrapper check uses the existing fork pin.
+
+[Official incremental comparison](https://github.com/cloudflare/cloudflare-os/compare/aad703ec...2ca27fb0)

@@ -106,6 +106,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   lease. A clean worktree and successful agent exit do not supply that report.
   Mark active checks incomplete; a checkpoint preserves observed evidence if the
   backend is interrupted, but never turns a running check into successful acceptance.
+  Review retained tracked diffs as well as commits. Keep prepared frontier edits in a
+  patch until the atomic bookkeeping step can apply and commit them together. Verify
+  the full worktree status, including the submodule, before releasing the lease.
 - **Bound remote orientation.** Put explicit time limits on GitHub history and submodule
   network operations. If unavailable, inspect retained receipts/objects read-only and
   report remote history or exact-pin bootstrap as incomplete; never substitute an

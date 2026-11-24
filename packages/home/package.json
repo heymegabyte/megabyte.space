@@ -10,7 +10,7 @@
   "dependencies": {
     "@theme-tools/shared-utils": "file:../../vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz",
     "@theme-tools/themes": "file:../../vendor/theme-tools/theme-tools-themes-1.0.8.tgz",
-    "@theme-tools/ui": "file:../../vendor/theme-tools/theme-tools-ui-1.0.60.tgz",
+    "@theme-tools/ui": "file:../../vendor/theme-tools/theme-tools-ui-1.0.65.tgz",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.180.0",

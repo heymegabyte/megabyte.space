@@ -9,6 +9,10 @@
   "scripts": {
     "build": "vp run -r --cache build",
     "test": "node --test 'scripts/**/*.test.ts' 'scripts/**/*.test.mjs' && vp run --filter '!cloudflare-os-starter' --cache test",
+    "test:requirement-evidence": "node --test test/requirement-evidence.test.mjs",
+    "verify:requirement-evidence": "node scripts/verify-requirement-evidence.mjs",
+    "test:runtime-boundary": "playwright test e2e/runtime-boundary-evidence.spec.ts --config playwright.runtime-boundary.config.ts",
+    "verify:runtime-boundary": "pnpm --filter megabyte-home build && pnpm --filter megabyte-home exec wrangler deploy --dry-run --outdir ../../dist-worker && pnpm test:runtime-boundary",
     "types:scripts": "tsc -p scripts/tsconfig.json",
     "lint:check": "vp lint",
     "lint:fix": "vp lint --fix",
@@ -18,8 +22,8 @@
     "deploy": "node scripts/deploy.ts && node scripts/record-deploy.mjs --commit --push"
   },
   "devDependencies": {
-    "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz",
-    "@theme-tools/testing": "file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz",
+    "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz",
+    "@theme-tools/testing": "file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz",
     "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vitest-pool-workers": "catalog:",
     "@playwright/test": "^1.63.0",

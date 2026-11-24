@@ -38,6 +38,7 @@ catalogs:
       version: 4.6.7
 
 overrides:
+  '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
   vite: 7.3.6
   '@types/node': 26.1.0
 
@@ -55,11 +56,11 @@ importers:
         specifier: ^1.63.0
         version: 1.63.0
       '@theme-tools/shared-utils':
-        specifier: file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
-        version: file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
+        specifier: file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
+        version: file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
       '@theme-tools/testing':
-        specifier: file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz
-        version: file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz)(@types/node@26.1.0)(typescript@7.0.2)
+        specifier: file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz
+        version: file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)(@types/node@26.1.0)(typescript@7.0.2)
       '@types/node':
         specifier: 26.1.0
         version: 26.1.0
@@ -241,14 +242,14 @@ importers:
   packages/home:
     dependencies:
       '@theme-tools/shared-utils':
-        specifier: file:../../vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
-        version: file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
+        specifier: file:../../vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
+        version: file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
       '@theme-tools/themes':
-        specifier: file:../../vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz
-        version: file:vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz)
+        specifier: file:../../vendor/theme-tools/theme-tools-themes-1.0.8.tgz
+        version: file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)
       '@theme-tools/ui':
-        specifier: file:../../vendor/theme-tools/theme-tools-ui-1.0.51.tgz
-        version: file:vendor/theme-tools/theme-tools-ui-1.0.51.tgz(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.7)
+        specifier: file:../../vendor/theme-tools/theme-tools-ui-1.0.57.tgz
+        version: file:vendor/theme-tools/theme-tools-ui-1.0.57.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: ^19.2.0
         version: 19.3.0
@@ -2003,90 +2004,36 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@theme-tools/shared-utils@1.0.0':
-    resolution: {integrity: sha512-sGfn9qX8kupVXFA8+wMTWA0RPMjjnTsly+a0LvXRJlAFAlpgYrXWgMrqGaBTwi74jqDrlmhuFbD809U5eKct/Q==}
+  '@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz':
+    resolution: {integrity: sha512-I0ohGvTVhwO/M7VCGA+kGyEk4FWVJGA33mW8StJfGnBh3UPjEJ3cF6Y8h4zzp5gu0sbr3Nllmzz+IGPvD/9HmQ==, tarball: file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz}
+    version: 1.0.16
 
-  '@theme-tools/shared-utils@1.0.1':
-    resolution: {integrity: sha512-T1lYNTT7lEjwdKtsbqNnDxm5rkW4XKM4QLfZdv/GFoMVv/JcQIrWguSF8chH8lCsT6EHgQA7tKEgbqapn2F+2Q==}
-
-  '@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz':
-    resolution: {integrity: sha512-xLvSBVvk0azQEnCNue3Umt9bCBiuTGRoCwuDN1fvadJRBy70isyzA1Tz4iPIj/5JKX6gGBvT9k2yQ33V//+L/g==, tarball: file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz}
-    version: 1.0.13
-
-  '@theme-tools/testing@file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz':
-    resolution: {integrity: sha512-4d0x3oa2xSFP6zFeB+MD2wy/hbEkuvGBdM4827b/AQe/g3iPOIlI+k5eC+9ZeS55Mui8Ku4lQ/K4BGpkO8ll5w==, tarball: file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz}
-    version: 1.0.0
+  '@theme-tools/testing@file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz':
+    resolution: {integrity: sha512-EyNUqGuWXk8Mt50jz+4bNcSQnv0qbbO9MuUMBC1GKo5HOztUAOwXXk2cb0t8pr12C6159EBY9mbN3xFb3QeghA==, tarball: file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz}
+    version: 1.0.1
     peerDependencies:
       '@theme-tools/shared-utils': '>=1.0.13 <2'
 
-  '@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz':
-    resolution: {integrity: sha512-GEsTLaZM4SJ6Nh1iwR4d/+u87YOMcvyVTqzWHoYY/RE0U5yRBQwDvk6zz7fHP+fPPywMR/mKEB9Vj7xD9ZWQVw==, tarball: file:vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz}
-    version: 1.0.3
+  '@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz':
+    resolution: {integrity: sha512-zkaHqmxNC9JrJSn7PjZZOKzS8dxjo70igJQG+IK8sQXk4Mtr7vIbR1rrGFjXLaVmG9iupomK/olQPAbby8DPIw==, tarball: file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz}
+    version: 1.0.8
     peerDependencies:
       '@theme-tools/shared-utils': '>=1.0.13 <2'
 
-  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.51.tgz':
-    resolution: {integrity: sha512-Sne42IWOmZWU7bVD+0UIuasvu8mjASzdEeWkIaZFkS5TEs9/ysn/nJJ3cmrEOH+74hmmk29EgtbC1FSngZv46w==, tarball: file:vendor/theme-tools/theme-tools-ui-1.0.51.tgz}
-    version: 1.0.51
+  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.57.tgz':
+    resolution: {integrity: sha512-ldEscICG/zPSrlDi6Ok0wxc5qX49o4Gz2nmrTiCnG6bMRRK60leY5NyLdJn+YKjcq0qL0dlNqOXsojac9KsE/A==, tarball: file:vendor/theme-tools/theme-tools-ui-1.0.57.tgz}
+    version: 1.0.57
     peerDependencies:
+      '@theme-tools/shared-utils': '>=1.0.13 <2'
+      '@theme-tools/themes': '>=1.0.3 <2'
       lucide-react: '>=0.400.0 <2'
       react: ^18.3.0 || ^19.0.0
       react-dom: ^18.3.0 || ^19.0.0
-      zod: ^3.24.0 || ^4.0.0
-
-  '@theme.tools/agent-ui@1.0.0':
-    resolution: {integrity: sha512-3mLGAGuGN3jF1hI6fHzsTdY5ILH35Y5CTNFxi0keDm5k/IAw8BdbEwI4rQIEH+sRxeax6/iEcuizpyIh0Wbq1w==}
-
-  '@theme.tools/auth@1.0.0':
-    resolution: {integrity: sha512-5cHo7jzz/zJynC6osJ9rz7NnGaPL0hXj60L98c1GP+eyCK7isNU2PuPGzg/Rq/9LZqaKnfwqkLuYCJMc8spJxQ==}
-
-  '@theme.tools/billing@1.0.0':
-    resolution: {integrity: sha512-0q7PmSfvn3VpkjTj5nxDYjH92j1bJ967nsiKPHuKoiGBbjJ9ZHD9DS3QHxBj9hJT6sD3qMi+7xztf9EkS9IWmg==}
-
-  '@theme.tools/crm@1.0.0':
-    resolution: {integrity: sha512-bXS7pETvjxl8Zh2W/3wDyS0IZHIXGKjvD2W4xVkAZaUOJCC2uAULVwheS0+RoDhuWKDuOjHHZ5q3LQkL5shV2w==}
-
-  '@theme.tools/flags@1.0.0':
-    resolution: {integrity: sha512-5MB8ST9cZaTbkeAzFZjL5bzdinIRvtnr5SAgnvHbS+3yjPiWhXira0P0Rl+li0PGQY/3E4SiESJtwBnjVSHe2Q==}
-
-  '@theme.tools/forms@1.0.0':
-    resolution: {integrity: sha512-lY1xvtm+v4pX8EwLXFdAC+h4DFAlh8FnxWz3H8Kij37FKgjebsPnnE18bGLkg7itKn8KKqd8/xRieVHC9OsOXg==}
-
-  '@theme.tools/i18n-a11y@1.0.0':
-    resolution: {integrity: sha512-CKlPe/8HoO9sTdFLr/UqORV2DEBnrEIjC39Eo8VdGBWlamZhxwbxqSuQDIBduJbatSsK0hwgxje/LMjXjyoJng==}
-
-  '@theme.tools/kb@1.0.0':
-    resolution: {integrity: sha512-vblgi1y662ZR/FJrHjQ5CgvMsNPaoCh7nrRSXP+3eMfsjvROPoK7ljOA9EhTkPwEyE//Wddo3iMO9sxF3+IPGw==}
-
-  '@theme.tools/keys@1.0.0':
-    resolution: {integrity: sha512-V4xSxfV6ap0MWr8aBARxeci2B1a7qGq8zdIUoEVvu8CGyiuY81BVS7QlYaj0mnMrFpW24HGXrCzkvVPUl8sl5Q==}
-
-  '@theme.tools/links@1.0.0':
-    resolution: {integrity: sha512-qs9WwuG+XhF287FVN9gFZMZkmgbxiXw1mkoxJdNMq/BN4kfBMbnNTc/Qe73DqIy16CJ4XswHovce+7FoDX6ztw==}
-
-  '@theme.tools/media-video@1.0.0':
-    resolution: {integrity: sha512-pAtX1waVsF3kvqObHWvMlinyhVhrN6D3C8kWh8tk1Y3j6xMPF6OrVCmy0aND00dHxECd3bRdgyO2zDWN1JFo3g==}
-
-  '@theme.tools/notifications@1.0.0':
-    resolution: {integrity: sha512-eZyWdhPHTp8hX+9WBaDzN1xgpaWP6zv4NT9eeoE2r48yfWi2pxgHvKCPiLbkUkKjzzT+nN+b7DXE1ppfFW2V9A==}
-
-  '@theme.tools/scheduling@1.0.0':
-    resolution: {integrity: sha512-EGsDiNlTtqYyOdDc+fNqTBctnSTFU21IDu8+sziTiuXX3G+3Qee7KTVC12yPnhlpJ7WtSwlfislxsyUjQq7RlQ==}
-
-  '@theme.tools/seo-geo@1.0.1':
-    resolution: {integrity: sha512-vytnNBtrSDNcmLS1gBz7k9vjO/NsyogXPLU7NbWafqNYyzufVC+iHXl2BRRre7PfOGP8NEdEKqYfY7e87ZrM6w==}
-
-  '@theme.tools/signing@1.0.0':
-    resolution: {integrity: sha512-5+dBlx2JoqDJdTBN3gMGtk8NNnzD2+8mLOLxQDBuEwzpOHTlXSoG+gwNCcdB14QDNoM59CbuRn1lJr+5+BHlag==}
-
-  '@theme.tools/social@1.0.0':
-    resolution: {integrity: sha512-kTFlaYNgDbNWFAq/oWg8C20wieFwpfrrpRe8RSF8N4TZTCYfAxIkz48UBvq8YFXePdOFK18bfUSQHLUb3A1qLw==}
-
-  '@theme.tools/status@1.0.0':
-    resolution: {integrity: sha512-JEpReing+V5TdcnxiJUmKEQvfXdxRzsjsdZgGMs/dQXYnqiFNG8bnpA/DcKN24b1uReJ37Um5I3BmdQUItccdQ==}
-
-  '@theme.tools/workflows@1.0.0':
-    resolution: {integrity: sha512-9pypsu1Oa77RAEk1HWX70BohS/cfORikmGmukeCasj6xth/zTjqlUMWveHxZtWSO6BSK7eWOWZDWEvLgiYNP0A==}
+    peerDependenciesMeta:
+      '@theme-tools/shared-utils':
+        optional: true
+      '@theme-tools/themes':
+        optional: true
 
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
@@ -2149,6 +2096,9 @@ packages:
 
   '@types/three@0.180.0':
     resolution: {integrity: sha512-ykFtgCqNnY0IPvDro7h+9ZeLY+qjgUWv+qEvUt84grhenO60Hqd4hScHE7VTB9nOQ/3QM8lkbNE+4vKjEpUxKg==}
+
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -2590,6 +2540,21 @@ packages:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
     engines: {node: '>=6.5'}
 
+  ag-charts-types@14.3.0:
+    resolution: {integrity: sha512-6VtzUYBKN5mFY24/Eye3RUn1AAq7s+/B4hEu83ZOK/Pjqx26tHq2MoxiXlBE8F7oQO0VpjV5rZZaw6wxSpMNJg==}
+
+  ag-grid-community@36.3.0:
+    resolution: {integrity: sha512-0JRaIwE82TuOcx+upA3OnTyhDAIUDqrMxLoBib6yVON0SyfICdpOnwD4QdiT0A1lgrC8SkzLBFRst73bTREF6Q==}
+
+  ag-grid-react@36.3.0:
+    resolution: {integrity: sha512-Ttpb5J7b3oun8AdzTrLnXd5iMyh/G3R1esdG3nXnrfPC4kzFsM3sD0/h/wATE3dw7MH1oEKERa7xvQ+8QLuk1A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  ag-stack@36.3.0:
+    resolution: {integrity: sha512-KbX/b6cM0GIJ4cz6W3jk8YoDG/XpqOC4WurYl8CDuQtER2d4rihjPI4tOLN4LqS0yfVspZ31ED1273kfG+6m0w==}
+
   agentkeepalive@4.6.0:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
@@ -2813,6 +2778,9 @@ packages:
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
+
+  dompurify@3.4.18:
+    resolution: {integrity: sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg==}
 
   dotenv@16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
@@ -3255,6 +3223,10 @@ packages:
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
 
+  loose-envify@1.4.0:
+    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -3482,6 +3454,10 @@ packages:
     resolution: {integrity: sha512-kQK9LGGFiHtrWiNhZtA7Qbw17AQz+dmsEKODRIVTXA9+e5MS/2gZEBhYJt13GrAz5/IOZKddH/0Z3TP/Zgo+yw==}
     engines: {node: '>=18'}
 
+  object-assign@4.1.1:
+    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
+    engines: {node: '>=0.10.0'}
+
   obug@2.1.4:
     resolution: {integrity: sha512-4a+OsYv9UktOJKE+l1A4OufDgdRF9PifWj+tJnHURo/P+WOxpG4GzUFL9qCalmWauao6ogiG+QvnCovwPoyAWA==}
     engines: {node: '>=12.20.0'}
@@ -3554,10 +3530,16 @@ packages:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
 
+  prop-types@15.8.1:
+    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+
   react-dom@19.3.0:
     resolution: {integrity: sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==}
     peerDependencies:
       react: ^19.3.0
+
+  react-is@16.13.1:
+    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -5133,145 +5115,36 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.1
 
-  '@theme-tools/shared-utils@1.0.0':
-    optional: true
-
-  '@theme-tools/shared-utils@1.0.1':
-    optional: true
-
-  '@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz':
+  '@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz':
     dependencies:
       zod: 4.6.7
 
-  '@theme-tools/testing@file:vendor/theme-tools/theme-tools-testing-1.0.0-contracts-peer.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz)(@types/node@26.1.0)(typescript@7.0.2)':
+  '@theme-tools/testing@file:vendor/theme-tools/theme-tools-testing-1.0.1-contracts.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)(@types/node@26.1.0)(typescript@7.0.2)':
     dependencies:
-      '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
+      '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
       msw: 2.15.0(@types/node@26.1.0)(typescript@7.0.2)
       zod: 4.6.7
     transitivePeerDependencies:
       - '@types/node'
       - typescript
 
-  '@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.3-peer.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz)':
+  '@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)':
     dependencies:
-      '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.13-document-stats.tgz
+      '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
       zod: 4.6.7
 
-  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.51.tgz(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.7)':
+  '@theme-tools/ui@file:vendor/theme-tools/theme-tools-ui-1.0.57.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)(@theme-tools/themes@file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz))(lucide-react@1.77.0(@types/react@19.3.0)(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
       lucide-react: 1.77.0(@types/react@19.3.0)(react@19.3.0)
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
-      zod: 4.6.7
     optionalDependencies:
-      '@theme.tools/agent-ui': 1.0.0
-      '@theme.tools/auth': 1.0.0
-      '@theme.tools/billing': 1.0.0
-      '@theme.tools/crm': 1.0.0
-      '@theme.tools/flags': 1.0.0
-      '@theme.tools/forms': 1.0.0
-      '@theme.tools/i18n-a11y': 1.0.0
-      '@theme.tools/kb': 1.0.0
-      '@theme.tools/keys': 1.0.0
-      '@theme.tools/links': 1.0.0
-      '@theme.tools/media-video': 1.0.0
-      '@theme.tools/notifications': 1.0.0
-      '@theme.tools/scheduling': 1.0.0
-      '@theme.tools/seo-geo': 1.0.1
-      '@theme.tools/signing': 1.0.0
-      '@theme.tools/social': 1.0.0
-      '@theme.tools/status': 1.0.0
-      '@theme.tools/workflows': 1.0.0
-
-  '@theme.tools/agent-ui@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/auth@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/billing@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/crm@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/flags@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/forms@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/i18n-a11y@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/kb@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/keys@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/links@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/media-video@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/notifications@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/scheduling@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/seo-geo@1.0.1':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.1
-    optional: true
-
-  '@theme.tools/signing@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/social@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/status@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
-
-  '@theme.tools/workflows@1.0.0':
-    dependencies:
-      '@theme-tools/shared-utils': 1.0.0
-    optional: true
+      '@theme-tools/shared-utils': file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz
+      '@theme-tools/themes': file:vendor/theme-tools/theme-tools-themes-1.0.8.tgz(@theme-tools/shared-utils@file:vendor/theme-tools/theme-tools-shared-utils-1.0.16.tgz)
+      ag-grid-community: 36.3.0
+      ag-grid-react: 36.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      dompurify: 3.4.18
+      zod: 4.6.7
 
   '@tweenjs/tween.js@23.1.3': {}
 
@@ -5351,6 +5224,9 @@ snapshots:
       '@webgpu/types': 0.1.74
       fflate: 0.8.3
       meshoptimizer: 0.22.0
+
+  '@types/trusted-types@2.0.7':
+    optional: true
 
   '@types/unist@3.0.3': {}
 
@@ -5719,6 +5595,26 @@ snapshots:
     dependencies:
       event-target-shim: 5.0.1
 
+  ag-charts-types@14.3.0:
+    optional: true
+
+  ag-grid-community@36.3.0:
+    dependencies:
+      ag-charts-types: 14.3.0
+      ag-stack: 36.3.0
+    optional: true
+
+  ag-grid-react@36.3.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+    dependencies:
+      ag-grid-community: 36.3.0
+      prop-types: 15.8.1
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
+    optional: true
+
+  ag-stack@36.3.0:
+    optional: true
+
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
@@ -5927,6 +5823,11 @@ snapshots:
   devtools-protocol@0.0.1182435: {}
 
   dom-accessibility-api@0.5.16: {}
+
+  dompurify@3.4.18:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
+    optional: true
 
   dotenv@16.3.1: {}
 
@@ -6243,6 +6144,11 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.33.0
 
   longest-streak@3.1.0: {}
+
+  loose-envify@1.4.0:
+    dependencies:
+      js-tokens: 4.0.0
+    optional: true
 
   lru-cache@5.1.1:
     dependencies:
@@ -6683,6 +6589,9 @@ snapshots:
 
   node-releases@2.0.57: {}
 
+  object-assign@4.1.1:
+    optional: true
+
   obug@2.1.4: {}
 
   outvariant@1.4.3: {}
@@ -6822,10 +6731,20 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 17.0.2
 
+  prop-types@15.8.1:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    optional: true
+
   react-dom@19.3.0(react@19.3.0):
     dependencies:
       react: 19.3.0
       scheduler: 0.28.0
+
+  react-is@16.13.1:
+    optional: true
 
   react-is@17.0.2: {}
 

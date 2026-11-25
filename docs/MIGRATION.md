@@ -847,3 +847,19 @@ app host, including outstanding calls and timer cleanup. Reconcile effects from
 already received calls at the backend and verify the configurator lifecycle
 separately. The browser and candidate fixtures remain unverified. The official
 fetch policy, chat epoch folding and ambient connector changes remain open review.
+
+## 43. Official upstream attachment and storage increment (fire-392)
+
+The official `266dffed..b355717f` comparison lists six commits and 52 changed
+paths. Review covered #1230's attachment admission, model replay and workspace
+storage quotas. The other commits cover model catalog visibility, chat epoch
+rows and display-row cleanup, pinned worktree reads, and protected-resource
+list ordering and deduplication.
+
+Keep candidate adoption on the backlog. A 100 MiB attachment can be stored
+while exceeding the image/PDF replay budgets or the client history inline budget.
+Rehearse streaming, download, history paging, compaction and provider refusal
+separately. Near quota, reconcile concurrent and interrupted large-file writes
+against SQLite usage, then confirm a refused agent turn still persists its error.
+See the [source review](../.ai/runs/heymegabyte--megabyte.space-45541749036-1/codex-research.md)
+for thresholds and outstanding review coverage.

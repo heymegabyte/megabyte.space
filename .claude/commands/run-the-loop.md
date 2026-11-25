@@ -82,6 +82,9 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   gate. Do not use `handoff`: it writes the legacy watchdog trigger. The worktree-local lease
   does not lock another worktree; the fleet repository lock serializes fleet runs, while
   independently running sessions still require conflict review at publication.
+  Keep temporary launchers in an ignored workspace directory and remove them after use.
+  Before release, also check `git status --porcelain --untracked-files=all`; the tracked
+  source gate alone misses scratch files that block outer-runner publication.
 - **Separate fixture acceptance from source acceptance.** Expected rejection of an empty fork is a passing regression assertion, while the actual missing source leaves full gates incomplete. Chain the real preflight and fork install with `&&`; a semicolon can let pnpm discover the parent workspace after rejection. Submodule status alone is not local identity evidence.
 - **Persisted metadata must survive serialization.** For offline evidence validation,
   reject coercible non-string digests before regex checks. Regression acceptance

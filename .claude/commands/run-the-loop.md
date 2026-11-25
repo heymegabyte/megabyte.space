@@ -70,6 +70,10 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   is authorized and credentials are available, use `node scripts/deploy.ts` and then
   `node scripts/record-deploy.mjs` without `--commit`/`--push`; include that receipt in the
   local bookkeeping commit and verify production before claiming deployment success.
+- **Check source-map delivery per deployment path.** Record effective per-Worker
+  bundle flags and verify symbolication against the observed version. Packaged releases
+  can omit maps even when direct Wrangler uploads use them. Require a matching module
+  digest before using a reconstructed map.
 - **Commit labels are not build evidence.** Before crediting source correlation, use
   the execution contract in `docs/deployment-provenance.md`: immutable build inputs,
   actual artifact/config identity, per-Worker version/allocation read-back and durable

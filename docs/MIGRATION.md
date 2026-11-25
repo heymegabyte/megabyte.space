@@ -878,3 +878,18 @@ so clearing the in-memory array is tested against actual history reload and
 durable prompts, tool steps and catalog events. Measure memory during those
 passes before crediting the optimization. Candidate fixtures and protected
 runtime acceptance remain open.
+
+## 45. Worker bundle and source-map acceptance at `73919572` (fire-394)
+
+The official comparison from `b355717f` reports seven commits and a capped
+300-path listing. The [source review](../.ai/runs/heymegabyte--megabyte.space-45716432561-1/codex-research.md)
+covers #1284. Its official release builder minifies ESM, checks for wide source
+characters, and excludes source maps from release modules. Wrangler's direct
+upload path can deliver maps using its own configuration.
+
+For the candidate, inspect every generated Worker config, including the
+starter-owned Workers. Rehearse uploads on an approved isolated identity and
+verify symbolication for a known error against the observed Worker version.
+For packaged releases, reconstruct the map with the exact build inputs and
+require the rebuilt module SHA-256 to match the release manifest before using
+it. The candidate pin and map delivery remain unverified.

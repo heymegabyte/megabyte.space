@@ -19,7 +19,8 @@
     "lint": "pnpm run lint:check && pnpm run types:scripts && pnpm run build",
     "check:interconnect": "node scripts/check-route-reachability.mjs && node scripts/check-dead-components.mjs && node scripts/check-accent-coverage.mjs",
     "check": "node scripts/check-submodule-resolvable.mjs && pnpm run check:interconnect && node scripts/check-scripts-types.mjs && node scripts/deploy.ts --check",
-    "deploy": "node scripts/deploy.ts && node scripts/record-deploy.mjs --commit --push"
+    "deploy": "node scripts/deploy.ts && node scripts/record-deploy.mjs --commit --push",
+    "verify:theme-tools": "node --experimental-strip-types src/theme-tools-thin-shell.ts --verify"
   },
   "devDependencies": {
     "@theme-tools/shared-utils": "file:vendor/theme-tools/theme-tools-shared-utils-1.0.18.tgz",
@@ -34,5 +35,11 @@
     "vite": "catalog:",
     "vite-plus": "catalog:",
     "wrangler": "catalog:"
+  },
+  "themeTools": {
+    "schemaVersion": 2,
+    "consumerMode": "thin-shell",
+    "canonicalPackages": 28,
+    "voiceProvider": "voicekit-17k-grant"
   }
 }

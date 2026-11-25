@@ -5,11 +5,11 @@
 //   https://megabyte.space/        → the `megabyte-os` router SERVES THE CLOUDFLARE OS at the apex.
 //                                    Auth is AUTH-ON-ACTION (Better Auth, baked into the apex at
 //                                    /api/auth/*): an ANONYMOUS HTML navigation is 302'd to OUR
-//                                    same-origin /signin (NOT to cloudflareaccess.com); an
+//                                    same-origin /login (NOT to cloudflareaccess.com); an
 //                                    ALLOWLISTED/authed navigation (session cookie) PASSES THROUGH
 //                                    to the OS shell (200). The OS Better Auth sign-in page is
-//                                    served at /signin, with GitHub + Google SSO wired.
-//   https://megabyte.space/signin  → 200, the OS Better Auth sign-in surface (body: "Cloudflare OS").
+//                                    served at /login, with GitHub + Google SSO wired.
+//   https://megabyte.space/login  → 200, the OS Better Auth sign-in surface.
 //   https://megabyte.space/api/auth/ok → 200 {ok:true}  (Better Auth rail on the apex).
 //   https://www.megabyte.space/    → 301 to the apex.
 //
@@ -68,12 +68,12 @@ const getSetCookies = (res) =>
     : [res.headers.get("set-cookie")].filter(Boolean);
 
 // 1. The apex SERVES THE CLOUDFLARE OS (not the old homepage, not Access). Auth-on-action means an
-//    anonymous HTML nav to "/" is 302'd to OUR same-origin /signin, and /signin itself is a 200 OS
+//    anonymous HTML nav to "/" is 302'd to OUR same-origin /login, and /login itself is a 200 OS
 //    surface whose body says "Cloudflare OS". Assert both: the gate redirects same-origin (never to
 //    cloudflareaccess.com) AND the served surface is the OS, not the retired `megabyte-home` page.
 {
   const root = await tryFetch(`${APEX}/`, { redirect: "manual", headers: NAV });
-  const signin = await tryFetch(`${APEX}/signin`, { redirect: "manual", headers: NAV });
+  const signin = await tryFetch(`${APEX}/login`, { redirect: "manual", headers: NAV });
   if (root.error || signin.error) {
     record("apex serves the Cloudflare OS", false, `fetch failed: ${root.error || signin.error}`);
   } else {
@@ -111,15 +111,15 @@ const getSetCookies = (res) =>
   }
 }
 
-// 3. The OS Better Auth sign-in page is served at /signin → 200 HTML.
+// 3. The OS Better Auth sign-in page is served at /login → 200 HTML.
 {
-  const res = await tryFetch(`${APEX}/signin`, { redirect: "manual", headers: NAV });
+  const res = await tryFetch(`${APEX}/login`, { redirect: "manual", headers: NAV });
   if (res.error) {
-    record("/signin → 200 (BA sign-in page)", false, `fetch failed: ${res.error}`);
+    record("/login → 200 (BA sign-in page)", false, `fetch failed: ${res.error}`);
   } else {
     const type = res.headers.get("content-type") || "";
     const pass = res.status === 200 && type.includes("text/html");
-    record("/signin → 200 (BA sign-in page)", pass, `status=${res.status} type=${type.split(";")[0] || "(none)"}`);
+    record("/login → 200 (BA sign-in page)", pass, `status=${res.status} type=${type.split(";")[0] || "(none)"}`);
   }
 }
 
@@ -209,7 +209,7 @@ const getSetCookies = (res) =>
 }
 
 // 5. Allowlisted Better Auth email sign-in → a session cookie scoped to megabyte.space; then an
-//    authed HTML nav to "/" carrying that cookie PASSES THE GATE to the OS shell (200, not a /signin
+//    authed HTML nav to "/" carrying that cookie PASSES THE GATE to the OS shell (200, not a /login
 //    redirect). This is the auth-on-action happy path end to end.
 let sessionCookie = "";
 {
@@ -242,7 +242,7 @@ let sessionCookie = "";
   } else {
     const body = authed.status === 200 ? await authed.text() : "";
     const loc = authed.headers.get("location") || "";
-    const pass = authed.status === 200 && !loc.includes("/signin") && body.length > 500 && /megabyte os/i.test(body);
+    const pass = authed.status === 200 && !loc.includes("/login") && body.length > 500 && /megabyte os/i.test(body);
     record(
       "authed nav → OS shell (gate passthrough)",
       pass,

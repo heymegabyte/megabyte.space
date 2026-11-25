@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * verify-login-gate — Brian 2026-10-06: an ANONYMOUS visitor's FIRST-LOAD HTML is a full-screen,
- * undismissable login screen, inlined by the router (paints instantly, no SPA/React boot), offering
+ * verify-login-gate: an anonymous visitor is sent to the canonical /login screen, offering
  * Better Auth Google + GitHub + magic-link. An AUTHED visitor (session cookie) gets the OS SPA, not
  * the gate (no flash). Pure HTTP against the RAW HTML — proves the login is in the first-load bytes,
  * not JS-rendered. Authed leg needs BA_E2E_EMAIL / BA_E2E_PASSWORD.
@@ -19,25 +18,22 @@ async function getHtml(path, cookie) {
   return { status: res.status, ctype: res.headers.get('content-type') || '', body: await res.text() }
 }
 
-// 1. ANON / → the inlined full-screen login gate, with all three methods, in the RAW HTML.
+// 1. ANON / → canonical same-origin /login.
 {
-  const { status, ctype, body } = await getHtml('/')
-  rec('anon / → 200 text/html', status === 200 && /text\/html/.test(ctype), `status=${status}`)
-  rec('anon / → inlined login-gate in raw HTML', /data-testid="login-gate"/.test(body))
-  rec('anon / → full-screen (fixed / inset:0 / 100dvh)', /position:\s*fixed|inset:\s*0|100dvh|100vh/i.test(body))
-  rec('anon / → Google SSO (Better Auth social)', /Google/i.test(body) && /sign-in\/social/.test(body))
-  rec('anon / → GitHub SSO', /GitHub/i.test(body))
-  rec('anon / → magic-link email', /type="email"/i.test(body) && /sign-in\/magic-link/.test(body))
-  rec('anon / → Megabyte OS brand', /megabyte os/i.test(body))
-  rec('anon / → IS the login, not the SPA shell', !/id="root"/.test(body))
+  const res = await fetch(APEX + '/', { headers: { accept: 'text/html' }, redirect: 'manual' })
+  rec('anon / → /login', res.status === 302 && new URL(res.headers.get('location'), APEX).pathname === '/login', `status=${res.status}`)
 }
 
-// 2. ANON /signin (and a deep route) → same gate (undismissable everywhere pre-auth).
+// 2. /login contains the three public methods and no password field.
 {
-  const a = await getHtml('/signin')
-  rec('anon /signin → login-gate', a.status === 200 && /data-testid="login-gate"/.test(a.body), `status=${a.status}`)
+  const a = await getHtml('/login')
+  rec('anon /login → login page', a.status === 200 && /data-testid="login-gate"/.test(a.body), `status=${a.status}`)
+  rec('/login → Google SSO', /Google/i.test(a.body) && /sign-in\/social/.test(a.body))
+  rec('/login → GitHub SSO', /GitHub/i.test(a.body))
+  rec('/login → magic email', /type="email"/i.test(a.body) && /sign-in\/magic-link/.test(a.body))
+  rec('/login → password UI hidden', !/type="password"|mb-password/i.test(a.body))
   const b = await getHtml('/logs')
-  rec('anon /logs (deep) → login-gate', b.status === 200 && /data-testid="login-gate"/.test(b.body), `status=${b.status}`)
+  rec('anon /logs → /login', b.status === 302, `status=${b.status}`)
 }
 
 // 3. AUTHED / → the OS SPA, NOT the gate (no authed flash).

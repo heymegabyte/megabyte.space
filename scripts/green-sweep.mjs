@@ -46,7 +46,7 @@ const CHECKS = [
   ['check-fork-tests.mjs', [], 'FORK-TESTS OK'], // RATCHET (fire-246, WIRED fire-247): the cloudflare-os fork vitest (~886 tests) — fail-count must not EXCEED baseline(9: known-red useAuth.test.tsx jsdom localStorage, BACKLOG WS-FORK-TESTS). Catches a NEW red fork UNIT that otherwise ships INVISIBLY (nothing else runs fork vitest). Secret-free, ~14s, SERIAL (CPU-bound vitest)
   ['verify-prod.mjs', [], 'assertions green'],
   ['verify-anon-console.mjs', [], 'did not leak pre-login'], // force-login/anon invariant (Brian, fire-90)
-  ['verify-login-gate.mjs', [], 'LOGIN-GATE GREEN'], // anon first-load HTML IS the full-screen login (Google+GitHub+magic-link+email/pw); authed gets the SPA (Brian 2026-10-06)
+  ['verify-login-gate.mjs', [], 'LOGIN-GATE GREEN'], // /login exposes Google+GitHub+magic-link; password remains test-only.
   ['verify-os-screens.mjs', [], 'ALL OS SCREENS LOAD'], // every static OS route loads authed, 0 console errors (Brian 2026-10-06 "make sure all screens can load") — net-new comprehensive load gate
   ['verify-home-composer.mjs', [], '0 console errors'], // the value-path ENTRY — read-only (fire-114)
   ['verify-pulse.mjs', [], '0 console errors'],

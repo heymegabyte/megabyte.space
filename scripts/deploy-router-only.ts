@@ -39,6 +39,9 @@ if (build.status !== 0) process.exit(build.status ?? 1);
 
 // Wrangler resolves generated configs relative to their own path inconsistently across releases;
 // pin the freshly-built asset directory so router-only deploys cannot lose the frontend bundle.
+if (!generated.router.assets) {
+  throw new Error("generated router config is missing its required assets binding");
+}
 generated.router.assets.directory = join(root, "cloudflare-os/packages/workshop-frontend/dist");
 const cfgPath = join(routerDir, "wrangler.prod.jsonc");
 await writeFile(cfgPath, JSON.stringify(generated.router, null, 2) + "\n");

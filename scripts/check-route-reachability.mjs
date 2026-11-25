@@ -20,7 +20,15 @@ const SRC = 'cloudflare-os/packages/workshop-frontend/src'
 const ROUTES_DIR = `${SRC}/routes`
 
 // Reached without an in-app nav ref — not orphans.
-const ALLOW = new Set(['__root', 'index', 'signin', 'signup'])
+const ALLOW = new Set([
+  '__root',
+  'index',
+  'signin',
+  'signup',
+  // Native OAuth popups navigate here programmatically; exposing it in product navigation would
+  // turn a single-use protocol endpoint into a misleading user-facing destination.
+  'connect.handoff',
+])
 
 // filename (sans .tsx) → URL path. TanStack: dots are separators; a trailing `_` on a segment is the
 // layout-escape marker; `$x` is a param (⇒ dynamic, skipped below).

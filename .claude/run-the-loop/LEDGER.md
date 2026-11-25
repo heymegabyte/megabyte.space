@@ -5045,3 +5045,11 @@ cadence and publication.
 - The wrapper dry run passed exact-pin fetch, interconnect, script typecheck and
   260 Node tests. Its 150-second timeout exited 124 during Gatekeeper builds.
   Full Worker dry runs remain unverified.
+
+## fire-392 — Official attachment and storage review
+
+- Recovered the unpublished retained chain through `b090318c` with tree equality. GitHub main was `d30b6715` at orientation.
+- `fd1f9d15` inventories six official upstream commits and 52 paths, reviews #1230's attachment and storage boundaries, and adds an untracked-file check to the fleet closeout.
+- Declared fork `240899ec` initialized and fetched from its declared remote. Both frozen installs exited 0 with pnpm 11.17.0. Focused fleet tests passed 74/74.
+- Wrapper check hit its 115-second budget (exit 124); full dry-run acceptance remains open. Generated Wrangler configs remained after exit and were removed from this worktree.
+- Source review only. The fork pin and deployment manifest are unchanged. Protected candidate, production, browser and live-provider acceptance remain open.

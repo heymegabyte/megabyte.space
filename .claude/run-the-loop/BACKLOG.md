@@ -709,13 +709,18 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
 - [ ] Migration readiness — maintain the complete upstream diff inventory, finish auth/storage/
   binding/deprecation review, and run frozen installs + `pnpm check` against the selected candidate
   and wrapper before protected evaluation. No release/pilot acceptance until source and production
-  gates pass; see `docs/MIGRATION.md` §§ 9–42 for historical evidence and outstanding boundaries.
-  Latest inventory (fire-391): `2ca27fb0..266dffed` is four commits and 33 paths.
-  Source review covered Gatekeeper app capability disposal. Review unified fetch policy,
-  chat epoch folding and ambient connector eligibility before selecting this candidate.
+  gates pass; see `docs/MIGRATION.md` §§ 9–43 for historical evidence and outstanding boundaries.
+  Latest inventory (fire-392): `266dffed..b355717f` is six commits and 52 paths.
+  Source review covered attachment admission, replay and storage quotas. Review the
+  catalog, chat epoch and display cleanup, pinned worktree view reads, and protected
+  resource presentation changes. Earlier unified fetch policy, chat epoch folding,
+  and ambient connector eligibility checks remain open.
 - [ ] Rehearse the Context sync fix in the `aad703ec` candidate. Verify recovery of an
   emptied collection, same-named branch and tag resolution, and deletion behavior for
   genuinely empty or unresolved branches. See migration §40 for the Workshop boundaries.
+- [ ] Rehearse the attachment/storage increment at `b355717f`. Check streamed uploads,
+  per-message and history page budgets, provider-refusal fallback, and durable quota
+  behavior for concurrent writes and refused turns. See migration §43.
 - [ ] Rehearse Gatekeeper app teardown at `266dffed`. Check queued, dispatched and newly
   submitted calls, timer cleanup, durable effects of already started calls and the
   resource configurator lifecycle. See migration §42.

@@ -863,3 +863,18 @@ separately. Near quota, reconcile concurrent and interrupted large-file writes
 against SQLite usage, then confirm a refused agent turn still persists its error.
 See the [source review](../.ai/runs/heymegabyte--megabyte.space-45541749036-1/codex-research.md)
 for thresholds and outstanding review coverage.
+
+## 44. Chat epoch and model replay at `b355717f` (fire-393)
+
+Official HEAD is unchanged from §43. The [source review](../.ai/runs/heymegabyte--megabyte.space-45625166022-1/codex-research.md)
+covers the two-stage epoch optimization and the release of display rows after
+model context construction.
+
+Reopen state after a merge and verify that the stored epoch points to the
+persisted boundary row. Compare content and declared pins across the boundary,
+including historical reads, migrated chats without epoch metadata, and a
+restored snapshot. Exercise explicit compaction and model-pass retry separately
+so clearing the in-memory array is tested against actual history reload and
+durable prompts, tool steps and catalog events. Measure memory during those
+passes before crediting the optimization. Candidate fixtures and protected
+runtime acceptance remain open.

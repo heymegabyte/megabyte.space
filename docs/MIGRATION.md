@@ -893,3 +893,17 @@ verify symbolication for a known error against the observed Worker version.
 For packaged releases, reconstruct the map with the exact build inputs and
 require the rebuilt module SHA-256 to match the release manifest before using
 it. The candidate pin and map delivery remain unverified.
+
+## 46. Published fork pin `c3973908` (fire-395)
+
+The declared fork served the exact wrapper gitlink, and the pinned checkout
+passed workspace identity preflight. The [source review](../.ai/runs/heymegabyte--megabyte.space-45758093849-1/codex-research.md)
+records a root frozen-install failure caused by the added workspace tooling
+dependency. Reconcile the wrapper workspace and catalog with the pinned fork
+before regenerating the root lockfile and running the wrapper dry-run.
+
+For rolling backend upgrades, verify subscription recovery in a mounted
+client after the backend gains the missing RPCs. Distinguish genuinely
+unsupported methods from supported methods that reject with a matching
+`TypeError`. The previous official candidate remains at `73919572`.
+Production changes remain subject to ADR 0002.

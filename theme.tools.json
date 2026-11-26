@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 2,
+  "project": "megabyte.space",
+  "primaryDomain": "megabyte.space",
+  "archetype": "commercial-field-service-and-client-sites",
+  "consumerMode": "thin-shell",
+  "canonicalUpstream": "https://github.com/heymegabyte/theme.tools",
+  "runtimeAdapterPath": "src/theme-tools-thin-shell.ts",
+  "verifyCommand": "node --experimental-strip-types src/theme-tools-thin-shell.ts --verify",
+  "themeTokens": {
+    "background": "#060610",
+    "accent": "#00E5FF",
+    "colorSpace": "oklch",
+    "transitionDuration": "0.333s",
+    "interactionStates": 16,
+    "minApcaContrastLc": 60
+  },
+  "boundPackages": [
+    "@theme.tools/themes",
+    "@theme.tools/ui",
+    "@theme.tools/blog",
+    "@theme.tools/catalog",
+    "@theme.tools/testing",
+    "@theme.tools/workflows",
+    "@theme.tools/integrations",
+    "@theme.tools/social",
+    "@theme.tools/scheduling",
+    "@theme.tools/signing",
+    "@theme.tools/forms",
+    "@theme.tools/links",
+    "@theme.tools/keys",
+    "@theme.tools/notifications",
+    "@theme.tools/crm",
+    "@theme.tools/inbox",
+    "@theme.tools/billing",
+    "@theme.tools/status",
+    "@theme.tools/kb",
+    "@theme.tools/dataplane",
+    "@theme.tools/telemetry",
+    "@theme.tools/auth",
+    "@theme.tools/flags",
+    "@theme.tools/agent-ui",
+    "@theme.tools/seo-geo",
+    "@theme.tools/media-video",
+    "@theme.tools/crawl-research",
+    "@theme.tools/i18n-a11y"
+  ],
+  "discoveredScreensAndSectionsCount": 25,
+  "discoveredScreensAndSections": [
+    "packages/auth/src/auth-cli.ts",
+    "packages/auth/src/auth.ts",
+    "packages/auth/worker.ts",
+    "packages/contracts/src/contracts.test.ts",
+    "packages/contracts/src/golden-paths.test.ts",
+    "packages/contracts/src/golden-paths.ts",
+    "packages/contracts/src/index.ts",
+    "packages/contracts/src/orchestration.ts",
+    "packages/contracts/src/primitives.ts",
+    "packages/contracts/src/runtime.ts",
+    "packages/contracts/src/workers.ts",
+    "packages/contracts/vite.config.ts",
+    "packages/custom-gatekeeper/__tests__/custom.test.ts",
+    "packages/custom-gatekeeper/__tests__/worker.ts",
+    "packages/custom-gatekeeper/src/custom.ts",
+    "packages/custom-gatekeeper/src/index.ts",
+    "packages/custom-gatekeeper/src/types-code.ts",
+    "packages/custom-gatekeeper/vite.config.ts",
+    "packages/custom-gatekeeper/vitest.config.ts",
+    "packages/error-reporter/src/format.test.ts",
+    "packages/error-reporter/src/format.ts",
+    "packages/error-reporter/src/index.ts",
+    "packages/error-reporter/vite.config.ts",
+    "packages/home/index.html",
+    "packages/home/src/App.tsx"
+  ],
+  "screenAndSectionBindings": [
+    {
+      "screenOrRoute": "/* (Global Header & Navigation)",
+      "canonicalSectionComponent": "UniversalMegaMenuNavbar + BrandLogoLockup",
+      "sourceLibrary": "@theme.tools/ui",
+      "interactionStates": 16,
+      "transitionDuration": "0.333s"
+    },
+    {
+      "screenOrRoute": "/ (Hero, Bento Feature Grid & Social Proof)",
+      "canonicalSectionComponent": "SpotlightBentoCard + PillCluster + BtfReveal",
+      "sourceLibrary": "@theme.tools/ui",
+      "interactionStates": 16,
+      "transitionDuration": "0.333s"
+    },
+    {
+      "screenOrRoute": "/blog & /blog/:slug (Editorial & Audio Narration)",
+      "canonicalSectionComponent": "Full 100-Component Blog Registry + VoiceKit AudioNarrationPlayer",
+      "sourceLibrary": "@theme.tools/blog",
+      "interactionStates": 16,
+      "transitionDuration": "0.333s"
+    },
+    {
+      "screenOrRoute": "/status & /api/health/* (Synthetic Probes & Uptime)",
+      "canonicalSectionComponent": "tt-status-badge + tt-uptime-timeline",
+      "sourceLibrary": "@theme.tools/status",
+      "interactionStates": 16,
+      "transitionDuration": "0.333s"
+    }
+  ],
+  "blogSystem": {
+    "package": "@theme.tools/blog",
+    "editor": "platejs/react",
+    "fullCatalogEnabled": true,
+    "componentCount": 100,
+    "postIndex": "content/posts/index.json",
+    "routes": [
+      "/blog",
+      "/blog/:slug",
+      "/blog/:slug/edit",
+      "/blog/api/:slug"
+    ]
+  },
+  "voiceAndMediaEngine": {
+    "package": "@theme.tools/media-video",
+    "primaryProvider": "voicekit",
+    "creditsGrantUsd": 17000,
+    "fallbackChain": [
+      "voicekit",
+      "melotts-workers-ai",
+      "piper-local"
+    ],
+    "replacesDeprecated": "elevenlabs"
+  },
+  "telemetry8Pillar": {
+    "package": "@theme.tools/telemetry",
+    "langfuseTimeoutMs": 2500,
+    "circuitBreakerStrikes": 3,
+    "gtmConsentModeV2Default": "G100",
+    "pillars": [
+      "posthog",
+      "sentry",
+      "ga4",
+      "gtm",
+      "langfuse",
+      "cloudflare-rum",
+      "w3c-traceparent",
+      "promptfoo"
+    ]
+  },
+  "cloudflareFreeTierEdge": {
+    "dimensionsEnforced": 13,
+    "wafCustomRules": 5,
+    "rateLimitRules": 1,
+    "securityHeaders": 4,
+    "cacheRules": 2,
+    "compressionAlgorithms": [
+      "zstd",
+      "brotli",
+      "gzip"
+    ],
+    "configRules": 1,
+    "urlNormalizationScope": "both",
+    "zoneSettingsCount": 25
+  },
+  "contributedSharedModules": [
+    "@theme.tools/sdk/streamlined-thin-shell-composer",
+    "@theme.tools/media-video/zero-cost-video-credit-planner"
+  ]
+}

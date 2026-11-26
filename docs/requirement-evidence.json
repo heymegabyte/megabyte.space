@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-11-20T00:00:00.000Z",
+  "records": [
+    {
+      "id": "megabyte-space-i02-adoption",
+      "requirementId": "i02-requirement-release-evidence",
+      "capabilityId": "portfolio-traceability",
+      "origin": {
+        "kind": "rule",
+        "reference": "pinned-shared-platform-policy",
+        "revision": "75f4661c9335bf63c077476bb327cec51dc0fc88"
+      },
+      "implementation": {
+        "repository": "megabyte-space",
+        "revision": "b0283222559d113627fadbfb32652c29be4660f2",
+        "paths": [
+          "docs/requirement-evidence.json",
+          "scripts/verify-requirement-evidence.mjs",
+          "test/requirement-evidence.test.mjs"
+        ],
+        "planningPaths": [
+          "docs/requirement-evidence.json"
+        ]
+      },
+      "checks": [],
+      "status": "planned"
+    }
+  ]
+}

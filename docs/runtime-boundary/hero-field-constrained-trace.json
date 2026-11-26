@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "repository": "megabyte.space",
+  "evidenceRevision": "worktree-sha256:71dd78ba412d4340851007f8be8ef3176b9019ebbf864056f685210664d41b7b",
+  "browser": {
+    "name": "chromium",
+    "version": "153.0.8010.12",
+    "headless": true
+  },
+  "device": {
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "cpuThrottleRate": 4,
+    "network": {
+      "profile": "fast-3g",
+      "latencyMs": 150,
+      "downloadBytesPerSecond": 200000,
+      "uploadBytesPerSecond": 90000
+    }
+  },
+  "build": {
+    "indexPath": "packages/home/dist/assets/index-D7mg9XDC.js",
+    "indexDigest": "sha256:58dcc118bb09fd9b55eb150c6524a091e248daaa93cd90ea86b4091919f1bc14",
+    "entryPath": "dist-worker/worker.js",
+    "entryDigest": "sha256:51e70b93c576550f0de5f9daf06b8ae5691b974f47b93c9fb00da29e54aefb39",
+    "interactionChunkPath": "packages/home/dist/assets/three-HkVMcYU6.js",
+    "interactionChunkDigest": "sha256:de6b14604d009513da64d9e2dcc48758cfb55b98ee82d1c5dfdcf2548cb39496"
+  },
+  "interaction": {
+    "id": "hero-field-pointer-response",
+    "route": "/",
+    "strategy": "main-thread",
+    "accessibilityPattern": "inline",
+    "rationale": "Three.js is already isolated in an asynchronously imported production chunk outside the LCP path. Once mounted, the bounded 9,620-point shader field responds through uniform updates and requestAnimationFrame; introducing a worker would not move WebGL rendering off the main thread and would add coordination overhead.",
+    "thresholdMs": 500,
+    "p75Ms": 40.42,
+    "samples": [
+      {
+        "id": "sample-1",
+        "activationToVisibleMs": 40.42,
+        "chunkRequestedBeforeActivation": false,
+        "chunkRequestedAfterActivation": false,
+        "contentVisible": true,
+        "focusPreserved": true,
+        "keyboardOperable": true,
+        "seriousAccessibilityViolations": 0
+      },
+      {
+        "id": "sample-2",
+        "activationToVisibleMs": 123.4,
+        "chunkRequestedBeforeActivation": false,
+        "chunkRequestedAfterActivation": false,
+        "contentVisible": true,
+        "focusPreserved": true,
+        "keyboardOperable": true,
+        "seriousAccessibilityViolations": 0
+      },
+      {
+        "id": "sample-3",
+        "activationToVisibleMs": 38.21,
+        "chunkRequestedBeforeActivation": false,
+        "chunkRequestedAfterActivation": false,
+        "contentVisible": true,
+        "focusPreserved": true,
+        "keyboardOperable": true,
+        "seriousAccessibilityViolations": 0
+      },
+      {
+        "id": "sample-4",
+        "activationToVisibleMs": 37.89,
+        "chunkRequestedBeforeActivation": false,
+        "chunkRequestedAfterActivation": false,
+        "contentVisible": true,
+        "focusPreserved": true,
+        "keyboardOperable": true,
+        "seriousAccessibilityViolations": 0
+      },
+      {
+        "id": "sample-5",
+        "activationToVisibleMs": 37.42,
+        "chunkRequestedBeforeActivation": false,
+        "chunkRequestedAfterActivation": false,
+        "contentVisible": true,
+        "focusPreserved": true,
+        "keyboardOperable": true,
+        "seriousAccessibilityViolations": 0
+      }
+    ]
+  },
+  "sourceDigests": {
+    "homepageComposition": "sha256:6e31f2988e2bc586105a012933a9d85de29bdea2d139e1a1e20d7d91b3ae2343",
+    "heroField": "sha256:6994b034da4789ad5dc64f887a961ce9b5208e6d04f52e02f1c9da441d859f04",
+    "workerRuntime": "sha256:4f62e7255e0653617417fec72dbb4a34ebb9e03f865903da507fd3608749f45e",
+    "browserRehearsal": "sha256:15236e76603346a73a676e6c70fdb1c81b22631f067ee2ac0a818104cf7e4e82"
+  },
+  "artifactDigests": {
+    "packages/home/src/App.tsx": "sha256:6e31f2988e2bc586105a012933a9d85de29bdea2d139e1a1e20d7d91b3ae2343",
+    "packages/home/src/webgl.ts": "sha256:6994b034da4789ad5dc64f887a961ce9b5208e6d04f52e02f1c9da441d859f04",
+    "packages/home/worker.ts": "sha256:4f62e7255e0653617417fec72dbb4a34ebb9e03f865903da507fd3608749f45e",
+    "e2e/runtime-boundary-evidence.spec.ts": "sha256:15236e76603346a73a676e6c70fdb1c81b22631f067ee2ac0a818104cf7e4e82",
+    "packages/home/dist/apple-touch-icon.png": "sha256:9b06bc3c30bf7a684e0a878c63de177bdb5b8c5bd093e74cd9eef1c8378af4a6",
+    "packages/home/dist/assets/index-CtTWW2vb.css": "sha256:184e1130705f402b376be2470e41f3656a1d9f1f201708a77cd6f31515b64cfa",
+    "packages/home/dist/assets/index-D7mg9XDC.js": "sha256:58dcc118bb09fd9b55eb150c6524a091e248daaa93cd90ea86b4091919f1bc14",
+    "packages/home/dist/assets/three-HkVMcYU6.js": "sha256:de6b14604d009513da64d9e2dcc48758cfb55b98ee82d1c5dfdcf2548cb39496",
+    "packages/home/dist/assets/webgl-Dgys8BOJ.js": "sha256:9ce1a90743d3b5d60e97a42489c1d02f691a32364cfb53e1f15ada7a58ef8e8d",
+    "packages/home/dist/build-info.json": "sha256:1fe5c82f65312c7a4e1caa8a21e357261a3637727fe208461ae927e9f6975521",
+    "packages/home/dist/favicon.svg": "sha256:9486f39251334649e307118d96bf6c0c61434c7cb4eaa285a4bff1c787ac1230",
+    "packages/home/dist/feed.xml": "sha256:3e81ce0d7689acd656a225761cfa4afd30c987d5176ae3002fc43275b3b40deb",
+    "packages/home/dist/humans.txt": "sha256:59b209c3faeb11ac8f0944244317a872d092c0354652789633d7e60d19bd9e9d",
+    "packages/home/dist/index.html": "sha256:96ec783235c7b225e35c76678f8cec3aa46550de21ce4af3c60c2421c87d4efa",
+    "packages/home/dist/llms.txt": "sha256:ab228a3f904eaad1f3688f23409cdd55edc7ecde5762b59ed6b619431ec8973f",
+    "packages/home/dist/og.jpg": "sha256:5b7dba9001e698a6bb05243bc8b1abf0f7c69a388f6f59aeaca142877bd5955a",
+    "packages/home/dist/robots.txt": "sha256:9d00f041bad9405f981a51a38e33a5d15a9779108170631486010a3410b14748",
+    "packages/home/dist/sitemap.xml": "sha256:2d138c559d980edc36631ceb8e9174a61fa7a43686cc6098ebc2c52347b8bda6",
+    "dist-worker/worker.js": "sha256:51e70b93c576550f0de5f9daf06b8ae5691b974f47b93c9fb00da29e54aefb39"
+  },
+  "traceArtifact": "docs/runtime-boundary/hero-field-constrained-trace.json"
+}

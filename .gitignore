@@ -2,6 +2,9 @@ node_modules/
 packages/*/dist/
 packages/*/.wrangler/
 packages/*/wrangler.prod.jsonc
+/.wrangler/state/
+/dist-worker/
+/test-results/
 deployment.local.jsonc
 .playwright-mcp/
 # Loop runtime state — never committed

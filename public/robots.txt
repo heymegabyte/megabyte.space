@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /webhook/
-Disallow: /mcp/
-
-Sitemap: https://megabyte.space/sitemap.xml
-# GEO / LLM Discovery: https://megabyte.space/llms.txt

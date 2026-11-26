@@ -131,6 +131,15 @@ The complete control reference and recipes live in [Customization](docs/customiz
 - Follow the [upgrade checklist](docs/customization.md#upgrade) before changing the pinned submodule.
 - Review the upstream Cloudflare OS documentation and release history before adopting behavior changes.
 
+Repository automation is exposed through package scripts rather than orphaned helper files:
+
+- `pnpm verify:theme-tools` validates [`theme.tools.json`](theme.tools.json) against the thin-shell adapter.
+- `pnpm verify:shell-black` checks the authenticated application shell's black-background contract.
+- `pnpm verify:authed` runs the secret-backed authenticated browser verification suites.
+- `pnpm shot -- <route>` captures a route through the canonical screenshot helper.
+
+Agent orchestration uses the generated OpenSpec surfaces under `.agents/skills/`, `.claude/commands/opsx/`, `.claude/skills/`, `.opencode/commands/`, and `.opencode/skills/`. The current upgrade directive is [documented with the run loop](.claude/run-the-loop/DIRECTIVE-2026-10-08-agent-system-upgrade.md), while `openspec/config.yaml` and `openspec/project.md` configure the repository-local OpenSpec CLI.
+
 ### Moving here from the hosted deploy (os.cloudflare.app/deploy)
 
 Ejecting an instance created by the hosted flow means redeploying over Workers that already hold your data. Worker names, storage IDs, the public URL, and AI Gateway all have to be carried across by hand, and each one fails quietly if it is not: the deploy succeeds against empty storage. [Migrating from the hosted deploy](docs/migrate-from-hosted.md) is the checklist.

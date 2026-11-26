@@ -1,24 +1,16 @@
-# Megabyte OS
+# megabyte.space (megabyte.space)
 
-> The AI operating system for Megabyte Labs — agent chat with company context, private self-building Gadget apps, and Gatekeeper security, running entirely on Cloudflare.
+> Sovereign Cloudflare-native web property & application powered by the 28 canonical `@theme.tools/*` libraries, Paperclip (`swarml.ink`), OpenClaw (`openclaw.swarml.ink`), and VoiceKit (`$17,000` startup credits voice/audio platform).
 
-Megabyte OS is Megabyte Labs' private deployment of Cloudflare OS: an agent workspace where documents write themselves, apps grow their own features, and every agent action is guarded, logged, and owner-approved. It runs on Megabyte Labs' own Cloudflare account — no SaaS middleman, no data leaving home.
+## Architecture & Capabilities
 
-## What it does
+- **Edge Runtime**: Cloudflare Workers + Hono + D1/Neon + R2 + Queues + AI Gateway.
+- **Voice & Media**: VoiceKit Neural TTS & Conversational Voice AI (`$17,000` credits tier) + Cloudflare Workers AI MeloTTS (`@cf/myshell-ai/melotts`) + HyperFrames 4K video pipeline.
+- **Observability**: Sovereign 8-Pillar Telemetry (`@theme.tools/telemetry`, W3C `traceparent`, GTM Consent Mode v2, Langfuse v4 `2500ms` fail-open, PostHog, Sentry Envelope v7).
+- **Security**: RFC 9116 `/.well-known/security.txt`, 13-dimension Cloudflare Free-Tier Edge Hardening (5 WAF rules, Rate Limiting, 4 Security Headers, Cache Rules, Zstd Compression, HSTS Preload, Post-Quantum ML-KEM, Page Shield, DNSSEC, URL Normalization `scope=both`).
 
-- **Agent chat with context** — agents are preloaded with how Megabyte Labs operates (context, tools, and rules), so you ask for work, not files.
-- **Gadgets** — self-building private apps (slide decks, dashboards, tools); each person gets their own safe, remixable copy, and you can ask the agent to add a feature.
-- **Gatekeepers** — capability-scoped access to GitHub, Google, email and more; side-effects are simulated ahead and approved in bulk, with a full audit log.
-- **Blueprints** — prompt to product: one sentence becomes a working app.
-- **Scheduler** — agents run on timers and recurrences; research and reports arrive finished.
+## Key Endpoints & Resources
 
-## Pages
-
-- [Homepage](https://megabyte.space/): product overview, features, how it works, and the security model.
-- The operator workspace lives at https://os.megabyte.space (Cloudflare Access-gated; not public).
-
-## About
-
-- Megabyte Labs — Brian Zalewski's solo, AI-native studio.
-- Built on Cloudflare OS (https://github.com/cloudflare/cloudflare-os), open source, on Cloudflare Workers + Durable Objects, secured by Cloudflare Access.
-- Contact: hey@megabyte.space
+- [Homepage](https://megabyte.space/)
+- [Security Policy](https://megabyte.space/.well-known/security.txt)
+- [Robots Policy](https://megabyte.space/robots.txt)

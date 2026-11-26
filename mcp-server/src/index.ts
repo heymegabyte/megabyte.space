@@ -208,15 +208,15 @@ const INFO_HTML = `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Megabyte OS · MCP Server</title>
 <meta name="description" content="Use Megabyte OS as MCP tools — point Claude, ChatGPT, or VS Code at this Model Context Protocol server (JSON-RPC over HTTP). Read-only tools: about the OS, live feature flags, integrations."/>
-<link rel="canonical" href="https://mcp.megabyte.space/"/>
+<link rel="canonical" href="https://os.mcp.megabyte.space/"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://mcp.megabyte.space/"/>
+<meta property="og:url" content="https://os.mcp.megabyte.space/"/>
 <meta property="og:title" content="Megabyte OS · MCP Server"/>
 <meta property="og:description" content="Point an MCP client (Claude, ChatGPT, VS Code) at this URL to use Megabyte OS as tools."/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Megabyte OS · MCP Server"/>
 <meta name="twitter:description" content="Use Megabyte OS as MCP tools over the Model Context Protocol."/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Megabyte OS MCP Server","applicationCategory":"DeveloperApplication","operatingSystem":"Cloudflare Workers","url":"https://mcp.megabyte.space/","description":"A Model Context Protocol (MCP) server exposing Megabyte OS as read-only tools to AI agents.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Megabyte Labs","url":"https://megabyte.space"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Megabyte OS MCP Server","applicationCategory":"DeveloperApplication","operatingSystem":"Cloudflare Workers","url":"https://os.mcp.megabyte.space/","description":"A Model Context Protocol (MCP) server exposing Megabyte OS as read-only tools to AI agents.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Megabyte Labs","url":"https://megabyte.space"}}</script>
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#060610;color:#eaf6ff;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}main{max-width:560px;padding:32px;text-align:center}
 h1{font-size:22px;margin:0 0 6px}code{background:rgba(0,229,255,.1);color:#00E5FF;padding:2px 7px;border-radius:6px;font-size:13px}

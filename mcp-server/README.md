@@ -35,7 +35,7 @@ curl -s "$URL" -H content-type:application/json \
 
 ## Follow-ups
 
-- Brandable `mcp.megabyte.space` custom domain (add a Worker custom-domain route; set `workers_dev`
+- Brandable `os.mcp.megabyte.space` custom domain (the primary `mcp.megabyte.space` hostname is reserved for the authenticated MCP Portal; set `workers_dev`
   explicitly since `routes` auto-disables it).
 - New **sensitive/destructive** tools would require auth (CF Access JWT / bearer) + the
   `mcp-server-hardening` gates (rate-limit, audit log, `.strict()` schemas) BEFORE shipping.

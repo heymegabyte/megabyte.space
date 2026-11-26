@@ -5053,3 +5053,10 @@ cadence and publication.
 - Declared fork `240899ec` initialized and fetched from its declared remote. Both frozen installs exited 0 with pnpm 11.17.0. Focused fleet tests passed 74/74.
 - Wrapper check hit its 115-second budget (exit 124); full dry-run acceptance remains open. Generated Wrangler configs remained after exit and were removed from this worktree.
 - Source review only. The fork pin and deployment manifest are unchanged. Protected candidate, production, browser and live-provider acceptance remain open.
+
+## fire-395 — Validate published fork pin compatibility (2026-11-26 UTC)
+
+- The declared fork advertised and served the exact committed `c3973908` pin. Recent successful result commits are on `origin/main`. Retained failed-run commits are patch-equivalent to published work, and the Context sync item from the retained dirty backlog is already present.
+- Root frozen install rejected a new `@gadgets/scripts` workspace dependency. The fork also changed its shared package manifests and Cap'n Web catalog. Wrapper build and dry-run acceptance remain open.
+- [Migration §46](../../docs/MIGRATION.md#46-published-fork-pin-c3973908-fire-395) records the bootstrap findings and the rolling RPC recovery checks. The fleet command now calls out dependency preflight for externally advanced pins. No gitlink, production or visual score change.
+- The fork frozen install succeeded with an explicit public-registry option after the configured mirror returned integrity failures. All 57 wrapper provenance and bookkeeping tests and 37 fork notification fixture tests passed. Mixed-version RPC and production acceptance remain open.

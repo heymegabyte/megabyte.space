@@ -715,6 +715,10 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   catalog, chat epoch and display cleanup, pinned worktree view reads, and protected
   resource presentation changes. Earlier unified fetch policy, chat epoch folding,
   and ambient connector eligibility checks remain open.
+- [ ] Restore the wrapper frozen install at `c3973908`. Reconcile workspace membership and
+  shared catalog entries, regenerate the lockfile with pnpm 11.17.0, and verify both frozen
+  installs plus the wrapper dry-run. Include live RPC recovery in the protected rehearsal
+  as scoped in [migration §46](../../docs/MIGRATION.md#46-published-fork-pin-c3973908-fire-395).
 - [ ] Rehearse the Context sync fix in the `aad703ec` candidate. Verify recovery of an
   emptied collection, same-named branch and tag resolution, and deletion behavior for
   genuinely empty or unresolved branches. See migration §40 for the Workshop boundaries.

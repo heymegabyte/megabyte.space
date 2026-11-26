@@ -14,7 +14,12 @@
   // A specific proxied DNS record for os.mcp.megabyte.space overrides the account wildcard;
   // wrangler provisions the DNS + TLS on the active zone. workers_dev stays true (a routes/custom_domain
   // block otherwise auto-disables the workers.dev URL — keep it as a fallback).
-  "routes": [{ "pattern": "os.mcp.megabyte.space", "custom_domain": true }],
+  // Keep the legacy hostname during DNS/TLS propagation. Remove it only after
+  // the new hostname passes live health and MCP protocol verification.
+  "routes": [
+    { "pattern": "os.mcp.megabyte.space", "custom_domain": true },
+    { "pattern": "mcp.megabyte.space", "custom_domain": true }
+  ],
   "workers_dev": true,
   "preview_urls": true,
 

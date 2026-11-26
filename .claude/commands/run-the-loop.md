@@ -147,6 +147,11 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   A prior receipt saying `running` is
   unfinished evidence: rerun or reconcile the actual process, never inherit it as green.
   Final reports name terminal check outcomes; interrupted checks remain incomplete.
+  After an externally advanced gitlink, check the fork package manifests imported
+  by the wrapper against its workspace membership, catalog and lockfile. Exact-pin
+  fetchability does not establish dependency compatibility. A root frozen-lockfile
+  failure blocks wrapper consumers, but the fork frozen install can still be
+  verified independently after exact-pin preflight.
   Update the report checkpoint immediately after EACH frozen install exits, before
   starting the next stage; retain its launcher/version and exit status. A later
   interruption must not erase completed bootstrap evidence or imply wrapper success.

@@ -5060,3 +5060,9 @@ cadence and publication.
 - Root frozen install rejected a new `@gadgets/scripts` workspace dependency. The fork also changed its shared package manifests and Cap'n Web catalog. Wrapper build and dry-run acceptance remain open.
 - [Migration §46](../../docs/MIGRATION.md#46-published-fork-pin-c3973908-fire-395) records the bootstrap findings and the rolling RPC recovery checks. The fleet command now calls out dependency preflight for externally advanced pins. No gitlink, production or visual score change.
 - The fork frozen install succeeded with an explicit public-registry option after the configured mirror returned integrity failures. All 57 wrapper provenance and bookkeeping tests and 37 fork notification fixture tests passed. Mixed-version RPC and production acceptance remain open.
+
+## fire-396 — Recover and verify the wrapper compatibility repair (2026-11-27 UTC)
+
+- Recovered the unpublished fire-395 documentation and latest tracked compatibility repair from the retained fleet worktrees. The exact `c3973908` fork pin was independently fetched from its declared remote.
+- pnpm 11.17.0 frozen installs passed in both workspaces. The wrapper check passed the static gates and ran 260 passing script tests and 53 passing package tests, including the custom Gatekeeper reconnect regression assertion.
+- The complete wrapper dry-run and ADR 0002 acceptance remain open. No deployment was attempted.

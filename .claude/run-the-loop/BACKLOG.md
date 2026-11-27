@@ -710,7 +710,11 @@ DEEPSEEK_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY.
   binding/deprecation review, and run frozen installs + `pnpm check` against the selected candidate
   and wrapper before protected evaluation. No release/pilot acceptance until source and production
   gates pass; see `docs/MIGRATION.md` §§ 9–43 for historical evidence and outstanding boundaries.
-  Latest inventory (fire-392): `266dffed..b355717f` is six commits and 52 paths.
+  Latest inventory (fire-397): `73919572..062d82c4` is two commits and 11 paths
+  in the Google Gatekeeper. Rehearse moved Doc runs and selective list reads
+  against full-tab output, plus shared-mint cancellation and Gmail/BigQuery
+  deadline boundaries. See migration §47.
+  Earlier inventory (fire-392): `266dffed..b355717f` is six commits and 52 paths.
   Source review covered attachment admission, replay and storage quotas. Review the
   catalog, chat epoch and display cleanup, pinned worktree view reads, and protected
   resource presentation changes. Earlier unified fetch policy, chat epoch folding,

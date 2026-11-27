@@ -5066,3 +5066,13 @@ cadence and publication.
 - Recovered the unpublished fire-395 documentation and latest tracked compatibility repair from the retained fleet worktrees. The exact `c3973908` fork pin was independently fetched from its declared remote.
 - pnpm 11.17.0 frozen installs passed in both workspaces. The wrapper check passed the static gates and ran 260 passing script tests and 53 passing package tests, including the custom Gatekeeper reconnect regression assertion.
 - The complete wrapper dry-run and ADR 0002 acceptance remain open. No deployment was attempted.
+
+## fire-397 — Review official Google Gatekeeper increment (2026-11-27 UTC)
+
+`6f52f171` records the exact official `73919572..062d82c4` two-commit,
+11-path inventory and source review. Updated the upstream frontier with separate
+rehearsal cases for Docs context and Google request cancellation. The declared
+fork still serves `c3973908`; exact-pin preflight and independent remote
+verification passed. Focused fork, resolvability and bookkeeping tests passed
+44/44. The prior wrapper log records Workshop frontend type errors. Candidate
+fixtures, full wrapper dry-run, deployment and protected acceptance remain open.

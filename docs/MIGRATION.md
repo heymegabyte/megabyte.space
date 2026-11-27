@@ -907,3 +907,13 @@ client after the backend gains the missing RPCs. Distinguish genuinely
 unsupported methods from supported methods that reject with a matching
 `TypeError`. The previous official candidate remains at `73919572`.
 Production changes remain subject to ADR 0002.
+
+## 47. Official Google Gatekeeper increment at `062d82c4` (fire-397)
+
+An exact fetch from official upstream confirms two commits and 11 changed paths
+after `73919572`, all in the Google Gatekeeper. The changes add selective Docs
+run decoding and make waits for a Google token or retry pause interruptible.
+Candidate rehearsal should cover Docs positional and list context as well as
+cancellation during a shared mint, before certifying the Gmail and BigQuery
+deadline behavior. See the [source review](../.ai/runs/heymegabyte--megabyte.space-46083970333-1/codex-research.md)
+for the boundaries and test cases. The candidate has source evidence only.

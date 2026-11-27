@@ -138,6 +138,16 @@ throughout §§0–11. Execute exactly one iteration inside the assigned isolate
   leaves the downstream gates unrun, rather than proving a source/build defect.
   Run the fork preflight before direct root build/test entry points too; only
   `check` currently includes it automatically.
+  If a nested Vite+ build rejects the pnpm tarball hash after frozen installs
+  pass, independently verify the canonical npm registry artifact against the
+  fork's `packageManager` digest. Retry with a process-local registry override
+  so nested task runners use that artifact. Preserve hash verification and
+  leave machine registry settings intact.
+- **Keep wrapper repairs separable from fork failures.** If the wrapper's
+  frozen install, tests and changed packages pass but an unchanged fork package
+  blocks the dry-run, preserve the verified wrapper repair and record the first
+  failing fork target and exact gitlink. Leave the end-to-end gate open until a
+  reviewed, fetchable fork revision passes it.
 - **Finish verification before reporting it.** Start frozen installs and the full wrapper
   check early enough to collect their exit status within the fleet deadline. Dependency
   consumers start only after both installs finish. Before the fork install, verify its

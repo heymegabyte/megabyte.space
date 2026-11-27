@@ -147,7 +147,11 @@ export class CustomAccount extends WorkerEntrypoint<Cloudflare.Env> implements G
 
   async revoke(): Promise<void> {}
 
-  reconnect(): Promise<{ url: string }> {
+  reconnect(): never {
+    throw new Error("Custom Gatekeeper has no credentials to reconnect.");
+  }
+
+  commitReconnect(_stageId: string): never {
     throw new Error("Custom Gatekeeper has no credentials to reconnect.");
   }
 

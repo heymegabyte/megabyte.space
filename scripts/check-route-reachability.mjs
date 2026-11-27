@@ -9,7 +9,7 @@
  * (dynamic `$param` routes are deep-link targets reached via interpolated links — not grep-reliable).
  * A route is "reachable" if some .tsx/.ts (excluding routeTree.gen + the route's own file) contains a
  * `to:`/`to=`/`href=` pointing at its path. ALLOW = routes legitimately reached without a nav ref
- * (the root layout, `/` home, and the auth pages reached by redirect, not a link).
+ * (the root layout, `/` home, and callback pages reached through redirects).
  *
  * Exit 1 (+ the orphan list) on any unreachable static route; 0 when every one has an entry point.
  */
@@ -20,7 +20,14 @@ const SRC = 'cloudflare-os/packages/workshop-frontend/src'
 const ROUTES_DIR = `${SRC}/routes`
 
 // Reached without an in-app nav ref — not orphans.
-const ALLOW = new Set(['__root', 'index', 'signin', 'signup'])
+const ALLOW = new Set([
+  '__root',
+  'index',
+  'signin',
+  'signup',
+  // Gatekeeper popups navigate here with a ticket in the URL fragment.
+  'connect.handoff',
+])
 
 // filename (sans .tsx) → URL path. TanStack: dots are separators; a trailing `_` on a segment is the
 // layout-escape marker; `$x` is a param (⇒ dynamic, skipped below).

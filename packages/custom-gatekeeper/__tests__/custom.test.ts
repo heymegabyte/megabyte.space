@@ -1,11 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
+  CustomAccount,
   CustomSessionImpl,
   describeCustomAccount,
   describeCustomVendor,
 } from "../src/custom.js";
 
 describe("custom-gatekeeper", () => {
+  it("rejects committing a reconnect because the singleton has no credentials", () => {
+    expect(() => CustomAccount.prototype.commitReconnect("unused-stage")).toThrow(
+      "Custom Gatekeeper has no credentials to reconnect.",
+    );
+  });
+
   it("describes an auto-provisioned singleton", () => {
     expect(describeCustomVendor()).toMatchObject({
       displayName: "Custom Gatekeeper",
